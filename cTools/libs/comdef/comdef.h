@@ -54,5 +54,19 @@ extern int VERBOSE;
 
 #define ROUND_UP(mul, val) (val + mul - (val % mul))
 
+#ifdef __clang__
+    #if __has_attribute(__always_inline__)
+        #define INLINE inline __attribute__((__always_inline__))
+    #else
+        #define INLINE inline
+    #endif
+#elif defined(__GNUC__)
+    #define INLINE inline __attribute__((__always_inline__))
+#elif defined(_MSC_VER)
+    #define INLINE __forceinline
+#else
+    #define INLINE inline
+#endif
+
 #endif /* __COMDEF_H */
 
