@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 find_program(CMAKE_C_COMPILER gcc)
   if(NOT CMAKE_C_COMPILER)
     message(FATAL_ERROR "gcc not found")
