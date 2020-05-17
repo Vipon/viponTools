@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 find_program(CCACHE ccache)
   if(NOT CCACHE)
     message(SEND_ERROR "ccache not found")
