@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import shutil
+import argparse
+import subprocess
+
+ROOT = os.path.abspath(os.path.dirname(__file__))
+CMAKE_DIR = os.path.join(ROOT, 'cmake')
+TOOLCHAIN_DIR = os.path.join(CMAKE_DIR, 'toochain')
+
+def parseArgs():
+    parser = argparse.ArgumentParser(description = 'Configure viponTools project.')
+    parser.add_argument('--release', action = 'store_true',
+            help = 'release build instead of debug')
+    parser.add_argument('--c-toolchain', metavar = 'PATH', nargs = '?',
+            default = os.path.join(TOOLCHAIN_DIR, 'host-clang.cmake'),
+            help = 'path to CMAKE_TOOLCHAIN_FILE')
+    parser.add_argument('--cmake-path', metavar = 'PATH', nargs = '?',
+            default = shutil.which('cmake'),
+            help = 'path to special cmake')
+    parser.add_argument('--output', metavar = 'DIR_PATH', nargs = '?',
+            default = os.path.join(ROOT, 'output'),
+            help = 'name of output directory')
+
+    return parser.parse_args()
+
+
+def goToOutputDir(args):
+    if not os.path.isdir(args.output):
+        try:
+            os.makedirs(args.output, mode = 0o755)
+        except FileExistsError:
+            sys.exit(f'{args.output} already exists and it\'s not directory')
+
+    os.chdir(args.output)
+
+
+def execCmake(args):
+    subprocess.check_call(
+        [ args.cmake_path
+        , '-DCMAKE_BUILD_TYPE={}'    .format('Release' if args.release else 'Debug')
+        , '-DCMAKE_TOOLCHAIN_FILE={}'.format(args.c_toolchain)
+        , ROOT
+        ])
+
+
+def main():
+    args = parseArgs()
+    goToOutputDir(args)
+    execCmake(args)
+
+
+if __name__ == '__main__':
+    main()
+
