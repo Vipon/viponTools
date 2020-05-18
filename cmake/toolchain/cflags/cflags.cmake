@@ -1,0 +1,20 @@
+include_guard(GLOBAL)
+include(CheckCCompilerFlag)
+
+macro(append_cflags var)
+  foreach(flag ${ARGN})
+    set(check "Flag: ${flag}")
+    check_c_compiler_flag("${flag} -w" ${check})
+    if(${check})
+      string(APPEND ${var} " ${flag}")
+    endif()
+  endforeach()
+endmacro()
+
+#enable_language(C)
+include(${CMAKE_CURRENT_LIST_DIR}/debug.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/release.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/coverage.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/sanitizers.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/warnings.cmake)
+
