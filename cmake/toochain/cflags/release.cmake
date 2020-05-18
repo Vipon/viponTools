@@ -1,0 +1,3 @@
+append_cflags(C_FLAGS_RELEASE -O3 -DNDEBUG)
+append_cflags(CXX_FLAGS_RELEASE -O3 -DNDEBUG)
+
