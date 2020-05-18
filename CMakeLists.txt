@@ -4,5 +4,6 @@ project(viponTools
   VERSION 1.0
   )
 
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/toolchain/cflags/cflags.cmake)
 #add_subdirectory(cTools)
 

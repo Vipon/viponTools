@@ -8,7 +8,7 @@ import subprocess
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 CMAKE_DIR = os.path.join(ROOT, 'cmake')
-TOOLCHAIN_DIR = os.path.join(CMAKE_DIR, 'toochain')
+TOOLCHAIN_DIR = os.path.join(CMAKE_DIR, 'toolchain')
 
 def parseArgs():
     parser = argparse.ArgumentParser(description = 'Configure viponTools project.')
