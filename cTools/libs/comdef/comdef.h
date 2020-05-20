@@ -46,6 +46,11 @@ extern int VERBOSE;
         fprintf(stderr, "\n");                                      \
     } while (0);
 
+#define TEST_EXEC_CODE(code) \
+    {                        \
+        code;                \
+    }
+
 #define STRINGIZE(s) #s
 #define STR(s) STRINGIZE(s)
 

@@ -1,4 +1,5 @@
 #include "perfTimer.h"
+#include "comdef.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -8,6 +9,9 @@
 
 int main(int argc, const char *argv[])
 {
+    UNUSED(argc);
+    UNUSED(argv);
+
     uint64_t curTsc = 0;
     uint64_t allTsc = 0;
 
