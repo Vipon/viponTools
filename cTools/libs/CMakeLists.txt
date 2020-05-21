@@ -3,4 +3,6 @@ add_subdirectory(perfAnalysis)
 add_subdirectory(x86_64)
 add_subdirectory(mem)
 add_subdirectory(bits)
+add_subdirectory(file)
+add_subdirectory(LEB128)
 
