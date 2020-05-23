@@ -5,4 +5,5 @@ add_subdirectory(mem)
 add_subdirectory(bits)
 add_subdirectory(file)
 add_subdirectory(LEB128)
+add_subdirectory(containers)
 
