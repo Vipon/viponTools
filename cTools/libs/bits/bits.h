@@ -97,5 +97,17 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
 #define IS_SIGN_DIFF_16(a16, b16) \
     (((uint16_t)a16 ^ (uint16_t)b16) & 0x8000)
 
+
+#define ROUND_UP_2(v) \
+    ({                \
+        --v;          \
+        v |= v >> 1;  \
+        v |= v >> 2;  \
+        v |= v >> 4;  \
+        v |= v >> 8;  \
+        v |= v >> 16; \
+        ++v;          \
+    })
+
 #endif /* _BITS_H */
 
