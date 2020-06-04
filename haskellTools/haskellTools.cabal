@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: da4c8ba5349c3955229ba682219c1f09ee10e921645889247ade0585de095274
+-- hash: 0bee0501a2629b1cd2233d222ead1725f5d4333dabc158933b655535d5091fdf
 
 name:           haskellTools
 version:        0.1.0.0
@@ -27,13 +27,16 @@ source-repository head
 
 library
   exposed-modules:
+      HelloName
       Lib
+      MonadTest
   other-modules:
       Paths_haskellTools
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , containers
   default-language: Haskell2010
 
 executable haskellTools-exe
@@ -45,6 +48,7 @@ executable haskellTools-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , haskellTools
   default-language: Haskell2010
 
@@ -58,5 +62,6 @@ test-suite haskellTools-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , haskellTools
   default-language: Haskell2010
