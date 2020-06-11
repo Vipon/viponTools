@@ -4,16 +4,16 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0bee0501a2629b1cd2233d222ead1725f5d4333dabc158933b655535d5091fdf
+-- hash: 650e276729e39050e87dc4fe54e8020f733c781cd0a5b98ca118fbad83330851
 
 name:           haskellTools
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/haskellTools#readme>
-homepage:       https://github.com/githubuser/haskellTools#readme
-bug-reports:    https://github.com/githubuser/haskellTools/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2020 Author name here
+homepage:       https://github.com/Vipon/haskellTools#readme
+bug-reports:    https://github.com/Vipon/haskellTools/issues
+author:         valerii konychev
+maintainer:     valerakonychev@gmail.com
+copyright:      2020 valerii konychev
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -23,16 +23,22 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/haskellTools
+  location: https://github.com/Vipon/haskellTools
 
 library
   exposed-modules:
+      Vipon.Cmd
+      Vipon.Text
+      Candidate
       HelloName
+      Hinq
       Lib
+      MaxPairM
       MonadTest
   other-modules:
       Paths_haskellTools
   hs-source-dirs:
+      lib
       src
   build-depends:
       base >=4.7 && <5
