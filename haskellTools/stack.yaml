@@ -29,6 +29,7 @@ resolver: lts-15.14
 #   - auto-update
 #   - wai
 packages:
+- .
 - tool/isPalindrome
 
 # Dependency packages to be pulled from upstream that are not in the resolver.
