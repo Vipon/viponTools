@@ -1,0 +1,3 @@
+module Vipon.Error
+  (
+  ) where
