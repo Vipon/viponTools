@@ -1,0 +1,19 @@
+#!/bin/bash
+
+source "$(dirname "${BASH_SOURCE[0]}")"/../os/libos.sh
+source "$(dirname "${BASH_SOURCE[0]}")"/"$(getOsName)"/libPkgs.sh
+
+createDefPkgsList()
+{
+    defPkgsListDir="$(dirname "${BASH_SOURCE[0]}")"/"$(getOsName)"/"$(getOsVersion)"
+    defPkgsList="${defPkgsListDir}"/pkgsList
+
+    if [ ! -d "${defPkgsListDir}" ]; then
+        mkdir -p "${defPkgsListDir}"
+    fi
+
+    getListOfInstalledPkgs > "${defPkgsList}"
+}
+
+createDefPkgsList
+
