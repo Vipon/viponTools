@@ -2221,9 +2221,12 @@ linux-headers-4.15.0-101
 linux-headers-4.15.0-101-generic
 linux-headers-4.15.0-106
 linux-headers-4.15.0-106-generic
+linux-headers-4.15.0-108
+linux-headers-4.15.0-108-generic
 linux-headers-generic
 linux-image-4.15.0-101-generic
 linux-image-4.15.0-106-generic
+linux-image-4.15.0-108-generic
 linux-image-4.15.0-20-generic
 linux-image-4.15.0-38-generic
 linux-image-4.15.0-39-generic
@@ -2259,6 +2262,7 @@ linux-libc-dev-arm64-cross
 linux-libc-dev-armhf-cross
 linux-modules-4.15.0-101-generic
 linux-modules-4.15.0-106-generic
+linux-modules-4.15.0-108-generic
 linux-modules-4.15.0-20-generic
 linux-modules-4.15.0-38-generic
 linux-modules-4.15.0-39-generic
@@ -2290,6 +2294,7 @@ linux-modules-4.15.0-96-generic
 linux-modules-4.15.0-99-generic
 linux-modules-extra-4.15.0-101-generic
 linux-modules-extra-4.15.0-106-generic
+linux-modules-extra-4.15.0-108-generic
 linux-modules-extra-4.15.0-20-generic
 linux-modules-extra-4.15.0-38-generic
 linux-modules-extra-4.15.0-39-generic

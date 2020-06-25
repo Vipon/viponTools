@@ -6,17 +6,17 @@ getOsName()
 {
     if [ "${OS_RELEASE}" != "" ]; then
         echo "$(getOsNameFromOsRelease)"
+    else
+        echo ""
     fi
-
-    echo ""
 }
 
 getOsVersion()
 {
     if [ "${OS_RELEASE}" != "" ]; then
         echo "$(getVersionFromOsRelease)"
+    else
+        echo ""
     fi
-
-    echo ""
 }
 

@@ -6,9 +6,9 @@ getOsReleaseFile()
         echo "/etc/os-release"
     elif [ -f "/usr/lib/os-release" ]; then
         echo "/usr/lib/os-release"
+    else
+        echo ""
     fi
-
-    echo ""
 }
 
 OS_RELEASE="$(getOsReleaseFile)"
