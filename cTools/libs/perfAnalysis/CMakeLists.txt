@@ -1,9 +1,9 @@
 set(PERF_ANALYSIS_SRC
-  perfTimer.c
+  perf.c
   )
 
 set(PERF_ANALYSIS_HEADERS
-  perfTimer.h
+  perf.h
   )
 
 add_library(perfAnalysis
