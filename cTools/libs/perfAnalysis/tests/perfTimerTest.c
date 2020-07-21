@@ -1,4 +1,4 @@
-#include "perfTimer.h"
+#include "perf.h"
 #include "comdef.h"
 
 #include <unistd.h>
@@ -20,9 +20,9 @@ int main(int argc, const char *argv[])
 
     printf("#\tcycleTics\n");
     for (i = 0; i < numTest; ++i) {
-        curTsc = getTSC();
+        curTsc = getCPUCycles();
         getpid();
-        curTsc = getTSC() - curTsc;
+        curTsc = getCPUCycles() - curTsc;
         allTsc += curTsc;
         printf("%"PRIu64"\t%"PRIu64"\n", i, curTsc);
     }

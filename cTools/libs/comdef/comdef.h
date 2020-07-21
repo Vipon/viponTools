@@ -25,6 +25,8 @@
 #ifndef __COMDEF_H
 #define __COMDEF_H
 
+#include "arch.h"
+
 #include <stdio.h>
 
 #define PAGE_SIZE 4096
