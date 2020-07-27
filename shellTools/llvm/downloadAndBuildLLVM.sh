@@ -22,8 +22,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-TRUE="true"
-FALSE="false"
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+source "${SCRIPT_DIR}/../libCommon.sh"
 
 NUM_THREADS=`nproc`
 
@@ -49,37 +49,37 @@ checkUtils()
 {
     # Check exesting of wget
     if [ `which wget` == "" ]; then
-        echo "ERROR: There is no wget."
+        pError "There is no wget."
         exit -1
     fi
 
     # Check exesting of tar
     if [ `which tar` == "" ]; then
-        echo "ERROR: There is no tar."
+        pError "There is no tar."
         exit -1
     fi
 
     # Check exesting of xz
     if [ `which xz` == "" ]; then
-        echo "ERROR: There is no xz."
+        pError "There is no xz."
         exit -1
     fi
 
     # Check exesting of gpg
     if [ `which gpg` == "" ]; then
-        echo "ERROR: There is no gpg."
+        pError "There is no gpg."
         exit -1
     fi
 
     # Check exesting of cmake
     if [ `which cmake` == "" ]; then
-        echo "ERROR: There is no cmake."
+        pError "There is no cmake."
         exit -1
     fi
 
     # Check exesting of make
     if [ `which make` == "" ]; then
-        echo "ERROR: There is no make."
+        pError "There is no make."
         exit -1
     fi
 
@@ -166,7 +166,7 @@ parseArgs()
                   --long test          \
                   -- "$@")
     if [ $? -ne 0 ]; then
-        echo "Incorrect option provided"
+        pError "Incorrect option provided"
         printOptions
         exit -1
     fi
@@ -271,7 +271,7 @@ parseArgs()
 
     # new URL
     BASE_URL="https://github.com/llvm/llvm-project/releases/download/llvmorg-${VERSION}"
-    if [[ "${VERSION}" < "7.0.1" ]]; then
+    if [[ $(cmpVersions "${VERSION}" "7.0.1") -lt 0 ]]; then
         # old URL
         BASE_URL="https://releases.llvm.org/${VERSION}"
     fi
@@ -297,14 +297,18 @@ downloadPublicKey()
         PUBLIC_KEY="hans-gpg-key.asc"
         wget "${BASE_URL}/${PUBLIC_KEY}" -P "${DOWNLOAD_PATH}"
         if [ "$?" != "0" ]; then
-            echo "ERROR: cann't download public key."
-            exit -1
+            # hans-gpg-key-asc could be still on the old URL
+            wget "https://releases.llvm.org/${VERSION}/${PUBLIC_KEY}" -P "${DOWNLOAD_PATH}"
+            if [ "$?" != "0" ]; then
+                pError "cann't download public key."
+                exit -1
+            fi
         fi
     fi
 
     gpg --import "${DOWNLOAD_PATH}/${PUBLIC_KEY}"
     if [ "$?" != "0" ]; then
-        echo "ERROR: cann't import public key."
+        pError "cann't import public key."
         exit -1
     fi
 
@@ -322,20 +326,20 @@ downloadLLVMTool()
 
     wget "${BASE_URL}/${TOOL}-${VERSION}.src.tar.xz" -P "${DOWNLOAD_PATH}"
     if [ "$?" != "0" ]; then
-        echo "ERROR: cannot download ${TOOL}."
+        pError "cannot download ${TOOL}."
         exit -1
     fi
 
     wget "${BASE_URL}/${TOOL}-${VERSION}.src.tar.xz.sig" -P "${DOWNLOAD_PATH}"
     if [ "$?" != "0" ]; then
-        echo "ERROR: cann't download signature for ${TOOL}."
+        pError "cann't download signature for ${TOOL}."
         exit -1
     fi
 
     gpg --verify "${DOWNLOAD_PATH}/${TOOL}-${VERSION}.src.tar.xz.sig" \
                  "${DOWNLOAD_PATH}/${TOOL}-${VERSION}.src.tar.xz"
     if [ "$?" != "0" ]; then
-        echo "ERROR: cann't verify ${TOOL}."
+        pError "cann't verify ${TOOL}."
         exit -1
     fi
 
@@ -350,7 +354,7 @@ downloadSourceCode()
 
     downloadLLVMTool llvm
     # Name of clang package depends on version
-    if [[ "${VERSION}" < "7.0.1" ]]; then
+    if [[ $(cmpVersions "${VERSION}" "7.0.1") -lt 0 ]]; then
     downloadLLVMTool cfe
     else
     downloadLLVMTool clang
@@ -392,7 +396,7 @@ extractSourceCode()
 {
     extractToDir llvm "${LLVM_PATH}"
     # Name of clang package depends on version
-    if [[ "${VERSION}" < "7.0.1" ]]; then
+    if [[ $(cmpVersions "${VERSION}" "7.0.1") -lt 0 ]]; then
     extractToDir cfe "${LLVM_PATH}/tools/clang"
     else
     extractToDir clang "${LLVM_PATH}/tools/clang"
@@ -427,14 +431,14 @@ buildCode()
         DEBUG_PARAM="--debug"
     fi
 
-    ./buildLLVM.sh --build-path="${BUILD_PATH}" \
-                   "${CCACHE_PARAM}" \
-                   "${CROSS_COMPILE_PARAM}" \
-                   "${DEBUG_PARAM}" \
-                   --install-path="${INSTALL_PATH}" \
-                   --jobs="${NUM_THREADS}" \
-                   --llvm-path="${LLVM_PATH}" \
-                   --sysroot="${SYSROOT}"
+    "${SCRIPT_DIR}"/buildLLVM.sh --build-path="${BUILD_PATH}" \
+                                 "${CCACHE_PARAM}" \
+                                 "${CROSS_COMPILE_PARAM}" \
+                                 "${DEBUG_PARAM}" \
+                                 --install-path="${INSTALL_PATH}" \
+                                 --jobs="${NUM_THREADS}" \
+                                 --llvm-path="${LLVM_PATH}" \
+                                 --sysroot="${SYSROOT}"
 }
 
 
