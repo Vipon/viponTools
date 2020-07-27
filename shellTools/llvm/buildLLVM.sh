@@ -22,6 +22,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+source "${SCRIPT_DIR}/../libCommon.sh"
+
 NUM_THREADS=`nproc`
 
 SYSROOT="/"
@@ -186,13 +189,13 @@ build()
           -DLLVM_ENABLE_TERMINFO=OFF \
           -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}" "${LLVM_PATH}"
     if [ "$?" != "0" ]; then
-        echo "ERROR: llvm cmake fail."
+        pError "llvm cmake fail."
         exit -1
     fi
 
     make -j"${NUM_THREADS}"
     if [ "$?" != "0" ]; then
-        echo "ERROR: llvm build fail."
+        pError "llvm build fail."
         exit -1
     fi
 
