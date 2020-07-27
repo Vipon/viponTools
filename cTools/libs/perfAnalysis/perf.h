@@ -62,7 +62,7 @@ static INLINE uint64_t getCPUCycles(void)
 #elif ARM32_DEFINED || ARM64_DEFINED
 # include <arm_acle.h>
 
-static INLINE uint64_t pmccntrRead(void)
+static INLINE uint64_t readPmccntr(void)
 {
     uint64_t cycles = 0;
 
@@ -86,7 +86,7 @@ static INLINE uint64_t getCPUCycles(void)
     // From the ARM C Language Extensions (ACLE): The only supported value for
     // the __isb intrinsic is 15
     __isb(15);
-    uint64_t cycles = pmccntrRead();
+    uint64_t cycles = readPmccntr();
     __isb(15);
 
     return cycles;
