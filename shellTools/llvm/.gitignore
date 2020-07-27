@@ -1,1 +1,3 @@
 *download\/*
+*llvm-*\/*
+*buildLLVM-*\/*
