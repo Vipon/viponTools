@@ -1,0 +1,88 @@
+{
+  "languageserver": {
+    "haskell": {
+      "command": "hie-wrapper",
+      "args": ["--lsp"],
+      "rootPatterns": [
+        "*.cabal",
+        "stack.yaml",
+        "cabal.project"
+      ],
+      "filetypes": [
+        "hs",
+        "lhs",
+        "haskell"
+      ],
+      "initializationOptions": {
+        "languageServerHaskell": {
+          "hlintOn": true
+        }
+      }
+    },
+
+    "clangd": {
+      "command": "clangd",
+      "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
+      "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
+    },
+
+    "cmake": {
+      "command": "cmake-language-server",
+      "filetypes": ["cmake"],
+      "rootPatterns": ["build/"],
+      "initializationOptions": {"buildDirectory": "build"}
+    },
+
+    "bash": {
+      "command": "bash-language-server",
+      "args": ["start"],
+      "filetypes": ["sh"],
+      "ignoredRootPaths": ["~"]
+    },
+
+    "python": {
+      "command": "python",
+      "args": [
+        "-mpyls",
+        "-vv",
+        "--log-file",
+        "/tmp/lsp_python.log"
+      ],
+      "trace.server": "verbose",
+      "filetypes": ["python"],
+      "settings": {
+        "pyls": {
+          "enable": true,
+          "trace": {"server": "verbose"},
+          "commandPath": "",
+          "configurationSources": ["pycodestyle"],
+          "plugins": {
+            "jedi_completion": {"enabled": true},
+            "jedi_hover": {"enabled": true},
+            "jedi_references": {"enabled": true},
+            "jedi_signature_help": {"enabled": true},
+            "jedi_symbols": {
+              "enabled": true,
+              "all_scopes": true
+            },
+            "mccabe": {
+              "enabled": true,
+              "threshold": 15
+            },
+            "preload": {"enabled": true},
+            "pycodestyle": {"enabled": true},
+            "pydocstyle": {
+              "enabled": false,
+              "match": "(?!test_).*\\.py",
+              "matchDir": "[^\\.].*"
+            },
+            "pyflakes": {"enabled": true},
+            "rope_completion": {"enabled": true},
+            "yapf": {"enabled": true}
+          }
+        }
+      }
+    }
+  }
+}
+
