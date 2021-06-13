@@ -1,3 +1,4 @@
-export PATH=${HOME}/.local/bin:${HOME}/.local/lib:${HOME}/.local/include:${PATH}
+export PATH=${HOME}/.local/bin:${PATH}
 export LD_LIBRARY_PATH=${HOME}/.local/lib:${LD_LIBRARY_PATH}
+export CPATH=${HOME}/.local/include:${CPATH}
 
