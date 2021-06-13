@@ -30,12 +30,12 @@ RESET_COLOR="\033[0m"
 
 getScriptDir()
 {
-    "$(dirname "${BASH_SOURCE[0]}")"
+    echo "$(dirname "${BASH_SOURCE[0]}")"
 }
 
 cmpVersions()
 {
-    if [[ "$$1" == "$2" ]]; then
+    if [[ "$1" == "$2" ]]; then
         return 0
     elif [[ "$1" == "echo -e '$1\n$2' | sort -V | head -n1" ]]; then
         return -1
