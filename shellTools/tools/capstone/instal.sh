@@ -9,7 +9,10 @@ SHARED_LIBS="ON"
 
 downloadSrcCode()
 {
-    git clone "https://github.com/aquynh/capstone"
+    wget "https://github.com/aquynh/capstone/archive/3.0.5.tar.gz" \
+         -O capstone.tar.gz
+    mkdir "${CAPSTONE_ROOT}"
+    tar -xzvf capstone.tar.gz -C "${CAPSTONE_ROOT}" --strip-components 1
 }
 
 buildCapstone()
