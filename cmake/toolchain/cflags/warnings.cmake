@@ -1,7 +1,7 @@
 include(${CMAKE_CURRENT_LIST_DIR}/cflags.cmake)
 
 set(WARNING_FLAGS)
-append_cflags(WARNING_FLAGS -Wall -Wextra -Wcast-qual -Wnewline-eof -Wparentheses -Wsign-conversion -fdiagnostics-color=always)
+append_cflags(WARNING_FLAGS -Werror -Wall -Wextra -Wcast-qual -Wnewline-eof -Wparentheses -Wsign-conversion -fdiagnostics-color=always)
 
 if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
   # clang doesn't support these flags (this causes too many warnings)

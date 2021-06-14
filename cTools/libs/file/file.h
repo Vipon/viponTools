@@ -42,6 +42,23 @@
  */
 size_t getFileSize(int fd);
 
+/*
+ * Description: read data from offset position in file.
+ * Input:
+ *  @fd  - target file descriptor.
+ *  @off - offset position in file. If off is equal NULL, function will
+ *          read from current position in file.
+ *  @size- amount of bytes, that should be readed.
+ * Output:
+ *  Success:
+ *      point to readed data.
+ *  Fail:
+ *      NULL point.
+ * After:
+ *  Need to free memory.
+ */
+void *readFromFile(int fd, size_t *off, size_t size);
+
 
 /**
  * \def mapFileForRead

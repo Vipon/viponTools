@@ -40,42 +40,78 @@ extern int VERBOSE;
 #define RESET_COLOR_TEXT   "\033[0m"
 #define SET_RED_COLOR_TEXT "\033[1;31m"
 #define SET_YLW_COLOR_TEXT "\033[1;33m"
+
+#define DEF_GUARD(def)  \
+    do {                \
+        def;            \
+    } while (0);
+
 #define LOG(...)                            \
-    do {                                    \
+    DEF_GUARD(                              \
         if (VERBOSE) {                      \
             fprintf(stdout, __VA_ARGS__);   \
             fprintf(stdout, "\n");          \
             fflush(stdout);                 \
         }                                   \
-    } while (0);
-
+    )
 #define WARNING(...)                                                    \
-    do {                                                                \
+    DEF_GUARD(                                                          \
         fprintf(stderr, SET_YLW_COLOR_TEXT "WARNING: " RESET_COLOR_TEXT \
                         __VA_ARGS__);                                   \
         fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);        \
         fprintf(stderr, "\n");                                          \
-    } while (0);
-
+    )
 #define ERROR(...)                                                    \
-    do {                                                              \
+    DEF_GUARD(                                                        \
         fprintf(stderr, SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT \
                         __VA_ARGS__);                                 \
         fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);      \
         fprintf(stderr, "\n");                                        \
-    } while (0);
-
+    )
 #define PERROR(func)                                                \
-    do {                                                            \
+    DEF_GUARD(                                                      \
         perror(SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT func); \
         fprintf(stderr, "\t%s line %d\n", __FILE__, __LINE__);      \
         fprintf(stderr, "\n");                                      \
-    } while (0);
+    )
+#define STDERROR_PRINT(...)                                         \
+    DEF_GUARD(                                                      \
+        fprintf(stderr, __VA_ARGS__);                               \
+        fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);    \
+    )
+#define EXEC_CODE(code) \
+    DEF_GUARD(          \
+        code;           \
+    )
 
-#define TEST_EXEC_CODE(code) \
-    {                        \
-        code;                \
-    }
+#ifdef DEBUG
+    #define WARNING_DEBUG(...)      \
+        {                           \
+            WARNING(__VA_ARGS__)    \
+        }
+    #define ERROR_DEBUG(...)    \
+        {                       \
+            ERROR(__VA_ARGS__)  \
+        }
+    #define PERROR_DEBUG(func)  \
+        {                       \
+            PERROR(func)        \
+        }
+    #define STDERROR_PRINT_DEBUG(...)   \
+        {                               \
+            STDERR_PRINT(__VA_ARGS__)   \
+        }
+    #define EXEC_CODE_DEBUG(code)   \
+        {                           \
+            EXEC_CODE(code)         \
+        }
+#else
+    #define WARNING_DEBUG(...)
+    #define ERROR_DEBUG(...)
+    #define PERROR_DEBUG(func)
+    #define STDERROR_PRINT_DEBUG(...)
+    #define EXEC_CODE_DEBUG(code)
+#endif
 
 #define STRINGIZE(s) #s
 #define STR(s) STRINGIZE(s)
