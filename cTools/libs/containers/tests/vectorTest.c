@@ -34,7 +34,7 @@ static int pushBackVectorTest()
         pushBackVector(&v, &i);
     }
 
-    unsigned *data = v.data;
+    unsigned *data = (unsigned*)v.data;
     for (i = 0; i < capacity; ++i) {
         EXPECT_INT_EQ(data[i], i);
     }

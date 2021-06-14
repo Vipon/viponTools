@@ -342,7 +342,7 @@ uint8_t get_opcode_size(const x86_64_instr *insn)
         switch (opcode[0]) {
         case 0x0F:
             /* 2 or 3-bytes opcode */
-            if (opcode[1] == 0x38 && opcode[1] == 0x3A) {
+            if (opcode[1] == 0x38 || opcode[1] == 0x3A) {
                 /* 3-bytes opcode */
                 opcode_size = 3;
             } else {
@@ -634,7 +634,7 @@ int32_t get_disp(const x86_64_instr *insn)
             if (get_modrm_size(insn))
                 disp = x86->disp;
             else
-                disp = get_imm(insn) - insn->address - insn->size;
+                disp = (uint64_t)get_imm(insn) - insn->address - insn->size;
             break;
 
         default:
@@ -772,7 +772,7 @@ ERR_DISASM_WRAP get_jmp_target( x86_64_instr *insn,
     case X86_OP_MEM:
         if (x86_op[0].mem.base == X86_REG_RIP &&
             x86_op[0].mem.index == X86_REG_INVALID) {
-            *jmp_target = *((size_t*)((size_t)src + instr_len + x86->disp));
+            *jmp_target = *((size_t*)((size_t)src + instr_len + S32_TO_U64(x86->disp)));
         } else {
             /* !TODO: absolute jmp/call mem */
             ERROR("Face with absolute jmp/call mem.");
@@ -1046,7 +1046,7 @@ int64_t is_instr_jmp_target(const uint8_t  *start,
         if (group == JCC_GROUP || group == JMP_GROUP || group == CALL_GROUP) {
             d_err = get_jmp_target(pInsn, source, instr_ip, &target);
             if (d_err != ERR_DISASM_WRAP_OK) {
-                TEST_EXEC_CODE(print_x86_instr(stdout, pInsn));
+                EXEC_CODE_DEBUG(print_x86_instr(stdout, pInsn));
                 ERROR("get_jmp_target().\n"
                     "%s", get_disasmwrap_error_string(d_err));
                 free_instr(&pInsn);

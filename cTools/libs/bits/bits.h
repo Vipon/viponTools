@@ -109,5 +109,9 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
         ++v;          \
     })
 
+
+#define S32_TO_U64(s32) \
+    ((uint64_t)((int64_t)s32))
+
 #endif /* _BITS_H */
 
