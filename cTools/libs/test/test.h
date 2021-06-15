@@ -2,6 +2,7 @@
 #define __TEST_H
 
 #include "comdef.h"
+#include "string.h"
 #include <stdlib.h>
 
 #define EXPECT_FUNC_EQ(func, res)       \
@@ -19,6 +20,11 @@
 #define EXPECT_INT_EQ(val, res)   EXPECT_VAL_EQ(val, res, "%d")
 #define EXPECT_SIZET_EQ(val, res) EXPECT_VAL_EQ(val, res, "%zu")
 
+#define EXPECT_STR_EQ(str0, str1)                     \
+    if (strcmp(str0, str1)) {                         \
+        ERROR("expect: %s | result: %s", str0, str1); \
+        exit(EXIT_FAILURE);                           \
+    }
 
 #endif /* __TEST_H */
 
