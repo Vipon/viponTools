@@ -34,7 +34,8 @@
 extern int VERBOSE;
 
 #ifndef UNUSED
-    #define UNUSED(expr) do { (void)(expr); } while (0)
+    #define UNUSED(expr) \
+        DEF_GUARD((void)(expr))
 #endif /* UNUSED */
 
 #define RESET_COLOR_TEXT   "\033[0m"
