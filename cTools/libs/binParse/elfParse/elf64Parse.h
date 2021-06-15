@@ -199,6 +199,8 @@ typedef struct {
 } Elf64File;
 
 
+#define ELF64_PARSE_ERROR ((size_t)-1)
+
 /*
  * Input:
  *  @fn - binary file name. C string with terminal null.
@@ -543,7 +545,7 @@ size_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, 
  * Input:
  *  elf64 - Elf64File structer with initialized field fd.
  *  func - name of function, that is nedded to hooked.
- *  hand - address of handler functin.
+ *  hand - address of handler function.
  * Output:
  *  Success:
  *      Old relocation addr.

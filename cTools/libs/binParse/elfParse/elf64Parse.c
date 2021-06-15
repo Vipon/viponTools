@@ -30,7 +30,7 @@
 #include "elf64Parse.h"
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Description:
@@ -65,14 +65,14 @@ static Elf64Ehdr *elf64ParseHeader(const int fd)
         eIdent[EI_MAG2] == 'L' && eIdent[EI_MAG3] == 'F')
         return header;
     else {
-        STDERROR_PRINT_DEBUG("It isn't ELF file.\n");
+        LOG("It isn't ELF file.\n");
         Free(header);
         return NULL;
     }
 }
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Input:
@@ -88,7 +88,7 @@ static Elf64Ehdr *elf64ParseHeader(const int fd)
  */
 static Elf64Shdr *elf64ParseSectionHeadersTable(const Elf64File *elf64)
 {
-    /*
+    /***
      * Sections are identified by an index into the section header table.
      */
     if (elf64 == NULL || elf64->elf64Header == NULL || elf64->fd < 0) {
@@ -96,27 +96,43 @@ static Elf64Shdr *elf64ParseSectionHeadersTable(const Elf64File *elf64)
         return NULL;
     }
 
-    /*
+    /***
      * e_shoff - contains the file offset, in bytes, of the section header
      *           table.
      * e_shnum - contains the number of entries in the section header table.
-     * TODO:
      * If the number of sections is greater than or equal to SHN_LORESERVE,
      * e_shnum has the value SHN_UNDEF. The actual number of section header
-     * table entries is contained in the shSize field of the section header
+     * table entries is contained in the sh_size field of the section header
      * at index 0.
-     * Otherwise, the shSize member of the initial entry contains the value
+     * Otherwise, the sh_size member of the initial entry contains the value
      * zero.
      */
     int fd = elf64->fd;
     size_t eShOff = elf64->elf64Header->e_shoff;
-    size_t shSize = elf64->elf64Header->e_shnum * sizeof(Elf64Shdr);
+    size_t shNum = elf64->elf64Header->e_shnum;
+    size_t shSize = 0;
+
+    if (shNum != SHN_UNDEF) {
+        shSize = shNum * sizeof(Elf64Shdr);
+    } else {
+        Elf64Shdr *sect0 = (Elf64Shdr*) readFromFile(fd, &eShOff, sizeof(Elf64Shdr));
+        shNum = sect0->sh_size;
+        if (shNum == 0) {
+            LOG("There are no sections headers");
+            free(sect0);
+            return NULL;
+        } else {
+            shSize = shNum * sizeof(Elf64Shdr);
+        }
+
+        free(sect0);
+    }
 
     return (Elf64Shdr*) readFromFile(fd, &eShOff, shSize);
 }
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Input:
@@ -144,7 +160,7 @@ static Elf64Phdr *elf64ParseSegments(const Elf64File *elf64)
 }
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Input:
@@ -165,7 +181,7 @@ static Elf64Sym *elf64ParseSymbolTable(const Elf64File *elf64)
         return NULL;
     }
 
-    /*
+    /***
      * SHT_SYMTAB - Contains a linker symbol table.
      */
     Elf64Shdr *symbolTable = elf64GetSectionByType(elf64, SHT_SYMTAB);
@@ -212,11 +228,11 @@ static Elf64Sym *elf64ParseDynamicSymbolTable(const Elf64File *elf64)
 }
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Input:
- *  elf64 - Elf64File structer with initialized fields: fd, elf64Header and
+ *  @elf64 - Elf64File structer with initialized fields: fd, elf64Header and
  *        sectionHeaders.
  * Output:
  *  Success:
@@ -450,7 +466,7 @@ Elf64File *elf64Parse(const char *fn)
         return NULL;
     }
 
-    //PRINTF("start elf64Parse.\n");
+    LOG("start elf64Parse\n")
     int fd = 0;
     if((fd = open(fn, O_RDONLY)) < 0) {
         PERROR("open()");
@@ -470,19 +486,19 @@ Elf64File *elf64Parse(const char *fn)
         goto eexit_1;
     }
 
-    //PRINTF("%s\n", fn);
+    LOG("%s\n", fn);
     strncpy(elf64->fn, fn, nameSize);
-    //PRINTF("%s\n", elf64->fn);
+    LOG("%s\n", elf64->fn);
 
     if ((elf64->elf64Header = elf64ParseHeader(fd)) == NULL) {
-        STDERROR_PRINT_DEBUG("Cannot parse elf64 header.");
+        LOG("Cannot parse elf64 header.");
         goto eexit_2;
     }
 
     elf64->fileType = elf64->elf64Header->e_type;
 
     if ((elf64->sectionHeaders = elf64ParseSectionHeadersTable(elf64)) == NULL) {
-        STDERROR_PRINT_DEBUG("Cannot parse section headers table.");
+        LOG("Cannot parse section headers table.");
         goto eexit_3;
     }
     if ((elf64->segments = elf64ParseSegments(elf64)) == NULL) {
@@ -865,13 +881,13 @@ size_t elf64GetAmountSSym(const Elf64File *elf64)
 {
     if (elf64 == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     Elf64Shdr *symbolTable = elf64GetSectionByType(elf64, SHT_SYMTAB);
     if(symbolTable == NULL) {
         STDERROR_PRINT_DEBUG("Cannot get section SHT_SYMTAB.");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     size_t shSize = symbolTable->sh_size;
@@ -884,7 +900,7 @@ size_t elf64GetSSymAddr(const Elf64Sym *sym)
 {
     if (sym == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     return sym->st_value;
@@ -895,7 +911,7 @@ size_t elf64GetAddrSymByName(const Elf64File *elf64, const char *name)
 {
     if (elf64FullCheckFile(elf64) || name == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     // TODO: work only for static symbols, for dynamic need signal
@@ -907,7 +923,7 @@ size_t elf64GetSSymSize(const Elf64File *elf64, const Elf64Sym *sym)
 {
     if (elf64 == NULL || sym == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     return sym->st_size;
@@ -918,7 +934,7 @@ size_t elf64GetSSymFileoff(const Elf64File *elf64, const Elf64Sym *sym)
 {
     if (elf64FullCheckFile(elf64) || sym == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     size_t shndx = sym->st_shndx;
@@ -932,7 +948,7 @@ size_t elf64GetDSymIndex(const Elf64File *elf64, const char *name)
 {
     if(elf64FullCheckFile(elf64) || name == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     /*
@@ -941,7 +957,7 @@ size_t elf64GetDSymIndex(const Elf64File *elf64, const char *name)
     Elf64Shdr *dynsymTable = elf64GetSectionByType(elf64, SHT_DYNSYM);
     if(dynsymTable == NULL) {
         STDERROR_PRINT_DEBUG("Cannot get section SHT_DYNSYM.");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     char *dynsymNameTable = elf64->dynamicSymbolNameTable;
@@ -956,7 +972,7 @@ size_t elf64GetDSymIndex(const Elf64File *elf64, const char *name)
             return i;
     }
 
-    return (size_t)-1;
+    return ELF64_PARSE_ERROR;
 }
 
 
@@ -964,7 +980,7 @@ size_t elf64GetAmountSegment(const Elf64File *elf64)
 {
     if (elf64FullCheckFile(elf64)) {
         STDERROR_PRINT_DEBUG("Invalid argument.");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     return elf64->elf64Header->e_phnum;
@@ -1075,7 +1091,7 @@ size_t elf64GetAmountSection(const Elf64File *elf64)
 {
     if (elf64FullCheckFile(elf64)) {
         STDERROR_PRINT_DEBUG("Invalid argument.");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     return elf64->elf64Header->e_shnum;
@@ -1098,7 +1114,7 @@ size_t elf64GetSectionSize(const Elf64Shdr *elf64Sect)
 {
     if (elf64Sect == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     return elf64Sect->sh_size;
@@ -1109,7 +1125,7 @@ size_t elf64GetSectionVaddr(const Elf64Shdr *elf64Sect)
 {
     if (elf64Sect == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     return elf64Sect->sh_addr;
@@ -1120,7 +1136,7 @@ size_t elf64GetSectionFileoff(const Elf64Shdr *elf64Sect)
 {
     if (elf64Sect == NULL) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     return elf64Sect->sh_offset;
@@ -1131,13 +1147,13 @@ size_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, 
 {
     if(elf64FullCheckFile(elf64) || sect == NULL || addr == (size_t)-1) {
         ERROR("Invalid arguments");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     const char *sectName = elf64GetSectionName(elf64, sect);
     if (sectName == NULL) {
         STDERROR_PRINT_DEBUG("getSectionName().");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     size_t size = strlen(".rela");
@@ -1145,7 +1161,7 @@ size_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, 
     char *relaSectName = (char*)Malloc(size);
     if (relaSectName == NULL) {
         STDERROR_PRINT_DEBUG("Cannot alloc %zu bytes.", size);
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     char *point = copyString(".rela", relaSectName);
@@ -1154,13 +1170,13 @@ size_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, 
     Elf64Shdr *relaSect = elf64GetSectionByName(elf64, relaSectName);
     if (relaSect == NULL) {
         STDERROR_PRINT_DEBUG("Cannot get the section %s.", relaSectName);
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     Elf64Rel *rela = elf64ReadSection(elf64, relaSect);
     if (rela == NULL) {
         STDERROR_PRINT_DEBUG("elf64ReadSection()");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     size_t relaAmount = relaSect->sh_size / sizeof(Elf64Rel);
@@ -1185,14 +1201,14 @@ size_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, 
 
     if (i == relaAmount) {
         STDERROR_PRINT_DEBUG("There is no relocation info");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     if (ELF64_R_TYPE(rela[i].r_info) == R_X86_64_64) {
         return (size_t)rela[i].r_addend;
     } else {
         STDERROR_PRINT_DEBUG("Unknown relocation type.");
-        return (size_t)-1;
+        return ELF64_PARSE_ERROR;
     }
 
     return 0;
@@ -1211,7 +1227,7 @@ void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand)
      */
     size_t symbolIndex = elf64GetDSymIndex(elf64, func);
     if (symbolIndex == (size_t)-1) {
-        STDERROR_PRINT_DEBUG("Cannot get an index of a dynamic symbol %s.", func);
+        STDERROR_PRINT("Cannot get an index of a dynamic symbol %s.", func);
         return NULL;
     }
 
@@ -1221,7 +1237,7 @@ void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand)
      */
     Elf64Shdr *relplt = elf64GetSectionByName(elf64, REL_PLT);
     if (relplt == NULL) {
-        STDERROR_PRINT_DEBUG("Cannot get the section " REL_PLT ".");
+        STDERROR_PRINT("Cannot get the section " REL_PLT ".");
         return NULL;
     }
 
