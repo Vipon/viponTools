@@ -8,3 +8,6 @@ function(addPrefix prefix list)
   set(${list} "${newList}" PARENT_SCOPE)
 endfunction(addPrefix)
 
+include(${CMAKE_CURRENT_LIST_DIR}/file.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/test.cmake)
+
