@@ -1,7 +1,6 @@
-add_library(bits
-  bits.c
-  bits.h
-  )
-
-target_include_directories(bits INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+add_vipon_library(
+  NAME bits
+  TYPE STATIC
+  SOURCES bits.c bits.h
+)
 
