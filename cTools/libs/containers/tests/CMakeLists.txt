@@ -1,11 +1,6 @@
-add_executable(vectorTest
-  vectorTest.c
-  )
-
-target_link_libraries(vectorTest containers comdef vTest)
-
-add_test(
-  NAME vector-test
-  COMMAND ./vectorTest
-  )
+add_vipon_test(
+  NAME vectorTest
+  SOURCES vectorTest.c
+  LINK_LIBS containers
+)
 
