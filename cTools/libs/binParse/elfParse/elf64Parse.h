@@ -25,24 +25,24 @@
 #ifndef _ELF64_PARSE_H
 #define _ELF64_PARSE_H
 
-/* Linux headers */
-#include <elf.h>
-
 /* Unix headers */
+#include <elf.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
 
 /* C standard headers */
 #include <stdlib.h>
+#include <stdint.h>
+#include <assert.h>
 
-/*
+/***
  * Elf64_Word:
  * size      -   4 bytes
  * alignment -   4 bytes
  */
-typedef Elf64_Word  Elf64Word;
-/*
+typedef Elf64_Word Elf64Word;
+/***
  *   typedef struct
  *   {
  *       unsigned char   e_ident[16];
@@ -62,7 +62,7 @@ typedef Elf64_Word  Elf64Word;
  *   } Elf64_Ehdr;
  */
 typedef Elf64_Ehdr  Elf64Ehdr;
-/*
+/***
  *  typedef struct
  *  {
  *      Elf64_Word    p_type;   // Segment type
@@ -76,7 +76,7 @@ typedef Elf64_Ehdr  Elf64Ehdr;
  *  } Elf64_Phdr;
  */
 typedef Elf64_Phdr  Elf64Phdr;
-/*
+/***
  *   typedef struct {
  *       Elf64_Word      sh_name;        // Section name
  *       Elf64_Word      sh_type;        // Section type
@@ -91,7 +91,7 @@ typedef Elf64_Phdr  Elf64Phdr;
  *   } Elf64_Shdr;
  */
 typedef Elf64_Shdr  Elf64Shdr;
-/*
+/***
  *   typedef struct {
  *       Elf64_Word      st_name;
  *       unsigned char   st_info;
@@ -102,7 +102,7 @@ typedef Elf64_Shdr  Elf64Shdr;
  *   } Elf64_Sym;
  */
 typedef Elf64_Sym   Elf64Sym;
-/*
+/***
  *   typedef struct {
  *       Elf64_Addr      r_offset;
  *       Elf64_Xword     r_info;
@@ -112,96 +112,113 @@ typedef Elf64_Sym   Elf64Sym;
  *   x64, there are only relocations of type RELA
  */
 typedef Elf64_Rela  Elf64Rel;
-/*
+/***
  * #define ELF64_R_SYM(info) ((info)>>32)
  */
-#define REL_DYN     ".rela.dyn"
-/*
+#define RELADYN     ".rela.dyn"
+/***
  * .rela.plt:
  *   .rela   -  Relocation information.
  *   .plt    -  The procedure linkage table.
  */
-#define REL_PLT     ".rela.plt"
-/*
+#define RELAPLT     ".rela.plt"
+/***
  * .symtab   -  This section holds a symbol table.
  */
 #define SYMTAB      ".symtab"
-/*
+/***
  * .dynsym   -  This section holds the dynamic linking symbol table.
  */
 #define DYNSYM      ".dynsym"
-/*
+/***
  * .strtab  -   This section holds strings, most commonly the strings that
  *              represent the names associated with symbol table entries.
  */
 #define STRTAB      ".strtab"
-/*
+/***
  * .dynstr  -   This section holds strings needed for dynamic linking,
  *              most commonly the strings that represent the names
  *              associated with symbol table entries.
  */
 #define DYNSTR      ".dynstr"
 
-/**
+/***
  * Symbol table entry type
  *  ELF64_ST_TYPE(info)
  */
 
-/*
+/***
  * STT_FUNC The symbol is associated with a function or other executable code.
  */
 #define IS_ELF64_SYM_FUNC(sym)  (ELF64_ST_TYPE(sym.st_info) == STT_FUNC)
 
-/*
+/***
  * STT_OBJECT The symbol is associated with a data object, such as a variable,
  * an array, etc.
  */
 #define IS_ELF64_SYM_DATA(sym)  (ELF64_ST_TYPE(sym.st_info) == STT_OBJECT)
 
-/*
+/***
  * STT_NOTYPE The symbol’s type is not specified.
  */
 #define IS_ELF64_SYM_LABEL(sym) (ELF64_ST_TYPE(sym.st_info) == STT_NOTYPE)
 
-/*
+/***
  * sym.st_name - show positon into the symbol string table. If st_name equal
  * to zero, it mean symbol has no name - STN_UNDEF.
  */
 #define IS_ELF64_SYM_UNDEF(sym) (sym.st_name == 0)
 
-/* Defines for checking type of binary files */
-#define IS_ELF64_FILE_REL(elf)  (elf->fileType == ET_REL)
-#define IS_ELF64_FILE_EXEC(elf) (elf->fileType == ET_EXEC)
-
-typedef struct {
-    Elf64Sym     *symtab;
-    Elf64Sym     *dynsym;
-} Symbols;
-
-typedef struct {
-    Elf64Rel     *relaplt;
-    Elf64Rel     *reladyn;
-} RelTables;
+/***
+ * Defines for checking type of binary files
+ */
+#define IS_ELF64_FILE_OBJ(elf)  (elf->type == ET_REL)
+#define IS_ELF64_FILE_EXEC(elf) (elf->type == ET_EXEC)
 
 typedef struct {
     char        *fn;
     int         fd;
-    uint32_t    fileType;
-    Elf64Ehdr   *elf64Header;
-    Elf64Shdr   *sectionHeaders;
+    uint32_t    type;
+    Elf64Ehdr   *header;
+    Elf64Shdr   *sections;
     Elf64Phdr   *segments;
-    Symbols     *symbols;
+    Elf64Sym    *symtab;
+    uint64_t    symnum;
+    Elf64Sym    *dynsym;
+    uint64_t    dynsymnum;
     Elf64Sym    *sortSymtab;
-    RelTables   *relTables;
-    char        *sectionNameTable;
-    char        *symbolNameTable;
-    char        *dynamicSymbolNameTable;
+    Elf64Rel    *relaplt;
+    Elf64Rel    *reladyn;
+    char        *sectNameTab;
+    char        *symNameTab;
+    char        *dynSymNameTab;
 } Elf64File;
 
 
-#define ELF64_PARSE_ERROR ((size_t)-1)
+typedef enum {
+    ELF64_NO_RELOCATION = (uint64_t)-16,
+    ELF64_NO_SECTION,
+    ELF64_NO_SYMBOL,
+    ELF64_NO_RELADYN,
+    ELF64_NO_RELAPLT,
+    ELF64_NO_DYN_SYM_NAME_TAB,
+    ELF64_NO_SYM_NAME_TAB,
+    ELF64_NO_SH_NAME_TAB,
+    ELF64_NO_DYNSYM,
+    ELF64_NO_SYMTAB,
+    ELF64_NO_SYMBOLS,
+    ELF64_NO_SEGMENTS,
+    ELF64_NO_SECTIONS,
+    ELF64_NO_HEADER,
+    ELF64_NO_MEM,
+    ELF64_INV_ARG,
+    ELF64_OK = 0
+} ELF64_ERROR;
 
-/*
+static_assert(sizeof(ELF64_ERROR) == 8, "ELF64_ERROR must be 64 bit");
+static_assert(((int64_t)ELF64_INV_ARG) < 0, "ERRORS must be negative");
+
+/***
  * Input:
  *  @fn - binary file name. C string with terminal null.
  * Output:
@@ -215,7 +232,7 @@ typedef struct {
 Elf64File *elf64Parse(const char *fn);
 
 
-/*
+/***
  * Before:
  *  You must completed all jobs with this elf64, otherwise you will free all
  *  information about this file including sections, symbols etc.
@@ -227,7 +244,7 @@ Elf64File *elf64Parse(const char *fn);
 void elf64Free(Elf64File *elf64);
 
 
-/*
+/***
  * Input:
  *  @elf64 - Elf64File structure, that is nedded to check.
  * Output:
@@ -236,10 +253,10 @@ void elf64Free(Elf64File *elf64);
  *  Fail:
  *      -1.
  */
-int elf64FullCheckFile(const Elf64File *elf64);
+ELF64_ERROR elf64FullCheckFile(const Elf64File *elf64);
 
 
-/*
+/***
  * Description:
  *  Function prints all symbols in @elf64 with information.
  * Input:
@@ -250,11 +267,11 @@ int elf64FullCheckFile(const Elf64File *elf64);
  *  Fail:
  *      -1.
  */
-int elf64PrintSymbol(const Elf64File *elf64, const Elf64Sym *sym);
-int elf64PrintSymbols(const Elf64File *elf64);
+ELF64_ERROR elf64PrintSymbol(const Elf64File *elf64, const Elf64Sym *sym);
+ELF64_ERROR elf64PrintSymbols(const Elf64File *elf64);
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Description:
@@ -272,7 +289,7 @@ int elf64PrintSymbols(const Elf64File *elf64);
 Elf64Sym *elf64GetSymByName(const Elf64File *elf64, const char *name);
 
 
-/*
+/***
  * Description:
  *  Function returns name of the symbol @sym.
  * Input:
@@ -287,7 +304,7 @@ Elf64Sym *elf64GetSymByName(const Elf64File *elf64, const char *name);
 char *elf64GetSymName(const Elf64File *elf64, const Elf64Sym *sym);
 
 
-/*
+/***
  * Description:
  *  Function for work with qsort. Functions compare addresses of symbols and
  *  returns 1/-1/0 if a->addr >/</== b->addr.
@@ -295,7 +312,7 @@ char *elf64GetSymName(const Elf64File *elf64, const Elf64Sym *sym);
 int elf64CmpSym(const void *a, const void *b);
 
 
-/*
+/***
  * Description:
  *  Function returns pointer to the static symbols table.
  * Input:
@@ -310,7 +327,7 @@ Elf64Sym *elf64GetSSymTable(const Elf64File *elf64);
 Elf64Sym *elf64GetSSymSortTable(const Elf64File *elf64);
 
 
-/*
+/***
  * Description:
  *  Function returns amount of static symbols.
  * Input:
@@ -321,10 +338,10 @@ Elf64Sym *elf64GetSSymSortTable(const Elf64File *elf64);
  *  Fail:
  *      -1.
  */
-size_t elf64GetAmountSSym(const Elf64File *elf64);
+uint64_t elf64GetAmountSSym(const Elf64File *elf64);
 
 
-/*
+/***
  * Description:
  *  Function returns addr of static symbol without randomization address space.
  * Input:
@@ -335,10 +352,10 @@ size_t elf64GetAmountSSym(const Elf64File *elf64);
  *  Fail:
  *      -1.
  */
-size_t elf64GetSSymAddr(const Elf64Sym *sym);
+uint64_t elf64GetSSymAddr(const Elf64Sym *sym);
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Input:
@@ -351,10 +368,10 @@ size_t elf64GetSSymAddr(const Elf64Sym *sym);
  *  Fail:
  *      -1.
  */
-size_t elf64GetAddrSymByName(const Elf64File *elf64, const char *name);
+uint64_t elf64GetAddrSymByName(const Elf64File *elf64, const char *name);
 
 
-/*
+/***
  * Description:
  *  Function returns size of static symbol without randomization address space.
  * Input:
@@ -365,10 +382,10 @@ size_t elf64GetAddrSymByName(const Elf64File *elf64, const char *name);
  *  Fail:
  *      -1.
  */
-size_t elf64GetSSymSize(const Elf64File *elf64, const Elf64Sym *sym);
+uint64_t elf64GetSSymSize(const Elf64File *elf64, const Elf64Sym *sym);
 
 
-/*
+/***
  * Description:
  *  Function returns file position for the static symbol @sym.
  * Input:
@@ -380,10 +397,10 @@ size_t elf64GetSSymSize(const Elf64File *elf64, const Elf64Sym *sym);
  *  Fail:
  *      -1.
  */
-size_t elf64GetSSymFileoff(const Elf64File *elf64, const Elf64Sym *sym);
+uint64_t elf64GetSSymFileoff(const Elf64File *elf64, const Elf64Sym *sym);
 
 
-/*
+/***
  * Before:
  *   If you need a file position, you should to save it.
  * Input:
@@ -396,10 +413,10 @@ size_t elf64GetSSymFileoff(const Elf64File *elf64, const Elf64Sym *sym);
  *  Fail:
  *      -1.
  */
-size_t elf64GetDSymIndex(const Elf64File *elf64, const char *name);
+uint64_t elf64GetDSymIndex(const Elf64File *elf64, const char *name);
 
 
-/*
+/***
  *  Function returns an amount of segments in the binary file.
  * Input:
  *  @elf64 - point to the targer Elf64File.
@@ -409,10 +426,10 @@ size_t elf64GetDSymIndex(const Elf64File *elf64, const char *name);
  *  Fail:
  *      -1.
  */
-size_t elf64GetAmountSegment(const Elf64File *elf64);
+uint64_t elf64GetAmountSegment(const Elf64File *elf64);
 
 
-/*
+/***
  * Input:
  *  sh_type - this member categorizes the section’s contents and semantics.
  * Output:
@@ -424,7 +441,7 @@ size_t elf64GetAmountSegment(const Elf64File *elf64);
 Elf64Shdr *elf64GetSectionByType(const Elf64File *elf64, const Elf64Word sh_type);
 
 
-/*
+/***
  * Description:
  *  Function returns a descriptor of a section with @name.
  * Input:
@@ -441,7 +458,7 @@ Elf64Shdr *elf64GetSectionByName(const Elf64File *elf64, const char* name);
 Elf64Shdr *elf64GetLastLoadableSection(const Elf64File *elf64);
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Input:
@@ -458,14 +475,14 @@ Elf64Shdr *elf64GetLastLoadableSection(const Elf64File *elf64);
 void *elf64ReadSection(const Elf64File *elf64, const Elf64Shdr *sectionHeader);
 
 
-/*
+/***
  * Description:
  *  Function returns an amount of sections in the binary file.
  */
-size_t elf64GetAmountSection(const Elf64File *elf64);
+uint64_t elf64GetAmountSection(const Elf64File *elf64);
 
 
-/*
+/***
  * Description:
  *  Function returns name of the section @sect.
  * Input:
@@ -480,7 +497,7 @@ size_t elf64GetAmountSection(const Elf64File *elf64);
 const char* elf64GetSectionName(const Elf64File *elf64, const Elf64Shdr *sect);
 
 
-/*
+/***
  * Description:
  *  Function returns a size of a section.
  * Input:
@@ -491,10 +508,10 @@ const char* elf64GetSectionName(const Elf64File *elf64, const Elf64Shdr *sect);
  *  Fail:
  *      -1.
  */
-size_t elf64GetSectionSize(const Elf64Shdr *elf64Sect);
+uint64_t elf64GetSectionSize(const Elf64Shdr *elf64Sect);
 
 
-/*
+/***
  * Description:
  *  Function returns a virtual address of a section.
  * Input:
@@ -505,10 +522,10 @@ size_t elf64GetSectionSize(const Elf64Shdr *elf64Sect);
  *  Fail:
  *      -1.
  */
-size_t elf64GetSectionVaddr(const Elf64Shdr *sect);
+uint64_t elf64GetSectionVaddr(const Elf64Shdr *sect);
 
 
-/*
+/***
  * Description:
  *  Function returns a file offset of a section.
  * Input:
@@ -519,10 +536,10 @@ size_t elf64GetSectionVaddr(const Elf64Shdr *sect);
  *  Fail:
  *      -1.
  */
-size_t elf64GetSectionFileoff(const Elf64Shdr *sect);
+uint64_t elf64GetSectionFileoff(const Elf64Shdr *sect);
 
 
-/*
+/***
  * Description:
  *  Function returns a relocation number for data, that is located at @addr in
  *  section @sect.
@@ -536,10 +553,10 @@ size_t elf64GetSectionFileoff(const Elf64Shdr *sect);
  *  Fail:
  *      NULL.
  */
-size_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, size_t addr);
+uint64_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, uint64_t addr);
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Input:
@@ -555,7 +572,7 @@ size_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, 
 void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand);
 
 
-/*
+/***
  * Before:
  *  If you need a file position, you should to save it.
  * Input:
