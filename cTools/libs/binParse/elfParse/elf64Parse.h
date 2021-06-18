@@ -51,14 +51,14 @@ typedef Elf64_Word Elf64Word;
  *       Elf64_Word      e_version;
  *       Elf64_Addr      e_entry;
  *       Elf64_Off       e_phoff;
- *       Elf64_Off       e_shoff;       // Section header offset
+ *       Elf64_Off       e_shoff;       // Sect header offset
  *       Elf64_Word      e_flags;
  *       Elf64_Half      e_ehsize;
  *       Elf64_Half      e_phentsize;
  *       Elf64_Half      e_phnum;
  *       Elf64_Half      e_shentsize;
  *       Elf64_Half      e_shnum;       // Number of section header entries
- *       Elf64_Half      e_shstrndx;    // Section name string table index
+ *       Elf64_Half      e_shstrndx;    // Sect name string table index
  *   } Elf64_Ehdr;
  */
 typedef Elf64_Ehdr  Elf64Ehdr;
@@ -78,8 +78,8 @@ typedef Elf64_Ehdr  Elf64Ehdr;
 typedef Elf64_Phdr  Elf64Phdr;
 /***
  *   typedef struct {
- *       Elf64_Word      sh_name;        // Section name
- *       Elf64_Word      sh_type;        // Section type
+ *       Elf64_Word      sh_name;        // Sect name
+ *       Elf64_Word      sh_type;        // Sect type
  *       Elf64_Xword     sh_flags;
  *       Elf64_Addr      sh_addr;
  *       Elf64_Off       sh_offset;      // Offset in file
@@ -253,7 +253,7 @@ void elf64Free(Elf64File *elf64);
  *  Fail:
  *      -1.
  */
-ELF64_ERROR elf64FullCheckFile(const Elf64File *elf64);
+ELF64_ERROR elf64Check(const Elf64File *elf64);
 
 
 /***
@@ -323,8 +323,8 @@ int elf64CmpSym(const void *a, const void *b);
  *  Fail:
  *      NULL point.
  */
-Elf64Sym *elf64GetSSymTable(const Elf64File *elf64);
-Elf64Sym *elf64GetSSymSortTable(const Elf64File *elf64);
+Elf64Sym *elf64GetSSymTab(const Elf64File *elf64);
+Elf64Sym *elf64GetSSymSortTab(const Elf64File *elf64);
 
 
 /***
@@ -438,7 +438,7 @@ uint64_t elf64GetAmountSegment(const Elf64File *elf64);
  *  Fail:
  *      NULL point.
  */
-Elf64Shdr *elf64GetSectionByType(const Elf64File *elf64, const Elf64Word sh_type);
+Elf64Shdr *elf64GetSectByType(const Elf64File *elf64, const Elf64Word sh_type);
 
 
 /***
@@ -454,8 +454,8 @@ Elf64Shdr *elf64GetSectionByType(const Elf64File *elf64, const Elf64Word sh_type
  *  Fail:
  *      NULL point.
  */
-Elf64Shdr *elf64GetSectionByName(const Elf64File *elf64, const char* name);
-Elf64Shdr *elf64GetLastLoadableSection(const Elf64File *elf64);
+Elf64Shdr *elf64GetSectByName(const Elf64File *elf64, const char* name);
+Elf64Shdr *elf64GetLastLoadableSect(const Elf64File *elf64);
 
 
 /***
@@ -472,14 +472,14 @@ Elf64Shdr *elf64GetLastLoadableSection(const Elf64File *elf64);
  * After:
  *  need to free memory
  */
-void *elf64ReadSection(const Elf64File *elf64, const Elf64Shdr *sectionHeader);
+void *elf64ReadSect(const Elf64File *elf64, const Elf64Shdr *sectionHeader);
 
 
 /***
  * Description:
  *  Function returns an amount of sections in the binary file.
  */
-uint64_t elf64GetAmountSection(const Elf64File *elf64);
+uint64_t elf64GetAmountSect(const Elf64File *elf64);
 
 
 /***
@@ -494,7 +494,7 @@ uint64_t elf64GetAmountSection(const Elf64File *elf64);
  *  Fail:
  *      NULL.
  */
-const char* elf64GetSectionName(const Elf64File *elf64, const Elf64Shdr *sect);
+const char* elf64GetSectName(const Elf64File *elf64, const Elf64Shdr *sect);
 
 
 /***
@@ -508,7 +508,7 @@ const char* elf64GetSectionName(const Elf64File *elf64, const Elf64Shdr *sect);
  *  Fail:
  *      -1.
  */
-uint64_t elf64GetSectionSize(const Elf64Shdr *elf64Sect);
+uint64_t elf64GetSectSize(const Elf64Shdr *elf64Sect);
 
 
 /***
@@ -522,7 +522,7 @@ uint64_t elf64GetSectionSize(const Elf64Shdr *elf64Sect);
  *  Fail:
  *      -1.
  */
-uint64_t elf64GetSectionVaddr(const Elf64Shdr *sect);
+uint64_t elf64GetSectVaddr(const Elf64Shdr *sect);
 
 
 /***
@@ -536,7 +536,7 @@ uint64_t elf64GetSectionVaddr(const Elf64Shdr *sect);
  *  Fail:
  *      -1.
  */
-uint64_t elf64GetSectionFileoff(const Elf64Shdr *sect);
+uint64_t elf64GetSectFileoff(const Elf64Shdr *sect);
 
 
 /***
