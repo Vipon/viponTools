@@ -5,5 +5,12 @@ add_vipon_library(
   LINK_LIBS file mem string
 )
 
+add_vipon_library(
+  NAME elf32Parse
+  TYPE STATIC
+  SOURCES elf32Parse.c elf32Parse.h
+  LINK_LIBS file mem string
+)
+
 add_subdirectory(tests)
 
