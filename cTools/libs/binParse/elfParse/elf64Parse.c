@@ -29,6 +29,8 @@
 #include "string.h"
 #include "elf64Parse.h"
 
+/* c standard headers */
+#include <inttypes.h>
 
 /***
  * Before:
@@ -780,11 +782,11 @@ ELF64_ERROR elf64PrintSymbol(const Elf64File *elf64, const Elf64Sym *sym)
      *   } Elf64_Sym;
      */
     printf("\tname:\t%s\n", elf64GetSymName(elf64, sym));
-    printf("\t\tinfo:\t0x%x\n", sym->st_info);
-    printf("\t\tother\t0x%x\n", sym->st_other);
-    printf("\t\tshndx\t%u\n", sym->st_shndx);
-    printf("\t\tvalue\t0x%zx\n", sym->st_value);
-    printf("\t\tsize\t0x%zx\n", sym->st_size);
+    printf("\t\tinfo:\t0x%"PRIx32"\n", sym->st_info);
+    printf("\t\tother\t0x%"PRIx32"\n", sym->st_other);
+    printf("\t\tshndx\t%"PRIu32"\n", sym->st_shndx);
+    printf("\t\tvalue\t0x%"PRIx64"\n", sym->st_value);
+    printf("\t\tsize\t0x%"PRIx64"\n", sym->st_size);
 
     return ELF64_OK;
 }

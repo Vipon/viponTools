@@ -25,7 +25,7 @@
 #ifndef _BIN_PARSE_H
 #define _BIN_PARSE_H
 
-#include <elf.h>
+#include <stdint.h>
 
 typedef enum {
     ELF64 = 0,

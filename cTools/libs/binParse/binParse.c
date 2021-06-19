@@ -1,5 +1,6 @@
 #include "binParse.h"
 #include "elf64Parse.h"
+#include "elf32Parse.h"
 #include "comdef.h"
 
 BinParser binParser;
@@ -40,6 +41,9 @@ int initBinParser(const char *fn)
     if ((bin = elf64Parse(fn)) != NULL) {
         binParser.type = ELF64;
         INIT_BIN_PARSER_FUNCS(elf64);
+    } else if ((bin = elf32Parse(fn)) != NULL) {
+        binParser.type = ELF32;
+        INIT_BIN_PARSER_FUNCS(elf32);
     } else {
         ERROR("Unknown FileType\n");
         return -1;
