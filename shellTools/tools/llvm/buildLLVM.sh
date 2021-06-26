@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
-source "${SCRIPT_DIR}/../libCommon.sh"
+source "${SCRIPT_DIR}/../../libCommon.sh"
 
 NUM_THREADS=`nproc`
 
