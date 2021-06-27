@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2020 Konychev Valera
+# Copyright (c) 2021 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,57 +22,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-TRUE="true"
-FALSE="false"
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+source "${SCRIPT_DIR}/libCommon.sh"
 
-SET_RED_COLOR="\033[0;31m"
-RESET_COLOR="\033[0m"
+ROOT="$(dirname "$0")"
+TOOLS_DIR="${ROOT}/tools"
 
-getScriptDir()
+installTool()
 {
-    echo "$(dirname "${BASH_SOURCE[0]}")"
+    "$1/install.sh"
 }
 
-cmpVersions()
+installTools()
 {
-    if [[ "$1" == "$2" ]]; then
-        return 0
-    elif [[ "$1" == "echo -e '$1\n$2' | sort -V | head -n1" ]]; then
-        return -1
-    else
-        return 1
-    fi
+    cd "${TOOLS_DIR}"
+    forEachDir installTool
 }
 
-pError()
+main()
 {
-    echo -e "${SET_RED_COLOR}ERROR:${RESET_COLOR} $1" > /dev/stderr
+    installTools
 }
 
-forEachFile()
-{
-    func="$1"
-    for f in * ; do
-        "$func" "$f"
-    done
-}
-
-forEachDir()
-{
-    func="$1"
-    for f in * ; do
-        if isDir "$f"; then
-            "$func" "$f"
-        fi
-    done
-}
-
-isDir()
-{
-    if [[ -d "$1" ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
+main "$@"
 
