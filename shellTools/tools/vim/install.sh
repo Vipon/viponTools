@@ -23,44 +23,67 @@
 # SOFTWARE.
 
 ROOT="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
-CAPSTONE_ROOT="${ROOT}/capstone"
-CAPSTONE_BUILD_DIR="${CAPSTONE_ROOT}/build"
-INSTALL_PATH="${HOME}/.local"
-BUILD_ARCH="AArch64;ARM;Mips;PowerPC;X86"
-BUILD_TYPE="Release"
-SHARED_LIBS="ON"
+BUILD_DIR="${ROOT}/vim/src"
+INSTALL_DIR="${HOME}/.local"
+VIM_DIR="${HOME}/.vim"
+VIM_AUTOLOAD_DIR="${VIM_DIR}/autoload"
+VIM_COLOR_DIR="${VIM_DIR}/colors"
+VIM_FILE_TYPE_DETECT_DIR="${VIM_DIR}/ftdetect"
 
-downloadSrcCode()
+installLatestVim()
 {
-    wget "https://github.com/aquynh/capstone/archive/3.0.5.tar.gz" \
-         -O capstone.tar.gz
-    mkdir "${CAPSTONE_ROOT}"
-    tar -xzvf capstone.tar.gz -C "${CAPSTONE_ROOT}" --strip-components 1
-}
-
-buildCapstone()
-{
-    mkdir "${CAPSTONE_BUILD_DIR}"
-    cd "${CAPSTONE_BUILD_DIR}"
-    cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"       \
-          -DCAPSTONE_X86_ATT_DISABLE="ON"          \
-          -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}" \
-          ..
+    git clone https://github.com/vim/vim
+    cd "${BUILD_DIR}"
+    ./configure --with-features=huge    \
+        --enable-gui=gnome2             \
+        --prefix="${INSTALL_DIR}"
     make -j8
+    make install
 }
 
-installCapstone()
+installVimPlug()
 {
-    cd "${CAPSTONE_BUILD_DIR}"
-    make install
+    mkdir -p "${VIM_AUTOLOAD_DIR}"
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+}
+
+installVimRc()
+{
+    cp "${ROOT}/.vimrc" ~/
+    mkdir -p "${VIM_FILE_TYPE_DETECT_DIR}"
+    cp "${ROOT}/kssLanguage.vim" "${VIM_FILE_TYPE_DETECT_DIR}"
+}
+
+installPlugins()
+{
+    vim +PlugInstall +q +q
+}
+
+installCocConfig()
+{
+    echo ${ROOT}
+    cp ${ROOT}/coc-settings.json ~/.vim
+}
+
+installLanguageServers()
+{
+    pip3 install --user pyls
+    pip3 install --user cmake-language-server
+    sudo snap install bash-language-server
+    sudo apt install clangd-9
+    sudo apt install hoogle
 }
 
 main()
 {
     cd "${ROOT}"
-    downloadSrcCode
-    buildCapstone
-    installCapstone
+    installLatestVim
+    installVimPlug
+    installVimRc
+    installPlugins
+    installCocConfig
+    installLanguageServers
 }
 
 main "$@"
