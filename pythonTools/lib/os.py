@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+#
+# MIT License
+#
+# Copyright (c) 2020 Konychev Valera
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import os
+import platform
+
+def execForOs(linux=None, mac=None, win=None):
+    os = platform.system()
+    if os == 'Linux':
+        if linux is None:
+            raise 'Where is no Linux hadler'
+        linux()
+    elif os == 'Darwin':
+        if mac is None:
+            raise 'Where is no Mac OS X hadler'
+        mac()
+    elif os == 'Windows':
+        if win is None:
+            raise 'Where is no Win hadler'
+        win()
+    else:
+        raise 'Unknown OS'
+
+def getForOs(linux=None, mac=None, win=None):
+    os = platform.system()
+    if os == 'Linux':
+        return linux
+    elif os == 'Darwin':
+        return mac
+    elif os == 'Windows':
+        return win
+    else:
+        raise 'Unknown OS'
+
+def appendPath(newPath):
+    def appendNixPath():
+        return
+    def appendWinPath():
+        os.system(f'setx path "%path%;{newPath}"')
+
+    execForOs(
+        linux = appendNixPath,
+        mac = appendNixPath,
+        win = appendWinPath
+    )
