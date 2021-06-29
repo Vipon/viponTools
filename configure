@@ -6,6 +6,8 @@ import shutil
 import argparse
 import subprocess
 
+from python.lib.os import isWin, isLinux, getForOs
+
 ROOT = os.path.abspath(os.path.dirname(__file__))
 CMAKE_DIR = os.path.join(ROOT, 'cmake')
 TOOLCHAIN_DIR = os.path.join(CMAKE_DIR, 'toolchain')
@@ -23,8 +25,22 @@ def parseArgs():
     parser.add_argument('--output', metavar = 'DIR_PATH', nargs = '?',
             default = os.path.join(ROOT, 'output'),
             help = 'name of output directory')
+    parser.add_argument('--vs', action = 'store_true',
+            default = True if isWin() else False,
+            help = 'use visual code build system')
+    parser.add_argument('--gmake', action = 'store_true',
+            default = True if isLinux() else False,
+            help = 'use gnuMake build system')
+    parser.add_argument('--ninja', action = 'store_true',
+            help = 'use ninjs build system')
 
     return parser.parse_args()
+
+
+def finalizeArgs(args):
+    if args.ninja:
+        args.vs = False
+        args.gmake = False
 
 
 def goToOutputDir(args):
@@ -38,16 +54,31 @@ def goToOutputDir(args):
 
 
 def execCmake(args):
+    generator = str()
+    if args.gmake:
+        generator = '-G Unix Makefiles'
+    elif args.ninja:
+        generator = '-G Ninja'
+    elif args.vs:
+        generator = '-G Visual Studio 16 2019'
+    else:
+        raise "Unknown build system"
+
     subprocess.check_call(
         [ args.cmake_path
+        , generator
+        , '{}'                       .format('-A x64' if args.vs else '')
+        , '{}'                       .format('-T ClangCL' if args.vs else '')
         , '-DCMAKE_BUILD_TYPE={}'    .format('Release' if args.release else 'Debug')
         , '-DCMAKE_TOOLCHAIN_FILE={}'.format(args.c_toolchain)
         , ROOT
-        ])
+        ]
+    )
 
 
 def main():
     args = parseArgs()
+    finalizeArgs(args)
     goToOutputDir(args)
     execCmake(args)
 

@@ -25,17 +25,27 @@
 import os
 import platform
 
+OS = platform.system()
+
+def isLinux():
+    return OS == 'Linux'
+
+def isMacOsX():
+    return OS == 'Darwin'
+
+def isWin():
+    return OS == 'Windows'
+
 def execForOs(linux=None, mac=None, win=None):
-    os = platform.system()
-    if os == 'Linux':
+    if isLinux():
         if linux is None:
             raise 'Where is no Linux hadler'
         linux()
-    elif os == 'Darwin':
+    elif isMacOsX():
         if mac is None:
             raise 'Where is no Mac OS X hadler'
         mac()
-    elif os == 'Windows':
+    elif isWin():
         if win is None:
             raise 'Where is no Win hadler'
         win()
@@ -43,12 +53,11 @@ def execForOs(linux=None, mac=None, win=None):
         raise 'Unknown OS'
 
 def getForOs(linux=None, mac=None, win=None):
-    os = platform.system()
-    if os == 'Linux':
+    if isLinux():
         return linux
-    elif os == 'Darwin':
+    elif isMacOsX():
         return mac
-    elif os == 'Windows':
+    elif isWin():
         return win
     else:
         raise 'Unknown OS'
