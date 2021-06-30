@@ -34,6 +34,11 @@
 // OS headers
 # include <sys/types.h>
 #if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+
 typedef int FileD;
 typedef int FileFlag;
 
