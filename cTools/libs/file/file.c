@@ -33,16 +33,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-FileD openFile(const char *fn, FileFlag flags)
-{
-    return open(fn, flags);
-}
-
-void closeFile(FileD fd)
-{
-    close(fd);
-}
-
 size_t getFileSize(int fd)
 {
     if (fd < 0) {

@@ -56,16 +56,17 @@ def goToOutputDir(args):
 def execCmake(args):
     generator = str()
     if args.gmake:
-        generator = '-G Unix Makefiles'
+        generator = 'Unix Makefiles'
     elif args.ninja:
-        generator = '-G Ninja'
+        generator = 'Ninja'
     elif args.vs:
-        generator = '-G Visual Studio 16 2019'
+        generator = 'Visual Studio 16 2019'
     else:
         raise "Unknown build system"
 
     subprocess.check_call(
         [ args.cmake_path
+        , '-G'
         , generator
         , '{}'                       .format('-A x64' if args.vs else '')
         , '{}'                       .format('-T ClangCL' if args.vs else '')
