@@ -1488,3 +1488,4 @@ typedef struct {
 #define	ELF_BSDF_SIGFASTBLK	0x0001	/* Kernel supports fast sigblock */
 
 #endif /* !_SYS_ELF_COMMON_H_ */
+

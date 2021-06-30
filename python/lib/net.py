@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2020 Konychev Valera
+# Copyright (c) 2021 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,3 +26,4 @@ import urllib.request
 
 def downloadFile(url, fn=None):
     urllib.request.urlretrieve(url, fn)
+
