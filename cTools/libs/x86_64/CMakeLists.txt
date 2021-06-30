@@ -12,7 +12,7 @@ add_vipon_library(
   NAME asmWrap
   TYPE SHARED
   SOURCES ${X86_64_SOURCES} ${X86_64_HEADERS}
-  LINK_LIBS capstone keystone mem bits
+  LINK_LIBS capstone keystone mem
 )
 
 target_compile_definitions(asmWrap PUBLIC -DCAPSTONE_DISASSEMBLER)

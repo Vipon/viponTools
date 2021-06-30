@@ -25,9 +25,64 @@
 #ifndef _FILE_H
 #define _FILE_H
 
+#include "os.h"
+
 // C standard headers
 #include <stddef.h>
+#include <stdint.h>
 
+// OS headers
+# include <sys/types.h>
+#if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
+typedef int FileD;
+typedef int FileFlag;
+
+/***
+ * \def mapFileForRead
+ *
+ * \param[in] fd file descriptor
+ * \param[out] fileSize size of file
+ *
+ * \return addr of mapped file or MAP_FAILED
+ */
+void *mapFileForRead(FileD fd, size_t fileSize);
+
+/***
+ *
+ */
+int unmapFile(void *addr, size_t fileSize);
+
+#elif defined(__WIN__)
+# include <windows.h>
+# define O_RDONLY       GENERIC_READ
+# define O_WRONLY       GENERIC_WRITE
+# define O_RDWR         O_RDONLY | O_WRONLY
+# define FILE_SHARE_RW  FILE_SHARE_READ | FILE_SHARE_WRITE
+# ifdef SEEK_SET
+#  undef SEEK_SET
+# endif
+# define SEEK_SET       FILE_BEGIN
+# ifdef SEEK_CUR
+#  undef SEEK_CUR
+# endif
+# define SEEK_CUR       FILE_CURRENT
+# ifdef SEEK_END
+#  undef SEEK_END
+# endif
+# define SEEK_END       FILE_END
+
+typedef HANDLE FileD;
+typedef DWORD FileFlag;
+
+FileD open(const char *fn, FileFlag flags);
+void close(FileD fd);
+off_t lseek(FileD fd, off_t offset, int whence);
+typedef intmax_t ssize_t;
+ssize_t read(FileD fd, void *buf, size_t count);
+
+#else
+# error "*** ERROR: Unknown OS. ***"
+#endif
 
 #ifndef MAP_FAILED
 # define MAP_FAILED ((void *) -1)
@@ -38,9 +93,9 @@
  *
  * \param[in] fd file descriptor
  *
- *  \return size of files or -1.
+ * \return size of files or -1.
  */
-size_t getFileSize(int fd);
+size_t getFileSize(FileD fd);
 
 /*
  * Description: read data from offset position in file.
@@ -57,23 +112,7 @@ size_t getFileSize(int fd);
  * After:
  *  Need to free memory.
  */
-void *readFromFile(int fd, size_t *off, size_t size);
-
-
-/**
- * \def mapFileForRead
- *
- * \param[in] fd file descriptor
- * \param[out] fileSize size of file
- *
- * \return addr of mapped file or MAP_FAILED
- */
-void *mapFileForRead(int fd, size_t fileSize);
-
-
-/**
- *
- */
-int unmapFile(void *addr, size_t fileSize);
+void *readFromFile(FileD fd, size_t *off, size_t size);
 
 #endif /* _FILE_H */
+

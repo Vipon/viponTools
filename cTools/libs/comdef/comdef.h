@@ -62,6 +62,9 @@ extern int VERBOSE;
         fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);        \
         fprintf(stderr, "\n");                                          \
     )
+#ifdef ERROR
+# undef ERROR
+#endif /* ERROR */
 #define ERROR(...)                                                    \
     DEF_GUARD(                                                        \
         fprintf(stderr, SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT \

@@ -25,11 +25,11 @@
 #ifndef _ELF32_PARSE_H
 #define _ELF32_PARSE_H
 
+#include "os.h"
+#include "file.h"
+
 /* Unix headers */
 #include <elf.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
 
 /* C standard headers */
 #include <stdlib.h>
@@ -177,7 +177,7 @@ typedef Elf32_Rela  Elf32Rel;
 
 typedef struct {
     char        *fn;
-    int         fd;
+    FileD       fd;
     uint32_t    type;
     Elf32Ehdr   *header;
     Elf32Shdr   *sections;
@@ -195,7 +195,11 @@ typedef struct {
 } Elf32File;
 
 
+#ifdef __WIN__
+typedef enum : uint32_t {
+#else
 typedef enum {
+#endif /* __WIN__ */
     ELF32_NO_RELOCATION = (uint32_t)-16,
     ELF32_NO_SECTION,
     ELF32_NO_SYMBOL,

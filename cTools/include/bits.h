@@ -25,8 +25,7 @@
 #ifndef _BITS_H
 #define _BITS_H
 
-#ifdef __STDC__
-    #if __STDC__ == 1
+#if __STDC__ == 1 || __STDC_HOSTED__ == 1
 #include <stdio.h>
 #include <stdint.h>
 
@@ -38,10 +37,11 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
 
     fprintf(f, "\n");
 }
-    #endif /* __STDC__ == 1 */
-#else /* __STDC__ */
-    #error "*** ERROR: Need standard C library or equivalent. ***"
-#endif /* __STDC__ */
+#elif defined(__NO_STD_LIB__)
+// Cannot print in common case without stdlib
+#else
+# error "*** ERROR: Need standard C library or equivalent. ***"
+#endif
 
 
 /*

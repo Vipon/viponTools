@@ -25,11 +25,11 @@
 #ifndef _ELF64_PARSE_H
 #define _ELF64_PARSE_H
 
+#include "os.h"
+#include "file.h"
+
 /* Unix headers */
 #include <elf.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
 
 /* C standard headers */
 #include <stdlib.h>
@@ -177,7 +177,7 @@ typedef Elf64_Rela  Elf64Rel;
 
 typedef struct {
     char        *fn;
-    int         fd;
+    FileD       fd;
     uint32_t    type;
     Elf64Ehdr   *header;
     Elf64Shdr   *sections;
@@ -194,8 +194,11 @@ typedef struct {
     char        *dynSymNameTab;
 } Elf64File;
 
-
+#ifdef __WIN__
+typedef enum : uint64_t {
+#else
 typedef enum {
+#endif /* __WIN__ */
     ELF64_NO_RELOCATION = (uint64_t)-16,
     ELF64_NO_SECTION,
     ELF64_NO_SYMBOL,

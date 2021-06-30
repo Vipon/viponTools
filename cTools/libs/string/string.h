@@ -27,15 +27,6 @@
 
 /* C standard headers */
 #include <stddef.h>
-#include <stdint.h>
-
-/* OS standard headers */
-#if defined(unix) || defined(__unix) || \
-    defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
-    #include <sys/types.h>
-#else
-    #error "*** ERROR: Unknown OS. ***"
-#endif
 
 /*
  * Description:

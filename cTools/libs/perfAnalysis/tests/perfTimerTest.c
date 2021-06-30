@@ -1,11 +1,20 @@
+// vipon headers
+#include "os.h"
 #include "perf.h"
 #include "comdef.h"
 
-#include <unistd.h>
+// c standard headers
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
 
+// os headers
+#if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
+# include <unistd.h>
+#elif defined(__WIN__)
+# include <windows.h>
+# define getpid GetCurrentProcessId
+#endif
 
 int main(int argc, const char *argv[])
 {

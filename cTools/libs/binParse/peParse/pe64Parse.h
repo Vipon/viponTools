@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valera
+ * Copyright (c) 2021 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,16 @@
  * SOFTWARE.
  */
 
-#ifndef __ARCH_H
-#define __ARCH_H
+#ifndef __PE_64_PARSE
+#define __PE_64_PARSE
 
-#if defined(__GNUC__) || defined(__clang__)
-# if defined(i386) || defined(__i386) || defined(__i386__)
-#  define IA32_DEFINED 1
-# endif
+#include "file.h"
 
-# if defined(__amd64) || defined(__amd64__) || defined(__x86_64) || defined(__x86_64__)
-#  define IA32_DEFINED 1
-#  define IA32E_DEFINED 1
-#  define AMD64_DEFINED 1
-#  define X86_64_DEFINED 1
-# endif
+typedef struct {
+    FileD fd;
+    char *fn;
+} PE64File;
 
-# if defined(__aarch64__)
-#  define ARM64_DEFINED 1
-#  define ARMV8_DEFINED 1
-#  define AARCH64_DEFINED 1
-# endif
+PE64File *pe64Parse(const char *fn);
 
-# if defined(__arm__)
-#  define ARM32_DEFINED 1
-# endif
-#else
-# error Unknown compiler type
-#endif
-
-#endif /* __ARCH_H */
-
+#endif /* __PE_64_PARSE */
