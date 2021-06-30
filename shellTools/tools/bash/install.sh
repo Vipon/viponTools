@@ -22,8 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
-
 SCRIPT_DIR="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
 source "${SCRIPT_DIR}/../../libCommon.sh"
 

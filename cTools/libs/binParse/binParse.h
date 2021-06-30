@@ -113,4 +113,3 @@ void *binHook(const char *func, const void *hand);
 
 #endif /* _BIN_PARSE_H */
 
-

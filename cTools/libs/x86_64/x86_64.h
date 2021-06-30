@@ -468,3 +468,4 @@ uint8_t *put_jcc_rel32(uint8_t *dest, size_t ip, size_t jmp_addr, X86_INSTR_TYPE
 uint8_t *put_call_rel32(uint8_t *dest, size_t ip, size_t call_addr);
 
 #endif /* _X86_64_H */
+
