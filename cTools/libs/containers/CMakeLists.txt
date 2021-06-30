@@ -10,7 +10,7 @@ add_vipon_library(
   NAME containers
   TYPE STATIC
   SOURCES ${CONTAINERS_SRCS} ${CONTAINERS_HEADERS}
-  LINK_LIBS bits mem
+  LINK_LIBS mem
 )
 
 add_subdirectory(tests)

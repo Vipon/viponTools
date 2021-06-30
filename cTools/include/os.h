@@ -26,18 +26,27 @@
 #define __OS_H
 
 #if defined(unix) || defined(__unix) || defined(__unix__)
-# define __UNIX_OS__
+# ifndef __UNIX__
+#  define __UNIX__
+# endif
 #endif
 
 #if defined(__linux__)
-# define __LINUX_OS__
+# ifndef __LINUX__
+#  define __LINUX__
+# endif
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
-# define __MAC_OS_X__
+# ifndef __MAC_OS_X__
+#  define __MAC_OS_X__
+# endif
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-# define __WIN_OS__
+# ifndef __WIN__
+#  define __WIN__
+# endif
 #endif
+
 #endif /* __OS_H */

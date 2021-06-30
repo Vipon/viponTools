@@ -23,6 +23,7 @@
  */
 
 /* vipon headers */
+#include "os.h"
 #include "mem.h"
 #include "file.h"
 #include "comdef.h"
@@ -31,6 +32,12 @@
 
 /* c standard headers */
 #include <inttypes.h>
+
+#ifdef __WIN__
+// windows.h defines itsown ERROR
+# undef ERROR
+# define ERROR(...)
+#endif
 
 /***
  * Before:
@@ -52,7 +59,7 @@ static ELF64_ERROR elf64ParseHeader(Elf64File *elf64)
     if (elf64 == NULL || elf64->fd < 0)
         return ELF64_INV_ARG;
 
-    int fd = elf64->fd;
+    FileD fd = elf64->fd;
     uint64_t ehOff = 0;
     uint64_t ehSize = sizeof(Elf64Ehdr);
     Elf64Ehdr *header = (Elf64Ehdr*) readFromFile(fd, &ehOff, ehSize);
@@ -106,7 +113,7 @@ static ELF64_ERROR elf64ParseSections(Elf64File *elf64)
      * Otherwise, the sh_size member of the initial entry contains the value
      * zero.
      */
-    int fd = elf64->fd;
+    FileD fd = elf64->fd;
     uint64_t eShOff = elf64->header->e_shoff;
     uint64_t shNum = elf64->header->e_shnum;
     uint64_t shSize = 0;
@@ -476,7 +483,7 @@ Elf64File *elf64Parse(const char *fn)
     }
 
     LOG("start elf64Parse\n")
-    int fd = 0;
+    FileD fd = 0;
     if ((fd = open(fn, O_RDONLY)) < 0) {
         PERROR("open()");
         return NULL;
@@ -1078,7 +1085,7 @@ void *elf64ReadSect(const Elf64File *elf64, const Elf64Shdr *sectionHeader)
      *              of the section contents in the file.
      * sh_size   -  contains the size, in bytes, of the section.
      */
-    int fd = elf64->fd;
+    FileD fd = elf64->fd;
     uint64_t shSize = sectionHeader->sh_size;
     uint64_t shOffset = sectionHeader->sh_offset;
 

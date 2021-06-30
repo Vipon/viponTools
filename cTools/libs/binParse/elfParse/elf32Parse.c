@@ -23,6 +23,7 @@
  */
 
 /* vipon headers */
+#include "os.h"
 #include "mem.h"
 #include "file.h"
 #include "comdef.h"
@@ -31,6 +32,12 @@
 
 /* c standard header */
 #include <inttypes.h>
+
+#ifdef __WIN__
+// windows.h defines itsown ERROR
+# undef ERROR
+# define ERROR(...)
+#endif
 
 /***
  * Before:
@@ -52,7 +59,7 @@ static ELF32_ERROR elf32ParseHeader(Elf32File *elf32)
     if (elf32 == NULL || elf32->fd < 0)
         return ELF32_INV_ARG;
 
-    int fd = elf32->fd;
+    FileD fd = elf32->fd;
     size_t ehOff = 0;
     uint32_t ehSize = sizeof(Elf32Ehdr);
     Elf32Ehdr *header = (Elf32Ehdr*) readFromFile(fd, &ehOff, ehSize);
@@ -106,7 +113,7 @@ static ELF32_ERROR elf32ParseSections(Elf32File *elf32)
      * Otherwise, the sh_size member of the initial entry contains the value
      * zero.
      */
-    int fd = elf32->fd;
+    FileD fd = elf32->fd;
     size_t eShOff = elf32->header->e_shoff;
     uint32_t shNum = elf32->header->e_shnum;
     uint32_t shSize = 0;
@@ -476,7 +483,7 @@ Elf32File *elf32Parse(const char *fn)
     }
 
     LOG("start elf32Parse\n")
-    int fd = 0;
+    FileD fd = 0;
     if ((fd = open(fn, O_RDONLY)) < 0) {
         PERROR("open()");
         return NULL;
@@ -1078,7 +1085,7 @@ void *elf32ReadSect(const Elf32File *elf32, const Elf32Shdr *sectionHeader)
      *              of the section contents in the file.
      * sh_size   -  contains the size, in bytes, of the section.
      */
-    int fd = elf32->fd;
+    FileD fd = elf32->fd;
     uint32_t shSize = sectionHeader->sh_size;
     size_t shOffset = sectionHeader->sh_offset;
 
@@ -1277,8 +1284,9 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
     uint32_t i = 0;
     for (i = 0; i < relpltAmount; ++i)
         if (ELF32_R_SYM(elf32->relaplt[i].r_info) == symbolIndex){
+            // !TODO: need refactor
             relAddr = (void*) (size_t)*(uint32_t*) (size_t)elf32->relaplt[i].r_offset;
-            *(uint32_t*) (size_t)(elf32->relaplt[i].r_offset) = (uint32_t) hand;
+            *(uint32_t*) (size_t)(elf32->relaplt[i].r_offset) = (uint32_t)(uint64_t) hand;
 
             return relAddr;
         }

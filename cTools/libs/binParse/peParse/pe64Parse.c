@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valera
+ * Copyright (c) 2021 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,44 @@
  * SOFTWARE.
  */
 
-#ifndef __ARCH_H
-#define __ARCH_H
+#include "pe64Parse.h"
+#include "mem.h"
+#include "file.h"
+#include "comdef.h"
 
-#if defined(__GNUC__) || defined(__clang__)
-# if defined(i386) || defined(__i386) || defined(__i386__)
-#  define IA32_DEFINED 1
-# endif
 
-# if defined(__amd64) || defined(__amd64__) || defined(__x86_64) || defined(__x86_64__)
-#  define IA32_DEFINED 1
-#  define IA32E_DEFINED 1
-#  define AMD64_DEFINED 1
-#  define X86_64_DEFINED 1
-# endif
+PE64File *pe64Parse(const char *fn)
+{
+    if (fn == NULL) {
+        ERROR("Invalid arguments");
+        return NULL;
+    }
 
-# if defined(__aarch64__)
-#  define ARM64_DEFINED 1
-#  define ARMV8_DEFINED 1
-#  define AARCH64_DEFINED 1
-# endif
+    FileD fd = 0;
+    if ((fd = openFile(fn, O_RDONLY)) < 0) {
+        PERROR("openFile()");
+        return NULL;
+    }
 
-# if defined(__arm__)
-#  define ARM32_DEFINED 1
-# endif
-#else
-# error Unknown compiler type
-#endif
+    PE64File *pe64 = (PE64File*) Calloc(1, sizeof(PE64File));
+    if (pe64 == NULL) {
+        ERROR("Cannot allocate %zu bytes", sizeof(PE64File));
+        goto eexit_0;
+    }
 
-#endif /* __ARCH_H */
+    pe64->fd = fd;
+    uint64_t nameSize = strlen(fn) * sizeof(char);
+    if ((elf64->fn = (char*) Calloc(nameSize, sizeof(char))) == NULL) {
+        ERROR("Cannot allocate %zu bytes", nameSize);
+        goto eexit_1;
+    }
 
+    return pe64;
+
+eexit_1:
+    pe64Free(elf64);
+    return NULL;
+eexit_0:
+    closeFile(fd);
+    return NULL;
+}

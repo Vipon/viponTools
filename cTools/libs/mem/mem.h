@@ -29,7 +29,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-
 void Free(void *ptr);
 void *Malloc(size_t num);
 void *Calloc(size_t num, size_t elem_size);

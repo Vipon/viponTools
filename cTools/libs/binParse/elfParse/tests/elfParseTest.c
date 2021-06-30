@@ -4,11 +4,17 @@
 #include "elf64Parse.h"
 #include "comdef.h"
 
+#ifdef __WIN__
+# undef ERROR
+# define ERROR(...)
+#endif
+
 static void hookFooWithBar(char *argv0)
 {
     Elf64File *elf64 = elf64Parse(argv0);
     if (elf64 == NULL) {
         ERROR("Cannot parse %s", argv0);
+        return;
     }
 
     elf64Hook(elf64, "foo", bar);
