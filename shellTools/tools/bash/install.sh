@@ -24,6 +24,7 @@
 
 SCRIPT_DIR="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
 source "${SCRIPT_DIR}/../../libCommon.sh"
+source "${SCRIPT_DIR}/../../os/libOs.sh"
 
 installBashrc()
 {
@@ -31,9 +32,16 @@ installBashrc()
     cat ".bashrc" >> "${HOME}/.bashrc"
 }
 
+installZshrc()
+{
+    cd "${SCRIPT_DIR}"
+    cat ".zshrc" >> "${HOME}/.zshrc"
+}
+
 main()
 {
-    installBashrc
+    execIfLinux installBashrc
+    execIfMacOsX installZshrc
 }
 
 main "$@"

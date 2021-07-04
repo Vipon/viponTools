@@ -2,6 +2,8 @@
 
 source "$(dirname "${BASH_SOURCE[0]}")/libosRelease.sh"
 
+OS=`uname`
+
 getOsName()
 {
     if [ "${OS_RELEASE}" != "" ]; then
@@ -17,6 +19,20 @@ getOsVersion()
         echo "$(getVersionFromOsRelease)"
     else
         echo ""
+    fi
+}
+
+execIfMacOsX()
+{
+    if [[ "$OS" == "Darwin" ]]; then
+        "$1"
+    fi
+}
+
+execIfLinux()
+{
+    if [[ "$OS" == "Linux" ]]; then
+        "$1"
     fi
 }
 

@@ -22,6 +22,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+SCRIPT_DIR="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
+source "${SCRIPT_DIR}/../../os/libOs.sh"
+
 ROOT="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
 BUILD_DIR="${ROOT}/vim/src"
 INSTALL_DIR="${HOME}/.local"
@@ -37,6 +40,7 @@ installLatestVim()
     ./configure --with-features=huge    \
         --enable-gui=gnome2             \
         --prefix="${INSTALL_DIR}"
+
     make -j8
     make install
 }
@@ -78,7 +82,7 @@ installLanguageServers()
 main()
 {
     cd "${ROOT}"
-    installLatestVim
+    execIfLinux installLatestVim
     installVimPlug
     installVimRc
     installPlugins

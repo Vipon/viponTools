@@ -25,7 +25,24 @@
 SCRIPT_DIR="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
 source "${SCRIPT_DIR}/libCommon.sh"
 
+OS=`uname`
 TOOLS_DIR="${SCRIPT_DIR}/tools"
+
+macOsXPreinstall()
+{
+    brew install coreutils
+}
+
+preinstall()
+{
+    if [[ "$OS" == "Darwin" ]]; then
+        macOsXPreinstall
+    elif  [[ "$OS" == "Linux" ]]; then
+        return
+    else
+        exit 1
+    fi
+}
 
 installTool()
 {
@@ -40,6 +57,7 @@ installTools()
 
 main()
 {
+    preinstall()
     installTools
 }
 
