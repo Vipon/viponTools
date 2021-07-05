@@ -6,7 +6,7 @@ import shutil
 import argparse
 import subprocess
 
-from python.lib.os import isWin, isLinux, getForOs
+from python.lib.os import isWin, isLinux, isMacOsX, getForOs
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 CMAKE_DIR = os.path.join(ROOT, 'cmake')
@@ -29,7 +29,7 @@ def parseArgs():
             default = True if isWin() else False,
             help = 'use visual code build system')
     parser.add_argument('--gmake', action = 'store_true',
-            default = True if isLinux() else False,
+            default = True if isLinux() or isMacOsX()  else False,
             help = 'use gnuMake build system')
     parser.add_argument('--ninja', action = 'store_true',
             help = 'use ninjs build system')

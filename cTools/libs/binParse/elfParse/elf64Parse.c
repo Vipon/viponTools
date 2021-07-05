@@ -62,7 +62,7 @@ static ELF64_ERROR elf64ParseHeader(Elf64File *elf64)
     FileD fd = elf64->fd;
     uint64_t ehOff = 0;
     uint64_t ehSize = sizeof(Elf64Ehdr);
-    Elf64Ehdr *header = (Elf64Ehdr*) readFromFile(fd, &ehOff, ehSize);
+    Elf64Ehdr *header = (Elf64Ehdr*) readFromFile(fd, (size_t*)&ehOff, ehSize);
     if (header == NULL)
         return ELF64_NO_MEM;
 
@@ -121,7 +121,7 @@ static ELF64_ERROR elf64ParseSections(Elf64File *elf64)
     if (shNum != SHN_UNDEF)
         shSize = shNum * sizeof(Elf64Shdr);
     else {
-        Elf64Shdr *sect0 = (Elf64Shdr*) readFromFile(fd, &eShOff, sizeof(Elf64Shdr));
+        Elf64Shdr *sect0 = (Elf64Shdr*) readFromFile(fd, (size_t*)&eShOff, sizeof(Elf64Shdr));
         shNum = sect0->sh_size;
         if (shNum == 0) {
             free(sect0);
@@ -132,7 +132,7 @@ static ELF64_ERROR elf64ParseSections(Elf64File *elf64)
         free(sect0);
     }
 
-    elf64->sections = (Elf64Shdr*) readFromFile(fd, &eShOff, shSize);
+    elf64->sections = (Elf64Shdr*) readFromFile(fd, (size_t*)&eShOff, shSize);
     if (elf64->sections == NULL)
         return ELF64_NO_MEM;
 
@@ -164,7 +164,7 @@ static ELF64_ERROR elf64ParseSegments(Elf64File *elf64)
     if (phnum == 0)
         return ELF64_NO_SEGMENTS;
 
-    elf64->segments = readFromFile(elf64->fd, &phoff, sizeof(Elf64Phdr)*phnum);
+    elf64->segments = readFromFile(elf64->fd, (size_t*)&phoff, sizeof(Elf64Phdr)*phnum);
     if (elf64->segments == NULL)
         return ELF64_NO_MEM;
 
@@ -498,7 +498,7 @@ Elf64File *elf64Parse(const char *fn)
     elf64->fd = fd;
     uint64_t nameSize = strlen(fn) * sizeof(char);
     if ((elf64->fn = (char*) Calloc(nameSize, sizeof(char))) == NULL) {
-        ERROR("Cannot allocate %zu bytes", nameSize);
+        ERROR("Cannot allocate %"PRIu64" bytes", nameSize);
         goto eexit_1;
     }
 
@@ -1089,7 +1089,7 @@ void *elf64ReadSect(const Elf64File *elf64, const Elf64Shdr *sectionHeader)
     uint64_t shSize = sectionHeader->sh_size;
     uint64_t shOffset = sectionHeader->sh_offset;
 
-    void *section = readFromFile(fd, &shOffset, shSize);
+    void *section = readFromFile(fd, (size_t*)&shOffset, shSize);
     if (section == NULL) {
         ERROR("Cannot read from file.");
         return NULL;
@@ -1178,7 +1178,7 @@ uint64_t elf64GetRelocationForAddr( const Elf64File *elf64
     size += strlen(sectName);
     char *relaSectName = (char*)Malloc(size);
     if (relaSectName == NULL) {
-        ERROR("Cannot alloc %zu bytes.", size);
+        ERROR("Cannot alloc %"PRIu64" bytes.", size);
         return ELF64_NO_MEM;
     }
 
@@ -1210,14 +1210,14 @@ uint64_t elf64GetRelocationForAddr( const Elf64File *elf64
         if (  IS_ELF64_FILE_OBJ(elf64)
            && rela[i].r_offset + sect->sh_addr == addr
            ) {
-            LOG("find addr %zx\n", addr);
+            LOG("find addr %"PRIu64"\n", addr);
             break;
         }
 
         if (  IS_ELF64_FILE_EXEC(elf64)
            && rela[i].r_offset == addr
            ) {
-            LOG("find addr %zx\n", addr);
+            LOG("find addr %"PRIu64"\n", addr);
             break;
         }
     }
