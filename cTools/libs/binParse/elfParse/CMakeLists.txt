@@ -12,7 +12,7 @@ add_vipon_library(
   LINK_LIBS file mem string
 )
 
-if (NOT WIN32)
+if (NOT WIN32 AND NOT APPLE)
   add_subdirectory(tests)
-endif (NOT WIN32)
+endif ()
 

@@ -7,7 +7,7 @@ add_vipon_library(
   LINK_LIBS elf64Parse elf32Parse
 )
 
-if (NOT WIN32)
+if (NOT WIN32 AND NOT APPLE)
   add_subdirectory(tests)
-endif (NOT WIN32)
+endif ()
 
