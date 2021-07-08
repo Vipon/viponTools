@@ -29,18 +29,27 @@ def parseArgs():
             default = True if isWin() else False,
             help = 'use visual code build system')
     parser.add_argument('--gmake', action = 'store_true',
-            default = True if isLinux() or isMacOsX()  else False,
+            default = True if isLinux() else False,
             help = 'use gnuMake build system')
     parser.add_argument('--ninja', action = 'store_true',
             help = 'use ninjs build system')
+    parser.add_argument('--xcode', action = 'store_true',
+            default = True if isMacOsX() else False,
+            help = 'use xcode build system')
 
     return parser.parse_args()
 
 
 def finalizeArgs(args):
-    if args.ninja:
-        args.vs = False
-        args.gmake = False
+    if isLinux():
+        if args.ninja or args.vs or args.xcode:
+            args.gmake = False
+    elif isMacOsX():
+        if args.ninja or args.vs or args.gmake:
+            args.xcode = False
+    elif isWin():
+        if args.ninja or args.xcode or args.gmake:
+            args.vs = False
 
 
 def goToOutputDir(args):
@@ -61,6 +70,8 @@ def execCmake(args):
         generator = 'Ninja'
     elif args.vs:
         generator = 'Visual Studio 16 2019'
+    elif args.xcode:
+        generator = 'Xcode'
     else:
         raise "Unknown build system"
 
