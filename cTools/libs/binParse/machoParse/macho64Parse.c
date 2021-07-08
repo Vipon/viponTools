@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <inttypes.h>
 
 /* OS standard headers */
 #if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
@@ -584,7 +585,7 @@ int macho64PrintSymbol(const Macho64File *mf, const Macho64Sym *ms)
     printf("\t\ttype:\t0x%x\n", ms->n_type);
     printf("\t\tsect:\t%d\n", ms->n_sect);
     printf("\t\tdesc:\t%d\n", ms->n_desc);
-    printf("\t\tvalue:\t%llx\n", ms->n_value);
+    printf("\t\tvalue:\t%"PRIu64"\n", ms->n_value);
 
     return 0;
 }
@@ -604,7 +605,7 @@ int macho64PrintSymbols(const Macho64File *mf)
         printf("\t\ttype:\t0x%x\n", mf->symtab[i].n_type);
         printf("\t\tsect:\t%d\n", mf->symtab[i].n_sect);
         printf("\t\tdesc:\t%d\n", mf->symtab[i].n_desc);
-        printf("\t\tvalue:\t%llx\n", mf->symtab[i].n_value);
+        printf("\t\tvalue:\t%"PRIu64"\n", mf->symtab[i].n_value);
     }
 
     return 0;
