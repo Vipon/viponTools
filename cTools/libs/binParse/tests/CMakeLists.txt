@@ -9,6 +9,6 @@ add_library(BINBAR SHARED
 add_vipon_test(
   NAME binParseTest
   SOURCES binParseTest.c
-  LINK_LIBS BIN_PARSE BINFOO BINBAR
+  LINK_LIBS binParse BINFOO BINBAR
 )
 

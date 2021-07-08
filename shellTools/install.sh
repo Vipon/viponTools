@@ -31,6 +31,7 @@ TOOLS_DIR="${SCRIPT_DIR}/tools"
 macOsXPreinstall()
 {
     brew install coreutils
+    brew install npm
 }
 
 preinstall()

@@ -25,6 +25,7 @@
 #ifndef _BIN_PARSE_H
 #define _BIN_PARSE_H
 
+#include "macho64Parse.h"
 #include <stdint.h>
 
 typedef enum {
