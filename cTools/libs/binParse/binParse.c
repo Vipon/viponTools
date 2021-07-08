@@ -73,8 +73,10 @@ int initBinParser(const char *fn)
         binParser.type = MACHO64;
         INIT_BIN_PARSER_FUNCS(macho64);
     } else {
+#ifndef __WIN__
         ERROR("Unknown FileType\n");
         return -1;
+#endif /* __WIN__ */
     }
 
     binParser.bin = bin;

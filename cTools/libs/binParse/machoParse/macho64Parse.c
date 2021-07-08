@@ -12,14 +12,6 @@
 #include <string.h>
 #include <inttypes.h>
 
-/* OS standard headers */
-#if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
-    #include <fcntl.h>
-    #include <unistd.h>
-#else
-    #error "*** ERROR: Unknown OS. ***"
-#endif
-
 /***
  * Description:
  *  Function returns a mach-o FatHeader struct from a file.
@@ -470,9 +462,9 @@ void macho64Free(Macho64File *mf)
         mf->fn = NULL;
     }
 
-    if (mf->fd > 0) {
+    if (mf->fd != INV_FD) {
         close(mf->fd);
-        mf->fd = -1;
+        mf->fd = INV_FD;
     }
 
     if (mf->header) {

@@ -42,6 +42,8 @@
 typedef int FileD;
 typedef int FileFlag;
 
+#define INV_FD -1
+
 /***
  * \def mapFileForRead
  *
@@ -78,6 +80,8 @@ int unmapFile(void *addr, size_t fileSize);
 
 typedef HANDLE FileD;
 typedef DWORD FileFlag;
+
+#define INV_FD NULL
 
 FileD open(const char *fn, FileFlag flags);
 void close(FileD fd);
