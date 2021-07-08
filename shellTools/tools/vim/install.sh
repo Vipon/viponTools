@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 SCRIPT_DIR="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
-source "${SCRIPT_DIR}/../../os/libOs.sh"
+source "${SCRIPT_DIR}/../../os/libos.sh"
 
 ROOT="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
 BUILD_DIR="${ROOT}/vim/src"
@@ -74,7 +74,8 @@ installLanguageServers()
 {
     pip3 install --user pyls
     pip3 install --user cmake-language-server
-    sudo snap install bash-language-server
+    execIfLinux sudo snap install bash-language-server
+    execIfMacOsX npm install bash-language-server
     sudo apt install clangd-9
     sudo apt install hoogle
 }

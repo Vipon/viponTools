@@ -1,5 +1,6 @@
 set(CONTAINERS_HEADERS
   containers.h
+  vector.h
 )
 
 set(CONTAINERS_SRCS

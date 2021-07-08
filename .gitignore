@@ -3,4 +3,4 @@ output/*
 .clangd/*
 compile_commands.json
 *.tar.gz
-
+.cache/*

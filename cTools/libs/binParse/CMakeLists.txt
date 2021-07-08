@@ -1,13 +1,14 @@
 add_subdirectory(elfParse)
+add_subdirectory(machoParse)
 
 add_vipon_library(
-  NAME BIN_PARSE
+  NAME binParse
   TYPE STATIC
   SOURCES binParse.c binParse.h
-  LINK_LIBS elf64Parse elf32Parse
+  LINK_LIBS elf64Parse elf32Parse macho64Parse
 )
 
-if (NOT WIN32 AND NOT APPLE)
+if (NOT WIN32)
   add_subdirectory(tests)
 endif ()
 

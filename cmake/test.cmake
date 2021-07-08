@@ -22,9 +22,8 @@ function(add_vipon_test)
   )
 
   target_link_libraries(${ARG_NAME}
-    ${ARG_LINK_LIBS}
-    comdef
     vTest
+    ${ARG_LINK_LIBS}
   )
 
   add_test(
