@@ -65,7 +65,7 @@ extern int VERBOSE;
         fprintf(stderr, "\n");                                          \
     )
 #ifdef ERROR
-# undef ERROR
+    #undef ERROR
 #endif /* ERROR */
 #define ERROR(...)                                                    \
     DEF_GUARD(                                                        \
