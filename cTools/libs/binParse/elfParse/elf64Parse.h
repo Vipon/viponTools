@@ -416,7 +416,7 @@ uint64_t elf64GetSSymFileoff(const Elf64File *elf64, const Elf64Sym *sym);
  *  Fail:
  *      -1.
  */
-uint64_t elf64GetDSymIndex(const Elf64File *elf64, const char *name);
+uint64_t elf64GetDSymIndxByName(const Elf64File *elf64, const char *name);
 
 
 /***
@@ -429,7 +429,7 @@ uint64_t elf64GetDSymIndex(const Elf64File *elf64, const char *name);
  *  Fail:
  *      -1.
  */
-uint64_t elf64GetAmountSegment(const Elf64File *elf64);
+uint64_t elf64GetAmountSeg(const Elf64File *elf64);
 
 
 /***
@@ -525,7 +525,7 @@ uint64_t elf64GetSectSize(const Elf64Shdr *elf64Sect);
  *  Fail:
  *      -1.
  */
-uint64_t elf64GetSectVaddr(const Elf64Shdr *sect);
+uint64_t elf64GetSectAddr(const Elf64Shdr *sect);
 
 
 /***
@@ -556,7 +556,7 @@ uint64_t elf64GetSectFileoff(const Elf64Shdr *sect);
  *  Fail:
  *      NULL.
  */
-uint64_t elf64GetRelocationForAddr(const Elf64File *elf64, const Elf64Shdr *sect, uint64_t addr);
+uint64_t elf64GetRelocForAddr(const Elf64File *elf64, const Elf64Shdr *sect, uint64_t addr);
 
 
 /***
@@ -587,7 +587,7 @@ void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand);
  *  Fail:
  *      NULL point.
  */
-void *elf64GetRelocationDataAddr(const Elf64File *elf64, const char *func);
+void *elf64GetRelocDataAddr(const Elf64File *elf64, const char *func);
 
 #endif /* _ELF64_PARSE_H */
 
