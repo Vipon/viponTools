@@ -964,7 +964,7 @@ uint32_t elf32GetSSymFileoff(const Elf32File *elf32, const Elf32Sym *sym)
 }
 
 
-uint32_t elf32GetDSymIndex(const Elf32File *elf32, const char *name)
+uint32_t elf32GetDSymIndxByName(const Elf32File *elf32, const char *name)
 {
     if (elf32Check(elf32) || name == NULL) {
         ERROR("Invalid arguments");
@@ -986,7 +986,7 @@ uint32_t elf32GetDSymIndex(const Elf32File *elf32, const char *name)
 }
 
 
-uint32_t elf32GetAmountSegment(const Elf32File *elf32)
+uint32_t elf32GetAmountSeg(const Elf32File *elf32)
 {
     if (elf32Check(elf32)) {
         ERROR("Invalid argument");
@@ -1133,7 +1133,7 @@ uint32_t elf32GetSectSize(const Elf32Shdr *elf32Sect)
 }
 
 
-uint32_t elf32GetSectVaddr(const Elf32Shdr *elf32Sect)
+uint32_t elf32GetSectAddr(const Elf32Shdr *elf32Sect)
 {
     if (elf32Sect == NULL) {
         ERROR("Invalid arguments");
@@ -1155,10 +1155,10 @@ uint32_t elf32GetSectFileoff(const Elf32Shdr *elf32Sect)
 }
 
 
-uint32_t elf32GetRelocationForAddr( const Elf32File *elf32
-                                  , const Elf32Shdr *sect
-                                  , uint32_t addr
-                                  )
+uint32_t elf32GetRelocForAddr( const Elf32File *elf32
+                             , const Elf32Shdr *sect
+                             , uint32_t addr
+                             )
 {
     if (  elf32Check(elf32)
        || sect == NULL
@@ -1251,7 +1251,7 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
     /***
      * symbolIndex -   index of target symbol in .dynsym section.
      */
-    uint32_t symbolIndex = elf32GetDSymIndex(elf32, func);
+    uint32_t symbolIndex = elf32GetDSymIndxByName(elf32, func);
     if (symbolIndex == (uint32_t)-1) {
         ERROR("Cannot get an index of a dynamic symbol %s.", func);
         return NULL;
@@ -1295,7 +1295,7 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
 }
 
 
-void *elf32GetRelocationDataAddr(const Elf32File *elf32, const char *func)
+void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func)
 {
     if (elf32Check(elf32) || func == NULL) {
         ERROR("Invalid arguments");
@@ -1305,7 +1305,7 @@ void *elf32GetRelocationDataAddr(const Elf32File *elf32, const char *func)
     /***
      * symbolIndex  -   index of target symbol in .dynsym section.
      */
-    uint32_t symbolIndex = elf32GetDSymIndex(elf32, func);
+    uint32_t symbolIndex = elf32GetDSymIndxByName(elf32, func);
     if (symbolIndex == (uint32_t)-1) {
         ERROR("Cannot get an index of a dynamic symbol %s.", func);
         return NULL;

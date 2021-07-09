@@ -417,7 +417,7 @@ uint32_t elf32GetSSymFileoff(const Elf32File *elf32, const Elf32Sym *sym);
  *  Fail:
  *      -1.
  */
-uint32_t elf32GetDSymIndex(const Elf32File *elf32, const char *name);
+uint32_t elf32GetDSymIndxByName(const Elf32File *elf32, const char *name);
 
 
 /***
@@ -430,7 +430,7 @@ uint32_t elf32GetDSymIndex(const Elf32File *elf32, const char *name);
  *  Fail:
  *      -1.
  */
-uint32_t elf32GetAmountSegment(const Elf32File *elf32);
+uint32_t elf32GetAmountSeg(const Elf32File *elf32);
 
 
 /***
@@ -526,7 +526,7 @@ uint32_t elf32GetSectSize(const Elf32Shdr *elf32Sect);
  *  Fail:
  *      -1.
  */
-uint32_t elf32GetSectVaddr(const Elf32Shdr *sect);
+uint32_t elf32GetSectAddr(const Elf32Shdr *sect);
 
 
 /***
@@ -557,7 +557,7 @@ uint32_t elf32GetSectFileoff(const Elf32Shdr *sect);
  *  Fail:
  *      NULL.
  */
-uint32_t elf32GetRelocationForAddr(const Elf32File *elf32, const Elf32Shdr *sect, uint32_t addr);
+uint32_t elf32GetRelocForAddr(const Elf32File *elf32, const Elf32Shdr *sect, uint32_t addr);
 
 
 /***
@@ -588,7 +588,7 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand);
  *  Fail:
  *      NULL point.
  */
-void *elf32GetRelocationDataAddr(const Elf32File *elf32, const char *func);
+void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func);
 
 #endif /* _ELF32_PARSE_H */
 

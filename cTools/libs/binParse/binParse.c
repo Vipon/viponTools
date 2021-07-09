@@ -47,18 +47,18 @@ BinParser binParser;
     binParser.getAddrSymByName = (BinGetAddrSymByName) &type ## GetAddrSymByName; \
     binParser.getSSymSize = (BinGetSSymSize) &type ## GetSSymSize; \
     binParser.getSSymFileoff = (BinGetSSymFileoff) &type ## GetSSymFileoff; \
-    binParser.getDSymIndex = (BinGetDSymIndex) &type ## GetDSymIndex; \
-    binParser.getAmountSegment = (BinGetAmountSegment) &type ## GetAmountSegment; \
+    binParser.getDSymIndxByName = (BinGetDSymIndxByName) &type ## GetDSymIndxByName; \
+    binParser.getAmountSeg = (BinGetAmountSeg) &type ## GetAmountSeg; \
     binParser.getSectByName = (BinGetSectByName) &type ## GetSectByName; \
     binParser.getLastLoadableSect = (BinGetLastLoadableSect) &type ## GetLastLoadableSect; \
     binParser.readSect = (BinReadSect) &type ## ReadSect; \
     binParser.getAmountSect = (BinGetAmountSect) &type ## GetAmountSect; \
     binParser.getSectName = (BinGetSectName) &type ## GetSectName; \
     binParser.getSectSize = (BinGetSectSize) &type ## GetSectSize; \
-    binParser.getSectVaddr = (BinGetSectVaddr) &type ## GetSectVaddr; \
+    binParser.getSectAddr = (BinGetSectAddr) &type ## GetSectAddr; \
     binParser.getSectFileoff = (BinGetSectFileoff) &type ## GetSectFileoff; \
-    binParser.getRelocationForAddr = (BinGetRelocationForAddr) &type ## GetRelocationForAddr; \
-    binParser.getRelocationDataAddr = (BinGetRelocationDataAddr) &type ## GetRelocationDataAddr;
+    binParser.getRelocForAddr = (BinGetRelocForAddr) &type ## GetRelocForAddr; \
+    binParser.getRelocDataAddr = (BinGetRelocDataAddr) &type ## GetRelocDataAddr;
 
 int initBinParser(const char *fn)
 {

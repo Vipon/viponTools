@@ -964,7 +964,7 @@ uint64_t elf64GetSSymFileoff(const Elf64File *elf64, const Elf64Sym *sym)
 }
 
 
-uint64_t elf64GetDSymIndex(const Elf64File *elf64, const char *name)
+uint64_t elf64GetDSymIndxByName(const Elf64File *elf64, const char *name)
 {
     if (elf64Check(elf64) || name == NULL) {
         ERROR("Invalid arguments");
@@ -986,7 +986,7 @@ uint64_t elf64GetDSymIndex(const Elf64File *elf64, const char *name)
 }
 
 
-uint64_t elf64GetAmountSegment(const Elf64File *elf64)
+uint64_t elf64GetAmountSeg(const Elf64File *elf64)
 {
     if (elf64Check(elf64)) {
         ERROR("Invalid argument");
@@ -1133,7 +1133,7 @@ uint64_t elf64GetSectSize(const Elf64Shdr *elf64Sect)
 }
 
 
-uint64_t elf64GetSectVaddr(const Elf64Shdr *elf64Sect)
+uint64_t elf64GetSectAddr(const Elf64Shdr *elf64Sect)
 {
     if (elf64Sect == NULL) {
         ERROR("Invalid arguments");
@@ -1155,10 +1155,10 @@ uint64_t elf64GetSectFileoff(const Elf64Shdr *elf64Sect)
 }
 
 
-uint64_t elf64GetRelocationForAddr( const Elf64File *elf64
-                                  , const Elf64Shdr *sect
-                                  , uint64_t addr
-                                  )
+uint64_t elf64GetRelocForAddr( const Elf64File *elf64
+                             , const Elf64Shdr *sect
+                             , uint64_t addr
+                             )
 {
     if (  elf64Check(elf64)
        || sect == NULL
@@ -1251,7 +1251,7 @@ void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand)
     /***
      * symbolIndex -   index of target symbol in .dynsym section.
      */
-    uint64_t symbolIndex = elf64GetDSymIndex(elf64, func);
+    uint64_t symbolIndex = elf64GetDSymIndxByName(elf64, func);
     if (symbolIndex == (uint64_t)-1) {
         ERROR("Cannot get an index of a dynamic symbol %s.", func);
         return NULL;
@@ -1294,7 +1294,7 @@ void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand)
 }
 
 
-void *elf64GetRelocationDataAddr(const Elf64File *elf64, const char *func)
+void *elf64GetRelocDataAddr(const Elf64File *elf64, const char *func)
 {
     if (elf64Check(elf64) || func == NULL) {
         ERROR("Invalid arguments");
@@ -1304,7 +1304,7 @@ void *elf64GetRelocationDataAddr(const Elf64File *elf64, const char *func)
     /***
      * symbolIndex  -   index of target symbol in .dynsym section.
      */
-    uint64_t symbolIndex = elf64GetDSymIndex(elf64, func);
+    uint64_t symbolIndex = elf64GetDSymIndxByName(elf64, func);
     if (symbolIndex == (uint64_t)-1) {
         ERROR("Cannot get an index of a dynamic symbol %s.", func);
         return NULL;
