@@ -27,6 +27,7 @@
 
 /* C standard headers */
 #include <stddef.h>
+#include <stdint.h>
 
 /*
  * Description:
@@ -34,12 +35,46 @@
  */
 size_t strlen(const char *addr);
 
-
 int strcmp(const char *s1, const char *s2);
-
 
 char *strncpy(char * __restrict dst, const char * __restrict src, size_t n);
 
+/***
+ *  The strtoi64() function converts the initial part of the string in @str to
+ *  an int64_t value according to the given base, which must be between 2 and 36
+ *  inclusive, or be the special value 0.
+ *
+ *  The string may begin with an arbitrary amount of white space (as determined
+ *  by isspace(3)) followed by a single optional '+' or '-' sign. If base is zero
+ *  or 16, the string may then include a "0x" or "0X" prefix, and the number will
+ *  be read in base 16; otherwise, a zero base is taken as 10 (decimal) unless
+ *  the next character is '0', in which case it is taken as 8 (octal).
+ *
+ *  The remainder of the string is converted to a long value in the obvious
+ *  manner, stopping at the first character which is not a valid digit in the
+ *  given base. (In bases above 10, the letter 'A' in either uppercase or
+ *  lowercase represents 10, 'B' represents 11, and so forth, with 'Z'
+ *  representing 35.)
+ *
+ *  If @end is not NULL, strtoi64() stores the address of the first invalid
+ *  character in @end. If there were no digits at all, strtoi64() stores the
+ *  original value of @str in @end (and returns 0). In particular, if @str is
+ *  not '\0' but @end is '\0' on return, the entire string is valid.
+ *
+ *  The strntoi64() function works just like the strtoi64() function, but looks
+ *  only at first sz base.
+ */
+int64_t strtoi64(const char *str, char **end, int base);
+int64_t strntoi64(const char *str, size_t sz, char **end, int base);
+
+/***
+ *  Description:
+ *      The memcpy() function copies n bytes from memory area src to
+ *      memory area dest. The memory areas must not overlap.
+ *  Return:
+ *      The memcpy() function returns a pointer to dest.
+ */
+void *memcpy(void *dest, const void *src, size_t n);
 
 /*
  * Description:
