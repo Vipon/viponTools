@@ -41,6 +41,12 @@
         exit(EXIT_FAILURE);                                                     \
     }
 
+#define EXPECT_VAL_NOT_EQ(val, res, format) \
+    if (val == res) {                       \
+        /*ERROR(format);*/                      \
+        exit(EXIT_FAILURE);                 \
+    }
+
 #define EXPECT_INT_EQ(val, res)   EXPECT_VAL_EQ(val, res, "%d")
 #define EXPECT_SIZET_EQ(val, res) EXPECT_VAL_EQ(val, res, "%zu")
 
