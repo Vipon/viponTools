@@ -1,5 +1,6 @@
 add_subdirectory(elfParse)
 add_subdirectory(machoParse)
+add_subdirectory(peParse)
 
 add_vipon_library(
   NAME binParse

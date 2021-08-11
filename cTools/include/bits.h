@@ -113,5 +113,11 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
 #define S32_TO_U64(s32) \
     ((uint64_t)((int64_t)s32))
 
+#define ALIGN_DOWN(val, align) \
+    (val & ~(align-1))
+
+#define ALIGN_UP(val, align) \
+    ((val & (align-1)) ? ALIGN_DOWN(val, align) + align : val)
+
 #endif /* _BITS_H */
 
