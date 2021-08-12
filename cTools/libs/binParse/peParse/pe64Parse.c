@@ -536,3 +536,12 @@ uint64_t pe64GetSSymAddr(const PESymbol *sym)
     return sym->Value;
 }
 
+uint64_t pe64GetAddrSymByName(const PE64File *pe, const char *name)
+{
+    if (pe == NULL || name == NULL)
+        return PE64_INV_ARG;
+
+    PESymbol *sym = pe64GetSymByName(pe, name);
+    return pe64GetSSymAddr(sym);
+}
+
