@@ -56,7 +56,7 @@
  */
 static ELF32_ERROR elf32ParseHeader(Elf32File *elf32)
 {
-    if (elf32 == NULL || elf32->fd < 0)
+    if (elf32 == NULL || IS_INV_FD(elf32->fd))
         return ELF32_INV_ARG;
 
     FileD fd = elf32->fd;
@@ -99,7 +99,7 @@ static ELF32_ERROR elf32ParseSections(Elf32File *elf32)
     /***
      * Sections are identified by an index into the section header table.
      */
-    if (elf32 == NULL || elf32->header == NULL || elf32->fd < 0)
+    if (elf32 == NULL || elf32->header == NULL || IS_INV_FD(elf32->fd))
         return ELF32_INV_ARG;
 
     /***
@@ -156,7 +156,7 @@ static ELF32_ERROR elf32ParseSections(Elf32File *elf32)
  */
 static ELF32_ERROR elf32ParseSegments(Elf32File *elf32)
 {
-    if (elf32 == NULL || elf32->fd < 0 || elf32->header == NULL)
+    if (elf32 == NULL || IS_INV_FD(elf32->fd) || elf32->header == NULL)
         return ELF32_INV_ARG;
 
     size_t phoff = elf32->header->e_phoff;
@@ -483,8 +483,8 @@ Elf32File *elf32Parse(const char *fn)
     }
 
     LOG("start elf32Parse\n")
-    FileD fd = 0;
-    if ((fd = open(fn, O_RDONLY)) < 0) {
+    FileD fd = open(fn, O_RDONLY);
+    if (IS_INV_FD(fd)) {
         PERROR("open()");
         return NULL;
     }
@@ -496,7 +496,7 @@ Elf32File *elf32Parse(const char *fn)
     }
 
     elf32->fd = fd;
-    uint32_t nameSize = strlen(fn) * sizeof(char);
+    uint32_t nameSize = (uint32_t)(strlen(fn) * sizeof(char));
     if ((elf32->fn = (char*) Calloc(nameSize, sizeof(char))) == NULL) {
         ERROR("Cannot allocate %u bytes", nameSize);
         goto eexit_1;
@@ -597,7 +597,7 @@ void elf32Free(Elf32File *elf32)
 
     LOG("start elf32Free");
 
-    if (elf32->fd >= 0) {
+    if (IS_VLD_FD(elf32->fd)) {
         LOG("close file");
         close(elf32->fd);
         elf32->fd = 0;
@@ -1075,7 +1075,7 @@ Elf32Shdr *elf32GetLastLoadableSect(const Elf32File *elf32)
 
 void *elf32ReadSect(const Elf32File *elf32, const Elf32Shdr *sectionHeader)
 {
-    if (elf32 == NULL || elf32->fd < 0 || sectionHeader == NULL) {
+    if (elf32 == NULL || IS_INV_FD(elf32->fd) || sectionHeader == NULL) {
         ERROR("Invalid arguments");
         return NULL;
     }
@@ -1233,8 +1233,6 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
         ERROR("Unknown relocation type.");
         return ELF32_NO_RELOCATION;
     }
-
-    return 0;
 }
 
 

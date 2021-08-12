@@ -12,7 +12,7 @@
 #if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
 # include <unistd.h>
 #elif defined(__WIN__)
-# include <windows.h>
+# include <Windows.h>
 # define getpid GetCurrentProcessId
 #endif
 

@@ -30,7 +30,7 @@
 
 static PE64_ERROR pe64ParseDosHeader(PE64File *pe)
 {
-    if (pe == NULL || pe->fd < 0)
+    if (pe == NULL || IS_INV_FD(pe->fd))
         return PE64_INV_ARG;
 
     FileD fd = pe->fd;
@@ -263,8 +263,8 @@ PE64File *pe64Parse(const char *fn)
         return NULL;
     }
 
-    FileD fd = 0;
-    if ((fd = open(fn, O_RDONLY)) < 0) {
+    FileD fd = open(fn, O_RDONLY);
+    if (IS_INV_FD(fd)) {
         PERROR("open()");
         return NULL;
     }
@@ -331,7 +331,7 @@ eexit_0:
 void pe64Free(PE64File *pe)
 {
     if (pe == NULL)
-        return
+        return;
 
     Free(pe->fn);
     close(pe->fd);
@@ -356,14 +356,15 @@ uint64_t pe64GetMachineID(const PE64File *pe)
     return pe->fileHeader->Machine;
 }
 
-PESection *pe64GetSectByAddr(const PE64File *pe)
+PESection *pe64GetSectByAddr(const PE64File *pe, uint64_t addr)
 {
     if (pe == NULL)
         return NULL;
 
     WORD i = 0;
     for (i = 0; i < pe->sectNum; ++i)
-        return &pe->sections[i];
+        if (pe->sections[i].VirtualAddress == addr)
+            return &pe->sections[i];
 
     return NULL;
 }

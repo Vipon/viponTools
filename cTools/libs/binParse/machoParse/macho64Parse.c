@@ -51,7 +51,7 @@
  */
 static FatHeader *macho64ParseFatHeader(const Macho64File *mf)
 {
-    if (mf == NULL || mf->fd < 0)
+    if (mf == NULL || IS_INV_FD(mf->fd))
         return NULL;
 
     FileD fd = mf->fd;
@@ -73,7 +73,7 @@ static FatHeader *macho64ParseFatHeader(const Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
 {
-    if (mf == NULL || mf->fd < 0)
+    if (mf == NULL || IS_INV_FD(mf->fd))
         return MACHO64_INV_ARG;
 
     FileD fd = mf->fd;
@@ -126,7 +126,7 @@ static MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseLCommands(Macho64File *mf)
 {
-    if (mf == NULL || mf->fd < 0 || mf->header == NULL)
+    if (mf == NULL || IS_INV_FD(mf->fd) || mf->header == NULL)
         return MACHO64_INV_ARG;
 
     FileD fd = mf->fd;
@@ -162,7 +162,7 @@ static MACHO64_ERROR macho64ParseSymtabCom(Macho64File *mf)
     uint32_t i = 0;
     uint32_t ncmds = mf->header->ncmds;
     uint32_t cmdsize = 0;
-    LoadCommand *lcom = (LoadCommand*)mf->lcom;
+    LoadCommand *lcom = (LoadCommand*)(void*)mf->lcom;
     for (i = 0; i < ncmds; ++i) {
         lcom = (LoadCommand*) ((size_t)lcom + cmdsize);
         cmdsize = lcom->cmdsize;
@@ -189,7 +189,7 @@ static MACHO64_ERROR macho64ParseSymtabCom(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseSymTab(Macho64File *mf)
 {
-    if (mf == NULL || mf->fd < 0 || mf->symtabCmd == NULL)
+    if (mf == NULL || IS_INV_FD(mf->fd) || mf->symtabCmd == NULL)
         return MACHO64_INV_ARG;
 
     uint32_t num = mf->symtabCmd->nsyms;
@@ -219,7 +219,7 @@ static MACHO64_ERROR macho64ParseSymTab(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseSortSymTab(Macho64File *mf)
 {
-    if (mf == NULL || mf->fd < 0 || mf->symtabCmd == NULL)
+    if (mf == NULL || IS_INV_FD(mf->fd) || mf->symtabCmd == NULL)
         return MACHO64_INV_ARG;
 
     FileD fd = mf->fd;
@@ -284,7 +284,7 @@ static MACHO64_ERROR macho64ParseDysymtabCom(Macho64File *mf)
     uint32_t i = 0;
     uint32_t ncmds = mf->header->ncmds;
     uint32_t cmdsize = 0;
-    LoadCommand *lcom = (LoadCommand*)mf->lcom;
+    LoadCommand *lcom = (LoadCommand*)(void*)mf->lcom;
     for (i = 0; i < ncmds; ++i) {
         lcom = (LoadCommand*) ((size_t)lcom + cmdsize);
         cmdsize = lcom->cmdsize;
@@ -311,7 +311,7 @@ static MACHO64_ERROR macho64ParseDysymtabCom(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseInderectSymtab(Macho64File *mf)
 {
-    if (mf == NULL || mf->fd < 0)
+    if (mf == NULL || IS_INV_FD(mf->fd))
         return MACHO64_INV_ARG;
 
     if (mf->dynsymCmd != NULL) {
@@ -346,26 +346,26 @@ static MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
 
     uint32_t i = 0;
     size_t cmdsize = 0;
-    LoadCommand *lc = (LoadCommand*)mf->lcom;
+    LoadCommand *lc = (LoadCommand*)(void*)mf->lcom;
     for (i = 0; i < mf->header->ncmds; ++i) {
         lc = (LoadCommand*) ((size_t)lc + cmdsize);
         cmdsize = lc->cmdsize;
         if (lc->cmd == LC_SEGMENT_64) {
-            char *name = ((Macho64Seg*)lc)->segname;
+            char *name = ((Macho64Seg*)(void*)lc)->segname;
             if (strcmp("__PAGEZERO", name) == 0)
-                mf->segments[PAGEZERO_NSEG] = (Macho64Seg*)lc;
+                mf->segments[PAGEZERO_NSEG] = (Macho64Seg*)(void*)lc;
             if (strcmp("__TEXT", name) == 0)
-                mf->segments[TEXT_NSEG] = (Macho64Seg*)lc;
+                mf->segments[TEXT_NSEG] = (Macho64Seg*)(void*)lc;
             if (strcmp("__DATA", name) == 0)
-                mf->segments[DATA_NSEG] = (Macho64Seg*)lc;
+                mf->segments[DATA_NSEG] = (Macho64Seg*)(void*)lc;
             if (strcmp("__OBJC", name) == 0)
-                mf->segments[OBJC_NSEG] = (Macho64Seg*)lc;
+                mf->segments[OBJC_NSEG] = (Macho64Seg*)(void*)lc;
             if (strcmp("__IMPORT", name) == 0)
-                mf->segments[IMPORT_NSEG] = (Macho64Seg*)lc;
+                mf->segments[IMPORT_NSEG] = (Macho64Seg*)(void*)lc;
             if (strcmp("__LINKEDIT", name) == 0)
-                mf->segments[LINKEDIT_NSEG] = (Macho64Seg*)lc;
+                mf->segments[LINKEDIT_NSEG] = (Macho64Seg*)(void*)lc;
             if (strcmp("", name) == 0)
-                mf->segments[UNNAMED_NSEG] = (Macho64Seg*)lc;
+                mf->segments[UNNAMED_NSEG] = (Macho64Seg*)(void*)lc;
         }
     }
 
@@ -377,8 +377,8 @@ Macho64File *macho64Parse(const char *fn)
     if (fn == NULL)
         return NULL;
 
-    FileD fd = 0;
-    if ((fd = open(fn, O_RDONLY)) < 0) {
+    FileD fd = open(fn, O_RDONLY);
+    if (IS_INV_FD(fd)) {
         PERROR("open()");
         return NULL;
     }
@@ -1002,7 +1002,7 @@ Macho64Seg *macho64GetLastSeg(const Macho64File *mf)
     if (macho64Check(mf))
         return NULL;
 
-    uint64_t i = 0;
+    int64_t i = 0;
     for (i = MAX_NSEG - 1; i >= 0; --i)
         if (mf->segments[i])
             return mf->segments[i];
@@ -1182,7 +1182,7 @@ Macho64Sect *macho64GetLastLoadableSect(const Macho64File *mf)
     uint64_t i = MAX_NSEG - 1;
     for (; i > 0; --i) {
         Macho64Seg *seg = mf->segments[i];
-        uint64_t j = seg->nsects;
+        int64_t j = seg->nsects;
         Macho64Sect *sect = macho64GetAllSect(seg);
         for (; j >= 0; --j)
             if (sect[i].addr)
@@ -1195,7 +1195,7 @@ Macho64Sect *macho64GetLastLoadableSect(const Macho64File *mf)
 
 void *macho64ReadSect(const Macho64File *mf, const Macho64Sect *sect)
 {
-    if (mf == NULL || mf->fd < 0 || sect == NULL) {
+    if (mf == NULL || IS_INV_FD(mf->fd) || sect == NULL) {
         ERROR("Invalid arguments");
         return NULL;
     }

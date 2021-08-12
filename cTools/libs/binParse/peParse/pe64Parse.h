@@ -26,7 +26,7 @@
 #define __PE_64_PARSE
 
 #include "file.h"
-#include <windows.h>
+#include <Windows.h>
 
 /***
  *  typedef struct _IMAGE_DOS_HEADER
@@ -218,7 +218,7 @@ typedef struct {
     PESection      *sections;   // Sections table
     PESymbol       *symtab;     // Symbol table
     PESymbol       *sortSymtab; // Sorted symbol table
-    DWORD          symNum;      // Number of symbols in symtab
+    uint64_t       symNum;      // Number of symbols in symtab
     char           *strtab;     // String table
 } PE64File;
 
@@ -268,7 +268,7 @@ PE64_ERROR pe64Check(const PE64File *pe);
  */
 uint64_t pe64GetMachineID(const PE64File *pe);
 
-PESection *pe64GetSectByAddr(const PE64File *pe);
+PESection *pe64GetSectByAddr(const PE64File *pe, uint64_t addr);
 PESection *pe64GetSectByNum(const PE64File *pe, uint64_t sectNum);
 
 const char *pe64GetShortSectName(const PE64File *pe, const PESection *sect);
