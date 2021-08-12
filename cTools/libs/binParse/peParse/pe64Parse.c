@@ -163,6 +163,25 @@ static PE64_ERROR pe64ParseSymtab(PE64File *pe)
     return PE64_OK;
 }
 
+static PE64_ERROR pe64ParseSortSymTab(PE64File *pe)
+{
+    if (pe == NULL)
+        return PE64_INV_ARG;
+
+    PESymbol *symtab = pe64GetSSymTab(pe);
+    uint64_t num = pe64GetAmountSSym(pe);
+    uint64_t size = num * sizeof(PESymbol);
+    PESymbol *sortTab = malloc(size);
+    if (sortTab == NULL)
+        return PE64_NO_MEM;
+
+    memcpy(sortTab, symtab, size);
+    qsort(sortTab, num, sizeof(PESymbol), pe64CmpSym);
+
+    pe->sortSymtab = sortTab;
+    return PE64_OK;
+}
+
 static PE64_ERROR pe64ParseStrtab(PE64File *pe)
 {
     if (pe == NULL || pe->fileHeader == NULL)
@@ -287,6 +306,9 @@ PE64File *pe64Parse(const char *fn)
             ERROR("Cannot parse symbol table");
             goto eexit_1;
         }
+    } else if (pe64ParseSortSymTab(pe)) {
+        ERROR("Cannot parse sorted symbol table");
+        goto eexit_1;
     }
 
     if (pe64ParseStrtab(pe)) {
@@ -425,6 +447,50 @@ uint64_t pe64GetSectEndFileoff(const PESection *sect)
     return 0;
 }
 
+PESymbol *pe64GetSSymTab(const PE64File *pe)
+{
+    if (pe == NULL)
+        return NULL;
+
+    return pe->symtab;
+}
+
+PESymbol *pe64GetSSymSortTab(const PE64File *pe)
+{
+    if (pe == NULL)
+        return NULL;
+
+    return pe->sortSymtab;
+}
+
+PESymbol *pe64GetSymByName(const PE64File *pe, const char *name)
+{
+    if (pe == NULL || name == NULL)
+        return NULL;
+
+    uint64_t i = 0;
+    uint64_t num = pe64GetAmountSSym(pe);
+    for (i = 0; i < num; ++i) {
+        curName = pe64GetSymName(pe->symtab[i]);
+        if (strcmp(curName, name) == 0)
+            return pe->symtab + i;
+    }
+
+    ERROR("There is no symbol %s.", name);
+    return NULL;
+}
+
+int pe64CmpSym(const void *a, const void *b)
+{
+    int64_t d = (int64_t)(((const PESymbol*)a)->value - ((const PESymbol*)b)->value);
+    if (d > 0)
+        return 1;
+    else if (d < 0)
+        return -1;
+    else
+        return 0;
+}
+
 const char*pe64GetLongSymName(const PE64File *pe, const PESymbol *sym)
 {
     if (pe == NULL || sym == NULL)
@@ -451,5 +517,13 @@ const char*pe64GetSymName(const PE64File *pe, const PESymbol *sym)
         return pe64GetShortSymName(pe, sym);
     else
         return pe64GetLongSymName(pe,sym);
+}
+
+uint64_t pe64GetAmountSSym(const PE64File *pe)
+{
+    if (pe == NULL)
+        return PE64_INV_ARG;
+
+    return pe->symNum;
 }
 

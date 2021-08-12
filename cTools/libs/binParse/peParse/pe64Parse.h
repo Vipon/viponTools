@@ -217,6 +217,7 @@ typedef struct {
     WORD           sectNum;     // Sections number
     PESection      *sections;   // Sections table
     PESymbol       *symtab;     // Symbol table
+    PESymbol       *sortSymtab; // Sorted symbol table
     DWORD          symNum;      // Number of symbols in symtab
     char           *strtab;     // String table
 } PE64File;
@@ -253,6 +254,8 @@ static_assert(((int64_t)PE64_INV_ARG) < 0, "ERRORS must be negative");
 PE64File *pe64Parse(const char *fn);
 void pe64Free(PE64File *pe);
 
+PE64_ERROR pe64Check(const PE64File *pe);
+
 /***
  * List of Machine_ID (not all):
  * IMAGE_FILE_MACHINE_UNKNOWN   0x0     To any machine type
@@ -275,9 +278,25 @@ uint64_t pe64GetSectAddr(const PESection *sect);
 uint64_t pe64GetSectFileoff(const PESection *sect);
 uint64_t pe64GetSectEndFileoff(const PESection *sect);
 
+PESymbol *pe64GetSSymTab(const PE64File *pe);
+PESymbol *pe64GetSSymSortTab(const PE64File *pe);
+PESymbol *pe64GetSymByName(const PE64File *pe, const char *name);
+
+/***
+ * Description:
+ *  Function for work with qsort. Function compares addresses of symbols and
+ * Output:
+ *  1 - if (a->addr > b->addr)
+ *  -1 - if (a->addr < b->addr)
+ *  0 - if (a->addr == b->addr)
+ */
+int pe64CmpSym(const void *a, const void *b);
+
 const char*pe64GetLongSymName(const PE64File *pe, const PESymbol *sym);
 const char*pe64GetShortSymName(const PE64File *pe, const PESymbol *sym);
 const char*pe64GetSymName(const PE64File *pe, const PESymbol *sym);
+
+uint64_t pe64GetAmountSSym(const PE64File *pe);
 
 #endif /* __PE_64_PARSE */
 
