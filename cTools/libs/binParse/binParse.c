@@ -24,6 +24,8 @@
 
 #include "comdef.h"
 #include "binParse.h"
+#include "pe64Parse.h"
+#include "pe64Printer.h"
 #include "elf64Parse.h"
 #include "elf32Parse.h"
 #include "macho64Parse.h"
@@ -72,7 +74,10 @@ int initBinParser(const char *fn)
     } else if ((bin = macho64Parse(fn)) != NULL) {
         binParser.type = MACHO64;
         INIT_BIN_PARSER_FUNCS(macho64);
-    } else {
+    } /*else if ((bin = pe64Parse(fn)) != NULL) {
+        binParser.type = PE64;
+        INIT_BIN_PARSER_FUNCS(pe64);
+    } */ else {
 #ifndef __WIN__
         ERROR("Unknown FileType\n");
         return -1;

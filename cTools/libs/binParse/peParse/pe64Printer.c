@@ -340,14 +340,14 @@ void pe64PrintSymbols(const PE64File *pe)
     printf("-------- ");
     printf("--------\n");
 
-    DWORD num = pe->symNum;
-    DWORD i = 0;
+    uint64_t num = pe->symNum;
+    uint64_t i = 0;
     for (i = 0; i < num; ++i) {
         PESymbol *sym = pe->symtab + i;
 
-        printf("%.8lu ", i);
+        printf("%.8"PRIu64" ", i);
         pe64PrintSymbol(pe, sym);
-        DWORD j = sym->NumberOfAuxSymbols;
+        uint64_t j = sym->NumberOfAuxSymbols;
         for (; j; j--) {
             PEAuxSymbol *auxSym = (PEAuxSymbol *)(pe->symtab + i + j);
             pe64PrintAuxSymbol(pe, sym, auxSym);

@@ -43,6 +43,8 @@ typedef int FileD;
 typedef int FileFlag;
 
 #define INV_FD -1
+#define IS_VLD_FD(fd) (fd >= 0)
+#define IS_INV_FD(fd) (fd < 0)
 
 /***
  * \def mapFileForRead
@@ -60,7 +62,7 @@ void *mapFileForRead(FileD fd, size_t fileSize);
 int unmapFile(void *addr, size_t fileSize);
 
 #elif defined(__WIN__)
-# include <windows.h>
+# include <Windows.h>
 # define O_RDONLY       GENERIC_READ
 # define O_WRONLY       GENERIC_WRITE
 # define O_RDWR         O_RDONLY | O_WRONLY
@@ -82,6 +84,8 @@ typedef HANDLE FileD;
 typedef DWORD FileFlag;
 
 #define INV_FD NULL
+#define IS_VLD_FD(fd) (fd != INV_FD)
+#define IS_INV_FD(fd) (fd == INV_FD)
 
 FileD open(const char *fn, FileFlag flags);
 void close(FileD fd);

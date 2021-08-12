@@ -101,7 +101,7 @@ int unmapFile(void *addr, size_t fileSize)
 }
 
 #elif defined(__WIN__)
-#include <windows.h>
+#include <Windows.h>
 
 FileD open(const char *fn, FileFlag flags)
 {
@@ -128,7 +128,7 @@ off_t lseek(FileD fd, off_t offset, int whence)
 ssize_t read(FileD fd, void *buf, size_t count)
 {
     DWORD num = 0;
-    BOOL r = ReadFile(fd, buf, count, &num, NULL);
+    BOOL r = ReadFile(fd, buf, (DWORD)count, &num, NULL);
     if (r)
         return num;
     else
@@ -142,7 +142,7 @@ size_t getFileSize(FileD fd)
 
 void *readFromFile(FileD fd, size_t *off, size_t size)
 {
-    if (fd < 0) {
+    if (fd == NULL) {
         STDERROR_PRINT_DEBUG("Invalid arguments.");
         return NULL;
     }

@@ -34,7 +34,7 @@
 
 void Free(void *ptr)
 {
-    return free(ptr);
+    free(ptr);
 }
 
 void *Malloc(size_t num)
@@ -73,7 +73,7 @@ long getPageSize(void)
 
 #elif defined(__WIN__)
 # include <malloc.h>
-# include <windows.h>
+# include <Windows.h>
 
 long getPageSize(void)
 {

@@ -56,7 +56,7 @@
  */
 static ELF64_ERROR elf64ParseHeader(Elf64File *elf64)
 {
-    if (elf64 == NULL || elf64->fd < 0)
+    if (elf64 == NULL || IS_INV_FD(elf64->fd))
         return ELF64_INV_ARG;
 
     FileD fd = elf64->fd;
@@ -99,7 +99,7 @@ static ELF64_ERROR elf64ParseSections(Elf64File *elf64)
     /***
      * Sections are identified by an index into the section header table.
      */
-    if (elf64 == NULL || elf64->header == NULL || elf64->fd < 0)
+    if (elf64 == NULL || elf64->header == NULL || IS_INV_FD(elf64->fd))
         return ELF64_INV_ARG;
 
     /***
@@ -156,7 +156,7 @@ static ELF64_ERROR elf64ParseSections(Elf64File *elf64)
  */
 static ELF64_ERROR elf64ParseSegments(Elf64File *elf64)
 {
-    if (elf64 == NULL || elf64->fd < 0 || elf64->header == NULL)
+    if (elf64 == NULL || IS_INV_FD(elf64->fd) || elf64->header == NULL)
         return ELF64_INV_ARG;
 
     uint64_t phoff = elf64->header->e_phoff;
@@ -483,8 +483,8 @@ Elf64File *elf64Parse(const char *fn)
     }
 
     LOG("start elf64Parse\n")
-    FileD fd = 0;
-    if ((fd = open(fn, O_RDONLY)) < 0) {
+    FileD fd = open(fn, O_RDONLY);
+    if (IS_INV_FD(fd)) {
         PERROR("open()");
         return NULL;
     }
@@ -597,7 +597,7 @@ void elf64Free(Elf64File *elf64)
 
     LOG("start elf64Free");
 
-    if (elf64->fd >= 0) {
+    if (IS_VLD_FD(elf64->fd)) {
         LOG("close file");
         close(elf64->fd);
         elf64->fd = 0;
@@ -1075,7 +1075,7 @@ Elf64Shdr *elf64GetLastLoadableSect(const Elf64File *elf64)
 
 void *elf64ReadSect(const Elf64File *elf64, const Elf64Shdr *sectionHeader)
 {
-    if (elf64 == NULL || elf64->fd < 0 || sectionHeader == NULL) {
+    if (elf64 == NULL || IS_INV_FD(elf64->fd) || sectionHeader == NULL) {
         ERROR("Invalid arguments");
         return NULL;
     }
@@ -1233,8 +1233,6 @@ uint64_t elf64GetRelocForAddr( const Elf64File *elf64
         ERROR("Unknown relocation type.");
         return ELF64_NO_RELOCATION;
     }
-
-    return 0;
 }
 
 

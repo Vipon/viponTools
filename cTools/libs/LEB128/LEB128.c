@@ -71,7 +71,7 @@ uint8_t* toULEB128(uint64_t v, uint8_t* buf, size_t size)
 }
 
 
-uint8_t* fromULEB128(uint8_t* p, uint64_t* res)
+uint8_t *fromULEB128(uint8_t *p, uint64_t *res)
 {
     if (p == NULL || res == NULL) {
         ERROR("NULL pointer.");
@@ -83,7 +83,7 @@ uint8_t* fromULEB128(uint8_t* p, uint64_t* res)
 
     do {
         if (i >= sizeof(*res)) {
-            ERROR("wrong ULEB128 record %"PRIu64".", *(uint64_t*)p);
+            ERROR("wrong ULEB128 record %"PRIu64".", *(uint64_t*)(void*)p);
             return NULL;
         }
 

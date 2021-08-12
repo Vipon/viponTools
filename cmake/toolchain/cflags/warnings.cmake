@@ -8,6 +8,21 @@ if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
   append_cflags(WARNING_FLAGS -Wduplicated-branches -Wduplicated-cond)
 endif()
 
+if (MSVC)
+  append_cflags(WARNING_FLAGS
+    -Wno-unknown-argument
+    -Wno-reserved-id-macro
+    -Wno-extra-semi-stmt
+    -Wno-documentation-unknown-command
+    -Wno-microsoft-fixed-enum
+    -Wno-unused-command-line-argument
+    -Wno-c++98-compat
+    -Wno-covered-switch-default
+    -Wno-gnu
+    -Wno-empty-translation-unit
+  )
+endif (MSVC)
+
 set(WARNING_CXXFLAGS "${WARNING_FLAGS}")
 
 # only C warning flags

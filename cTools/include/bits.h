@@ -25,6 +25,10 @@
 #ifndef _BITS_H
 #define _BITS_H
 
+#ifndef __STDC__
+# define __STDC__ 0
+#endif /* __STDC__ */
+
 #if __STDC__ == 1 || __STDC_HOSTED__ == 1
 #include <stdio.h>
 #include <stdint.h>
