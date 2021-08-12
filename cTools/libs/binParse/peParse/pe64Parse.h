@@ -298,6 +298,7 @@ const char*pe64GetSymName(const PE64File *pe, const PESymbol *sym);
 
 uint64_t pe64GetAmountSSym(const PE64File *pe);
 uint64_t pe64GetSSymAddr(const PESymbol *sym);
+uint64_t pe64GetAddrSymByName(const PE64File *pe, const char *name);
 
 #endif /* __PE_64_PARSE */
 
