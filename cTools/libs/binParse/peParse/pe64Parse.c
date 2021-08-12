@@ -471,9 +471,10 @@ PESymbol *pe64GetSymByName(const PE64File *pe, const char *name)
     uint64_t i = 0;
     uint64_t num = pe64GetAmountSSym(pe);
     for (i = 0; i < num; ++i) {
-        curName = pe64GetSymName(pe->symtab[i]);
+        PESymbol *sym = pe->symtab + i;
+        const char *curName = pe64GetSymName(pe, sym);
         if (strcmp(curName, name) == 0)
-            return pe->symtab + i;
+            return sym;
     }
 
     ERROR("There is no symbol %s.", name);
@@ -482,7 +483,7 @@ PESymbol *pe64GetSymByName(const PE64File *pe, const char *name)
 
 int pe64CmpSym(const void *a, const void *b)
 {
-    int64_t d = (int64_t)(((const PESymbol*)a)->value - ((const PESymbol*)b)->value);
+    int64_t d = (int64_t)(((const PESymbol*)a)->Value - ((const PESymbol*)b)->Value);
     if (d > 0)
         return 1;
     else if (d < 0)
@@ -525,5 +526,13 @@ uint64_t pe64GetAmountSSym(const PE64File *pe)
         return PE64_INV_ARG;
 
     return pe->symNum;
+}
+
+uint64_t pe64GetSSymAddr(const PESymbol *sym)
+{
+    if (sym == NULL)
+        return PE64_INV_ARG;
+
+    return sym->Value;
 }
 
