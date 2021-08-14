@@ -27,6 +27,13 @@
 
 #include "pe64Parse.h"
 
+void pe64PrintDosHeader(const PE64File *pe);
+void pe64PrintFileHeader(const PE64File *pe);
+void pe64PrintOptHeader(const PE64File *pe);
+void pe64PrintNtHeader(const PE64File *pe);
+void pe64PrintDataDir(const DataDir *dataDir);
+
+void pe64PrintSectName(const PE64File *pe, const PESection *sect);
 void pe64PrintSection(const PE64File *pe, const PESection *sect);
 void pe64PrintSections(const PE64File *pe);
 

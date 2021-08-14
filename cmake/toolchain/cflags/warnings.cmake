@@ -23,6 +23,12 @@ if (MSVC)
   )
 endif (MSVC)
 
+if (WIN32)
+  append_cflags(WARNING_FLAGS
+    -Wno-deprecated-declarations
+  )
+endif (WIN32)
+
 set(WARNING_CXXFLAGS "${WARNING_FLAGS}")
 
 # only C warning flags

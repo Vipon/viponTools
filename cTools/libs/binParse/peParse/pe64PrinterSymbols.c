@@ -1,51 +1,8 @@
+#include "comdef.h"
 #include "pe64Printer.h"
 
 #include <stdio.h>
 #include <inttypes.h>
-
-static void pe64PrintSectName(const PE64File *pe, const PESection *sect)
-{
-    if (pe == NULL || sect == NULL)
-        return;
-
-    switch (pe->type) {
-    case PE64_EXEC:
-    case PE64_SHARED:
-        // For exec and shared all long name are truncated to 8 characters
-        printf("%.*s", IMAGE_SIZEOF_SHORT_NAME, sect->Name);
-        break;
-    case PE64_OBJ:
-        if (sect->Name[0] == '/')
-            printf("%16s ", pe64GetLongSectName(pe, sect));
-        else
-            printf("%16.*s ", IMAGE_SIZEOF_SHORT_NAME, sect->Name);
-
-        break;
-    default:
-        //ERROR("Unknown file type");
-        break;
-    }
-}
-
-void pe64PrintSection(const PE64File *pe, const PESection *sect)
-{
-    if (pe == NULL || sect == NULL)
-        return;
-
-    printf("\tName:\t");
-    pe64PrintSectName(pe, sect);
-    putchar('\n');
-}
-
-void pe64PrintSections(const PE64File *pe)
-{
-    if (pe == NULL || pe->sections == NULL)
-        return;
-
-    WORD i = 0;
-    for (i = 0; i < pe->sectNum; ++i)
-        pe64PrintSection(pe, &pe->sections[i]);
-}
 
 static void pe64PrintSymName(const PE64File *pe, const PESymbol *sym)
 {
@@ -72,7 +29,7 @@ static void pe64PrintSymSection(const PE64File *pe, const PESymbol *sym)
         return;
 
     SHORT sectNum = sym->SectionNumber;
-    PESection *sect = pe64GetSectByNum(pe, (uint64_t)sectNum);
+    PESection *sect = pe64GetSectByIndx(pe, (uint64_t)sectNum);
     switch(sectNum) {
     case IMAGE_SYM_UNDEFINED:
         printf("%16s ", "N_UNDEF");
@@ -277,7 +234,7 @@ void pe64PrintSymbol(const PE64File *pe, const PESymbol *sym)
     pe64PrintSymStorageClass(sym);
     pe64PrintSymAuxilary(sym);
 
-    putchar('\n');
+    NEW_LINE;
 }
 
 void pe64PrintAuxSymSect(const PE64File *pe, const PEAuxSymbol *auxSym)
@@ -317,7 +274,7 @@ void pe64PrintAuxSymbol(const PE64File *pe, const PESymbol *sym, const PEAuxSymb
         break;
     }
 
-    putchar('\n');
+    NEW_LINE;
 }
 
 void pe64PrintSymbols(const PE64File *pe)

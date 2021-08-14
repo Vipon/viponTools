@@ -235,6 +235,29 @@ static PE64_ERROR pe64ParseMaybeObj(PE64File *pe)
     case IMAGE_FILE_MACHINE_ARMNT:
     case IMAGE_FILE_MACHINE_I386:
     case IMAGE_FILE_MACHINE_IA64:
+    case IMAGE_FILE_MACHINE_R3000:
+    case IMAGE_FILE_MACHINE_R4000:
+    case IMAGE_FILE_MACHINE_R10000:
+    case IMAGE_FILE_MACHINE_WCEMIPSV2:
+    case IMAGE_FILE_MACHINE_ALPHA:
+    case IMAGE_FILE_MACHINE_SH3:
+    case IMAGE_FILE_MACHINE_SH3DSP:
+    case IMAGE_FILE_MACHINE_SH3E:
+    case IMAGE_FILE_MACHINE_SH4:
+    case IMAGE_FILE_MACHINE_SH5:
+    case IMAGE_FILE_MACHINE_THUMB:
+    case IMAGE_FILE_MACHINE_AM33:
+    case IMAGE_FILE_MACHINE_POWERPC:
+    case IMAGE_FILE_MACHINE_POWERPCFP:
+    case IMAGE_FILE_MACHINE_MIPS16:
+    case IMAGE_FILE_MACHINE_ALPHA64:
+    case IMAGE_FILE_MACHINE_MIPSFPU:
+    case IMAGE_FILE_MACHINE_MIPSFPU16:
+    case IMAGE_FILE_MACHINE_TRICORE:
+    case IMAGE_FILE_MACHINE_CEF:
+    case IMAGE_FILE_MACHINE_EBC:
+    case IMAGE_FILE_MACHINE_M32R:
+    case IMAGE_FILE_MACHINE_CEE:
         break;
     default:
         return PE64_INV_MACHINE_TYPE;
@@ -369,7 +392,7 @@ PESection *pe64GetSectByAddr(const PE64File *pe, uint64_t addr)
     return NULL;
 }
 
-PESection *pe64GetSectByNum(const PE64File *pe, uint64_t sectNum)
+PESection *pe64GetSectByIndx(const PE64File *pe, uint64_t sectNum)
 {
     if (pe == NULL)
         return NULL;
@@ -378,6 +401,49 @@ PESection *pe64GetSectByNum(const PE64File *pe, uint64_t sectNum)
         return &pe->sections[sectNum - 1]; // sections enumerate from 1, not 0
 
     return NULL;
+}
+
+PESection *pe64GetSectByName(const PE64File *pe, const char *name)
+{
+    if (pe == NULL || name == NULL)
+        return NULL;
+
+    uint64_t i = 0;
+    uint64_t num = pe64GetAmountSect(pe);
+    for (i = 0; i < num; ++i) {
+        PESection *sect = pe->sections + i;
+        const char *curName = pe64GetSectName(pe, sect);
+        if (strcmp(curName, name) == 0)
+            return sect;
+    }
+
+    return NULL;
+}
+
+PESection *pe64GetLastLoadableSect(const PE64File *pe)
+{
+    if (pe == NULL)
+        return NULL;
+
+    int64_t i = (int64_t)pe64GetAmountSect(pe);
+    for (; i >= 0; --i) {
+        PESection *sect = pe->sections + i;
+        if (IS_PE64_SECT_LOADABLE(sect))
+            return sect;
+    }
+
+    return NULL;
+}
+
+void *pe64ReadSect(const PE64File *pe, const PESection *sect)
+{
+    if (pe == NULL || sect == NULL)
+        return NULL;
+
+    FileD fd = pe->fd;
+    uint64_t size = pe64GetSectSize(sect);
+    uint64_t fileOff = pe64GetSectFileoff(sect);
+    return readFromFile(fd, (size_t*)&fileOff, size);
 }
 
 const char *pe64GetShortSectName(const PE64File *pe, const PESection *sect)
@@ -424,12 +490,28 @@ const char *pe64GetSectName(const PE64File *pe, const PESection *sect)
     }
 }
 
+uint64_t pe64GetAmountSect(const PE64File *pe)
+{
+    if (pe == NULL)
+        return PE64_INV_ARG;
+
+    return pe->sectNum;
+}
+
 uint64_t pe64GetSectAddr(const PESection *sect)
 {
     if (sect == NULL)
         return PE64_INV_ARG;
 
     return sect->VirtualAddress;
+}
+
+uint64_t pe64GetSectSize(const PESection *sect)
+{
+    if (sect == NULL)
+        return PE64_INV_ARG;
+
+    return sect->SizeOfRawData;
 }
 
 uint64_t pe64GetSectFileoff(const PESection *sect)
@@ -443,6 +525,14 @@ uint64_t pe64GetSectFileoff(const PESection *sect)
 uint64_t pe64GetSectEndFileoff(const PESection *sect)
 {
     if (sect == NULL)
+        return PE64_INV_ARG;
+
+    return 0;
+}
+
+uint64_t pe64GetSectVend(const PE64File *pe, const PESection *sect)
+{
+    if (pe == NULL || sect == NULL)
         return PE64_INV_ARG;
 
     return 0;
@@ -537,6 +627,14 @@ uint64_t pe64GetSSymAddr(const PESymbol *sym)
     return sym->Value;
 }
 
+uint64_t pe64GetSSymSectIndx(const PESymbol *sym)
+{
+    if (sym == NULL)
+        return PE64_INV_ARG;
+
+    return (uint64_t)sym->SectionNumber;
+}
+
 uint64_t pe64GetAddrSymByName(const PE64File *pe, const char *name)
 {
     if (pe == NULL || name == NULL)
@@ -544,5 +642,45 @@ uint64_t pe64GetAddrSymByName(const PE64File *pe, const char *name)
 
     PESymbol *sym = pe64GetSymByName(pe, name);
     return pe64GetSSymAddr(sym);
+}
+
+uint64_t pe64GetSSymFileoff(const PE64File *pe, const PESymbol *sym)
+{
+    if (pe == NULL || sym == NULL)
+        return PE64_INV_ARG;
+
+    // for object it's offset from start of section
+    uint64_t symAddr = pe64GetSSymAddr(sym);
+    uint64_t sectIndx = pe64GetSSymSectIndx(sym);
+    PESection *sect = pe64GetSectByIndx(pe, sectIndx);
+    uint64_t sectFileoff = pe64GetSectFileoff(sect);
+
+    return sectFileoff + symAddr;
+}
+
+uint64_t pe64GetSSymSize(const PE64File *pe, const PESymbol *sym)
+{
+    if (pe == NULL || sym == NULL)
+        return PE64_INV_ARG;
+
+    uint64_t i = 0;
+    uint64_t vend = 0;
+    uint64_t start = pe64GetSSymAddr(sym);
+    PESymbol *symtab = pe64GetSSymSortTab(pe);
+    for (i = 0; symtab[i].Value < start; ++i);
+
+    if (symtab[i].SectionNumber != sym->SectionNumber) {
+        PESection *sect = pe64GetSectByIndx(pe, (uint64_t)sym->SectionNumber);
+        vend = pe64GetSectSize(sect);
+    } else {
+        vend = pe64GetSSymAddr(symtab + i);
+    }
+
+    return vend - start;
+}
+
+uint64_t pe64GetAmountSeg(const PE64File *pe)
+{
+    return pe64GetAmountSect(pe);
 }
 
