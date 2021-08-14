@@ -135,6 +135,30 @@ static PE64_ERROR pe64ParseSections(PE64File *pe)
     return PE64_OK;
 }
 
+static PE64_ERROR pe64ParseImport(PE64File *pe)
+{
+    if (pe == NULL || pe->optHeader== NULL)
+        return PE64_INV_ARG;
+
+
+    DataDir *importDir = pe->optHeader->DataDirectory + IMAGE_DIRECTORY_ENTRY_IMPORT;
+    uint64_t importAddr = importDir->VirtualAddress;
+
+    FileD fd = pe->fd;
+    uint64_t size = importDir->Size;
+    if (size == 0)
+        return PE64_NO_IMPORTS;
+
+    uint64_t off = pe64AddrToFileOff(pe, importAddr);
+    PEImport *import = readFromFile(fd, &off, size);
+    if (import == NULL)
+        return PE64_NO_MEM;
+
+    pe->import = import;
+    pe->importNum = size / sizeof(PEImport);
+    return PE64_OK;
+}
+
 static PE64_ERROR pe64ParseSymtab(PE64File *pe)
 {
     if (pe == NULL || pe->fileHeader == NULL)
@@ -324,6 +348,9 @@ PE64File *pe64Parse(const char *fn)
         goto eexit_1;
     }
 
+    // File can be without imports
+    pe64ParseImport(pe);
+
     if (pe64ParseSymtab(pe)) {
         if (IS_PE64_FILE_OBJ(pe)) {
             ERROR("Cannot parse symbol table");
@@ -371,6 +398,18 @@ void pe64Free(PE64File *pe)
     Free(pe->strtab);
 }
 
+uint64_t pe64AddrToFileOff(const PE64File *pe, uint64_t addr)
+{
+    if (pe == NULL || pe->sections == NULL)
+        return PE64_INV_ARG;
+
+    PESection *sect = pe64GetSectByAddr(pe, addr);
+    uint64_t sectAddr = pe64GetSectAddr(sect);
+    uint64_t sectFileOff = pe64GetSectFileoff(sect);
+
+    return (addr - sectAddr + sectFileOff);
+}
+
 uint64_t pe64GetMachineID(const PE64File *pe)
 {
     if (pe == NULL)
@@ -385,9 +424,13 @@ PESection *pe64GetSectByAddr(const PE64File *pe, uint64_t addr)
         return NULL;
 
     WORD i = 0;
-    for (i = 0; i < pe->sectNum; ++i)
-        if (pe->sections[i].VirtualAddress == addr)
-            return &pe->sections[i];
+    for (i = 0; i < pe->sectNum; ++i) {
+        PESection *sect = pe->sections + i;
+        uint64_t start = pe64GetSectAddr(sect);
+        uint64_t end = start + pe64GetSectSize(sect);
+        if (addr >= start && addr <= end)
+            return sect;
+    }
 
     return NULL;
 }

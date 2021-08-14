@@ -9,6 +9,7 @@ set(PE64_PRINTER_SOURSES
   pe64PrinterHeaders.c
   pe64PrinterSections.c
   pe64PrinterSymbols.c
+  pe64PrinterImports.c
 )
 
 set(PE64_PRINTER_HEADERS
