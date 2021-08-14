@@ -49,6 +49,21 @@ extern int VERBOSE;
         def;            \
     } while (0);
 
+#define NEW_LINE       \
+    DEF_GUARD(         \
+        putchar('\n'); \
+    )
+
+#define SPACE         \
+    DEF_GUARD(        \
+        putchar(' '); \
+    )
+
+#define TAB            \
+    DEF_GUARD(         \
+        putchar('\t'); \
+    )
+
 #define LOG(...)                            \
     DEF_GUARD(                              \
         if (VERBOSE) {                      \

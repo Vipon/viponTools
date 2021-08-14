@@ -77,7 +77,7 @@ int initBinParser(const char *fn)
     } /*else if ((bin = pe64Parse(fn)) != NULL) {
         binParser.type = PE64;
         INIT_BIN_PARSER_FUNCS(pe64);
-    } */ else {
+    } */else {
 #ifndef __WIN__
         ERROR("Unknown FileType\n");
         return -1;

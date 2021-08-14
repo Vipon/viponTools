@@ -5,10 +5,20 @@ add_vipon_library(
   LINK_LIBS file mem string
 )
 
+set(PE64_PRINTER_SOURSES
+  pe64PrinterHeaders.c
+  pe64PrinterSections.c
+  pe64PrinterSymbols.c
+)
+
+set(PE64_PRINTER_HEADERS
+  pe64Printer.h
+)
+
 add_vipon_library(
   NAME pe64Printer
   TYPE STATIC
-  SOURCES pe64Printer.c pe64Printer.h
+  SOURCES ${PE64_PRINTER_SOURSES} ${PE64_PRINTER_HEADERS}
   LINK_LIBS pe64Parse
 )
 

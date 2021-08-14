@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
     PE64File *pe = pe64Parse(argv[1]);
     EXPECT_VAL_NOT_EQ(pe, NULL, "Cannot parse pe64 file");
     EXPECT_VAL_NOT_EQ(pe->symtab, NULL, "Cannot parse pe64 symbol table");
+    pe64PrintFileHeader(pe);
+    pe64PrintSections(pe);
     pe64PrintSymbols(pe);
 
     pe64Free(pe);

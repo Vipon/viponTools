@@ -8,17 +8,17 @@ void dummy(void)
 
 }
 
-static void testPrintSections(const PE64File *pe)
-{
-    pe64PrintSections(pe);
-}
-
 int main(int argc, char *argv[])
 {
     UNUSED(argc);
     PE64File *pe = pe64Parse(argv[0]);
-    testPrintSections(pe);
 
+    pe64PrintDosHeader(pe);
+    pe64PrintNtHeader(pe);
+    pe64PrintSections(pe);
+    pe64PrintSymbols(pe);
+
+    pe64Free(pe);
     return 0;
 }
 

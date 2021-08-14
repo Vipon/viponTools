@@ -81,36 +81,44 @@ typedef IMAGE_FILE_HEADER FileHeader;
  *      WORD                 Magic;
  *      BYTE                 MajorLinkerVersion;
  *      BYTE                 MinorLinkerVersion;
- *      DWORD                SizeOfCode;
- *      DWORD                SizeOfInitializedData;
- *      DWORD                SizeOfUninitializedData;
- *      DWORD                AddressOfEntryPoint;
- *      DWORD                BaseOfCode;
+ *      DWORD                SizeOfCode; // Size of all code sections
+ *      DWORD                SizeOfInitializedData; // Size of all initialized data sections
+ *      DWORD                SizeOfUninitializedData; // Size of all uninitialized data sections
+ *      DWORD                AddressOfEntryPoint; // Ptr to the entry point func, relative to the image base addr
+ *      DWORD                BaseOfCode; // Start ptr of the code sect, relative to the image base
  *      ULONGLONG            ImageBase; // Program virtual base address
- *      DWORD                SectionAlignment;
- *      DWORD                FileAlignment;
+ *      DWORD                SectionAlignment; // Sect alignment in memory
+ *      DWORD                FileAlignment; // Raw data alignment of sect in the file
  *      WORD                 MajorOperatingSystemVersion;
  *      WORD                 MinorOperatingSystemVersion;
  *      WORD                 MajorImageVersion;
  *      WORD                 MinorImageVersion;
  *      WORD                 MajorSubsystemVersion;
  *      WORD                 MinorSubsystemVersion;
- *      DWORD                Win32VersionValue;
- *      DWORD                SizeOfImage;
+ *      DWORD                Win32VersionValue; // reserved and must be 0
+ *      DWORD                SizeOfImage; // Image size - multiple of SectionAlignment
  *      DWORD                SizeOfHeaders;
  *      DWORD                CheckSum;
- *      WORD                 Subsystem;
+ *      WORD                 Subsystem; // Subsystem required to run this image
  *      WORD                 DllCharacteristics;
  *      ULONGLONG            SizeOfStackReserve;
  *      ULONGLONG            SizeOfStackCommit;
  *      ULONGLONG            SizeOfHeapReserve;
  *      ULONGLONG            SizeOfHeapCommit;
- *      DWORD                LoaderFlags;
+ *      DWORD                LoaderFlags; // This member is obsolete
  *      DWORD                NumberOfRvaAndSizes;
  *      IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
  *  } IMAGE_OPTIONAL_HEADER64, *PIMAGE_OPTIONAL_HEADER64;
  */
 typedef IMAGE_OPTIONAL_HEADER64 OptHeader64;
+
+/***
+ *  typedef struct _IMAGE_DATA_DIRECTORY {
+ *      DWORD VirtualAddress;
+ *      DWORD Size;
+ *  } IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;
+ */
+typedef IMAGE_DATA_DIRECTORY DataDir;
 
 /***
  *  typedef struct _IMAGE_SECTION_HEADER {
@@ -119,9 +127,9 @@ typedef IMAGE_OPTIONAL_HEADER64 OptHeader64;
  *          DWORD PhysicalAddress;
  *          DWORD VirtualSize;
  *      } Misc;
- *      DWORD VirtualAddress;
- *      DWORD SizeOfRawData;
- *      DWORD PointerToRawData;
+ *      DWORD VirtualAddress;               // vaddr for exec, 0 for obj
+ *      DWORD SizeOfRawData;                // sect size in file with alignment
+ *      DWORD PointerToRawData;             // file offset
  *      DWORD PointerToRelocations;
  *      DWORD PointerToLinenumbers;
  *      WORD  NumberOfRelocations;
@@ -130,19 +138,20 @@ typedef IMAGE_OPTIONAL_HEADER64 OptHeader64;
  *  } IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;
  */
 typedef IMAGE_SECTION_HEADER PESection;
+typedef PESection PESegment;
 
 /***
  *  typedef struct _IMAGE_SYMBOL {
  *      union {
- *          BYTE ShortName[8];
+ *          BYTE ShortName[8];  // Short name
  *          struct {
- *              DWORD Short;
- *              DWORD Long;
+ *              DWORD Short;    // if Short == 0
+ *              DWORD Long;     // Long - offset in strtab
  *          } Name;
  *          DWORD LongName[2];
  *      } N;
  *      DWORD Value;
- *      SHORT SectionNumber;
+ *      SHORT SectionNumber;    // Section index
  *      WORD Type;
  *      BYTE StorageClass;
  *      BYTE NumberOfAuxSymbols;
@@ -199,6 +208,12 @@ typedef IMAGE_AUX_SYMBOL PEAuxSymbol;
 
 #define IS_PE64_FILE_OBJ(pe) \
     (pe->fileHeader->SizeOfOptionalHeader == 0)
+
+#define IS_PE64_SECT_LOADABLE(sect) \
+    (  (sect->Characteristics & IMAGE_SCN_MEM_EXECUTE) \
+    || (sect->Characteristics & IMAGE_SCN_MEM_READ)    \
+    || (sect->Characteristics & IMAGE_SCN_MEM_WRITE)   \
+    )
 
 typedef enum {
     PE64_EXEC = 0,
@@ -269,14 +284,22 @@ PE64_ERROR pe64Check(const PE64File *pe);
 uint64_t pe64GetMachineID(const PE64File *pe);
 
 PESection *pe64GetSectByAddr(const PE64File *pe, uint64_t addr);
-PESection *pe64GetSectByNum(const PE64File *pe, uint64_t sectNum);
+PESection *pe64GetSectByIndx(const PE64File *pe, uint64_t sectNum);
+PESection *pe64GetSectByName(const PE64File *pe, const char *name);
+PESection *pe64GetLastLoadableSect(const PE64File *pe);
+
+void *pe64ReadSect(const PE64File *pe, const PESection *sect);
 
 const char *pe64GetShortSectName(const PE64File *pe, const PESection *sect);
 const char *pe64GetLongSectName(const PE64File *pe, const PESection *sect);
 const char *pe64GetSectName(const PE64File *pe, const PESection *sect);
+
+uint64_t pe64GetAmountSect(const PE64File *pe);
 uint64_t pe64GetSectAddr(const PESection *sect);
+uint64_t pe64GetSectSize(const PESection *sect);
 uint64_t pe64GetSectFileoff(const PESection *sect);
 uint64_t pe64GetSectEndFileoff(const PESection *sect);
+uint64_t pe64GetSectVend(const PE64File *pe, const PESection *sect);
 
 PESymbol *pe64GetSSymTab(const PE64File *pe);
 PESymbol *pe64GetSSymSortTab(const PE64File *pe);
@@ -298,7 +321,12 @@ const char*pe64GetSymName(const PE64File *pe, const PESymbol *sym);
 
 uint64_t pe64GetAmountSSym(const PE64File *pe);
 uint64_t pe64GetSSymAddr(const PESymbol *sym);
+uint64_t pe64GetSSymSectIndx(const PESymbol *sym);
 uint64_t pe64GetAddrSymByName(const PE64File *pe, const char *name);
+uint64_t pe64GetSSymFileoff(const PE64File *pe, const PESymbol *sym);
+uint64_t pe64GetSSymSize(const PE64File *pe, const PESymbol *sym);
+
+uint64_t pe64GetAmountSeg(const PE64File *pe);
 
 #endif /* __PE_64_PARSE */
 
