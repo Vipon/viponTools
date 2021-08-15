@@ -49,5 +49,11 @@
 # endif
 #endif
 
+#ifdef __WIN__
+    #define EXPORT_FUNC(func) __declspec(dllexport) func
+#else
+    #define EXPORT_FUNC(func) func
+#endif /* __WIN__ */
+
 #endif /* __OS_H */
 

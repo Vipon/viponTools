@@ -1,7 +1,9 @@
 #ifndef _BAR_H
 #define _BAR_H
 
-char *bar(void);
+#include "os.h"
+
+EXPORT_FUNC(char *bar(void));
 
 #endif /* _BAR_H */
 

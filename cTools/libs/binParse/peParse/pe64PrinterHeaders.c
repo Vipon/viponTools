@@ -476,6 +476,8 @@ static void pe64PrintDllCharacteristics(const OptHeader64 *optHeader)
         TAB;
         TAB;
     }
+    if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA)
+        printf("HIGH_ENTROPY_VA ");
     if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE)
         printf("DYNAMIC_BASE ");
     if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY)
@@ -488,8 +490,12 @@ static void pe64PrintDllCharacteristics(const OptHeader64 *optHeader)
         printf("NO_SEH ");
     if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_NO_BIND)
         printf("NO_BIND ");
+    if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_APPCONTAINER)
+        printf("APPCONTAINER ");
     if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_WDM_DRIVER)
         printf("WDM_DRIVER ");
+    if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_GUARD_CF)
+        printf("GUARD_CF ");
     if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE)
         printf("TERMINAL_SERVER_AWARE ");
 }
