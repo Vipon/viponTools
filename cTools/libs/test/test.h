@@ -52,7 +52,7 @@
 
 #define EXPECT_STR_EQ(str0, str1)                     \
     if (strcmp(str0, str1)) {                         \
-        ERROR("expect: %s | result: %s", str0, str1); \
+        /*ERROR("expect: %s | result: %s", str0, str1);*/ \
         exit(EXIT_FAILURE);                           \
     }
 

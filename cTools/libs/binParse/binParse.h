@@ -92,7 +92,7 @@ typedef struct {
     BinGetAddrSymByName    getAddrSymByName;
     BinGetSSymSize         getSSymSize;
     BinGetSSymFileoff      getSSymFileoff;
-    BinGetDSymIndxByName   getDSymIndxByName;
+    //BinGetDSymIndxByName   getDSymIndxByName;
     BinGetAmountSeg        getAmountSeg;
     BinGetSectByName       getSectByName;
     BinGetLastLoadableSect getLastLoadableSect;
@@ -102,8 +102,8 @@ typedef struct {
     BinGetSectSize         getSectSize;
     BinGetSectAddr         getSectAddr;
     BinGetSectFileoff      getSectFileoff;
-    BinGetRelocForAddr     getRelocForAddr;
-    BinGetRelocDataAddr    getRelocDataAddr;
+    //BinGetRelocForAddr     getRelocForAddr;
+    //BinGetRelocDataAddr    getRelocDataAddr;
 } BinParser;
 
 extern BinParser binParser;

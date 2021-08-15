@@ -727,3 +727,54 @@ uint64_t pe64GetAmountSeg(const PE64File *pe)
     return pe64GetAmountSect(pe);
 }
 
+PE64_ERROR pe64Check(const PE64File *pe)
+{
+    if (pe == NULL)
+        return PE64_INV_ARG;
+
+    return PE64_OK;
+}
+
+void *pe64Hook(const PE64File *pe, const char *func, const void *hand)
+{
+    if (pe == NULL || func == NULL || hand == NULL)
+        return NULL;
+
+    size_t base = 0;
+    if (pe->optHeader->DllCharacteristics & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE)
+        base = (size_t)GetModuleHandle(NULL);
+    else
+        base = pe->optHeader->ImageBase;
+
+    uint64_t i = 0;
+    uint64_t impNum = pe->importNum - 1;
+    for (i = 0; i < impNum; ++i) {
+        PEImport *imp = pe->import + i;
+        ThunkData64 *IAT = (ThunkData64*)(base + imp->FirstThunk);
+        ThunkData64 *INT = (ThunkData64*)(base + imp->OriginalFirstThunk);
+
+        uint64_t j = 0;
+        for (;;++j) {
+            ImportByName *importByName = (ImportByName*)(base + INT[j].u1.AddressOfData);
+            if (INT[j].u1.AddressOfData == 0)
+                break;
+
+            char *name = importByName->Name;
+            if (strcmp(name, func) == 0) {
+                void *oldVal = (void*)IAT[j].u1.Function;
+
+                DWORD oldProtect = 0;
+                void *addr = (void*)alignToPageSize((size_t)(IAT + j));
+                size_t pageSize = (size_t)getPageSize();
+
+                VirtualProtect(addr, pageSize, PAGE_READWRITE, &oldProtect);
+                IAT[j].u1.Function = (size_t)hand;
+                VirtualProtect(addr, pageSize, oldProtect, &oldProtect);
+                return oldVal;
+            }
+        }
+    }
+
+    return NULL;
+}
+

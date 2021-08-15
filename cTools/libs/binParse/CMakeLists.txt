@@ -9,7 +9,5 @@ add_vipon_library(
   LINK_LIBS elf64Parse elf32Parse macho64Parse pe64Parse pe64Printer
 )
 
-if (NOT WIN32)
-  add_subdirectory(tests)
-endif ()
+add_subdirectory(tests)
 

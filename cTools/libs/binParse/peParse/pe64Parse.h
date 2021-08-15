@@ -306,6 +306,7 @@ static_assert(((int64_t)PE64_INV_ARG) < 0, "ERRORS must be negative");
 
 PE64File *pe64Parse(const char *fn);
 void pe64Free(PE64File *pe);
+void *pe64Hook(const PE64File *pe, const char *func, const void *hand);
 
 PE64_ERROR pe64Check(const PE64File *pe);
 

@@ -49,7 +49,7 @@ BinParser binParser;
     binParser.getAddrSymByName = (BinGetAddrSymByName) &type ## GetAddrSymByName; \
     binParser.getSSymSize = (BinGetSSymSize) &type ## GetSSymSize; \
     binParser.getSSymFileoff = (BinGetSSymFileoff) &type ## GetSSymFileoff; \
-    binParser.getDSymIndxByName = (BinGetDSymIndxByName) &type ## GetDSymIndxByName; \
+    /*binParser.getDSymIndxByName = (BinGetDSymIndxByName) &type ## GetDSymIndxByName;*/ \
     binParser.getAmountSeg = (BinGetAmountSeg) &type ## GetAmountSeg; \
     binParser.getSectByName = (BinGetSectByName) &type ## GetSectByName; \
     binParser.getLastLoadableSect = (BinGetLastLoadableSect) &type ## GetLastLoadableSect; \
@@ -59,8 +59,8 @@ BinParser binParser;
     binParser.getSectSize = (BinGetSectSize) &type ## GetSectSize; \
     binParser.getSectAddr = (BinGetSectAddr) &type ## GetSectAddr; \
     binParser.getSectFileoff = (BinGetSectFileoff) &type ## GetSectFileoff; \
-    binParser.getRelocForAddr = (BinGetRelocForAddr) &type ## GetRelocForAddr; \
-    binParser.getRelocDataAddr = (BinGetRelocDataAddr) &type ## GetRelocDataAddr;
+    //binParser.getRelocForAddr = (BinGetRelocForAddr) &type ## GetRelocForAddr; \
+    //binParser.getRelocDataAddr = (BinGetRelocDataAddr) &type ## GetRelocDataAddr;
 
 int initBinParser(const char *fn)
 {
@@ -74,14 +74,12 @@ int initBinParser(const char *fn)
     } else if ((bin = macho64Parse(fn)) != NULL) {
         binParser.type = MACHO64;
         INIT_BIN_PARSER_FUNCS(macho64);
-    } /*else if ((bin = pe64Parse(fn)) != NULL) {
+    } else if ((bin = pe64Parse(fn)) != NULL) {
         binParser.type = PE64;
         INIT_BIN_PARSER_FUNCS(pe64);
-    } */else {
-#ifndef __WIN__
-        ERROR("Unknown FileType\n");
+    } else {
+        //ERROR("Unknown FileType\n");
         return -1;
-#endif /* __WIN__ */
     }
 
     binParser.bin = bin;
