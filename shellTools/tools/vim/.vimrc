@@ -8,6 +8,9 @@ colorscheme peachpuff
 " Enable syntax highlighting
 syntax on
 
+" Change color of comments
+highlight Comment ctermfg=lightblue
+
 " 'hidden' option allows to hide old files insted of close them, when you open
 " new file in the same window. It permits to return to the old file after it
 " and undo some changes.
