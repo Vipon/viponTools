@@ -35,10 +35,12 @@ static void pe64PrintSectMisc(const PE64File *pe, const PESection *sect)
 
     switch (pe->type) {
     case PE64_OBJ:
-        printf("PhysAddr:\t%.8lx ", sect->Misc.PhysicalAddress);
+        printf("PhysAddr:\t\t%.8lx ", sect->Misc.PhysicalAddress);
         break;
+    case PE64_EXEC:
+    case PE64_SHARED:
     default:
-        printf("VirtSize:\t%.8lx ", sect->Misc.VirtualSize);
+        printf("VirtSize:\t\t%.8lx ", sect->Misc.VirtualSize);
         break;
     }
 }
@@ -48,7 +50,7 @@ static void pe64PrintSectVirtAddr(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("VirtAddr:\t%.8lx ", sect->VirtualAddress);
+    printf("VirtAddr:\t\t%.8lx ", sect->VirtualAddress);
 }
 
 static void pe6464PrintSectSizeOfRawData(const PESection *sect)
@@ -72,7 +74,7 @@ static void pe6464PrintPointerToRelocations(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("reloc offs:\t%.8lx ", sect->PointerToRelocations);
+    printf("reloc offs:\t\t%.8lx ", sect->PointerToRelocations);
 }
 
 static void pe6464PrintPointerToLinenumbers(const PESection *sect)
@@ -96,7 +98,7 @@ static void pe6464PrintNumberOfLinenumbers(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("line #'s:\t%.8hx ", sect->NumberOfLinenumbers);
+    printf("line #'s:\t\t%.8hx ", sect->NumberOfLinenumbers);
 }
 
 static void pe6464PrintCharacteristics(const PESection *sect)

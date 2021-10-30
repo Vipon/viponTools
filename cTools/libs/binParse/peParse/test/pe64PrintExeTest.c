@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     pe64PrintSections(pe);
     pe64PrintSymbols(pe);
     pe64PrintImports(pe);
+    pe64PrintDelayImports(pe);
 
     pe64Free(pe);
     return 0;

@@ -123,5 +123,11 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
 #define ALIGN_UP(val, align) \
     ((val & (align-1)) ? ALIGN_DOWN(val, align) + align : val)
 
+#define IS_BIT_SET(val, bitNum) \
+    (val & ((uint64_t)1 << bitNum))
+
+#define CLR_BIT(val, bitNum) \
+    (val & (~((uint64_t)1 << bitNum)))
+
 #endif /* _BITS_H */
 

@@ -28,13 +28,15 @@ void pe64PrintDosHeader(const PE64File *pe)
         return;
 
     printf("DOS Header:\n");
-    printf("Magic:\t\t\t");
+    TAB;
+    printf("Magic:\t\t\t\t");
     pe64PrintDosMagic(pe->dosHeader);
     NEW_LINE
+    TAB;
     printf("NT Header Offset:\t");
     pePrintDosNtHeaderOff(pe->dosHeader);
-
     NEW_LINE;
+
     NEW_LINE;
 }
 
@@ -201,6 +203,9 @@ static void pe64PrintCharacteristics(const FileHeader *fileHeader)
         TAB;
         TAB;
         TAB;
+        TAB;
+        TAB;
+        TAB;
     }
     if (type & IMAGE_FILE_BYTES_REVERSED_HI)
         printf("REVERSED_HI ");
@@ -240,24 +245,24 @@ void pe64PrintFileHeader(const PE64File *pe)
         return;
 
     printf("File Header:\n");
-    printf("Machine:\t\t");
+    printf("\tMachine:\t\t\t");
     pe64PrintMachineId(pe->fileHeader);
     NEW_LINE;
-    printf("Number of Sections:\t");
+    printf("\tNumber of Sections:\t");
     pe64PrintSectNum(pe->fileHeader);
     NEW_LINE;
-    printf("Time stamp:\t\t");
+    printf("\tTime stamp:\t\t\t");
     pe64PrintTimeStamp(pe->fileHeader);
-    printf("Symbol Table Pointer:\t");
+    printf("\tSymTab Pointer:\t\t");
     pe64PrintSymTabPtr(pe->fileHeader);
     NEW_LINE;
-    printf("Number of Symbols:\t");
+    printf("\tNumber of Symbols:\t");
     pe64PrintSymNum(pe->fileHeader);
     NEW_LINE;
-    printf("Size of Opt Header:\t");
+    printf("\tSize of Opt Header:\t");
     pe64PrintOptHeaderSize(pe->fileHeader);
     NEW_LINE;
-    printf("Characteristics:\t");
+    printf("\tCharacteristics:\t");
     pe64PrintCharacteristics(pe->fileHeader);
     NEW_LINE;
 }
@@ -562,135 +567,135 @@ void pe64PrintOptHeader(const PE64File *pe)
         return;
 
     printf("Optional Header:\n");
-    printf("Application Type:\t");
+    printf("\tApplication Type:\t");
     pe64PrintOptHeaderMagic(pe->optHeader);
     NEW_LINE;
-    printf("Linker Version:\t\t");
+    printf("\tLinker Version:\t\t");
     pe64PrintLinkerVersion(pe->optHeader);
     NEW_LINE;
-    printf("Code Size:\t\t");
+    printf("\tCode Size:\t\t\t");
     pe64PrintCodeSize(pe->optHeader);
     NEW_LINE;
-    printf("Initialized Data Size:\t");
+    printf("\tInit Data Size:\t\t");
     pe64PrintInitializedDataSize(pe->optHeader);
     NEW_LINE;
-    printf("Uninitialized Data Size:");
+    printf("\tUninit Data Size:\t");
     pe64PrintUninitializedDataSize(pe->optHeader);
     NEW_LINE;
-    printf("Entry Point:\t\t");
+    printf("\tEntry Point:\t\t");
     pe64PrintEntryPoint(pe->optHeader);
     NEW_LINE;
-    printf("Code Base:\t\t");
+    printf("\tCode Base:\t\t\t");
     pe64PrintCodeBase(pe->optHeader);
     NEW_LINE;
-    printf("Image Base:\t\t");
+    printf("\tImage Base:\t\t\t");
     pe64PrintImageBase(pe->optHeader);
     NEW_LINE;
-    printf("Section Alignment:\t");
+    printf("\tSection Alignment:\t");
     pe64PrintSectionAlignment(pe->optHeader);
     NEW_LINE;
-    printf("File Alignment:\t\t");
+    printf("\tFile Alignment:\t\t");
     pe64PrintFileAlignment(pe->optHeader);
     NEW_LINE;
-    printf("OS Version:\t\t");
+    printf("\tOS Version:\t\t\t");
     pe64PrintOSVersion(pe->optHeader);
     NEW_LINE;
-    printf("Image Version:\t\t");
+    printf("\tImage Version:\t\t");
     pe64PrintImageVersion(pe->optHeader);
     NEW_LINE;
-    printf("Subsystem Version:\t");
+    printf("\tSubsystem Version:\t");
     pe64PrintSubsystemVersion(pe->optHeader);
     NEW_LINE;
-    printf("Win32 Version Val:\t");
+    printf("\tWin32 Version Val:\t");
     pe64PrintWin32VersionValue(pe->optHeader);
     NEW_LINE;
-    printf("Image Size:\t\t");
+    printf("\tImage Size:\t\t\t");
     pe64PrintImageSize(pe->optHeader);
     NEW_LINE;
-    printf("Headers Size:\t\t");
+    printf("\tHeaders Size:\t\t");
     pe64PrintHeadersSize(pe->optHeader);
     NEW_LINE;
-    printf("CheckSum:\t\t");
+    printf("\tCheckSum:\t\t\t");
     pe64PrintCheckSum(pe->optHeader);
     NEW_LINE;
-    printf("Subsystem:\t\t");
+    printf("\tSubsystem:\t\t\t");
     pe64PrintSubsystem(pe->optHeader);
     NEW_LINE;
-    printf("DllCharacteristics:\t");
+    printf("\tDllCharacteristics:\t");
     pe64PrintDllCharacteristics(pe->optHeader);
     NEW_LINE;
-    printf("Stack Size Reserve:\t");
+    printf("\tStack Size Reserve:\t");
     pe64PrintStackSizeReserve(pe->optHeader);
     NEW_LINE;
-    printf("Stack Size Commit:\t");
+    printf("\tStack Size Commit:\t");
     pe64PrintStackSizeCommit(pe->optHeader);
     NEW_LINE;
-    printf("Heap Size Reserve:\t");
+    printf("\tHeap Size Reserve:\t");
     pe64PrintHeapSizeReserve(pe->optHeader);
     NEW_LINE;
-    printf("Heap Size Commit:\t");
+    printf("\tHeap Size Commit:\t");
     pe64PrintHeapSizeCommit(pe->optHeader);
     NEW_LINE;
-    printf("Loader Flags:\t\t");
+    printf("\tLoader Flags:\t\t");
     pe64PrintLoaderFlags(pe->optHeader);
     NEW_LINE;
-    printf("NumberOfRvaAndSizes:\t");
+    printf("\tNumberOfRvaAndSizes:\t");
     pe64PrintNumOfRvaAndSizes(pe->optHeader);
     NEW_LINE;
 
     printf("Data Directory:\t\tType\t\tAddr\t Size\n");
-    printf("\t\t\t--------------- -------- --------\n");
+    printf("\t\t\t\t--------------- -------- --------\n");
     DWORD i = 0;
     DWORD NumberOfRvaAndSizes = pe->optHeader->NumberOfRvaAndSizes;
     for (i = 0; i < NumberOfRvaAndSizes; ++i) {
         switch (i) {
         case IMAGE_DIRECTORY_ENTRY_EXPORT:
-            printf("\t\t\tEXPORT:\t\t");
+            printf("\t\t\t\tEXPORT:\t\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_IMPORT:
-            printf("\t\t\tIMPORT:\t\t");
+            printf("\t\t\t\tIMPORT:\t\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_RESOURCE:
-            printf("\t\t\tRESOURCE:\t");
+            printf("\t\t\t\tRESOURCE:\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_EXCEPTION:
-            printf("\t\t\tEXCEPTION:\t");
+            printf("\t\t\t\tEXCEPTION:\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_SECURITY:
-            printf("\t\t\tSECURITY:\t");
+            printf("\t\t\t\tSECURITY:\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_BASERELOC:
-            printf("\t\t\tBASERELOC:\t");
+            printf("\t\t\t\tBASERELOC:\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_DEBUG:
-            printf("\t\t\tDEBUG:\t\t");
+            printf("\t\t\t\tDEBUG:\t\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_ARCHITECTURE:
-            printf("\t\t\tARCHITECTURE:\t");
+            printf("\t\t\t\tARCHITECTURE:\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_GLOBALPTR:
-            printf("\t\t\tGLOBALPTR:\t");
+            printf("\t\t\t\tGLOBALPTR:\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_TLS:
-            printf("\t\t\tTLS:\t\t");
+            printf("\t\t\t\tTLS:\t\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG:
-            printf("\t\t\tLOAD_CONFIG:\t");
+            printf("\t\t\t\tLOAD_CONFIG:\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT:
-            printf("\t\t\tBOUND_IMPORT:\t");
+            printf("\t\t\t\tBOUND_IMPORT:\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_IAT:
-            printf("\t\t\tIAT:\t\t");
+            printf("\t\t\t\tIAT:\t\t\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT:
-            printf("\t\t\tDELAY_IMPORT:\t");
+            printf("\t\t\t\tDELAY_IMPORT:\t");
             break;
         case IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR:
-            printf("\t\t\tCOM_DESCRIPTOR:\t");
+            printf("\t\t\t\tCOM_DESCRIPTOR:\t");
             break;
         default:
-            printf("\t\t\tRESERVED:\t");
+            printf("\t\t\t\tRESERVED:\t\t");
             break;
         }
         pe64PrintDataDir(pe->optHeader->DataDirectory + i);
@@ -704,7 +709,7 @@ void pe64PrintNtHeader(const PE64File *pe)
         return;
 
     printf("NT Header:\n");
-    printf("Magic:\t\t\t");
+    printf("\tMagic:\t\t\t\t");
     pe64PrintNTMagic(pe->ntHeader);
     NEW_LINE;
     pe64PrintFileHeader(pe);

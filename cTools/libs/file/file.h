@@ -63,6 +63,7 @@ int unmapFile(void *addr, size_t fileSize);
 
 #elif defined(__WIN__)
 # include <Windows.h>
+
 # define O_RDONLY       GENERIC_READ
 # define O_WRONLY       GENERIC_WRITE
 # define O_RDWR         O_RDONLY | O_WRONLY

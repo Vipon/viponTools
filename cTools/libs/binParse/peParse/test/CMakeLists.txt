@@ -2,6 +2,7 @@ add_vipon_test(
   NAME pe64PrintExeTest
   SOURCES pe64PrintExeTest.c
   LINK_LIBS pe64Printer
+  LINK_FLAGS -DELAYLOAD:KERNEL32.dll
 )
 
 add_custom_target(testObjFile

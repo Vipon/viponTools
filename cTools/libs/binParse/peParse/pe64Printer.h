@@ -37,8 +37,13 @@ void pe64PrintSectName(const PE64File *pe, const PESection *sect);
 void pe64PrintSection(const PE64File *pe, const PESection *sect);
 void pe64PrintSections(const PE64File *pe);
 
+void pe64PrintINT(const PE64File *pe, ThunkData64 *INT);
 void pe64PrintImport(const PE64File *pe, const PEImport* import);
 void pe64PrintImports(const PE64File *pe);
+void pe64PrintDelayImport(const PE64File *pe, const PEDelimp *delimp);
+void pe64PrintDelayImports(const PE64File *pe);
+
+void pe64PrintExports(const PE64File *pe);
 
 void pe64PrintAuxSymSect(const PE64File *pe, const PEAuxSymbol *auxSym);
 void pe64PrintAuxSymFile(const PE64File *pe, const PEAuxSymbol *auxSym);
