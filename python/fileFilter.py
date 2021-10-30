@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2020 Konychev Valera
+# Copyright (c) 2020-201 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
