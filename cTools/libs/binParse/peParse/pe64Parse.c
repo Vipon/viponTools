@@ -140,7 +140,6 @@ static PE64_ERROR pe64ParseImport(PE64File *pe)
     if (pe == NULL || pe->optHeader== NULL)
         return PE64_INV_ARG;
 
-
     DataDir *importDir = pe->optHeader->DataDirectory + IMAGE_DIRECTORY_ENTRY_IMPORT;
     uint64_t importAddr = importDir->VirtualAddress;
 
@@ -156,6 +155,52 @@ static PE64_ERROR pe64ParseImport(PE64File *pe)
 
     pe->import = import;
     pe->importNum = size / sizeof(PEImport);
+    return PE64_OK;
+}
+
+static PE64_ERROR pe64ParseDelayImport(PE64File *pe)
+{
+    if (pe == NULL || pe->optHeader== NULL)
+        return PE64_INV_ARG;
+
+    FileD fd = pe->fd;
+    DataDir *delimpDir = pe->optHeader->DataDirectory
+                       + IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT;
+    uint64_t delimpAddr = delimpDir->VirtualAddress;
+    uint64_t size = delimpDir->Size;
+    if (size == 0)
+        return PE64_NO_DELIMP;
+
+    uint64_t off = pe64AddrToFileOff(pe, delimpAddr);
+    PEDelimp *delimp = readFromFile(fd, &off, size);
+    if (delimp == NULL)
+        return PE64_NO_MEM;
+
+    pe->delimp = delimp;
+    pe->delimpNum = size / sizeof(PEDelimp);
+    return PE64_OK;
+}
+
+static PE64_ERROR pe64ParseExport(PE64File *pe)
+{
+    if (pe == NULL || pe->optHeader== NULL)
+        return PE64_INV_ARG;
+
+    DataDir *expDir = pe->optHeader->DataDirectory + IMAGE_DIRECTORY_ENTRY_EXPORT;
+    uint64_t expAddr = expDir->VirtualAddress;
+
+    FileD fd = pe->fd;
+    uint64_t size = expDir->Size;
+    if (size == 0)
+        return PE64_NO_EXPORTS;
+
+    uint64_t off = pe64AddrToFileOff(pe, expAddr);
+    PEExport *exp= readFromFile(fd, &off, size);
+    if (exp == NULL)
+        return PE64_NO_MEM;
+
+    pe->exp = exp;
+    pe->expNum = size / sizeof(PEExport);
     return PE64_OK;
 }
 
@@ -350,6 +395,9 @@ PE64File *pe64Parse(const char *fn)
 
     // File can be without imports
     pe64ParseImport(pe);
+    pe64ParseDelayImport(pe);
+    // File canbe without exports
+    pe64ParseExport(pe);
 
     if (pe64ParseSymtab(pe)) {
         if (IS_PE64_FILE_OBJ(pe)) {
@@ -386,16 +434,47 @@ void pe64Free(PE64File *pe)
     Free(pe->fn);
     close(pe->fd);
 
-    if (IS_PE64_FILE_EXEC(pe) || IS_PE64_FILE_SHARED(pe)) {
+    switch (pe->type) {
+    case PE64_SHARED:
+        Free(pe->exp);
+        FALLTHROUGH;
+    case PE64_EXEC:
         Free(pe->dosHeader);
         Free(pe->ntHeader);
-    } else if (IS_PE64_FILE_OBJ(pe)) {
+        Free(pe->import);
+        Free(pe->delimp);
+        break;
+    case PE64_OBJ:
         Free(pe->fileHeader);
+        Free(pe->symtab);
+        Free(pe->sortSymtab);
+        Free(pe->strtab);
+        break;
+    default:
+        break;
     }
 
     Free(pe->sections);
-    Free(pe->symtab);
-    Free(pe->strtab);
+
+    // Poisoning
+    pe->fn         = (void*)-1;
+    pe->fd         = INV_FD;
+    pe->dosHeader  = (void*)-1;
+    pe->ntHeader   = (void*)-1;
+    pe->fileHeader = (void*)-1;
+    pe->optHeader  = (void*)-1;
+    pe->sectNum    = (WORD)-1;
+    pe->sections   = (void*)-1;
+    pe->import     = (void*)-1;
+    pe->importNum  = (uint64_t)-1;
+    pe->delimp     = (void*)-1;
+    pe->delimpNum  = (uint64_t)-1;
+    pe->exp        = (void*)-1;
+    pe->expNum     = (uint64_t)-1;
+    pe->symtab     = (void*)-1;
+    pe->sortSymtab = (void*)-1;
+    pe->symNum     = (uint64_t)-1;
+    pe->strtab     = (void*)-1;
 }
 
 uint64_t pe64AddrToFileOff(const PE64File *pe, uint64_t addr)
@@ -753,11 +832,23 @@ void *pe64Hook(const PE64File *pe, const char *func, const void *hand)
         ThunkData64 *IAT = (ThunkData64*)(base + imp->FirstThunk);
         ThunkData64 *INT = (ThunkData64*)(base + imp->OriginalFirstThunk);
 
+        if (imp ->TimeDateStamp == (DWORD)-1) {
+            // Static bound
+            // !TODO: Add check in bound libs
+            break;
+        }
+
         uint64_t j = 0;
         for (;;++j) {
             ImportByName *importByName = (ImportByName*)(base + INT[j].u1.AddressOfData);
             if (INT[j].u1.AddressOfData == 0)
                 break;
+
+            if (IS_BIT_SET(INT[j].u1.AddressOfData, 63)) {
+                // Import by number
+                // !TODO: Add check symbol name in export table of libs
+                break;
+            }
 
             char *name = importByName->Name;
             if (strcmp(name, func) == 0) {
@@ -774,6 +865,8 @@ void *pe64Hook(const PE64File *pe, const char *func, const void *hand)
             }
         }
     }
+
+    // !TODO: Add hook for delay imports
 
     return NULL;
 }

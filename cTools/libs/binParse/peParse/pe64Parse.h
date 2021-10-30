@@ -25,8 +25,12 @@
 #ifndef __PE_64_PARSE
 #define __PE_64_PARSE
 
+// ViponTools headers
 #include "file.h"
+
+// Windows standard headres
 #include <Windows.h>
+#include <delayimp.h>
 
 /***
  *  typedef struct _IMAGE_DOS_HEADER
@@ -123,16 +127,16 @@ typedef IMAGE_DATA_DIRECTORY DataDir;
 /***
  *  typedef struct _IMAGE_IMPORT_DESCRIPTOR {
  *      union {
- *          DWORD Characteristics; // 0 for terminating null import descriptor
+ *          DWORD Characteristics;    // 0 for terminating null import descriptor
  *          DWORD OriginalFirstThunk; // RVA to original unbound IAT
  *      };
- *      DWORD TimeDateStamp; // 0 if not bound,
- *      // -1 if bound, and real date\time stamp
- *      // in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT (new)
- *      // O.W. date/time stamp of DLL bound to (old)
- *      DWORD ForwarderChain; // -1 if no forwarders
+ *      DWORD TimeDateStamp;          // 0 if not bound,
+ *                                    // -1 if bound, and real date\time stamp
+ *                                    // in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT (new)
+ *                                    // O.W. date/time stamp of DLL bound to (old)
+ *      DWORD ForwarderChain;         // -1 if no forwarders
  *      DWORD Name;
- *      DWORD FirstThunk; // RVA to IAT
+ *      DWORD FirstThunk;             // RVA to IAT
  *  } IMAGE_IMPORT_DESCRIPTOR;
  */
 typedef IMAGE_IMPORT_DESCRIPTOR PEImport;
@@ -154,6 +158,38 @@ typedef IMAGE_IMPORT_BY_NAME ImportByName;
  *  } IMAGE_THUNK_DATA64, *PIMAGE_THUNK_DATA64;
  */
 typedef IMAGE_THUNK_DATA64 ThunkData64;
+
+/***
+ *  typedef struct ImgDelayDescr {
+ *      DWORD           grAttrs;        // attributes
+ *      RVA             rvaDLLName;     // RVA to dll name
+ *      RVA             rvaHmod;        // RVA of module handle
+ *      RVA             rvaIAT;         // RVA of the IAT
+ *      RVA             rvaINT;         // RVA of the INT
+ *      RVA             rvaBoundIAT;    // RVA of the optional bound IAT
+ *      RVA             rvaUnloadIAT;   // RVA of optional copy of original IAT
+ *      DWORD           dwTimeStamp;    // 0 if not bound,
+ *                                      // O.W. date/time stamp of DLL bound to (Old BIND)
+ *  } ImgDelayDescr, * PImgDelayDescr;
+ */
+typedef ImgDelayDescr PEDelimp;
+
+/***
+ *  typedef struct _IMAGE_EXPORT_DIRECTORY {
+ *      DWORD   Characteristics;
+ *      DWORD   TimeDateStamp;
+ *      WORD    MajorVersion;
+ *      WORD    MinorVersion;
+ *      DWORD   Name;
+ *      DWORD   Base;
+ *      DWORD   NumberOfFunctions;
+ *      DWORD   NumberOfNames;
+ *      DWORD   AddressOfFunctions;
+ *      DWORD   AddressOfNames;
+ *      DWORD   AddressOfNameOrdinals;
+ *  } IMAGE_EXPORT_DIRECTORY,*PIMAGE_EXPORT_DIRECTORY;
+*/
+typedef IMAGE_EXPORT_DIRECTORY PEExport;
 
 /***
  *  typedef struct _IMAGE_SECTION_HEADER {
@@ -268,6 +304,10 @@ typedef struct {
     PESection      *sections;   // Sections table
     PEImport       *import;     // Import tab
     uint64_t       importNum;   // Number of imports
+    PEDelimp       *delimp;     // Delay import tab
+    uint64_t       delimpNum;   // Number of delay imports
+    PEExport       *exp;        // Export table
+    uint64_t       expNum;      // Number of exports
     PESymbol       *symtab;     // Symbol table
     PESymbol       *sortSymtab; // Sorted symbol table
     uint64_t       symNum;      // Number of symbols in symtab
@@ -279,15 +319,14 @@ typedef enum : uint64_t {
 #else
 typedef enum {
 #endif /* __WIN__ */
-    PE64_NO_RELOCATION = (uint64_t)-19,
+    PE64_NO_RELOCATION = (uint64_t)-18,
     PE64_NO_OBJ,
     PE64_NO_SECTION,
     PE64_NO_SYMBOL,
-    PE64_NO_RELADYN,
-    PE64_NO_RELAPLT,
-    PE64_NO_DYN_SYM_NAME_TAB,
     PE64_NO_STR_TAB,
     PE64_NO_IMPORTS,
+    PE64_NO_DELIMP,
+    PE64_NO_EXPORTS,
     PE64_NO_DYNSYM,
     PE64_NO_SYMTAB,
     PE64_NO_SEGMENTS,

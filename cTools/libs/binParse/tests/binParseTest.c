@@ -9,9 +9,9 @@ static void hookFooWithBar(char *argv0)
 {
     initBinParser(argv0);
     if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", bar);
+        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
     else
-        binHook("foo", bar);
+        binHook("foo", (const void *)bar);
     finiBinParser();
 }
 

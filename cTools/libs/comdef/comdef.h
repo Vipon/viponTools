@@ -156,5 +156,7 @@ extern int VERBOSE;
     #define INLINE inline
 #endif
 
+#define FALLTHROUGH __attribute__((fallthrough))
+
 #endif /* __COMDEF_H */
 
