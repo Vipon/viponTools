@@ -15,7 +15,7 @@ function(add_vipon_test)
     # one_value_options
     "NAME"
     # multi_value_options
-    "SOURCES;LINK_LIBS;CMD_LINE;DEPENDS"
+    "SOURCES;LINK_LIBS;CMD_LINE;DEPENDS;LINK_FLAGS"
     ${ARGN}
   )
 
@@ -26,6 +26,10 @@ function(add_vipon_test)
   if (NOT ${ARG_DEPENDS} EQUAL "")
     add_dependencies(${ARG_NAME} ${ARG_DEPENDS})
   endif()
+
+  target_link_options(${ARG_NAME} BEFORE
+    PUBLIC ${ARG_LINK_FLAGS}
+  )
 
   target_link_libraries(${ARG_NAME}
     vTest
