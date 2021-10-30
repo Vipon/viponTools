@@ -20,6 +20,7 @@ if (MSVC)
     -Wno-covered-switch-default
     -Wno-gnu
     -Wno-empty-translation-unit
+    -Wno-bad-function-cast
   )
 endif (MSVC)
 
