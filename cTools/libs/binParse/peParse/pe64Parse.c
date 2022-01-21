@@ -26,6 +26,8 @@
 #include "bits.h"
 #include "file.h"
 #include "comdef.h"
+#include "string.h"
+#include "stdlib.h"
 #include "pe64Parse.h"
 
 static PE64_ERROR pe64ParseDosHeader(PE64File *pe)

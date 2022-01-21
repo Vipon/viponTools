@@ -32,6 +32,9 @@
 #include <Windows.h>
 #include <delayimp.h>
 
+// C standard headers
+#include <assert.h>
+
 /***
  *  typedef struct _IMAGE_DOS_HEADER
  *  {
