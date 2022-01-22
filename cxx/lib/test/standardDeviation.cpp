@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2022 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,41 +22,28 @@
  * SOFTWARE.
  */
 
-#include "os.h"
-#include "foo.h"
-#include "bar.h"
-#include "test.h"
-#include "binParse.h"
-#ifdef __WIN__
-    #include "pe64Printer.h"
-#endif /* __WIN__ */
-#include "comdef.h"
+#include "setPoints.h"
+#include "linearFunc.h"
+#include "standardDeviation.h"
 
-static void hookFooWithBar(char *argv0)
+#include <iostream>
+
+int main()
 {
-    initBinParser(argv0);
-    if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
-    else
-        binHook("foo", (const void *)bar);
-    finiBinParser();
-}
+    SetPoints<2> testSet0 = {
+        Point<2>({1.0, 1.0}),
+        Point<2>({2.0, 2.0}),
+        Point<2>({3.0, 3.0})
+    };
 
-int main(int argc, char *argv[])
-{
-    UNUSED(argc);
+    LinearFunc f0(0, 1);
+    std::cout << "deviation:" << standardDeviation(f0, testSet0) << "\n";
 
-    VERBOSE = 1;
+    LinearFunc f1(0, 0.0);
+    std::cout << "deviation:" << standardDeviation(f1, testSet0) << "\n";
 
-    foo();
-    bar();
-    hookFooWithBar(argv[0]);
-
-    char *str1 = foo();
-    char *str2 = bar();
-    LOG("str1: %s", str1);
-    LOG("str2: %s", str2);
-    EXPECT_STR_EQ(str1, str2);
+    LinearFunc f2(0, 0.5);
+    std::cout << "deviation:" << standardDeviation(f2, testSet0) << "\n";
 
     return 0;
 }

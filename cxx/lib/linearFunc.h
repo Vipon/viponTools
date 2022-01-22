@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2022 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,39 @@
  * SOFTWARE.
  */
 
-#include "os.h"
-#include "foo.h"
-#include "bar.h"
-#include "test.h"
-#include "binParse.h"
-#ifdef __WIN__
-    #include "pe64Printer.h"
-#endif /* __WIN__ */
-#include "comdef.h"
+#ifndef __LINEAR_FUNC_H
+#define __LINEAR_FUNC_H
 
-static void hookFooWithBar(char *argv0)
-{
-    initBinParser(argv0);
-    if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
-    else
-        binHook("foo", (const void *)bar);
-    finiBinParser();
-}
+#include "point.h"
 
-int main(int argc, char *argv[])
-{
-    UNUSED(argc);
+#include <cmath>
+#include <iostream>
 
-    VERBOSE = 1;
+class LinearFunc {
+private:
+    double x0;
+    double k;
 
-    foo();
-    bar();
-    hookFooWithBar(argv[0]);
+    LinearFunc();
 
-    char *str1 = foo();
-    char *str2 = bar();
-    LOG("str1: %s", str1);
-    LOG("str2: %s", str2);
-    EXPECT_STR_EQ(str1, str2);
+public:
+    LinearFunc(double x0, double k) : x0(x0), k(k) {}
+    LinearFunc(const Point<2>& p) : x0(p[0]), k(p[1]) {}
+    double operator()(double x) const { return x0 + k*x; }
+    double operator()(const Point<1>& p) const { return x0 + k*p[0]; }
 
-    return 0;
-}
+    friend std::ostream& operator<<(std::ostream& os, const LinearFunc& f)
+    {
+        double x0 = std::round(f.x0 * 1000) / 1000;
+        double k = std::round(f.k * 1000) / 1000;
+        os << x0;
+        if (f.k > 0.0)
+            os << " + " << k << "x";
+        else if (f.k < 0.0)
+            os << " - " << std::abs(k) << "x";
+        return os;
+    }
+};
+
+#endif /* __LINEAR_FUNC_H */
 

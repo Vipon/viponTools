@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2022 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,14 @@
  * SOFTWARE.
  */
 
-#include "os.h"
-#include "foo.h"
-#include "bar.h"
-#include "test.h"
-#include "binParse.h"
-#ifdef __WIN__
-    #include "pe64Printer.h"
-#endif /* __WIN__ */
-#include "comdef.h"
+#ifndef __POINT_H
+#define __POINT_H
 
-static void hookFooWithBar(char *argv0)
-{
-    initBinParser(argv0);
-    if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
-    else
-        binHook("foo", (const void *)bar);
-    finiBinParser();
-}
+#include <array>
+#include <vector>
 
-int main(int argc, char *argv[])
-{
-    UNUSED(argc);
+template<size_t N>
+using Point = std::array<double, N>;
 
-    VERBOSE = 1;
-
-    foo();
-    bar();
-    hookFooWithBar(argv[0]);
-
-    char *str1 = foo();
-    char *str2 = bar();
-    LOG("str1: %s", str1);
-    LOG("str2: %s", str2);
-    EXPECT_STR_EQ(str1, str2);
-
-    return 0;
-}
+#endif /* __POINT_H */
 

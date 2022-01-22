@@ -20,16 +20,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
-project(viponTools
-  LANGUAGES C CXX
-  VERSION 1.0
-  )
+set(MATH_HEADERS
+    point.h
+    setPoints.h
+    linearFunc.h
+    standardDeviation.h
+    linearRegression.h
+)
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/toolchain/cflags/cflags.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/common.cmake)
-include(CTest)
+set(MATH_SOURCES
+    linearRegression.cpp
+)
 
-add_subdirectory(cTools)
-add_subdirectory(cxx)
+add_vipon_library(
+  NAME math
+  TYPE STATIC
+  SOURCES ${MATH_SOURCES} ${MATH_SOURCES}
+)
+
+add_subdirectory(test)
 

@@ -20,16 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
-project(viponTools
-  LANGUAGES C CXX
-  VERSION 1.0
-  )
+add_vipon_test(
+  NAME standardDeviationTest
+  SOURCES standardDeviation.cpp
+  LINK_LIBS math
+)
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/toolchain/cflags/cflags.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/common.cmake)
-include(CTest)
-
-add_subdirectory(cTools)
-add_subdirectory(cxx)
+add_vipon_test(
+  NAME linearRegressionTest
+  SOURCES linearRegression.cpp
+  LINK_LIBS math
+)
 

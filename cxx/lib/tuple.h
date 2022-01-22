@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2022 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,24 @@
  * SOFTWARE.
  */
 
-#include "os.h"
-#include "foo.h"
-#include "bar.h"
-#include "test.h"
-#include "binParse.h"
-#ifdef __WIN__
-    #include "pe64Printer.h"
-#endif /* __WIN__ */
-#include "comdef.h"
+#ifndef __TUPLE_H
+#define __TUPLE_H
 
-static void hookFooWithBar(char *argv0)
+#include <tuple>
+#include <utility>
+
+template <typename Tuple, std::size_t ... Is>
+auto _popFrontTuple(const Tuple& t, std::index_sequence<Is...>)
 {
-    initBinParser(argv0);
-    if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
-    else
-        binHook("foo", (const void *)bar);
-    finiBinParser();
+    return std::make_tuple(std::get<1 + Is>(t)...);
 }
 
-int main(int argc, char *argv[])
+template <typename Tuple>
+auto popFrontTuple(const Tuple& t)
 {
-    UNUSED(argc);
-
-    VERBOSE = 1;
-
-    foo();
-    bar();
-    hookFooWithBar(argv[0]);
-
-    char *str1 = foo();
-    char *str2 = bar();
-    LOG("str1: %s", str1);
-    LOG("str2: %s", str2);
-    EXPECT_STR_EQ(str1, str2);
-
-    return 0;
+    return _popFrontTuple(t,
+                std::make_index_sequence<std::tuple_size<Tuple>::value - 1>());
 }
+
+#endif /* __TUPLE_H */
 
