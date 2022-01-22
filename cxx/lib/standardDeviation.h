@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2022 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,29 @@
  * SOFTWARE.
  */
 
-#include "os.h"
-#include "foo.h"
-#include "bar.h"
-#include "test.h"
-#include "binParse.h"
-#ifdef __WIN__
-    #include "pe64Printer.h"
-#endif /* __WIN__ */
-#include "comdef.h"
+#ifndef __STANDARD_DEVIATION_H
+#define __STANDARD_DEVIATION_H
 
-static void hookFooWithBar(char *argv0)
+#include "setPoints.h"
+
+#include <cmath>
+#include <cstddef>
+#include <algorithm>
+
+template <typename Func, template<typename...> class Set, size_t N>
+double standardDeviation(const Func& f, const Set<Point<N>>& set)
 {
-    initBinParser(argv0);
-    if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
-    else
-        binHook("foo", (const void *)bar);
-    finiBinParser();
+    double sum = 0;
+    size_t num = set.size();
+    for (const auto& elem: set) {
+        Point<N-1> args;
+        std::copy_n(elem.begin(), N-1, args.begin());
+        double res = f(args) - elem[0];
+        sum += res*res;
+    }
+
+    return sqrt(sum / num);
 }
 
-int main(int argc, char *argv[])
-{
-    UNUSED(argc);
-
-    VERBOSE = 1;
-
-    foo();
-    bar();
-    hookFooWithBar(argv[0]);
-
-    char *str1 = foo();
-    char *str2 = bar();
-    LOG("str1: %s", str1);
-    LOG("str2: %s", str2);
-    EXPECT_STR_EQ(str1, str2);
-
-    return 0;
-}
+#endif /* __STANDARD_DEVIATION_H */
 

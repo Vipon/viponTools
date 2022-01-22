@@ -22,13 +22,17 @@
 
 add_subdirectory(elfParse)
 add_subdirectory(machoParse)
-add_subdirectory(peParse)
+set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse)
+if (WIN32)
+    add_subdirectory(peParse)
+    set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse pe64Parse pe64Printer)
+endif (WIN32)
 
 add_vipon_library(
   NAME binParse
   TYPE STATIC
   SOURCES binParse.c binParse.h
-  LINK_LIBS elf64Parse elf32Parse macho64Parse pe64Parse pe64Printer
+  LINK_LIBS ${BIN_PARSE_LIB_LIST}
 )
 
 add_subdirectory(tests)
