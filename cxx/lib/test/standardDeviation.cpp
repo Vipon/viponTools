@@ -36,13 +36,16 @@ int main()
         Point<2>({3.0, 3.0})
     };
 
-    LinearFunc f0(0, 1);
+    Point<2> k0{0, 1};
+    LinearFunc<1> f0(k0);
     std::cout << "deviation:" << standardDeviation(f0, testSet0) << "\n";
 
-    LinearFunc f1(0, 0.0);
+    Point<2> k1{0, 0};
+    LinearFunc<1> f1(k1);
     std::cout << "deviation:" << standardDeviation(f1, testSet0) << "\n";
 
-    LinearFunc f2(0, 0.5);
+    Point<2> k2{0, 0.5};
+    LinearFunc<1> f2(k2);
     std::cout << "deviation:" << standardDeviation(f2, testSet0) << "\n";
 
     return 0;

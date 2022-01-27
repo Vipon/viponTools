@@ -29,7 +29,7 @@ set(MATH_HEADERS
 )
 
 set(MATH_SOURCES
-    linearRegression.cpp
+  math.cpp
 )
 
 add_vipon_library(
