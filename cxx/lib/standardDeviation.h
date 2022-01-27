@@ -35,15 +35,15 @@ template <typename Func, template<typename...> class Set, size_t N>
 double standardDeviation(const Func& f, const Set<Point<N>>& set)
 {
     double sum = 0;
-    size_t num = set.size();
+    size_t numPoints = set.size();
     for (const auto& elem: set) {
         Point<N-1> args;
         std::copy_n(elem.begin(), N-1, args.begin());
-        double res = f(args) - elem[0];
+        double res = f(args) - elem[N-1];
         sum += res*res;
     }
 
-    return sqrt(sum / num);
+    return sqrt(sum / numPoints);
 }
 
 #endif /* __STANDARD_DEVIATION_H */

@@ -34,7 +34,7 @@ int main()
         Point<2>({3.0, 3.0})
     };
 
-    LinearFunc f = linearRegression(testSet0);
+    auto f = linearRegression<1>(testSet0);
     std::cout << f << "\n";
     return 0;
 }

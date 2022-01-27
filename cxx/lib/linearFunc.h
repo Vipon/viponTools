@@ -28,30 +28,76 @@
 #include "point.h"
 
 #include <cmath>
+#include <cstddef>
 #include <iostream>
 
+template<size_t N>
 class LinearFunc {
 private:
-    double x0;
-    double k;
+    Point<N+1> k;
 
     LinearFunc();
 
-public:
-    LinearFunc(double x0, double k) : x0(x0), k(k) {}
-    LinearFunc(const Point<2>& p) : x0(p[0]), k(p[1]) {}
-    double operator()(double x) const { return x0 + k*x; }
-    double operator()(const Point<1>& p) const { return x0 + k*p[0]; }
-
-    friend std::ostream& operator<<(std::ostream& os, const LinearFunc& f)
+    static double roundK(double k, unsigned precision)
     {
-        double x0 = std::round(f.x0 * 1000) / 1000;
-        double k = std::round(f.k * 1000) / 1000;
-        os << x0;
-        if (f.k > 0.0)
-            os << " + " << k << "x";
-        else if (f.k < 0.0)
-            os << " - " << std::abs(k) << "x";
+        double r = std::pow(10, precision);
+        return std::round(k * r) / r;
+    }
+
+public:
+    LinearFunc(const Point<N+1>& k) : k(k) {}
+    double operator()(const Point<N>& x) const
+    {
+        double sum = k[0];
+        for (size_t i = 0; i < N; ++i)
+            sum += k[i+1]*x[i];
+
+        return sum;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const LinearFunc<N>& f)
+    {
+        unsigned precision = os.precision();
+        double k = roundK(f.k[0], precision);
+        if (k != 0.0)
+            os << k;
+
+        double prevK = k;
+        for (size_t i = 0; i < N; ++i) {
+            k = roundK(f.k[i+1], precision);
+            if (k != 0.0) {
+                if (k > 0.0) {
+                    if (prevK)
+                        os << " + ";
+
+                    if (k != 1)
+                        os << k ;
+
+                } else {
+                    if (prevK)
+                        os << " - ";
+
+                    if (k != 1)
+                        os << std::abs(k);
+                }
+
+                os << "x" << i;
+            }
+
+            prevK = k;
+        }
+
+        bool allKZero = true;
+        for (const auto& elem: f.k) {
+            if (roundK(elem, precision) != 0.0) {
+                allKZero = false;
+                break;
+            }
+        }
+
+        if (allKZero)
+            os << 0.0;
+
         return os;
     }
 };
