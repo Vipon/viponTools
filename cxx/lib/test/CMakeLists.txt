@@ -21,6 +21,12 @@
 # SOFTWARE.
 
 add_vipon_test(
+  NAME linearFuncTest
+  SOURCES linearFunc.cpp
+  LINK_LIBS math
+)
+
+add_vipon_test(
   NAME standardDeviationTest
   SOURCES standardDeviation.cpp
   LINK_LIBS math
