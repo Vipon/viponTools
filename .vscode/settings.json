@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "os.h": "c",
+        "mem.h": "c",
+        "comdef.h": "c",
+        "file.h": "c",
+        "string.h": "c",
+        "elf32parse.h": "c",
+        "inttypes.h": "c"
+    }
+}
