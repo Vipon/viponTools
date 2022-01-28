@@ -134,10 +134,8 @@ LinearFunc<N> linearRegression(const SetPoints<N+1>& set)
         for (size_t i = 1; i < N+1; ++i)
             k[i] -= a*derivativeJkn(f, normalSet, i);
 
-        if (J >= J_old) {
-            std::cout << "iterations: " << i << "\n";
+        if (J >= J_old)
             return LinearFunc<N>(k);
-        }
 
         f = LinearFunc<N>(k);
         J_old = J;

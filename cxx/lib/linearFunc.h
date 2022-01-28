@@ -57,41 +57,34 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const LinearFunc<N>& f)
     {
+        bool allKZero = true;
         unsigned precision = os.precision();
         double k = roundK(f.k[0], precision);
-        if (k != 0.0)
+        if (k != 0.0) {
+            allKZero = false;
             os << k;
+        }
 
-        double prevK = k;
+
         for (size_t i = 0; i < N; ++i) {
             k = roundK(f.k[i+1], precision);
             if (k != 0.0) {
                 if (k > 0.0) {
-                    if (prevK)
+                    if (!allKZero)
                         os << " + ";
 
                     if (k != 1)
                         os << k ;
 
                 } else {
-                    if (prevK)
-                        os << " - ";
+                    os << " - ";
 
                     if (k != 1)
                         os << std::abs(k);
                 }
 
-                os << "x" << i;
-            }
-
-            prevK = k;
-        }
-
-        bool allKZero = true;
-        for (const auto& elem: f.k) {
-            if (roundK(elem, precision) != 0.0) {
                 allKZero = false;
-                break;
+                os << "x" << i;
             }
         }
 
