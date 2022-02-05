@@ -38,3 +38,9 @@ add_vipon_test(
   LINK_LIBS math
 )
 
+add_vipon_test(
+  NAME matrixTest
+  SOURCES matrix.cpp
+  LINK_LIBS math
+)
+

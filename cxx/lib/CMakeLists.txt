@@ -22,14 +22,16 @@
 
 set(MATH_HEADERS
     point.h
+    matrix.h
     setPoints.h
     linearFunc.h
-    standardDeviation.h
+    normalEquation.h
     linearRegression.h
+    standardDeviation.h
 )
 
 set(MATH_SOURCES
-  math.cpp
+  normalEquation.cpp
 )
 
 add_vipon_library(
