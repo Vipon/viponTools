@@ -274,5 +274,23 @@ public:
     }
 };
 
+class Vector: public Matrix {
+public:
+    Vector(size_t N) : Matrix(N, 1) {}
+    Vector(const Vector& v) : Matrix(v) {}
+    Vector(const double* v, size_t N) : Matrix((const double**) v, N, 1) {}
+    Vector(const std::vector<double> &v)
+    {
+        std::vector<std::vector<double>> w;
+        size_t size = v.size();
+        w.resize(size);
+        for (size_t i = 0; i < size; ++i)
+            w[i].push_back(v[i]);
+
+        Matrix(*this) = std::move(Matrix(w));
+    }
+
+};
+
 #endif // __MATRIX_H
 
