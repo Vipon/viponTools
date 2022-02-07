@@ -2,9 +2,9 @@
 %
 %  Instructions
 %  ------------
-% 
+%
 %  This file contains code that helps you get started on the logistic
-%  regression exercise. You will need to complete the following functions 
+%  regression exercise. You will need to complete the following functions
 %  in this exericse:
 %
 %     sigmoid.m
@@ -27,7 +27,7 @@ data = load('ex2data1.txt');
 X = data(:, [1, 2]); y = data(:, 3);
 
 %% ==================== Part 1: Plotting ====================
-%  We start the exercise by first plotting the data to understand the 
+%  We start the exercise by first plotting the data to understand the
 %  the problem we are working with.
 
 fprintf(['Plotting data with + indicating (y = 1) examples and o ' ...
@@ -35,7 +35,7 @@ fprintf(['Plotting data with + indicating (y = 1) examples and o ' ...
 
 plotData(X, y);
 
-% Put some labels 
+% Put some labels
 hold on;
 % Labels and Legend
 xlabel('Exam 1 score')
@@ -51,7 +51,7 @@ pause;
 
 %% ============ Part 2: Compute Cost and Gradient ============
 %  In this part of the exercise, you will implement the cost and gradient
-%  for logistic regression. You neeed to complete the code in 
+%  for logistic regression. You neeed to complete the code in
 %  costFunction.m
 
 %  Setup the data matrix appropriately, and add ones for the intercept term
@@ -94,7 +94,7 @@ pause;
 options = optimset('GradObj', 'on', 'MaxIter', 400);
 
 %  Run fminunc to obtain the optimal theta
-%  This function will return theta and the cost 
+%  This function will return theta and the cost
 [theta, cost] = ...
 	fminunc(@(t)(costFunction(t, X, y)), initial_theta, options);
 
@@ -109,7 +109,7 @@ fprintf(' -25.161\n 0.206\n 0.201\n');
 % Plot Boundary
 plotDecisionBoundary(theta, X, y);
 
-% Put some labels 
+% Put some labels
 hold on;
 % Labels and Legend
 xlabel('Exam 1 score')
@@ -125,16 +125,16 @@ pause;
 %% ============== Part 4: Predict and Accuracies ==============
 %  After learning the parameters, you'll like to use it to predict the outcomes
 %  on unseen data. In this part, you will use the logistic regression model
-%  to predict the probability that a student with score 45 on exam 1 and 
+%  to predict the probability that a student with score 45 on exam 1 and
 %  score 85 on exam 2 will be admitted.
 %
-%  Furthermore, you will compute the training and test set accuracies of 
+%  Furthermore, you will compute the training and test set accuracies of
 %  our model.
 %
 %  Your task is to complete the code in predict.m
 
-%  Predict probability for a student with score 45 on exam 1 
-%  and score 85 on exam 2 
+%  Predict probability for a student with score 45 on exam 1
+%  and score 85 on exam 2
 
 prob = sigmoid([1 45 85] * theta);
 fprintf(['For a student with scores 45 and 85, we predict an admission ' ...
