@@ -79,33 +79,56 @@ public:
         , m(std::move(B.m))
         {}
 
+    std::vector<double>& operator[](size_t n)
+    {
+        return m[n];
+    }
+
+    Matrix getColomn(size_t n) const
+    {
+        Matrix V(N, 1);
+        for (size_t i = 0; i < N; ++i)
+            V[i][0] = m[i][n];
+
+        return V;
+    }
+
+    Matrix getRow(size_t n) const
+    {
+        Matrix A(1, M);
+        for (size_t i = 0; i < M; ++i)
+            A[0][i] = m[n][i];
+
+        return A;
+    }
+
     Matrix transpone() const
     {
         Matrix A(M, N);
         for (size_t i = 0; i < M; ++i)
             for (size_t j = 0; j < N; ++j)
-                A.m[i][j] = m[j][i];
+                A[i][j] = m[j][i];
 
         return A;
     }
 
-    Matrix dropRow(size_t n) const
+    Matrix dropRow(size_t rowNum) const
     {
         Matrix A(N-1, M);
         for (size_t i = 0, j = 0; i < N; ++i)
-            if (i != n)
-                A.m[j++] = m[i];
+            if (i != rowNum)
+                A[j++] = m[i];
 
         return A;
     }
 
-    Matrix dropColomn(size_t m) const
+    Matrix dropColomn(size_t colNum) const
     {
         Matrix A(N, M-1);
         for (size_t i = 0; i < N; ++i)
             for (size_t j = 0, k = 0; j < M; ++j)
-                if (j != m)
-                    A.m[i][k++] = this->m[i][j];
+                if (j != colNum)
+                    A[i][k++] = m[i][j];
 
         return A;
     }
@@ -134,7 +157,18 @@ public:
     {
         N = B.N;
         M = B.M;
+        B.N = (size_t)-1;
+        B.M = (size_t)-1;
         m = std::move(B.m);
+
+        return *this;
+    }
+
+    Matrix& operator=(const Matrix& B)
+    {
+        N = B.N;
+        M = B.M;
+        m = B.m;
 
         return *this;
     }
@@ -151,10 +185,35 @@ public:
         return *this;
     }
 
+    Matrix& operator+=(double k)
+    {
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                m[i][j] += k;
+
+        return *this;
+    }
+
     Matrix operator+(const Matrix& B) const
     {
         Matrix A(*this);
         A += B;
+
+        return A;
+    }
+
+    Matrix operator+(double k) const
+    {
+        Matrix A(*this);
+        A += k;
+
+        return A;
+    }
+
+    friend Matrix operator+(double k, const Matrix& M)
+    {
+        Matrix A(M);
+        A += k;
 
         return A;
     }
@@ -171,6 +230,15 @@ public:
         return *this;
     }
 
+    Matrix& operator-=(double k)
+    {
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                m[i][j] -= k;
+
+        return *this;
+    }
+
     Matrix operator-(const Matrix& B) const
     {
         Matrix A(*this);
@@ -179,34 +247,36 @@ public:
         return A;
     }
 
-    Matrix operator*(double k) const
+    Matrix operator-(double k) const
     {
         Matrix A(*this);
-        for (size_t i = 0; i < N; ++i)
-            for (size_t j = 0; j < M; ++j)
-                A.m[i][j] = k*m[i][j];
+        A -= k;
 
         return A;
     }
 
-    Matrix operator/(double k) const
-    {
-        Matrix A(*this);
-        for (size_t i = 0; i < N; ++i)
-            for (size_t j = 0; j < M; ++j)
-                A.m[i][j] = m[i][j] / k;
-
-        return A;
-    }
-
-    friend Matrix operator*(double k, const Matrix& M)
+    friend Matrix operator-(double k, const Matrix& M)
     {
         Matrix A(M);
-        for (size_t i = 0; i < M.N; ++i)
-            for (size_t j = 0; j < M.M; ++j)
-                A.m[i][j] = k*M.m[i][j];
+        A -= k;
+        A *= -1;
 
         return A;
+    }
+
+    Matrix& operator*=(const Matrix& B)
+    {
+        (*this) = (*this) * B;
+        return (*this);
+    }
+
+    Matrix& operator*=(double k)
+    {
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                m[i][j] *= k;
+
+        return *this;
     }
 
     Matrix operator*(const Matrix& B) const
@@ -223,6 +293,57 @@ public:
                     C.m[i][j] += m[i][k] * B.m[k][j];
 
         return C;
+    }
+
+    Matrix operator*(double k) const
+    {
+        Matrix A(*this);
+        A *= k;
+
+        return A;
+    }
+
+    friend Matrix operator*(double k, const Matrix& M)
+    {
+        Matrix A(M);
+        for (size_t i = 0; i < M.N; ++i)
+            for (size_t j = 0; j < M.M; ++j)
+                A.m[i][j] = k*M.m[i][j];
+
+        return A;
+    }
+
+    Matrix& operator/=(const Matrix& B)
+    {
+        (*this) = (*this) * B.pinv();
+        return (*this);
+    }
+
+    Matrix& operator/=(double k)
+    {
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                m[i][j] /= k;
+
+        return *this;
+    }
+
+    Matrix operator/(const Matrix& B) const
+    {
+        return (*this) * B.pinv();
+    }
+
+    Matrix operator/(double k) const
+    {
+        Matrix A(*this);
+        A /= k;
+
+        return A;
+    }
+
+    friend Matrix operator/(double k, const Matrix& M)
+    {
+        return k * M.pinv();
     }
 
     Matrix adjugate() const
@@ -272,24 +393,6 @@ public:
 
         return os;
     }
-};
-
-class Vector: public Matrix {
-public:
-    Vector(size_t N) : Matrix(N, 1) {}
-    Vector(const Vector& v) : Matrix(v) {}
-    Vector(const double* v, size_t N) : Matrix((const double**) v, N, 1) {}
-    Vector(const std::vector<double> &v)
-    {
-        std::vector<std::vector<double>> w;
-        size_t size = v.size();
-        w.resize(size);
-        for (size_t i = 0; i < size; ++i)
-            w[i].push_back(v[i]);
-
-        Matrix(*this) = std::move(Matrix(w));
-    }
-
 };
 
 #endif // __MATRIX_H
