@@ -29,7 +29,10 @@
 
 #include <cmath>
 #include <cstddef>
+#include <string>
+#include <sstream>
 #include <iostream>
+
 
 class LinearFunc {
 private:
@@ -60,6 +63,11 @@ public:
             sum += k[i]*x[i];
 
         return sum;
+    }
+
+    bool operator!=(const LinearFunc& f) const
+    {
+        return k != f.k;
     }
 
     friend std::ostream& operator<<(std::ostream& os, const LinearFunc& f)
@@ -98,6 +106,13 @@ public:
             os << 0.0;
 
         return os;
+    }
+
+    operator std::string() const
+    {
+        std::stringstream buffer;
+        buffer << (*this);
+        return buffer.str();
     }
 };
 

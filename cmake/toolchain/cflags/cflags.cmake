@@ -22,11 +22,22 @@
 
 include_guard(GLOBAL)
 include(CheckCCompilerFlag)
+include(CheckCXXCompilerFlag)
 
 macro(append_cflags var)
   foreach(flag ${ARGN})
     set(check "Flag: ${flag}")
     check_c_compiler_flag("${flag} -w" ${check})
+    if(${check})
+      string(APPEND ${var} " ${flag}")
+    endif()
+  endforeach()
+endmacro()
+
+macro(append_cxxflags var)
+  foreach(flag ${ARGN})
+    set(check "Flag: ${flag}")
+    check_cxx_compiler_flag("${flag} -w" ${check})
     if(${check})
       string(APPEND ${var} " ${flag}")
     endif()

@@ -21,4 +21,4 @@
 # SOFTWARE.
 
 append_cflags(C_FLAGS -fPIC -std=gnu11)
-
+append_cxxflags(CXX_FLAGS -fPIC -std=c++20)

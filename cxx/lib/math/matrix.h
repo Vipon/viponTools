@@ -448,6 +448,19 @@ public:
         return os;
     }
 
+    bool operator!=(const Matrix& B) const
+    {
+        if (N != B.N || M != B.M)
+            return true;
+
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                if (m[i][j] != B[i][j])
+                    return true;
+
+        return false;
+    }
+
     class iterator :
         public std::iterator<
             std::input_iterator_tag, // iterator_category
