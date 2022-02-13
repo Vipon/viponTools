@@ -20,11 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-#add_vipon_test(
-#  NAME linearFuncTest
-#  SOURCES linearFunc.cpp
-#  LINK_LIBS math
-#)
+add_vipon_test(
+  NAME linearFuncTest
+  SOURCES linearFunc.cpp
+  LINK_LIBS math
+)
 
 #add_vipon_test(
 #  NAME standardDeviationTest
