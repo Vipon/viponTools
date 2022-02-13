@@ -49,7 +49,7 @@ private:
 
 public:
     LinearFunc(const Point& k)
-        : dimension(k.size())
+        : dimension(k.size()-1)
         , k(k)
         {}
 
@@ -60,7 +60,7 @@ public:
 
         double sum = 0.0;
         for (size_t i = 0; i < dimension; ++i)
-            sum += k[i]*x[i];
+            sum += k[i+1]*x[i];
 
         return sum;
     }
@@ -80,7 +80,7 @@ public:
             os << k;
         }
 
-        for (size_t i = 1; i < f.dimension; ++i) {
+        for (size_t i = 1; i < f.k.size(); ++i) {
             k = roundK(f.k[i], precision);
             if (k != 0.0) {
                 if (k > 0.0) {

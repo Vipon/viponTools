@@ -22,31 +22,42 @@
  * SOFTWARE.
  */
 
-#include "setPoints.h"
+#include "matrix.h"
 #include "linearFunc.h"
 #include "standardDeviation.h"
 
+#include <vector>
 #include <iostream>
 
 int main()
 {
-    SetPoints<2> testSet0 = {
-        Point<2>({1.0, 1.0}),
-        Point<2>({2.0, 2.0}),
-        Point<2>({3.0, 3.0})
-    };
+    Matrix X(
+        {
+            {1.0},
+            {2.0},
+            {3.0}
+        }
+    );
 
-    Point<2> k0{0, 1};
-    LinearFunc<1> f0(k0);
-    std::cout << "deviation:" << standardDeviation(f0, testSet0) << "\n";
+    Matrix y(
+        {
+            {1.0},
+            {2.0},
+            {3.0}
+        }
+    );
 
-    Point<2> k1{0, 0};
-    LinearFunc<1> f1(k1);
-    std::cout << "deviation:" << standardDeviation(f1, testSet0) << "\n";
+    Point k0(std::vector<double>{0.0, 1.0});
+    LinearFunc f0(k0);
+    std::cout << "deviation:" << standardDeviation(f0, X, y) << "\n";
 
-    Point<2> k2{0, 0.5};
-    LinearFunc<1> f2(k2);
-    std::cout << "deviation:" << standardDeviation(f2, testSet0) << "\n";
+    Point k1(std::vector<double>{0, 0});
+    LinearFunc f1(k1);
+    std::cout << "deviation:" << standardDeviation(f1, X, y) << "\n";
+
+    Point k2(std::vector<double>{0, 0.5});
+    LinearFunc f2(k2);
+    std::cout << "deviation:" << standardDeviation(f2, X, y) << "\n";
 
     return 0;
 }
