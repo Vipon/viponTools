@@ -20,5 +20,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(math)
+set(MATH_HEADERS
+    point.h
+    matrix.h
+    linearFunc.h
+    normalEquation.h
+    linearRegression.h
+    standardDeviation.h
+)
+
+set(MATH_SOURCES
+  normalEquation.cpp
+  linearRegression.cpp
+)
+
+add_vipon_library(
+  NAME math
+  TYPE STATIC
+  SOURCES ${MATH_SOURCES} ${MATH_SOURCES}
+)
+
+add_subdirectory(test)
 
