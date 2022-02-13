@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "test.h"
 #include "linearRegression.h"
 
 #include <vector>
@@ -29,7 +30,7 @@
 
 int main()
 {
-    Matrix X(
+    Matrix X0(
         std::vector<std::vector<double>>{
             {1.0, 1.0},
             {1.0, 2.0},
@@ -37,7 +38,7 @@ int main()
         }
     );
 
-    Matrix y(
+    Matrix y0(
         std::vector<std::vector<double>>{
             {1.0},
             {2.0},
@@ -45,8 +46,27 @@ int main()
         }
     );
 
-    auto f = linearRegression(X, y);
-    std::cout << f << "\n";
+    LinearFunc res0(std::vector<double> {0.0, 1.0});
+    EXPECT_EQ((std::string)linearRegression(X0, y0), (std::string)res0);
+
+    Matrix X1(
+        std::vector<std::vector<double>>{
+            {1.0, 1.0, 1.0},
+            {1.0, 2.0, 2.0},
+            {1.0, 3.0, 3.0}
+        }
+    );
+
+    Matrix y1(
+        std::vector<std::vector<double>>{
+            {2.0},
+            {4.0},
+            {6.0}
+        }
+    );
+
+    LinearFunc res1(std::vector<double> {0.0, 1.0, 1.0});
+    EXPECT_EQ((std::string)linearRegression(X1, y1), (std::string)res1);
     return 0;
 }
 

@@ -198,6 +198,12 @@ public:
     {
         return Point((*(Matrix*)this) / k);
     }
+
+    bool operator!=(const Point& B) const
+    {
+        return (*(Matrix*)this) != B;
+    }
+
 };
 
 #endif /* __POINT_H */

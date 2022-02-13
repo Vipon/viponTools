@@ -27,8 +27,6 @@
 
 #include "arch.h"
 
-#include <stdio.h>
-
 #ifndef PAGE_SIZE
     #define PAGE_SIZE 4096
 #endif /* PAGE_SIZE */
@@ -49,57 +47,123 @@ extern int VERBOSE;
         def;            \
     } while (0);
 
-#define NEW_LINE       \
-    DEF_GUARD(         \
-        putchar('\n'); \
-    )
+#ifndef __cplusplus
+    #include <stdio.h>
 
-#define SPACE         \
-    DEF_GUARD(        \
-        putchar(' '); \
-    )
+    #define NEW_LINE       \
+        DEF_GUARD(         \
+            putchar('\n'); \
+        )
 
-#define TAB            \
-    DEF_GUARD(         \
-        putchar('\t'); \
-    )
+    #define SPACE         \
+        DEF_GUARD(        \
+            putchar(' '); \
+        )
 
-#define LOG(...)                            \
-    DEF_GUARD(                              \
-        if (VERBOSE) {                      \
-            fprintf(stdout, __VA_ARGS__);   \
-            fprintf(stdout, "\n");          \
-            fflush(stdout);                 \
-        }                                   \
-    )
-#define WARNING(...)                                                    \
-    DEF_GUARD(                                                          \
-        fprintf(stderr, SET_YLW_COLOR_TEXT "WARNING: " RESET_COLOR_TEXT \
-                        __VA_ARGS__);                                   \
-        fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);        \
-        fprintf(stderr, "\n");                                          \
-    )
-#ifdef ERROR
-    #undef ERROR
-#endif /* ERROR */
-#define ERROR(...)                                                    \
-    DEF_GUARD(                                                        \
-        fprintf(stderr, SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT \
-                        __VA_ARGS__);                                 \
-        fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);      \
-        fprintf(stderr, "\n");                                        \
-    )
-#define PERROR(func)                                                \
-    DEF_GUARD(                                                      \
-        perror(SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT func); \
-        fprintf(stderr, "\t%s line %d\n", __FILE__, __LINE__);      \
-        fprintf(stderr, "\n");                                      \
-    )
-#define STDERROR_PRINT(...)                                         \
-    DEF_GUARD(                                                      \
-        fprintf(stderr, __VA_ARGS__);                               \
-        fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);    \
-    )
+    #define TAB            \
+        DEF_GUARD(         \
+            putchar('\t'); \
+        )
+
+    #define LOG(...)                            \
+        DEF_GUARD(                              \
+            if (VERBOSE) {                      \
+                fprintf(stdout, __VA_ARGS__);   \
+                fprintf(stdout, "\n");          \
+                fflush(stdout);                 \
+            }                                   \
+        )
+    #define WARNING(...)                                                    \
+        DEF_GUARD(                                                          \
+            fprintf(stderr, SET_YLW_COLOR_TEXT "WARNING: " RESET_COLOR_TEXT \
+                            __VA_ARGS__);                                   \
+            fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);        \
+            fprintf(stderr, "\n");                                          \
+        )
+    #ifdef ERROR
+        #undef ERROR
+    #endif /* ERROR */
+    #define ERROR(...)                                                    \
+        DEF_GUARD(                                                        \
+            fprintf(stderr, SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT \
+                            __VA_ARGS__);                                 \
+            fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);      \
+            fprintf(stderr, "\n");                                        \
+        )
+    #define PERROR(func)                                                \
+        DEF_GUARD(                                                      \
+            perror(SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT func); \
+            fprintf(stderr, "\t%s line %d\n", __FILE__, __LINE__);      \
+            fprintf(stderr, "\n");                                      \
+        )
+    #define STDERROR_PRINT(...)                                         \
+        DEF_GUARD(                                                      \
+            fprintf(stderr, __VA_ARGS__);                               \
+            fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);    \
+        )
+
+#else // __cplusplus
+    #include <iostream>
+
+    #define NEW_LINE                \
+        DEF_GUARD(                  \
+            std::cout << std::endl; \
+        )
+
+    #define SPACE             \
+        DEF_GUARD(            \
+            std::cout << ' '; \
+        )
+
+    #define TAB                \
+        DEF_GUARD(             \
+            std::cout << '\t'; \
+        )
+
+    template<typename ...Args>
+    void LOG(Args&& ...args)
+    {
+        if (VERBOSE) {
+            (std::cout << ... << args);
+            std::cout << std::endl;
+        }
+    }
+
+    template<typename ...Args>
+    void WARNING(Args&& ...args)
+    {
+        std::cerr << SET_YLW_COLOR_TEXT "WARNING: " RESET_COLOR_TEXT;
+        (std::cerr << ... << args);
+        std::cerr << std::endl;
+        std::cerr << "\t" << __FILE__ << " line " << __LINE__ << std::endl;
+    }
+
+    template<typename ...Args>
+    void ERROR(Args&& ...args)
+    {
+        std::cerr << SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT;
+        (std::cerr << ... << args);
+        std::cerr << std::endl;
+        std::cerr << "\t" << __FILE__ << " line " << __LINE__ << std::endl;
+    }
+
+    #define PERROR(func)                                                     \
+        DEF_GUARD(                                                           \
+            std::perror(SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT func); \
+            std::cerr << "\t" << __FILE__ << " line " << __LINE__;           \
+            std::cerr << std::endl;                                          \
+        )
+
+    template<typename ...Args>
+    void STDERROR_PRINT(Args&& ...args)
+    {
+        (std::cerr << ... << args);
+        std::cerr << std::endl;
+        std::cerr << "\t" << __FILE__ << " line " << __LINE__ << std::endl;
+    }
+
+#endif // __cplusplus
+
 #define EXEC_CODE(code) \
     DEF_GUARD(          \
         code;           \

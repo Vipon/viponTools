@@ -28,6 +28,7 @@
 #include "matrix.h"
 #include "linearFunc.h"
 
+Matrix normalizeSetPoints(const Matrix& X);
 LinearFunc linearRegression(const Matrix& X, const Matrix& y);
 
 #endif /* __LINEAR_REGRESSION */

@@ -26,5 +26,6 @@ project(cTools
   VERSION 1.0
 )
 
+include_directories(AFTER include)
 add_subdirectory(lib)
 
