@@ -22,15 +22,13 @@
  * SOFTWARE.
  */
 
-#ifndef __SET_POINTS_H
-#define __SET_POINTS_H
+#ifndef __LINEAR_REGRESSION_H
+#define __LINEAR_REGRESSION_H
 
-#include <vector>
+#include "matrix.h"
+#include "linearFunc.h"
 
-#include "point.h"
+LinearFunc linearRegression(const Matrix& X, const Matrix& y);
 
-template<size_t N>
-using SetPoints = std::vector<Point<N>>;
-
-#endif /*__SET_POINTS_H */
+#endif /* __LINEAR_REGRESSION */
 

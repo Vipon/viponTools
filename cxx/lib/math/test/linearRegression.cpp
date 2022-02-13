@@ -24,17 +24,28 @@
 
 #include "linearRegression.h"
 
+#include <vector>
 #include <iostream>
 
 int main()
 {
-    SetPoints<2> testSet0 = {
-        Point<2>({1.0, 1.0}),
-        Point<2>({2.0, 2.0}),
-        Point<2>({3.0, 3.0})
-    };
+    Matrix X(
+        std::vector<std::vector<double>>{
+            {1.0, 1.0},
+            {1.0, 2.0},
+            {1.0, 3.0}
+        }
+    );
 
-    auto f = linearRegression<1>(testSet0);
+    Matrix y(
+        std::vector<std::vector<double>>{
+            {1.0},
+            {2.0},
+            {3.0}
+        }
+    );
+
+    auto f = linearRegression(X, y);
     std::cout << f << "\n";
     return 0;
 }

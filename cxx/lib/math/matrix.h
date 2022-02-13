@@ -27,8 +27,11 @@
 
 #include <cmath>
 #include <vector>
+#include <string>
+#include <utility>
 #include <cstddef>
 #include <ostream>
+#include <iterator>
 
 class Matrix {
 private:
@@ -79,7 +82,58 @@ public:
         , m(std::move(B.m))
         {}
 
+    Matrix to_all(const std::string& op, const Matrix& B) const
+    {
+        if (this->N != B.N || this->M != B.M)
+            throw "Different dimensions of Matrix";
+
+        Matrix A(*this);
+        if (op == std::string("+")) {
+            for (size_t i = 0; i < N; ++i)
+                for (size_t j = 0; j < M; ++j)
+                    A[i][j] += B[i][j];
+            return A;
+        } else if (op == std::string("-")) {
+            for (size_t i = 0; i < N; ++i)
+                for (size_t j = 0; j < M; ++j)
+                    A[i][j] -= B[i][j];
+            return A;
+        } else if (op == std::string("*")) {
+            for (size_t i = 0; i < N; ++i)
+                for (size_t j = 0; j < M; ++j)
+                    A[i][j] *= B[i][j];
+            return A;
+        } else if (op == std::string("/")) {
+            for (size_t i = 0; i < N; ++i)
+                for (size_t j = 0; j < M; ++j)
+                    A[i][j] /= B[i][j];
+            return A;
+        }
+
+        throw "Uknown Op";
+    }
+
+    double sum() const
+    {
+        double res = 0.0;
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                res += (*this)[i][j];
+
+        return res;
+    }
+
+    std::pair<size_t, size_t> size() const
+    {
+        return std::pair<size_t, size_t>(N, M);
+    }
+
     std::vector<double>& operator[](size_t n)
+    {
+        return m[n];
+    }
+
+    const std::vector<double>& operator[](size_t n) const
     {
         return m[n];
     }
@@ -393,6 +447,63 @@ public:
 
         return os;
     }
+
+    class iterator :
+        public std::iterator<
+            std::input_iterator_tag, // iterator_category
+            std::vector<double>      // value_type
+        >
+    {
+    private:
+        friend class Matrix;
+        using MatrixIt = std::vector<std::vector<double>>::iterator;
+        MatrixIt it;
+
+    public:
+        iterator(MatrixIt m) : it(m) {}
+        reference operator*() const { return *it; }
+        pointer operator->() { return &(*it); }
+        iterator& operator++() { ++it; return (*this); }
+        iterator operator++(int)
+        {
+            iterator newIt = (*this);
+            ++(*this);
+            return newIt;
+        }
+        bool operator==(iterator other) const { return (it == other.it); }
+        bool operator!=(iterator other) const { return (it != other.it); }
+    };
+
+    class const_iterator :
+        public std::iterator<
+            std::output_iterator_tag,  // iterator_category
+            const std::vector<double> // value_type
+        >
+    {
+    private:
+        friend class Matrix;
+        using ConstMatrixIt = std::vector<std::vector<double>>::const_iterator;
+        ConstMatrixIt it;
+
+    public:
+        const_iterator(ConstMatrixIt m) : it(m) {}
+        reference operator*() const { return *it; }
+        pointer operator->() { return &(*it); }
+        const_iterator& operator++() { ++it; return (*this); }
+        const_iterator operator++(int)
+        {
+            const_iterator newIt = (*this);
+            ++(*this);
+            return newIt;
+        }
+        bool operator==(const_iterator other) const { return (it == other.it); }
+        bool operator!=(const_iterator other) const { return (it != other.it); }
+    };
+
+    iterator begin() { return iterator(m.begin()); }
+    const_iterator begin() const  { return const_iterator(m.begin()); }
+    iterator end()   { return iterator(m.end()); }
+    const_iterator end() const  { return const_iterator(m.end()); }
 };
 
 #endif // __MATRIX_H

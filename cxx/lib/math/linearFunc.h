@@ -31,10 +31,10 @@
 #include <cstddef>
 #include <iostream>
 
-template<size_t N>
 class LinearFunc {
 private:
-    Point<N+1> k;
+    size_t dimension;
+    Point k;
 
     LinearFunc();
 
@@ -45,17 +45,24 @@ private:
     }
 
 public:
-    LinearFunc(const Point<N+1>& k) : k(k) {}
-    double operator()(const Point<N>& x) const
+    LinearFunc(const Point& k)
+        : dimension(k.size())
+        , k(k)
+        {}
+
+    double operator()(const Point& x) const
     {
-        double sum = k[0];
-        for (size_t i = 0; i < N; ++i)
-            sum += k[i+1]*x[i];
+        if (x.size() != dimension)
+            throw "ERROR: misalign between point and function dimensions.";
+
+        double sum = 0.0;
+        for (size_t i = 0; i < dimension; ++i)
+            sum += k[i]*x[i];
 
         return sum;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const LinearFunc<N>& f)
+    friend std::ostream& operator<<(std::ostream& os, const LinearFunc& f)
     {
         bool allKZero = true;
         unsigned precision = os.precision();
@@ -65,9 +72,8 @@ public:
             os << k;
         }
 
-
-        for (size_t i = 0; i < N; ++i) {
-            k = roundK(f.k[i+1], precision);
+        for (size_t i = 1; i < f.dimension; ++i) {
+            k = roundK(f.k[i], precision);
             if (k != 0.0) {
                 if (k > 0.0) {
                     if (!allKZero)
