@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "test.h"
 #include "matrix.h"
 #include "linearFunc.h"
 #include "standardDeviation.h"
@@ -49,15 +50,15 @@ int main()
 
     Point k0(std::vector<double>{0.0, 1.0});
     LinearFunc f0(k0);
-    std::cout << "deviation:" << standardDeviation(f0, X, y) << "\n";
+    EXPECT_EQ(LinearFunc::roundK(standardDeviation(f0, X, y), 2), 0);
 
     Point k1(std::vector<double>{0, 0});
     LinearFunc f1(k1);
-    std::cout << "deviation:" << standardDeviation(f1, X, y) << "\n";
+    EXPECT_EQ(LinearFunc::roundK(standardDeviation(f1, X, y), 2), 2.16);
 
     Point k2(std::vector<double>{0, 0.5});
     LinearFunc f2(k2);
-    std::cout << "deviation:" << standardDeviation(f2, X, y) << "\n";
+    EXPECT_EQ(LinearFunc::roundK(standardDeviation(f2, X, y), 2), 1.08);
 
     return 0;
 }

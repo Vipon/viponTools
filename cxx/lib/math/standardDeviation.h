@@ -36,12 +36,8 @@ double standardDeviation(const Func& f, const Matrix& X, const Matrix& y)
 {
     double sum = 0;
     size_t numPoints = X.size().first;
-    std::cout << f << std::endl;
-    std::cout << X << std::endl;
-    std::cout << y << std::endl;
     for (size_t i = 0; i < numPoints; ++i) {
         Point p(X[i]);
-        std::cout << p << std::endl;
         double res = f(p) - y[i][0];
         sum += res*res;
     }
