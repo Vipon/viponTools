@@ -41,12 +41,6 @@ private:
 
     LinearFunc();
 
-    static double roundK(double k, unsigned precision)
-    {
-        double r = std::pow(10, precision);
-        return std::round(k * r) / r;
-    }
-
 public:
     LinearFunc(const Point& k)
         : dimension(k.size()-1)
@@ -114,6 +108,12 @@ public:
         std::stringstream buffer;
         buffer << (*this);
         return buffer.str();
+    }
+
+    static double roundK(double k, unsigned precision)
+    {
+        double r = std::pow(10, precision);
+        return std::round(k * r) / r;
     }
 };
 
