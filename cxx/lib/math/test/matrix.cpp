@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "test.h"
 #include "matrix.h"
 
 #include <array>
@@ -38,6 +39,15 @@ int main()
             {7, 8, 9}
         }
     );
+    Matrix trA (
+        {
+            {1, 4, 7},
+            {2, 5, 8},
+            {3, 6, 9}
+        }
+    );
+    EXPECT_EQ(A.transpone(), trA);
+    EXPECT_EQ(A.determinant(), 0);
 
     Matrix B(
         {
@@ -46,15 +56,30 @@ int main()
             {3, 2, 1}
         }
     );
-
-    cout << "Matrix A:\n" << A << "\n";
-    cout << "Matrix B:\n" << B << "\n";
-    cout << "Transpone A\n" << A.transpone() << "\n";
-    cout << "Determinant A: " << A.determinant() << "\n";
-
-    cout << "Matrix A + B:\n" << A + B << "\n";
-    cout << "Matrix A - B:\n" << A - B << "\n";
-    cout << "Matrix A * B:\n" << A * B << "\n";
+    Matrix AplusB(
+        {
+            { 10, 10, 10 },
+            { 10, 10, 10 },
+            { 10, 10, 10 },
+        }
+    );
+    Matrix AminusB(
+        {
+            { -8, -6, -4 },
+            { -2,  0,  2 },
+            {  4,  6,  8 },
+        }
+    );
+    Matrix AmulB(
+        {
+            { 30, 24, 18 },
+            { 84, 69, 54 },
+            { 138, 114, 90 },
+        }
+    );
+    EXPECT_EQ(A + B, AplusB);
+    EXPECT_EQ(A - B, AminusB);
+    EXPECT_EQ(A * B, AmulB);;
 
     Matrix C(
         {
@@ -63,8 +88,14 @@ int main()
             {0, 0, 1}
         }
     );
-    cout << "Matrix C:\n" << C << "\n";
-    cout << "Inverse C\n" << C.inv() << "\n";
+    Matrix invC(
+        {
+            { -1.0/3.0,  2.0/3.0, -0 },
+            {  2.0/3.0, -1.0/3.0,  0 },
+            {  0,        0,        1 }
+        }
+    );
+    EXPECT_EQ(C.inv(), invC);
 
     Matrix D(
         {
@@ -72,8 +103,15 @@ int main()
             {2, 2, 3},
         }
     );
-    cout << "Matrix D:\n" << D << "\n";
-    cout << "Pseudo Inverse D\n" << D.pinv() << "\n";
+    Matrix pInvD(
+        {
+            {1.5, -0.5},
+            {1.5, -0.5},
+            {-2, 1}
+        }
+    );
+    EXPECT_EQ(D.pinv(), pInvD);
+
     return 0;
 }
 
