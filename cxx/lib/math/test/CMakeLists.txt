@@ -26,11 +26,11 @@ add_vipon_test(
   LINK_LIBS math
 )
 
-#add_vipon_test(
-#  NAME standardDeviationTest
-#  SOURCES standardDeviation.cpp
-#  LINK_LIBS math
-#)
+add_vipon_test(
+  NAME standardDeviationTest
+  SOURCES standardDeviation.cpp
+  LINK_LIBS math
+)
 
 add_vipon_test(
   NAME linearRegressionTest

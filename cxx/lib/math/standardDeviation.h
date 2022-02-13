@@ -25,21 +25,24 @@
 #ifndef __STANDARD_DEVIATION_H
 #define __STANDARD_DEVIATION_H
 
-#include "setPoints.h"
+#include "matrix.h"
 
 #include <cmath>
 #include <cstddef>
 #include <algorithm>
 
-template <typename Func, template<typename...> class Set, size_t N>
-double standardDeviation(const Func& f, const Set<Point<N>>& set)
+template <typename Func>
+double standardDeviation(const Func& f, const Matrix& X, const Matrix& y)
 {
     double sum = 0;
-    size_t numPoints = set.size();
-    for (const auto& elem: set) {
-        Point<N-1> args;
-        std::copy_n(elem.begin(), N-1, args.begin());
-        double res = f(args) - elem[N-1];
+    size_t numPoints = X.size().first;
+    std::cout << f << std::endl;
+    std::cout << X << std::endl;
+    std::cout << y << std::endl;
+    for (size_t i = 0; i < numPoints; ++i) {
+        Point p(X[i]);
+        std::cout << p << std::endl;
+        double res = f(p) - y[i][0];
         sum += res*res;
     }
 
