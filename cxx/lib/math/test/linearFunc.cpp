@@ -22,17 +22,19 @@
  * SOFTWARE.
  */
 
+#include "test.h"
 #include "point.h"
 #include "linearFunc.h"
 
+#include <string>
 #include <iostream>
 
 int main()
 {
-    // f0 = 5.5 - x1 + 3x4
-    Point<6> k0{5.5, 0, -1, 0, 0, 3};
-    LinearFunc<5> f0(k0);
-    std::cout << f0 << "\n";
+    // f0 = 5.5 - x2 + 3x5
+    Point k0({5.5, 0, -1, 0, 0, 3});
+    LinearFunc f0(k0);
+    EXPECT_EQ(std::string(f0), "5.5 - x2 + 3x5");
 
     return 0;
 }

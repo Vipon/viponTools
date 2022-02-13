@@ -87,14 +87,15 @@ public:
                     if (!allKZero)
                         os << " + ";
 
-                    if (k != 1)
-                        os << k ;
+                    if (k != 1.0)
+                        os << k;
 
                 } else {
                     os << " - ";
 
-                    if (k != 1)
+                    if (k != -1.0)
                         os << std::abs(k);
+
                 }
 
                 allKZero = false;
