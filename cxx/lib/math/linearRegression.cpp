@@ -72,40 +72,40 @@ Matrix normalizeSetPoints(const Matrix& X)
 
 namespace {
 
-double calculateJ(const Matrix& theta, const Matrix& X, const Matrix& y)
+double calculateJ(const Vector& theta, const Matrix& X, const Vector& y)
 {
-    Matrix err = X * theta - y;
-    Matrix err2 = err.transpone() * err;
+    Vector err = X * theta - y;
+    double err2 = err.transpone() * err;
 
     size_t numPoints = X.size().first;
-    double J = err2[0][0] / (2*numPoints);
+    double J = err2 / (2*numPoints);
     return J;
 }
 
-double derivativeJkn(const Matrix& theta, const Matrix& X, const Matrix& y, size_t n)
+double derivativeJkn(const Vector& theta, const Matrix& X, const Vector& y, size_t n)
 {
-    Matrix err = X * theta - y;
+    Vector err = X * theta - y;
     size_t numPoints = X.size().first;
-    return (err.transpone() * X.getColomn(n))[0][0] / numPoints;
+    return (err.transpone() * X.getColomn(n)) / numPoints;
 }
 
 }
 
-LinearFunc linearRegression(const Matrix& X, const Matrix& y)
+LinearFunc linearRegression(const Matrix& X, const Vector& y)
 {
     // f(i) = x0 + k*x(i)
     // J = 1/2N * Sum((f(i) - f)^2)
     // x0(j) = x0(j) - a*(d(J) / dx0)
     // k(j) = k(j) - a*(d(J) / dk)
 
-    Matrix theta(X.size().second, 1);
-    Matrix dJ(X.size().second, 1);
+    Vector theta(X.size().second);
+    Vector dJ(X.size().second);
     /*
     Matrix normalX(normalizeSetPoints(X));
     Matrix normalY(normalizeSetPoints(y));
     */
     Matrix normalX(X);
-    Matrix normalY(y);
+    Vector normalY(y);
 
     double a = 0.01;
     double J = DBL_MAX;
@@ -115,11 +115,11 @@ LinearFunc linearRegression(const Matrix& X, const Matrix& y)
     for (;;++i) {
         J = calculateJ(theta, normalX, normalY);
         for (size_t i = 0; i < X.size().second; ++i)
-            dJ[i][0] = derivativeJkn(theta, normalX, normalY, i);
+            dJ[i] = derivativeJkn(theta, normalX, normalY, i);
 
         theta -= a * dJ;
         if (J >= J_old)
-            return LinearFunc(theta.transpone()[0]);
+            return LinearFunc(theta.transpone());
 
         J_old = J;
     }

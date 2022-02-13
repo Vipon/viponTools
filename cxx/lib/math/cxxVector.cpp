@@ -22,15 +22,16 @@
  * SOFTWARE.
  */
 
-#ifndef __LINEAR_REGRESSION_H
-#define __LINEAR_REGRESSION_H
-
-#include "matrix.h"
+#include "point.h"
 #include "cxxVector.h"
-#include "linearFunc.h"
 
-Matrix normalizeSetPoints(const Matrix& X);
-LinearFunc linearRegression(const Matrix& X, const Vector& y);
+Point Vector::transpone() const
+{
+    return (Point)((*((Matrix*)this)).transpone());
+}
 
-#endif /* __LINEAR_REGRESSION */
+Matrix Vector::operator*(const Point& p) const
+{
+    return (*((Matrix*)this)) * p;
+}
 

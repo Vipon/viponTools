@@ -22,78 +22,78 @@
  * SOFTWARE.
  */
 
-#ifndef __POINT_H
-#define __POINT_H
+#ifndef __CXX_VECTOR_H
+#define __CXX_VECTOR_H
 
 #include "matrix.h"
-#include "cxxVector.h"
+#include "point.h"
 
 #include <vector>
 #include <cstddef>
 #include <iostream>
 
-class Vector;
+class Point;
 
-class Point : public Matrix {
+class Vector : public Matrix {
 public:
-    Point(size_t N) : Matrix(1, N) { }
-    Point(const Point& B) : Matrix(B) { }
-    Point(const Matrix& B)
+    Vector(size_t N) : Matrix(N, 1) { }
+    Vector(const Vector& B) : Matrix(B) { }
+    Vector(const Matrix& B)
     {
-        if (B.size().first > 1)
-            throw "Matrix cannot be turn into Point.";
+        if (B.size().second > 1)
+            throw "Matrix cannot be turn into Vector.";
 
         (*(Matrix*)this) = B;
     }
-    Point(const std::vector<double>& v)
+    Vector(const std::vector<double>& v)
     {
         std::vector<std::vector<double>> m;
-        m.push_back(v);
+        for (const auto& elem: v) {
+            std::vector<double> row;
+            row.push_back(elem);
+            m.push_back(row);
+        }
+
         *((Matrix*)this) = Matrix(m);
     }
 
-    Vector transpone() const;
+    Point transpone() const;
 
-    Point to_all(const std::string& op, const Point& B) const
+    Vector to_all(const std::string& op, const Vector& B) const
     {
         return (*(Matrix*)this).to_all(op, B);
     }
 
     size_t size() const
     {
-        return (*(Matrix*)this).size().second;
+        return (*(Matrix*)this).size().first;
     }
 
     double& operator[](size_t n)
     {
-        return (*(Matrix*)this)[0][n];
+        return (*(Matrix*)this)[n][0];
     }
 
     double operator[](size_t n) const
     {
-        return (*(Matrix*)this)[0][n];
+        return (*(Matrix*)this)[n][0];
     }
 
-    operator std::vector<double>() const
-    {
-        return (*((Matrix*)this))[0];
-    }
-
-    Point& operator=(Point&& B)
+    Vector& operator=(Vector&& B)
     {
         (*(Matrix*)this) = std::move(B);
 
         return *this;
     }
 
-    Point& operator=(const Point& B)
+    Vector& operator=(const Vector& B)
     {
         (*(Matrix*)this) = B;
 
         return *this;
     }
 
-    Point& operator+=(const Point& B)
+    Vector& operator+=(const Vector& B)
     {
         if (size() != B.size())
             throw "ERROR: vectors sizes are different";
@@ -103,38 +103,38 @@ public:
         return *this;
     }
 
-    Point& operator+=(double k)
+    Vector& operator+=(double k)
     {
         (*(Matrix*)this) += k;
 
         return *this;
     }
 
-    Point operator+(const Point& B) const
+    Vector operator+(const Vector& B) const
     {
-        Point A(*this);
+        Vector A(*this);
         A += B;
 
         return A;
     }
 
-    Point operator+(double k) const
+    Vector operator+(double k) const
     {
-        Point A(*this);
+        Vector A(*this);
         A += k;
 
         return A;
     }
 
-    friend Point operator+(double k, const Point& M)
+    friend Vector operator+(double k, const Vector& M)
     {
-        Point A(M);
+        Vector A(M);
         A += k;
 
         return A;
     }
 
-    Point& operator-=(const Point& B)
+    Vector& operator-=(const Vector& B)
     {
         if (size() != B.size())
             throw "ERROR: vectors sizes are different";
@@ -143,75 +143,75 @@ public:
         return *this;
     }
 
-    Point& operator-=(double k)
+    Vector& operator-=(double k)
     {
         (*(Matrix*)this) -= k;
 
         return *this;
     }
 
-    Point operator-(const Point& B) const
+    Vector operator-(const Vector& B) const
     {
-        Point A(*this);
+        Vector A(*this);
         A -= B;
 
         return A;
     }
 
-    Point operator-(double k) const
+    Vector operator-(double k) const
     {
-        Point A(*this);
+        Vector A(*this);
         A -= k;
 
         return A;
     }
 
-    friend Point operator-(double k, const Point& M)
+    friend Vector operator-(double k, const Vector& M)
     {
-        Point A(M);
+        Vector A(M);
         A -= k;
         A *= -1;
 
         return A;
     }
 
-    Point& operator*=(double k)
+    Vector& operator*=(double k)
     {
         (*(Matrix*)this) *= k;
 
         return *this;
     }
 
-    Point operator*(double k) const
+    Matrix operator*(const Point& p) const;
+
+    Vector operator*(double k) const
     {
-        return Point((*(Matrix*)this) * k);
+        return Vector((*(Matrix*)this) * k);
     }
 
-    double operator*(const Vector& v) const;
-
-    friend Point operator*(double k, const Point& M)
+    friend Vector operator*(double k, const Vector& M)
     {
-        return Point((Matrix&)M * k);
+        return Vector((Matrix&)M * k);
     }
 
-    Point& operator/=(double k)
+    Vector& operator/=(double k)
     {
         (*(Matrix*)this) /= k;
 
         return (*this);
     }
 
-    Point operator/(double k) const
+    Vector operator/(double k) const
     {
-        return Point((*(Matrix*)this) / k);
+        return Vector((*(Matrix*)this) / k);
     }
 
-    bool operator!=(const Point& B) const
+    bool operator!=(const Vector& B) const
     {
         return (*(Matrix*)this) != B;
     }
 
 };
 
-#endif /* __POINT_H */
+#endif // __CXX_VECTOR_H
 
