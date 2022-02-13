@@ -22,15 +22,11 @@
  * SOFTWARE.
  */
 
-#ifndef __LINEAR_REGRESSION_H
-#define __LINEAR_REGRESSION_H
-
-#include "matrix.h"
 #include "cxxVector.h"
-#include "linearFunc.h"
+#include "logisticRegression.h"
 
-Matrix normalizeSetPoints(const Matrix& X);
-LinearFunc linearRegression(const Matrix& X, const Vector& y);
+Matrix logisticRegression(const Matrix& X, const Matrix& y)
+{
 
-#endif /* __LINEAR_REGRESSION */
+}
 

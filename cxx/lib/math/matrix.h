@@ -33,6 +33,9 @@
 #include <ostream>
 #include <iterator>
 
+class Point;
+class Vector;
+
 class Matrix {
 private:
     size_t N;
@@ -138,23 +141,8 @@ public:
         return m[n];
     }
 
-    Matrix getColomn(size_t n) const
-    {
-        Matrix V(N, 1);
-        for (size_t i = 0; i < N; ++i)
-            V[i][0] = m[i][n];
-
-        return V;
-    }
-
-    Matrix getRow(size_t n) const
-    {
-        Matrix A(1, M);
-        for (size_t i = 0; i < M; ++i)
-            A[0][i] = m[n][i];
-
-        return A;
-    }
+    Vector getColomn(size_t n) const;
+    Point getRow(size_t n) const;
 
     Matrix transpone() const
     {

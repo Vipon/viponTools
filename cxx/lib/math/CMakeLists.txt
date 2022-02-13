@@ -21,15 +21,19 @@
 # SOFTWARE.
 
 set(MATH_HEADERS
-    point.h
-    matrix.h
-    linearFunc.h
-    normalEquation.h
-    linearRegression.h
-    standardDeviation.h
+  point.h
+  matrix.h
+  cxxVector.h
+  linearFunc.h
+  normalEquation.h
+  linearRegression.h
+  standardDeviation.h
 )
 
 set(MATH_SOURCES
+  point.cpp
+  matrix.cpp
+  cxxVector.cpp
   normalEquation.cpp
   linearRegression.cpp
 )

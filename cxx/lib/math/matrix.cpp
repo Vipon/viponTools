@@ -22,15 +22,25 @@
  * SOFTWARE.
  */
 
-#ifndef __LINEAR_REGRESSION_H
-#define __LINEAR_REGRESSION_H
-
-#include "matrix.h"
+#include "point.h"
 #include "cxxVector.h"
-#include "linearFunc.h"
+#include "matrix.h"
 
-Matrix normalizeSetPoints(const Matrix& X);
-LinearFunc linearRegression(const Matrix& X, const Vector& y);
+Vector Matrix::getColomn(size_t n) const
+{
+    Vector V(N);
+    for (size_t i = 0; i < N; ++i)
+        V[i] = m[i][n];
 
-#endif /* __LINEAR_REGRESSION */
+    return V;
+}
+
+Point Matrix::getRow(size_t n) const
+{
+    Point A(M);
+    for (size_t i = 0; i < M; ++i)
+        A[i] = m[n][i];
+
+    return A;
+}
 
