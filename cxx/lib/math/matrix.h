@@ -31,6 +31,7 @@
 #include <utility>
 #include <cstddef>
 #include <ostream>
+#include <fstream>
 #include <iterator>
 
 class Point;
@@ -56,6 +57,45 @@ public:
         m.resize(N);
         for (size_t i = 0; i < N; ++i)
             m[i].resize(M, 0);
+    }
+
+    Matrix(std::pair<size_t, size_t> size)
+    {
+        Matrix A(size.first, size.second);
+        *this = std::move(A);
+    }
+
+    static
+    Matrix ones(size_t N, size_t M)
+    {
+        Matrix A(N, M);
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                A[i][j] = 1;
+
+        return A;
+    }
+
+    static
+    Matrix ones(std::pair<size_t, size_t> size)
+    {
+        return ones(size.first, size.second);
+    }
+
+    static
+    Matrix load(const std::string& fn)
+    {
+        std::ifstream f(fn);
+        double N, M;
+        f >> N >> M;
+        Matrix A(N, M);
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t j = 0; j < M; ++j) {
+                f >> A[i][j];
+            }
+        }
+
+        return A;
     }
 
     Matrix(size_t N)
@@ -84,6 +124,16 @@ public:
         , M(B.M)
         , m(std::move(B.m))
         {}
+
+    Matrix to_all(double (*f)(double)) const
+    {
+        Matrix A(this->N, this->M);
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                A[i][j] = f((*this)[i][j]);
+
+        return A;
+    }
 
     Matrix to_all(const std::string& op, const Matrix& B) const
     {
@@ -114,6 +164,25 @@ public:
         }
 
         throw "Uknown Op";
+    }
+
+    Matrix concat(const Matrix& B) const
+    {
+        Matrix A(*this);
+        if (A.N != B.N)
+            throw "ERROR: wrong matrix dimensions";
+
+        size_t newN = A.N;
+        size_t newM = A.M + B.M;
+        Matrix C(newN, newM);
+        for (size_t i = 0; i < newN; ++i)
+            for (size_t j = 0; j < newM; ++j)
+                if (j < A.M)
+                    C[i][j] = A[i][j];
+                else
+                    C[i][j] = B[i][j - A.M];
+
+        return C;
     }
 
     double sum() const
@@ -434,6 +503,17 @@ public:
         }
 
         return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, Matrix& A)
+    {
+        for (size_t i = 0; i < A.N; ++i) {
+            for (size_t j = 0; j < A.M; ++j) {
+                is >> A.m[i][j];
+            }
+        }
+
+        return is;
     }
 
     bool operator!=(const Matrix& B) const

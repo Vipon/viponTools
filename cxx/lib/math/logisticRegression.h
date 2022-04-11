@@ -28,7 +28,13 @@
 #include "cxxVector.h"
 #include "matrix.h"
 
-Vector logisticRegression(const Matrix& X, const Vector& y);
+namespace LogisticRegression
+{
+std::pair<double, Vector>
+costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda=0);
+} // LogisticRegression
+
+//Vector logisticRegression(const Matrix& X, const Vector& y);
 
 #endif // __LOGISTIC_REGRESSION_H
 
