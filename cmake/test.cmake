@@ -29,6 +29,7 @@ include_guard()
 #   LINK_LIBRARIES - list of link libraries
 #   CMD_LINE - args for test
 #   DEPENDS - targets should be built before test building
+#   TEST_FILES - files for test case
 ###############################################################################
 function(add_vipon_test)
   cmake_parse_arguments(ARG
@@ -37,7 +38,7 @@ function(add_vipon_test)
     # one_value_options
     "NAME"
     # multi_value_options
-    "SOURCES;LINK_LIBS;CMD_LINE;DEPENDS;LINK_FLAGS"
+    "SOURCES;LINK_LIBS;CMD_LINE;DEPENDS;LINK_FLAGS;TEST_FILES"
     ${ARGN}
   )
 
@@ -62,5 +63,11 @@ function(add_vipon_test)
     NAME ${ARG_NAME}
     COMMAND ./${ARG_NAME} ${ARG_CMD_LINE}
   )
+
+  file(
+    COPY ${ARG_TEST_FILES}
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
 endfunction(add_vipon_test)
 
