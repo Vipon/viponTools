@@ -44,3 +44,5 @@ add_vipon_test(
   LINK_LIBS math
 )
 
+add_subdirectory(logisticRegression)
+

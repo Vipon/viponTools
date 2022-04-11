@@ -22,50 +22,25 @@
  * SOFTWARE.
  */
 
+#include "test.h"
 #include "matrix.h"
-#include "sigmoid.h"
 #include "cxxVector.h"
 #include "logisticRegression.h"
 
-#include <cmath>
-#include <cstddef>
-
-namespace LogisticRegression
+int main()
 {
+    Matrix X(Matrix::load("exam_scores.txt"));
+    //std::cout << X << std::endl;
+    X = (Matrix::ones(X.size().first, 1)).concat(X);
+    //std::cout << X << std::endl;
+    Vector y(Matrix::load("pass_list.txt"));
+    //std::cout << y << std::endl;
+    Vector theta(3);
 
-std::pair<double, Vector>
-costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda)
-{
-    size_t m = y.size();
-    Matrix XTheta = X*theta;
-    Matrix j = (y - 1).to_all("*", (1 - XTheta.to_all(sigmoid)).to_all(log))
-             - y.to_all("*", XTheta.to_all(sigmoid).to_all(log));
-    double J = j.sum() / m;
+    std::pair<double, Vector> res = LogisticRegression::costFunc(X, y, theta);
+    std::cout << res.first << "\n";
+    std::cout << res.second << "\n";
 
-    Vector grad(theta.size());
-    Vector err = XTheta.to_all(sigmoid) - y;
-    for (size_t i = 0; i < theta.size(); ++i) {
-        Vector errX = err.to_all("*", X.getColomn(i));
-        grad[i] = errX.sum() / m;
-    }
-
-    if (lambda) {
-        // Regularized
-        Vector regTheta(theta);
-        regTheta[0] = 0;
-        J = J + (lambda/(2*m)) * (regTheta.to_all("*", regTheta).sum());
-
-        Vector gradReg = lambda/m * regTheta;
-        grad = grad + gradReg;
-    }
-
-    return std::pair<double, Vector>(J, grad);
+    return 0;
 }
-
-} // LogisticRegression
-
-/*Matrix logisticRegression(const Matrix& X, const Matrix& y)
-{
-
-}*/
 

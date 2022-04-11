@@ -20,31 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set(MATH_HEADERS
-  point.h
-  matrix.h
-  cxxVector.h
-  linearFunc.h
-  normalEquation.h
-  linearRegression.h
-  standardDeviation.h
-  logisticRegression.h
+add_vipon_test(
+  NAME logisticRegression
+  SOURCES logisticRegression.cpp
+  LINK_LIBS math
+  TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/exam_scores.txt
+             ${CMAKE_CURRENT_SOURCE_DIR}/pass_list.txt
 )
-
-set(MATH_SOURCES
-  point.cpp
-  matrix.cpp
-  cxxVector.cpp
-  normalEquation.cpp
-  linearRegression.cpp
-  logisticRegression.cpp
-)
-
-add_vipon_library(
-  NAME math
-  TYPE STATIC
-  SOURCES ${MATH_SOURCES} ${MATH_SOURCES}
-)
-
-add_subdirectory(test)
 
