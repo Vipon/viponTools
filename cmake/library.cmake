@@ -28,6 +28,7 @@ include_guard()
 #   TYPE - library type
 #   SOURCES - list of source files
 #   LINK_LIBRARIES - list of link libraries
+#   LINK_OPTIONS - extra link options
 ###############################################################################
 function(add_vipon_library)
   cmake_parse_arguments(ARG
@@ -36,7 +37,7 @@ function(add_vipon_library)
     # one_value_options
     "NAME;TYPE"
     # multi_value_options
-    "SOURCES;LINK_LIBS"
+    "SOURCES;LINK_LIBS;LINK_OPTIONS"
     ${ARGN}
   )
 
@@ -52,5 +53,10 @@ function(add_vipon_library)
   target_include_directories(${ARG_NAME} INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}
   )
+
+  target_link_options(${ARG_NAME}
+    PUBLIC ${ARG_LINK_OPTIONS}
+  )
+
 endfunction(add_vipon_library)
 

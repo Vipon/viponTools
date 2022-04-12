@@ -22,51 +22,19 @@
  * SOFTWARE.
  */
 
-#include "log.h"
-#include "matrix.h"
-#include "sigmoid.h"
-#include "cxxVector.h"
-#include "logisticRegression.h"
+#ifndef __ROUND_H
+#define __ROUND_H
+
+#include "comdef.h"
 
 #include <cmath>
-#include <cstddef>
 
-namespace LogisticRegression
+INLINE
+double round(double k, unsigned precision)
 {
-
-std::pair<double, Vector>
-costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda)
-{
-    size_t m = y.size();
-    Matrix XTheta = X*theta;
-    Matrix j = (y - 1).to_all("*", log(1 - sigmoid(XTheta)))
-             - y.to_all("*", log(sigmoid(XTheta)));
-    double J = j.sum() / m;
-
-    Vector grad(theta.size());
-    Vector err = sigmoid(XTheta) - y;
-    for (size_t i = 0; i < theta.size(); ++i) {
-        Vector errX = err.to_all("*", X.getColomn(i));
-        grad[i] = errX.sum() / m;
-    }
-
-    if (lambda) {
-        // Regularized
-        Vector regTheta(theta);
-        regTheta[0] = 0;
-        J = J + (lambda/(2*m)) * (regTheta.to_all("*", regTheta).sum());
-
-        Vector gradReg = lambda/m * regTheta;
-        grad = grad + gradReg;
-    }
-
-    return std::pair<double, Vector>(J, grad);
+    double r = std::pow(10, precision);
+    return std::round(k * r) / r;
 }
 
-} // LogisticRegression
-
-/*Matrix logisticRegression(const Matrix& X, const Matrix& y)
-{
-
-}*/
+#endif /* __ROUND_H */
 

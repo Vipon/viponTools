@@ -25,6 +25,7 @@
 #ifndef __LINEAR_FUNC_H
 #define __LINEAR_FUNC_H
 
+#include "round.h"
 #include "point.h"
 
 #include <cmath>
@@ -68,14 +69,14 @@ public:
     {
         bool allKZero = true;
         unsigned precision = os.precision();
-        double k = roundK(f.k[0], precision);
+        double k = round(f.k[0], precision);
         if (k != 0.0) {
             allKZero = false;
             os << k;
         }
 
         for (size_t i = 1; i < f.k.size(); ++i) {
-            k = roundK(f.k[i], precision);
+            k = round(f.k[i], precision);
             if (k != 0.0) {
                 if (k > 0.0) {
                     if (!allKZero)
@@ -108,12 +109,6 @@ public:
         std::stringstream buffer;
         buffer << (*this);
         return buffer.str();
-    }
-
-    static double roundK(double k, unsigned precision)
-    {
-        double r = std::pow(10, precision);
-        return std::round(k * r) / r;
     }
 };
 
