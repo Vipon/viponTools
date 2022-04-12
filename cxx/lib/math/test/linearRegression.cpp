@@ -67,6 +67,17 @@ int main()
 
     LinearFunc res1(std::vector<double> {0.0, 1.0, 1.0});
     EXPECT_EQ((std::string)linearRegression(X1, y1), (std::string)res1);
+
+    std::pair<double, Vector> res =
+        linearRegression(
+            X0,
+            y0,
+            std::vector<double>{0.0, 0.0},
+            2000
+        );
+    Vector expectTheta = std::vector<double>{0.0, 1.0};
+    EXPECT_EQ(round(res.second[0], 1), expectTheta[0]);
+    EXPECT_EQ(round(res.second[1], 1), expectTheta[1]);
     return 0;
 }
 

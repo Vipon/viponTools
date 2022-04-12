@@ -29,8 +29,27 @@
 #include "cxxVector.h"
 #include "linearFunc.h"
 
+#include <utility>
+
 Matrix normalizeSetPoints(const Matrix& X);
 LinearFunc linearRegression(const Matrix& X, const Vector& y);
+
+namespace LinearRegression {
+
+std::pair<double, Vector>
+costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda);
+
+} // LinearRegression
+
+std::pair<double, Vector>
+linearRegression(
+    const Matrix& X,
+    const Vector& y,
+    const Vector& initTheta,
+    size_t numIter = 1000,
+    double regParam = 0,
+    double alpha = 0.01
+);
 
 #endif /* __LINEAR_REGRESSION */
 
