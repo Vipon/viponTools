@@ -22,51 +22,18 @@
  * SOFTWARE.
  */
 
-#include "log.h"
+#ifndef __LOG_H
+#define __LOG_H
+
+#include "comdef.h"
 #include "matrix.h"
-#include "sigmoid.h"
-#include "cxxVector.h"
-#include "logisticRegression.h"
-
 #include <cmath>
-#include <cstddef>
 
-namespace LogisticRegression
+INLINE
+Matrix log(const Matrix& z)
 {
-
-std::pair<double, Vector>
-costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda)
-{
-    size_t m = y.size();
-    Matrix XTheta = X*theta;
-    Matrix j = (y - 1).to_all("*", log(1 - sigmoid(XTheta)))
-             - y.to_all("*", log(sigmoid(XTheta)));
-    double J = j.sum() / m;
-
-    Vector grad(theta.size());
-    Vector err = sigmoid(XTheta) - y;
-    for (size_t i = 0; i < theta.size(); ++i) {
-        Vector errX = err.to_all("*", X.getColomn(i));
-        grad[i] = errX.sum() / m;
-    }
-
-    if (lambda) {
-        // Regularized
-        Vector regTheta(theta);
-        regTheta[0] = 0;
-        J = J + (lambda/(2*m)) * (regTheta.to_all("*", regTheta).sum());
-
-        Vector gradReg = lambda/m * regTheta;
-        grad = grad + gradReg;
-    }
-
-    return std::pair<double, Vector>(J, grad);
+    return z.to_all(log);
 }
 
-} // LogisticRegression
-
-/*Matrix logisticRegression(const Matrix& X, const Matrix& y)
-{
-
-}*/
+#endif /* __LOG_H */
 

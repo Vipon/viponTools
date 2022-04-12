@@ -21,8 +21,11 @@
 # SOFTWARE.
 
 set(MATH_HEADERS
+  log.h
+  round.h
   point.h
   matrix.h
+  sigmoid.h
   cxxVector.h
   linearFunc.h
   normalEquation.h
@@ -44,6 +47,7 @@ add_vipon_library(
   NAME math
   TYPE STATIC
   SOURCES ${MATH_SOURCES} ${MATH_SOURCES}
+  LINK_OPTIONS "-fopenmp"
 )
 
 add_subdirectory(test)

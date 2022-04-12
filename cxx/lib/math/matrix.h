@@ -28,6 +28,7 @@
 #include <cmath>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <utility>
 #include <cstddef>
 #include <ostream>
@@ -140,30 +141,42 @@ public:
         if (this->N != B.N || this->M != B.M)
             throw "Different dimensions of Matrix";
 
-        Matrix A(*this);
+        auto add = [](double a, double b)
+        {
+            return a + b;
+        };
+        auto sub = [](double a, double b)
+        {
+            return a - b;
+        };
+        auto mul = [](double a, double b)
+        {
+            return a * b;
+        };
+        auto div = [](double a, double b)
+        {
+            return a / b;
+        };
+
+        double (*f)(double, double);
         if (op == std::string("+")) {
-            for (size_t i = 0; i < N; ++i)
-                for (size_t j = 0; j < M; ++j)
-                    A[i][j] += B[i][j];
-            return A;
+            f = add;
         } else if (op == std::string("-")) {
-            for (size_t i = 0; i < N; ++i)
-                for (size_t j = 0; j < M; ++j)
-                    A[i][j] -= B[i][j];
-            return A;
+            f = sub;
         } else if (op == std::string("*")) {
-            for (size_t i = 0; i < N; ++i)
-                for (size_t j = 0; j < M; ++j)
-                    A[i][j] *= B[i][j];
-            return A;
+            f = mul;
         } else if (op == std::string("/")) {
-            for (size_t i = 0; i < N; ++i)
-                for (size_t j = 0; j < M; ++j)
-                    A[i][j] /= B[i][j];
-            return A;
+            f = div;
+        } else {
+            throw "Uknown Op";
         }
 
-        throw "Uknown Op";
+        Matrix A(this->N, this->M);
+        for (size_t i = 0; i < N; ++i)
+            for (size_t j = 0; j < M; ++j)
+                A[i][j] = f((*this)[i][j], B[i][j]);
+
+        return A;
     }
 
     Matrix concat(const Matrix& B) const
@@ -585,6 +598,13 @@ public:
     const_iterator begin() const  { return const_iterator(m.begin()); }
     iterator end()   { return iterator(m.end()); }
     const_iterator end() const  { return const_iterator(m.end()); }
+
+    operator std::string() const
+    {
+        std::stringstream buffer;
+        buffer << (*this);
+        return buffer.str();
+    }
 };
 
 #endif // __MATRIX_H

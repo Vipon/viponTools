@@ -26,12 +26,19 @@
 #define __SIGMOID_H
 
 #include "comdef.h"
+#include "matrix.h"
 #include <cmath>
 
 INLINE
 double sigmoid(double z)
 {
     return 1.0 / (1.0 + exp(-z));
+}
+
+INLINE
+Matrix sigmoid(const Matrix& z)
+{
+    return z.to_all(sigmoid);
 }
 
 #endif /* __SIGMOID_H */
