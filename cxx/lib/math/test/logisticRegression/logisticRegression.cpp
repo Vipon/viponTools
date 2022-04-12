@@ -39,18 +39,26 @@ int main()
 
     // zero theta
     Vector theta(3);
-    Vector expectTheta(
+    Vector expectGrad(
         std::vector<double>{ -0.1, -12.0092, -11.2628 }
     );
 
     std::pair<double, Vector> res = LogisticRegression::costFunc(X, y, theta);
     EXPECT_EQ(round(res.first, 6), 0.693147);
-    EXPECT_EQ((std::string)res.second, (std::string)expectTheta);
+    EXPECT_EQ((std::string)res.second, (std::string)expectGrad);
 
     theta = std::vector<double>{-24, 0.2, 0.2};
-    expectTheta = std::vector<double>{0.0429033, 2.56625, 2.64683};
+    expectGrad = std::vector<double>{0.0429033, 2.56625, 2.64683};
     res = LogisticRegression::costFunc(X, y, theta);
     EXPECT_EQ(round(res.first, 3), 0.218);
+    EXPECT_EQ((std::string)res.second, (std::string)expectGrad);
+
+    theta = std::vector<double>{-25, 0.15, 0.15};
+    Vector expectTheta(
+        std::vector<double>{ -24.9993, 0.204935, 0.20016 }
+    );
+    res = logisticRegression(X, y, theta, 400, 0, 0.001);
+    EXPECT_EQ(round(res.first, 4), 0.2035);
     EXPECT_EQ((std::string)res.second, (std::string)expectTheta);
     return 0;
 }
