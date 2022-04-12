@@ -22,68 +22,28 @@
  * SOFTWARE.
  */
 
-#include "log.h"
+#ifndef __GRAD_DESCENT_H
+#define __GRAD_DESCENT_H
+
 #include "matrix.h"
-#include "sigmoid.h"
 #include "cxxVector.h"
-#include "gradDescent.h"
-#include "logisticRegression.h"
 
-#include <cmath>
-#include <cstddef>
+#include <utility>
 
-namespace LogisticRegression
-{
+using CostFunc =
+    std::pair<double, Vector>
+        (*)(const Matrix& X, const Vector& y, const Vector& theta, double lambda);
 
 std::pair<double, Vector>
-costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda)
-{
-    size_t m = y.size();
-    Matrix XTheta = X*theta;
-    Matrix j = (y - 1).to_all("*", log(1 - sigmoid(XTheta)))
-             - y.to_all("*", log(sigmoid(XTheta)));
-    double J = j.sum() / m;
-
-    Vector grad(theta.size());
-    Vector err = sigmoid(XTheta) - y;
-    for (size_t i = 0; i < theta.size(); ++i) {
-        Vector errX = err.to_all("*", X.getColomn(i));
-        grad[i] = errX.sum() / m;
-    }
-
-    if (lambda) {
-        // Regularized
-        Vector regTheta(theta);
-        regTheta[0] = 0;
-        J = J + (lambda/(2*m)) * (regTheta.to_all("*", regTheta).sum());
-
-        Vector gradReg = lambda/m * regTheta;
-        grad = grad + gradReg;
-    }
-
-    return std::pair<double, Vector>(J, grad);
-}
-
-} // LogisticRegression
-
-std::pair<double, Vector>
-logisticRegression(
+gradDescent(
+    CostFunc costFunc,
     const Matrix& X,
     const Vector& y,
     const Vector& initTheta,
-    size_t numIter,
-    double regParam,
-    double alpha
-)
-{
-    return gradDescent(
-        LogisticRegression::costFunc,
-        X,
-        y,
-        initTheta,
-        numIter,
-        regParam,
-        alpha
-    );
-}
+    size_t numIter = 1000,
+    double regParam = 0,
+    double alpha = 0.01
+);
+
+#endif /* __GRAD_DESCENT_H */
 

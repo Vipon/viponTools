@@ -36,6 +36,7 @@ class Point;
 
 class Vector : public Matrix {
 public:
+    Vector() : Matrix() {}
     Vector(size_t N) : Matrix(N, 1) { }
     Vector(const Vector& B) : Matrix(B) { }
     Vector(const Matrix& B)

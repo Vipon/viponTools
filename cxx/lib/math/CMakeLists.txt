@@ -28,6 +28,7 @@ set(MATH_HEADERS
   sigmoid.h
   cxxVector.h
   linearFunc.h
+  gradDescent.h
   normalEquation.h
   linearRegression.h
   standardDeviation.h
@@ -38,6 +39,7 @@ set(MATH_SOURCES
   point.cpp
   matrix.cpp
   cxxVector.cpp
+  gradDescent.cpp
   normalEquation.cpp
   linearRegression.cpp
   logisticRegression.cpp

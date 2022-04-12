@@ -34,7 +34,15 @@ std::pair<double, Vector>
 costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda=0);
 } // LogisticRegression
 
-//Vector logisticRegression(const Matrix& X, const Vector& y);
+std::pair<double, Vector>
+logisticRegression(
+    const Matrix& X,
+    const Vector& y,
+    const Vector& initTheta,
+    size_t numIter = 1000,
+    double regParam = 0,
+    double alpha = 0.01
+);
 
 #endif // __LOGISTIC_REGRESSION_H
 
