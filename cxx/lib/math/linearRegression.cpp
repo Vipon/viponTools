@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "gradDescent.h"
 #include "linearRegression.h"
 
 #include <cmath>
@@ -89,6 +90,57 @@ double derivativeJkn(const Vector& theta, const Matrix& X, const Vector& y, size
     return (err.transpone() * X.getColomn(n)) / numPoints;
 }
 
+}
+
+namespace LinearRegression {
+
+std::pair<double, Vector>
+costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda)
+{
+    Vector XTheta = X * theta;
+    Vector err = XTheta - y;
+    double err2 = err.transpone() * err;
+    size_t m = X.size().first;
+    double J = err2 / (2*m);
+
+    Vector grad(theta.size());
+    for (size_t i = 0; i < X.size().second; ++i)
+        grad[i] = (err.transpone() * X.getColomn(i)) / m;
+
+    if (lambda) {
+        // Regularized
+        Vector regTheta(theta);
+        regTheta[0] = 0;
+        J = J + (lambda/(2*m)) * (regTheta.transpone() * regTheta);
+
+        Vector gradReg = lambda/m * regTheta;
+        grad = grad + gradReg;
+    }
+
+    return std::pair<double, Vector>(J, grad);
+}
+
+} // LinearRegression
+
+std::pair<double, Vector>
+linearRegression(
+    const Matrix& X,
+    const Vector& y,
+    const Vector& initTheta,
+    size_t numIter,
+    double regParam,
+    double alpha
+)
+{
+    return gradDescent(
+        LinearRegression::costFunc,
+        X,
+        y,
+        initTheta,
+        numIter,
+        regParam,
+        alpha
+    );
 }
 
 LinearFunc linearRegression(const Matrix& X, const Vector& y)
