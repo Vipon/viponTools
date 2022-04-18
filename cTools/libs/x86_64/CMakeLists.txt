@@ -11,7 +11,8 @@ set(X86_64_SOURCES
 add_vipon_library(
   NAME asmWrap
   TYPE SHARED
-  SOURCES ${X86_64_SOURCES} ${X86_64_HEADERS}
+  HEADERS ${X86_64_HEADERS}
+  SOURCES ${X86_64_SOURCES}
   LINK_LIBS capstone keystone mem
 )
 

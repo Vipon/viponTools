@@ -23,8 +23,10 @@
 add_vipon_library(
   NAME args
   TYPE SHARED
-  SOURCES args.c args.h
+  HEADERS args.h
+  SOURCES args.c
   LINK_LIBS mem string
+  INSTALL ON
 )
 
 add_subdirectory(test)

@@ -22,15 +22,17 @@
 
 add_vipon_library(
   NAME elf64Parse
-  TYPE STATIC
-  SOURCES elf64Parse.c elf64Parse.h
+  TYPE SHARED
+  HEADERS elf64Parse.h
+  SOURCES elf64Parse.c
   LINK_LIBS file mem string
 )
 
 add_vipon_library(
   NAME elf32Parse
-  TYPE STATIC
-  SOURCES elf32Parse.c elf32Parse.h
+  TYPE SHARED
+  HEADERS elf32Parse.h
+  SOURCES elf32Parse.c
   LINK_LIBS file mem string
 )
 
