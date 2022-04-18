@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2022 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(args)
-add_subdirectory(binParse)
-add_subdirectory(comdef)
-add_subdirectory(containers)
-add_subdirectory(file)
-add_subdirectory(LEB128)
-add_subdirectory(mem)
-add_subdirectory(perfAnalysis)
-add_subdirectory(string)
+add_vipon_library(
+  NAME args
+  TYPE SHARED
+  SOURCES args.c args.h
+  LINK_LIBS mem string
+)
+
 add_subdirectory(test)
-if (NOT WIN32)
-  add_subdirectory(x86_64)
-endif (NOT WIN32)
 

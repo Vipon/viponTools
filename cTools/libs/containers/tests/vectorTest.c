@@ -40,7 +40,7 @@ static int initVectorTest()
     }
     EXPECT_SIZET_EQ(v.capacity, capacity);
     EXPECT_SIZET_EQ(v.elemSize, elemSize);
-    EXPECT_SIZET_EQ(v.end, 0);
+    EXPECT_SIZET_EQ(v.end, (size_t)0);
 
     freeVector(&v);
     return 0;
@@ -51,16 +51,16 @@ static int pushBackVectorTest()
 {
     Vector v;
     const size_t capacity = 100;
-    initVector(&v, capacity, sizeof(int));
+    initVector(&v, capacity, sizeof(size_t));
 
     size_t i = 0;
     for (i = 0; i < capacity; ++i) {
         pushBackVector(&v, &i);
     }
 
-    unsigned *data = (unsigned*)(void*)v.data;
+    size_t *data = (size_t*)(void*)v.data;
     for (i = 0; i < capacity; ++i) {
-        EXPECT_INT_EQ(data[i], i);
+        EXPECT_SIZET_EQ(data[i], i);
     }
 
     freeVector(&v);
