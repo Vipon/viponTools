@@ -83,6 +83,10 @@
         "xstddef": "cpp",
         "xstring": "cpp",
         "xtr1common": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "*.idl": "cpp",
+        "args.h": "c",
+        "argp.h": "c",
+        "test.h": "c"
     }
 }
