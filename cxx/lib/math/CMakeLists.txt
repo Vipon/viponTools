@@ -22,6 +22,7 @@
 
 set(MATH_HEADERS
   log.h
+  #bfgs.h
   round.h
   point.h
   matrix.h
@@ -29,6 +30,7 @@ set(MATH_HEADERS
   cxxVector.h
   linearFunc.h
   gradDescent.h
+  quasiNewton.h
   normalEquation.h
   linearRegression.h
   standardDeviation.h
@@ -36,10 +38,12 @@ set(MATH_HEADERS
 )
 
 set(MATH_SOURCES
+  #bfgs.cpp
   point.cpp
   matrix.cpp
   cxxVector.cpp
   gradDescent.cpp
+  quasiNewton.cpp
   normalEquation.cpp
   linearRegression.cpp
   logisticRegression.cpp
@@ -48,7 +52,8 @@ set(MATH_SOURCES
 add_vipon_library(
   NAME math
   TYPE STATIC
-  SOURCES ${MATH_SOURCES} ${MATH_SOURCES}
+  HEADERS ${MATH_HEADERS}
+  SOURCES ${MATH_SOURCES}
   LINK_OPTIONS "-fopenmp"
 )
 

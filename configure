@@ -31,6 +31,8 @@ import subprocess
 from python.lib.os import isWin, isLinux, isMacOsX, getForOs
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
+OUTPUT_DIR = os.path.join(ROOT, 'output')
+INSTALL_DIR = os.path.join(OUTPUT_DIR, 'viponTools')
 CMAKE_DIR = os.path.join(ROOT, 'cmake')
 TOOLCHAIN_DIR = os.path.join(CMAKE_DIR, 'toolchain')
 
@@ -45,8 +47,11 @@ def parseArgs():
             default = shutil.which('cmake'),
             help = 'path to special cmake')
     parser.add_argument('--output', metavar = 'DIR_PATH', nargs = '?',
-            default = os.path.join(ROOT, 'output'),
+            default = OUTPUT_DIR,
             help = 'name of output directory')
+    parser.add_argument('--install-dir', metavar = 'DIR_PATH', nargs = '?',
+            default = INSTALL_DIR,
+            help = 'name of install directory')
     parser.add_argument('--vs', action = 'store_true',
             default = True if isWin() else False,
             help = 'use visual code build system')
@@ -63,6 +68,9 @@ def parseArgs():
 
 
 def finalizeArgs(args):
+    if args.output != OUTPUT_DIR:
+        if args.install_dir == INSTALL_DIR:
+            args.install_dir = os.path.join(args.output, 'install')
     if isLinux():
         if args.ninja or args.vs or args.xcode:
             args.gmake = False
@@ -105,6 +113,7 @@ def execCmake(args):
         , '{}'                       .format('-T ClangCL' if args.vs else '')
         , '-DCMAKE_BUILD_TYPE={}'    .format('Release' if args.release else 'Debug')
         , '-DCMAKE_TOOLCHAIN_FILE={}'.format(args.c_toolchain)
+        , '-DCMAKE_INSTALL_PREFIX={}'.format(args.install_dir)
         , '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
         , ROOT
         ]

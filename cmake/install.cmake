@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2022 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_vipon_library(
-  NAME file
-  TYPE STATIC
-  HEADERS file.h
-  SOURCES file.c
-  LINK_LIBS mem
-)
+set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
+set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+
+function(installFiles dir)
+  foreach(file ${ARGN})
+    install(
+      FILES "${file}"
+      DESTINATION ${dir}
+    )
+  endforeach(file)
+endfunction(installFiles)
+
+function(installHeaders)
+  installFiles(${INSTALL_INCLUDE_DIR} ${ARGN})
+endfunction(installHeaders)
 

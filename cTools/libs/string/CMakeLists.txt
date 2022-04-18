@@ -33,7 +33,8 @@ set(STRING_SOURCES
 add_vipon_library(
   NAME string
   TYPE STATIC
-  SOURCES ${STRING_SOURCES} ${STRING_HEADERS}
+  HEADERS ${STRING_HEADERS}
+  SOURCES ${STRING_SOURCES}
 )
 
 add_subdirectory(test)

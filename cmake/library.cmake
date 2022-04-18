@@ -26,18 +26,20 @@ include_guard()
 # Parameters:
 #   NAME - test name
 #   TYPE - library type
+#   HEADERS - list of library headers
 #   SOURCES - list of source files
 #   LINK_LIBRARIES - list of link libraries
 #   LINK_OPTIONS - extra link options
+#   INSTALL - if ON when install
 ###############################################################################
 function(add_vipon_library)
   cmake_parse_arguments(ARG
     # true_false_options
     ""
     # one_value_options
-    "NAME;TYPE"
+    "NAME;TYPE;INSTALL"
     # multi_value_options
-    "SOURCES;LINK_LIBS;LINK_OPTIONS"
+    "HEADERS;SOURCES;LINK_LIBS;LINK_OPTIONS"
     ${ARGN}
   )
 
@@ -57,6 +59,15 @@ function(add_vipon_library)
   target_link_options(${ARG_NAME}
     PUBLIC ${ARG_LINK_OPTIONS}
   )
+
+  if(ARG_INSTALL)
+    install(
+      TARGETS ${ARG_NAME}
+      DESTINATION ${INSTALL_LIB_DIR}
+    )
+
+    installHeaders("${ARG_HEADERS}")
+  endif(ARG_INSTALL)
 
 endfunction(add_vipon_library)
 

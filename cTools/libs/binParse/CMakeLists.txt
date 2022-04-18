@@ -31,7 +31,8 @@ endif (WIN32)
 add_vipon_library(
   NAME binParse
   TYPE STATIC
-  SOURCES binParse.c binParse.h
+  HEADERS binParse.h
+  SOURCES binParse.c
   LINK_LIBS ${BIN_PARSE_LIB_LIST}
 )
 

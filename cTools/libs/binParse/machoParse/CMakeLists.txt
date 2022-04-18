@@ -23,7 +23,8 @@
 add_vipon_library(
   NAME macho64Parse
   TYPE STATIC
-  SOURCES macho64Parse.c macho64Parse.h
+  HEADERS macho64Parse.h
+  SOURCES macho64Parse.c
   LINK_LIBS file mem string
 )
 
