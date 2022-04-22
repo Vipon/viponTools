@@ -33,7 +33,7 @@ static struct argp_option* opts = NULL;
 static ARG_HAND *hands = NULL;
 static struct argp argp = {0};
 
-int addArg(ARG_HAND hand, const struct argp_option* opt)
+int addArg(const Arg* arg)
 {
     if (NUM_OPTS == OPTS_LEN) {
         struct argp_option* new_opts = Calloc(NUM_OPTS + 10, sizeof(struct argp_option));
@@ -52,8 +52,8 @@ int addArg(ARG_HAND hand, const struct argp_option* opt)
         OPTS_LEN += 10;
     }
 
-    memcpy(opts + NUM_OPTS, opt, sizeof(struct argp_option));
-    hands[NUM_OPTS] = hand;
+    memcpy(opts + NUM_OPTS, arg, sizeof(struct argp_option));
+    hands[NUM_OPTS] = arg->hand;
     ++NUM_OPTS;
 
     return 0;
@@ -69,6 +69,12 @@ void addArgsDoc(const char* argsDoc)
 {
     // A description of the arguments we accept.
     argp.args_doc = argsDoc;
+}
+
+void addVersion(const char* version)
+{
+    // version of program
+    argp_program_version = version;
 }
 
 static ARG_HAND getHandle(int key)
@@ -103,7 +109,7 @@ parseOpt(int key, char *arg, struct argp_state *state)
 error_t argParse(int argc, char** argv)
 {
     // Add last elem argp_option
-    ADD_ARG(NULL, 0, 0, 0, 0, 0);
+    ADD_ARG(NULL);
     argp.parser = parseOpt;
     return argp_parse( &argp
                      , argc
@@ -116,6 +122,6 @@ error_t argParse(int argc, char** argv)
                      , NULL
                      );
 
-    return 0;
+    //return 0;
 }
 

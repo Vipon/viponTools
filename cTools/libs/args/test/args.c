@@ -34,6 +34,8 @@ static char doc[] = "Test args library";
 // A description of the arguments we accept.
 static char argsDoc[] = "ARG0 ARG1";
 
+const char progVersion[] = "0.0.1";
+
 bool isVerbose = false;
 
 static void argVerbose(char *arg)
@@ -46,7 +48,11 @@ int main(int argc, char **argv)
 {
     ADD_DOC(doc);
     ADD_ARGS_DOC(argsDoc);
-    ADD_ARG(argVerbose, "verbose", 'v', 0 , 0, "Produce verbose output");
+    ADD_ARG(argVerbose, .name = "verbose"
+                      , .key = 'v'
+                      , .doc = "Produce verbose output"
+    );
+    ADD_VERSION(progVersion);
     ARG_PARSE(argc, argv);
 
     EXPECT_BOOL_EQ(isVerbose, true);
