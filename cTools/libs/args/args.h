@@ -29,33 +29,46 @@
 
 typedef void(*ARG_HAND)(char*);
 
-/***
- * hand - pointer to handler for argument
- * Name - full argument name (--Name)
- * Key - short argument name (-Key)
- * Arg - extra hint for help. If Arg="VALUE"
- *  help will print --Name=VALUE
- * Flags - argp option flags. See
- *  https://www.gnu.org/software/libc/manual/html_node/Argp-Option-Flags.html
- * Doc - description of argument
- */
-#define ADD_ARG(hand, Name, Key, Arg, Flags, Doc) { \
-    struct argp_option loc_opt = {                  \
-        .name  = Name,                              \
-        .key   = Key,                               \
-        .arg   = Arg,                               \
-        .flags = Flags,                             \
-        .doc   = Doc,                               \
-    };                                              \
-    addArg(hand, &loc_opt);                         \
+typedef struct Arg {
+    // full argument name (--Name)
+    const char  *name;
+
+    // short argument name (-Key)
+    int         key;
+    // extra hint for help. If Arg="VALUE"
+    // help will print --Name=VALUE (type of arg)
+    const char  *arg;
+
+    // argp option flags. See
+    // https://www.gnu.org/software/libc/manual/html_node/Argp-Option-Flags.html
+    int         flags;
+
+    // description of argument
+    const char  *doc;
+
+    int         group;
+
+    // handler for argument
+    ARG_HAND    hand;
+} Arg;
+
+#define ADD_ARG(h, ...) { \
+    Arg loc_arg = {       \
+        .hand = h,        \
+        __VA_ARGS__       \
+    };                    \
+    addArg(&loc_arg);     \
 }
-int addArg(ARG_HAND hand, const struct argp_option* opt);
+int addArg(const Arg* arg);
 
 #define ADD_DOC(doc) addDoc(doc);
 void addDoc(const char* doc);
 
 #define ADD_ARGS_DOC(argsDoc) addArgsDoc(argsDoc);
 void addArgsDoc(const char* argsDoc);
+
+#define ADD_VERSION(version) addVersion(version);
+void addVersion(const char* version);
 
 #define ARG_PARSE(argc, argv) argParse(argc, argv);
 error_t argParse(int argc, char** argv);

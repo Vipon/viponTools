@@ -22,18 +22,23 @@ For adding new agument just use: ADD_ARG.
 ```
 /***
  * hand - pointer to handler for argument
- * Name - full argument name (--Name)
- * Key - short argument name (-Key)
- * Arg - extra hint for help. If Arg="VALUE"
+ * name - full argument name (--Name)
+ * key - short argument name (-Key)
+ * arg - extra hint for help. If Arg="VALUE"
  *  help will print --Name=VALUE
- * Flags - argp option flags. See more:
+ * flags - argp option flags. See more:
  *  https://www.gnu.org/software/libc/manual/html_node/Argp-Option-Flags.html
- * Doc - description of argument
+ * doc - description of argument
  */
-ADD_ARG(hand, Name, Key, Arg, Flags, Doc);
+ADD_ARG(hand, .name = Name
+            , .key = Key
+            , .arg = Arg
+            , .flags = Flags
+            , .doc = Doc
+);
 ```
 
-_Name, Key, Arg, Flags, Doc_ are the same as [struct argp\_option](https://www.gnu.org/software/libc/manual/html_node/Argp-Option-Vectors.html).
+_name, key, arg, flags, doc_ are the same as [struct argp\_option](https://www.gnu.org/software/libc/manual/html_node/Argp-Option-Vectors.html).
 
 ### Add program description for --help
 For adding extra description just use: ADD_DOC.
@@ -49,6 +54,12 @@ static char argsDoc[] = "ARG0 ARG1";
 ADD_ARGS_DOC(argsDoc);
 ```
 
+### Add program version for --version
+```
+const char progVersion[] = "0.0.1";
+ADD_VERSION(progVersion);
+```
+
 ### Full example
 ```
 #include "args.h"
@@ -56,6 +67,7 @@ ADD_ARGS_DOC(argsDoc);
 
 static char doc[] = "Test args library";
 static char argsDoc[] = "ARG0 ARG1";
+const char progVersion[] = "0.0.1";
 
 bool isVerbose = false;
 static void argVerbose(char *arg)
@@ -67,7 +79,11 @@ int main(int argc, char **argv)
 {
     ADD_DOC(doc);
     ADD_ARGS_DOC(argsDoc);
-    ADD_ARG(argVerbose, "verbose", 'v', 0 , 0, "Produce verbose output");
+    ADD_VERSION(progVersion);
+    ADD_ARG(argVerbose, .name = "verbose"
+                      , .key = 'v'
+                      , .doc = "Produce verbose output"
+    );
     ARG_PARSE(argc, argv);
 
     return 0;
@@ -81,6 +97,7 @@ int main(int argc, char **argv)
  * -v, --verbose              Produce verbose output
  * -?, --help                 Give this help list
  *     --usage                Give a short usage message
+ * -V, --version              Print program version
  */
 ```
 
