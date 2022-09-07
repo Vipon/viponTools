@@ -33,9 +33,10 @@ sys.path.append(libDir)
 from lib.net import downloadFile
 from lib.os import execForOs, getForOs
 
+VERSION = '3.24.1'
 
-WIN_URL = 'https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user'
-WIN_FN = 'VSCodeUserSetup-x64.exe'
+WIN_URL = f'https://github.com/Kitware/CMake/releases/download/v{VERSION}/cmake-{VERSION}-windows-x86_64.msi'
+WIN_FN = f'cmake-{VERSION}-windows-x86_64.msi'
 
 MAC_URL = ''
 MAC_FN = ''
@@ -54,6 +55,7 @@ def downloadVSCode():
             mac = MAC_FN,
             win = WIN_FN
          )
+
     downloadFile(url, fn)
 
 def installVSCodeForLinux():
@@ -64,8 +66,11 @@ def installVSCodeForMac():
 
 def installVSCodeForWin():
     subprocess.check_call(
-        [ WIN_FN
-        , '/SILENT'
+        [ 'MsiExec'
+        , '/i'
+        , WIN_FN
+        , 'ADD_CMAKE_TO_PATH=User'
+        , '/passive'
         ]
     )
 

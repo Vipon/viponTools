@@ -23,8 +23,12 @@
 # SOFTWARE.
 
 import os
+from lib.file import mvFile
 
 def createDir(path):
     if not os.path.exists(path):
         os.makedirs(path)
+
+def mvDir(src, dst):
+    mvFile(src, dst)
 
