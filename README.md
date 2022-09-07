@@ -5,6 +5,21 @@
 If you want to contribute or use my libs, you are welcome!
 
 ## Setup environment
+Scripts bellow will automatically download and install at least:
+* python3
+* ninja
+* vscode
+* cmake
+* ccache
+
+### Windows
+```
+cd batch
+setup.bat
+```
+
+### Linux
+### MacOS
 
 ## Configure, Build and Testing
 ### GnuMake

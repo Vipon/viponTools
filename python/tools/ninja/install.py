@@ -38,7 +38,7 @@ BASE_URL = 'https://github.com/ninja-build/ninja/releases/download'
 
 WIN_ARCHIVE = 'ninja-win.zip'
 WIN_EXEC = 'ninja.exe'
-WIN_INSTALL_PATH = 'C:\\Ninja'
+WIN_INSTALL_PATH = 'C:\\bin\\ninja'
 
 LINUX_ARCHIVE = 'ninja-linux.zip'
 LINUX_EXEC = 'ninja'
