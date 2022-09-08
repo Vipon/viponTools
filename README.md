@@ -4,6 +4,10 @@
 
 If you want to contribute or use my libs, you are welcome!
 
+## Clone
+```
+git clone -c core.symlinks=true https://github.com/Vipon/viponTools
+```
 ## Setup environment
 
 ### Windows
@@ -48,6 +52,12 @@ Currently works only with "Visual studio 16 2019"
 cd output/
 cmake --build .
 ctest -C Debug
+```
+
+Default build is Debug. If you want to build Release with Visual Studo use the
+folowed code:
+```
+cmake --build . --config Release
 ```
 
 ### XCode
