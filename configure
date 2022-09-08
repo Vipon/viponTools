@@ -99,7 +99,8 @@ def execCmake(args):
     elif args.ninja:
         generator = 'Ninja'
     elif args.vs:
-        generator = 'Visual Studio 16 2019'
+        #generator = 'Visual Studio 16 2019'
+        generator = 'Visual Studio 17 2022'
     elif args.xcode:
         generator = 'Xcode'
     else:
