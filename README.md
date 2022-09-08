@@ -5,18 +5,18 @@
 If you want to contribute or use my libs, you are welcome!
 
 ## Setup environment
-Scripts bellow will automatically download and install at least:
-* python3
-* ninja
-* vscode
-* cmake
-* ccache
 
 ### Windows
+Scripts bellow will automatically download and install at least:
+* python3, ninja, vscode, cmake, ccache, visual studio
 ```
 cd batch
 setup.bat
 ```
+
+Need to add to PATH:
+* {INSTALL_DIR}\VC\Tools\Llvm\x64\bin
+* {INSTALL_DIR}\MSBuild\Current\Bin
 
 ### Linux
 ### MacOS
