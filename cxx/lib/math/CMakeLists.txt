@@ -43,7 +43,7 @@ set(MATH_SOURCES
   matrix.cpp
   cxxVector.cpp
   gradDescent.cpp
-  quasiNewton.cpp
+  #quasiNewton.cpp
   normalEquation.cpp
   linearRegression.cpp
   logisticRegression.cpp

@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(args)
 add_subdirectory(binParse)
 add_subdirectory(comdef)
 add_subdirectory(containers)
@@ -31,6 +30,7 @@ add_subdirectory(perfAnalysis)
 add_subdirectory(string)
 add_subdirectory(test)
 if (NOT WIN32)
+  add_subdirectory(args)
   add_subdirectory(x86_64)
 endif (NOT WIN32)
 
