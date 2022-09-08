@@ -87,7 +87,7 @@ public:
     Matrix load(const std::string& fn)
     {
         std::ifstream f(fn);
-        double N, M;
+        size_t N, M;
         f >> N >> M;
         Matrix A(N, M);
         for (size_t i = 0; i < N; ++i) {

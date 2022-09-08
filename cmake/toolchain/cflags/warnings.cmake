@@ -43,6 +43,9 @@ if (MSVC)
     -Wno-gnu
     -Wno-empty-translation-unit
     -Wno-bad-function-cast
+    -Wno-shadow-field-in-constructor
+    -Wno-declaration-after-statement
+    -Wno-shadow
   )
 endif (MSVC)
 
