@@ -32,10 +32,9 @@ sys.path.append(libDir)
 
 from lib.net import downloadFile
 from lib.os import execForOs, getForOs
+from lib.installArgs import installArgs
 
-VERSION = '17'
-
-WIN_URL = f'https://aka.ms/vs/{VERSION}/release/vs_professional.exe'
+WIN_URL = ''
 WIN_FN = 'vs_professional.exe'
 
 MAC_URL = ''
@@ -43,6 +42,23 @@ MAC_FN = ''
 
 LINUX_URL = ''
 LINUX_FN = ''
+
+INSTALL_DIR = None
+
+def parseArgs():
+    args = installArgs('Install visual stuio.')
+
+    if args.install_version == None:
+        args.install_version = '17'
+
+    global WIN_URL
+    WIN_URL = f'https://aka.ms/vs/{args.install_version}/release/vs_professional.exe'
+
+    global INSTALL_DIR
+    if args.install_dir != None:
+        INSTALL_DIR = args.install_dir
+
+    return args
 
 def downloadVSCode():
     url = getForOs(
@@ -65,20 +81,25 @@ def installVSCodeForMac():
     return
 
 def installVSCodeForWin():
-    subprocess.check_call(
-        [ WIN_FN
-        , '--passive'
-        , '--norestart'
-        , '--nocache'
-        , '--wait'
-        , '--add'
-        , 'Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended'
-        , '--add'
-        , 'Microsoft.VisualStudio.Component.VC.Llvm.Clang'
-        , '--add'
-        , 'Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset'
-        ]
-    )
+    args = [ WIN_FN
+           , '--passive'
+           , '--norestart'
+           , '--nocache'
+           , '--wait'
+           , '--add'
+           , 'Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended'
+           , '--add'
+           , 'Microsoft.VisualStudio.Component.VC.Llvm.Clang'
+           , '--add'
+           , 'Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset'
+           ]
+
+    if INSTALL_DIR != None:
+        args.append('--installPath')
+        args.append(f'{INSTALL_DIR}')
+
+    print(args)
+    subprocess.check_call(args)
 
 def installVSCode():
     execForOs(
@@ -88,6 +109,7 @@ def installVSCode():
     )
 
 def main():
+    parseArgs()
     downloadVSCode()
     installVSCode()
 
