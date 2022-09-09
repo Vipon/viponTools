@@ -63,6 +63,10 @@ def parseArgs():
     parser.add_argument('--xcode', action = 'store_true',
             default = True if isMacOsX() else False,
             help = 'use xcode build system')
+    parser.add_argument('--use-version', metavar = 'VERSION', nargs = '?',
+            default = None,
+            help = 'specify build system version'
+            )
 
     return parser.parse_args()
 
@@ -74,12 +78,17 @@ def finalizeArgs(args):
     if isLinux():
         if args.ninja or args.vs or args.xcode:
             args.gmake = False
-    elif isMacOsX():
+    if isMacOsX():
         if args.ninja or args.vs or args.gmake:
             args.xcode = False
-    elif isWin():
+    if isWin():
         if args.ninja or args.xcode or args.gmake:
+            # not VS build system on Win
             args.vs = False
+        else:
+            # VS build system on Win
+            if args.use_version == None:
+                args.use_version = '17'
 
 
 def goToOutputDir(args):
@@ -99,8 +108,10 @@ def execCmake(args):
     elif args.ninja:
         generator = 'Ninja'
     elif args.vs:
-        #generator = 'Visual Studio 16 2019'
-        generator = 'Visual Studio 17 2022'
+        if args.use_version == '17':
+            generator = 'Visual Studio 17 2022'
+        elif args.use_version == '16':
+            generator = 'Visual Studio 16 2019'
     elif args.xcode:
         generator = 'Xcode'
     else:
