@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2022 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,10 @@
  * SOFTWARE.
  */
 
-#include "comdef.h"
-#include "delayLib.h" // for test delay import
-#include "pe64Parse.h"
-#include "pe64Printer.h"
+#include "delayLib.h"
 
-void dummy(void) __attribute__ ((section (".MY_SECTION123")));
-void dummy(void)
+int delayLib(void)
 {
-
-}
-
-int main(int argc, char *argv[])
-{
-    UNUSED(argc);
-    delayLib(); // for test delay import
-    PE64File *pe = pe64Parse(argv[0]);
-
-    pe64PrintDosHeader(pe);
-    pe64PrintNtHeader(pe);
-    pe64PrintSections(pe);
-    pe64PrintSymbols(pe);
-    pe64PrintImports(pe);
-    pe64PrintDelayImports(pe);
-
-    pe64Free(pe);
     return 0;
 }
 
