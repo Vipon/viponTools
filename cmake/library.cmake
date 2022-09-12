@@ -45,6 +45,7 @@ function(add_vipon_library)
 
   add_library(${ARG_NAME} ${ARG_TYPE}
     ${ARG_SOURCES}
+    ${ARG_HEADERS}
   )
 
   target_link_libraries(${ARG_NAME}
