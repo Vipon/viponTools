@@ -68,7 +68,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const LinearFunc& f)
     {
         bool allKZero = true;
-        unsigned precision = os.precision();
+        size_t precision = (size_t)os.precision();
         double k = round(f.k[0], precision);
         if (k != 0.0) {
             allKZero = false;

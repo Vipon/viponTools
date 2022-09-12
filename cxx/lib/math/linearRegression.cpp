@@ -55,7 +55,7 @@ Matrix normalizeSetPoints(const Matrix& X)
         }
     }
 
-    avrg /= setNum;
+    avrg /= (double)setNum;
     diff = max - min;
     for (size_t i = 0; i < X.size().second; ++i) {
         if (diff[i] == 0) {
@@ -79,7 +79,7 @@ double calculateJ(const Vector& theta, const Matrix& X, const Vector& y)
     double err2 = err.transpone() * err;
 
     size_t numPoints = X.size().first;
-    double J = err2 / (2*numPoints);
+    double J = err2 / (double)(2*numPoints);
     return J;
 }
 
@@ -87,7 +87,7 @@ double derivativeJkn(const Vector& theta, const Matrix& X, const Vector& y, size
 {
     Vector err = X * theta - y;
     size_t numPoints = X.size().first;
-    return (err.transpone() * X.getColomn(n)) / numPoints;
+    return (err.transpone() * X.getColomn(n)) / (double)numPoints;
 }
 
 }
@@ -101,19 +101,19 @@ costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda)
     Vector err = XTheta - y;
     double err2 = err.transpone() * err;
     size_t m = X.size().first;
-    double J = err2 / (2*m);
+    double J = err2 / (double)(2*m);
 
     Vector grad(theta.size());
     for (size_t i = 0; i < X.size().second; ++i)
-        grad[i] = (err.transpone() * X.getColomn(i)) / m;
+        grad[i] = (err.transpone() * X.getColomn(i)) / (double)m;
 
-    if (lambda) {
+    if (lambda > 0.0) {
         // Regularized
         Vector regTheta(theta);
         regTheta[0] = 0;
-        J = J + (lambda/(2*m)) * (regTheta.transpone() * regTheta);
+        J = J + (lambda/(double)(2*m)) * (regTheta.transpone() * regTheta);
 
-        Vector gradReg = lambda/m * regTheta;
+        Vector gradReg = lambda/((double)m) * regTheta;
         grad = grad + gradReg;
     }
 
