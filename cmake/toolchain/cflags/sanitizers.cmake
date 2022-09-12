@@ -25,9 +25,16 @@ include(${CMAKE_CURRENT_LIST_DIR}/cflags.cmake)
 set(SANITIZERS_FLAGS)
 
 # Need to specify libs for link, because cmake checking with linking.
-set(CMAKE_REQUIRED_LIBRARIES "-lasan -lubsan")
-
-append_cflags(SANITIZERS_FLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined)
+if (WIN32)
+    set(CMAKE_REQUIRED_LIBRARIES "-lclang_rt.asan-x86_64")
+    if (CMAKE_BUILD_TYPE STREQUAL "Release")
+        # Sanitizers doesn't work with debug informations
+        append_cflags(SANITIZERS_FLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined)
+    endif ()
+else ()
+    set(CMAKE_REQUIRED_LIBRARIES "-lasan -lubsan")
+    append_cflags(SANITIZERS_FLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined)
+endif ()
 
 unset(CMAKE_REQUIRED_LIBRARIES)
 

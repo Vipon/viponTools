@@ -20,6 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-append_cflags(C_FLAGS -fPIC -std=gnu11)
-append_cxxflags(CXX_FLAGS -fPIC -std=c++20 -fexceptions)
+if(MSVC)
+    append_cflags(C_FLAGS /std:gnu11)
+    append_cxxflags(CXX_FLAGS /std:c++latest)
+    if("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+        append_cxxflags(CXX_FLAGS "-Xclang -fcxx-exceptions" -fexceptions)
+    endif()
+else()
+    append_cflags(C_FLAGS -fPIC -std=gnu11)
+    append_cxxflags(CXX_FLAGS -fPIC -std=c++20 -fcxx-exceptions -fexceptions)
+endif()
 

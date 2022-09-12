@@ -46,7 +46,16 @@ if (MSVC)
     -Wno-shadow-field-in-constructor
     -Wno-declaration-after-statement
     -Wno-shadow
+    -Wno-old-style-cast
+    -Wno-float-equal
+    -Wno-c++98-compat-pedantic
   )
+  if (MSVC_VERSION GREATER_EQUAL "1930") # VS17
+    append_cflags(WARNING_FLAGS
+      -Wno-reserved-identifier
+      -Wno-cast-function-type
+    )
+  endif ()
 endif (MSVC)
 
 if (WIN32)
