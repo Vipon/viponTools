@@ -20,11 +20,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Need for testing print of delay load libs
+if (MSVC)
+  set(TEST_LINK_FLAGS /DELAYLOAD:delayLib.dll)
+else ()
+  set(TEST_LINK_FLAGS -Wl,-delayload:delayLib.dll)
+endif ()
+
+add_vipon_library(
+  NAME delayLib
+  TYPE SHARED
+  SOURCES delayLib.c delayLib.h
+)
+
 add_vipon_test(
   NAME pe64PrintExeTest
   SOURCES pe64PrintExeTest.c
-  LINK_LIBS pe64Printer
-  LINK_FLAGS -DELAYLOAD:KERNEL32.dll
+  # Delay load doesn't work without delayimp.lib
+  LINK_LIBS pe64Printer delayLib delayimp.lib
+  LINK_FLAGS ${TEST_LINK_FLAGS}
 )
 
 add_custom_target(testObjFile
