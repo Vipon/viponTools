@@ -26,5 +26,6 @@ add_vipon_library(
   HEADERS macho64Parse.h
   SOURCES macho64Parse.c
   LINK_LIBS file mem string
+  INSTALL ON
 )
 

@@ -26,6 +26,7 @@ add_vipon_library(
   HEADERS elf64Parse.h
   SOURCES elf64Parse.c
   LINK_LIBS file mem string
+  INSTALL ON
 )
 
 add_vipon_library(
@@ -34,6 +35,7 @@ add_vipon_library(
   HEADERS elf32Parse.h
   SOURCES elf32Parse.c
   LINK_LIBS file mem string
+  INSTALL ON
 )
 
 if (NOT WIN32 AND NOT APPLE)

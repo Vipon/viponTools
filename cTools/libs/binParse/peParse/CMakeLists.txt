@@ -23,7 +23,8 @@
 add_vipon_library(
   NAME pe64Parse
   TYPE STATIC
-  SOURCES pe64Parse.c pe64Parse.h
+  SOURCES pe64Parse.c
+  HEADERS pe64Parse.h
   LINK_LIBS file mem string
   INSTALL ON
 )
@@ -43,7 +44,8 @@ set(PE64_PRINTER_HEADERS
 add_vipon_library(
   NAME pe64Printer
   TYPE STATIC
-  SOURCES ${PE64_PRINTER_SOURSES} ${PE64_PRINTER_HEADERS}
+  SOURCES ${PE64_PRINTER_SOURSES}
+  HEADERS ${PE64_PRINTER_HEADERS}
   LINK_LIBS pe64Parse
   INSTALL ON
 )

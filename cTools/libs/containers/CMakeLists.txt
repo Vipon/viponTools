@@ -35,6 +35,7 @@ add_vipon_library(
   HEADERS ${CONTAINERS_HEADERS}
   SOURCES ${CONTAINERS_SRCS}
   LINK_LIBS mem
+  INSTALL ON
 )
 
 add_subdirectory(tests)

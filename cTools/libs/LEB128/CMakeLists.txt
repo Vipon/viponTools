@@ -25,5 +25,6 @@ add_vipon_library(
   TYPE STATIC
   HEADERS LEB128.h
   SOURCES LEB128.c
+  INSTALL ON
 )
 
