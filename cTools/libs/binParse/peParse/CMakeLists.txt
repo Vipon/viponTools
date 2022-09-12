@@ -25,6 +25,7 @@ add_vipon_library(
   TYPE STATIC
   SOURCES pe64Parse.c pe64Parse.h
   LINK_LIBS file mem string
+  INSTALL ON
 )
 
 set(PE64_PRINTER_SOURSES
@@ -44,6 +45,7 @@ add_vipon_library(
   TYPE STATIC
   SOURCES ${PE64_PRINTER_SOURSES} ${PE64_PRINTER_HEADERS}
   LINK_LIBS pe64Parse
+  INSTALL ON
 )
 
 add_subdirectory(test)
