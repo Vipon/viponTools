@@ -22,10 +22,7 @@
 
 if(MSVC)
     append_cflags(C_FLAGS /std:gnu11)
-    append_cxxflags(CXX_FLAGS /std:c++latest)
-    if("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
-        append_cxxflags(CXX_FLAGS "-Xclang -fcxx-exceptions" -fexceptions)
-    endif()
+    append_cxxflags(CXX_FLAGS /std:c++latest /EHac)
 else()
     append_cflags(C_FLAGS -fPIC -std=gnu11)
     append_cxxflags(CXX_FLAGS -fPIC -std=c++20 -fcxx-exceptions -fexceptions)
