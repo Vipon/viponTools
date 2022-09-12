@@ -30,7 +30,7 @@ set(MATH_HEADERS
   cxxVector.h
   linearFunc.h
   gradDescent.h
-  quasiNewton.h
+  #quasiNewton.h
   normalEquation.h
   linearRegression.h
   standardDeviation.h
