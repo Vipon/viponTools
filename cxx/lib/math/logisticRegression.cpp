@@ -42,22 +42,22 @@ costFunc(const Matrix& X, const Vector& y, const Vector& theta, double lambda)
     Matrix XTheta = X*theta;
     Matrix j = (y - 1).to_all("*", log(1 - sigmoid(XTheta)))
              - y.to_all("*", log(sigmoid(XTheta)));
-    double J = j.sum() / m;
+    double J = j.sum() / (double)m;
 
     Vector grad(theta.size());
     Vector err = sigmoid(XTheta) - y;
     for (size_t i = 0; i < theta.size(); ++i) {
         double errXSum = err.transpone() * X.getColomn(i);
-        grad[i] = errXSum / m;
+        grad[i] = errXSum / (double)m;
     }
 
-    if (lambda) {
+    if (lambda > 0.0) {
         // Regularized
         Vector regTheta(theta);
         regTheta[0] = 0;
-        J = J + (lambda/(2*m)) * (regTheta.transpone() * regTheta);
+        J = J + (lambda/(double)(2*m)) * (regTheta.transpone() * regTheta);
 
-        Vector gradReg = lambda/m * regTheta;
+        Vector gradReg = lambda/((double)m) * regTheta;
         grad = grad + gradReg;
     }
 

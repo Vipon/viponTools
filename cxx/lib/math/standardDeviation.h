@@ -42,7 +42,7 @@ double standardDeviation(const Func& f, const Matrix& X, const Matrix& y)
         sum += res*res;
     }
 
-    return sqrt(sum / numPoints);
+    return sqrt(sum / ((double)numPoints));
 }
 
 #endif /* __STANDARD_DEVIATION_H */

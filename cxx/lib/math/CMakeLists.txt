@@ -54,7 +54,6 @@ add_vipon_library(
   TYPE STATIC
   HEADERS ${MATH_HEADERS}
   SOURCES ${MATH_SOURCES}
-  LINK_OPTIONS "-fopenmp"
 )
 
 add_subdirectory(test)

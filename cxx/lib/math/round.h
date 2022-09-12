@@ -30,7 +30,7 @@
 #include <cmath>
 
 INLINE
-double round(double k, unsigned precision)
+double round(double k, size_t precision)
 {
     double r = std::pow(10, precision);
     return std::round(k * r) / r;
