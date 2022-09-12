@@ -146,6 +146,7 @@ void pe64PrintDelayImport(const PE64File *pe, const PEDelimp *delimp)
     TAB;
     printf("TimeStamp:\t");
     pe64PrintDelayImportTimeStamp(delimp);
+    NEW_LINE;
 
     FileD fd = pe->fd;
     uint64_t off = pe64AddrToFileOff(pe, delimp->rvaINT);

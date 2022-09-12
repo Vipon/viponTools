@@ -27,29 +27,29 @@
 
 #include "pe64Parse.h"
 
-void pe64PrintDosHeader(const PE64File *pe);
-void pe64PrintFileHeader(const PE64File *pe);
-void pe64PrintOptHeader(const PE64File *pe);
-void pe64PrintNtHeader(const PE64File *pe);
-void pe64PrintDataDir(const DataDir *dataDir);
+EXPORT_FUNC(void pe64PrintDosHeader(const PE64File *pe));
+EXPORT_FUNC(void pe64PrintFileHeader(const PE64File *pe));
+EXPORT_FUNC(void pe64PrintOptHeader(const PE64File *pe));
+EXPORT_FUNC(void pe64PrintNtHeader(const PE64File *pe));
+EXPORT_FUNC(void pe64PrintDataDir(const DataDir *dataDir));
 
-void pe64PrintSectName(const PE64File *pe, const PESection *sect);
-void pe64PrintSection(const PE64File *pe, const PESection *sect);
-void pe64PrintSections(const PE64File *pe);
+EXPORT_FUNC(void pe64PrintSectName(const PE64File *pe, const PESection *sect));
+EXPORT_FUNC(void pe64PrintSection(const PE64File *pe, const PESection *sect));
+EXPORT_FUNC(void pe64PrintSections(const PE64File *pe));
 
-void pe64PrintINT(const PE64File *pe, ThunkData64 *INT);
-void pe64PrintImport(const PE64File *pe, const PEImport* import);
-void pe64PrintImports(const PE64File *pe);
-void pe64PrintDelayImport(const PE64File *pe, const PEDelimp *delimp);
-void pe64PrintDelayImports(const PE64File *pe);
+EXPORT_FUNC(void pe64PrintINT(const PE64File *pe, ThunkData64 *INT));
+EXPORT_FUNC(void pe64PrintImport(const PE64File *pe, const PEImport* import));
+EXPORT_FUNC(void pe64PrintImports(const PE64File *pe));
+EXPORT_FUNC(void pe64PrintDelayImport(const PE64File *pe, const PEDelimp *delimp));
+EXPORT_FUNC(void pe64PrintDelayImports(const PE64File *pe));
 
-void pe64PrintExports(const PE64File *pe);
+EXPORT_FUNC(void pe64PrintExports(const PE64File *pe));
 
-void pe64PrintAuxSymSect(const PE64File *pe, const PEAuxSymbol *auxSym);
-void pe64PrintAuxSymFile(const PE64File *pe, const PEAuxSymbol *auxSym);
-void pe64PrintAuxSymbol(const PE64File *pe, const PESymbol *sym, const PEAuxSymbol *auxSym);
-void pe64PrintSymbol(const PE64File *pe, const PESymbol *sym);
-void pe64PrintSymbols(const PE64File *pe);
+EXPORT_FUNC(void pe64PrintAuxSymSect(const PE64File *pe, const PEAuxSymbol *auxSym));
+EXPORT_FUNC(void pe64PrintAuxSymFile(const PE64File *pe, const PEAuxSymbol *auxSym));
+EXPORT_FUNC(void pe64PrintAuxSymbol(const PE64File *pe, const PESymbol *sym, const PEAuxSymbol *auxSym));
+EXPORT_FUNC(void pe64PrintSymbol(const PE64File *pe, const PESymbol *sym));
+EXPORT_FUNC(void pe64PrintSymbols(const PE64File *pe));
 
 #endif /* __PE64_PRINTER_H */
 
