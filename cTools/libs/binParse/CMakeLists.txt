@@ -34,6 +34,7 @@ add_vipon_library(
   HEADERS binParse.h
   SOURCES binParse.c
   LINK_LIBS ${BIN_PARSE_LIB_LIST}
+  INSTALL ON
 )
 
 add_subdirectory(tests)

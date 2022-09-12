@@ -26,5 +26,6 @@ add_vipon_library(
   HEADERS file.h
   SOURCES file.c
   LINK_LIBS mem
+  INSTALL ON
 )
 

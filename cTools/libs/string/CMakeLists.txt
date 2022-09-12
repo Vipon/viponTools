@@ -35,6 +35,7 @@ add_vipon_library(
   TYPE STATIC
   HEADERS ${STRING_HEADERS}
   SOURCES ${STRING_SOURCES}
+  INSTALL ON
 )
 
 add_subdirectory(test)

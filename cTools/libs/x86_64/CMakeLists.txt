@@ -14,6 +14,7 @@ add_vipon_library(
   HEADERS ${X86_64_HEADERS}
   SOURCES ${X86_64_SOURCES}
   LINK_LIBS capstone keystone mem
+  INSTALL ON
 )
 
 target_compile_definitions(asmWrap PUBLIC -DCAPSTONE_DISASSEMBLER)

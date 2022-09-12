@@ -25,5 +25,6 @@ add_vipon_library(
   TYPE STATIC
   HEADERS mem.h
   SOURCES mem.c
+  INSTALL ON
 )
 

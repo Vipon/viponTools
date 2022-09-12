@@ -33,6 +33,7 @@ add_vipon_library(
   TYPE STATIC
   HEADERS ${PERF_ANALYSIS_HEADERS}
   SOURCES ${PERF_ANALYSIS_SRC}
+  INSTALL ON
 )
 
 add_subdirectory(tests)
