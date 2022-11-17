@@ -27,13 +27,13 @@ import subprocess
 import sys
 from os.path import dirname, realpath
 curDir = dirname(realpath(__file__))
-libDir = dirname(dirname(curDir))
-sys.path.append(libDir)
+vpyDir = dirname(dirname(dirname(curDir)))
+sys.path.append(vpyDir)
 
-from lib.os import execForOs, getForOs, appendPath
-from lib.dir import createDir, mvDir
-from lib.net import downloadFile
-from lib.file import extractFile
+from vpy.os import execForOs, getForOs, appendPath
+from vpy.dir import createDir, mvDir
+from vpy.net import downloadFile
+from vpy.file import extractFile
 
 VERSION = '4.6.3'
 

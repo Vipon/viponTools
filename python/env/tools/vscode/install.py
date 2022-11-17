@@ -27,11 +27,11 @@ import subprocess
 from os.path import dirname, realpath
 import sys
 curDir = dirname(realpath(__file__))
-libDir = dirname(dirname(curDir))
-sys.path.append(libDir)
+vpyDir = dirname(dirname(dirname(curDir)))
+sys.path.append(vpyDir)
 
-from lib.net import downloadFile
-from lib.os import execForOs, getForOs
+from vpy.net import downloadFile
+from vpy.os import execForOs, getForOs
 
 
 WIN_URL = 'https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user'

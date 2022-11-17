@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valera
+# Copyright (c) 2022 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-from lib.file import mvFile
+import subprocess
+from vpy.os import getForOs
 
-def createDir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+PACMAN_SHELL = getForOs( linux = 'bash'
+                       , mac = ''
+                       , win = 'C:\\msys64\\usr\\bin\\bash.exe'
+                       )
+PACMAN_BIN = 'pacman'
 
-def mvDir(src, dst):
-    mvFile(src, dst)
+def install(installList: [str], noInteractive: bool = True) -> None:
+    args = [ PACMAN_SHELL
+           , '-lc'
+           , f'{PACMAN_BIN} {"--noconfirm" if noInteractive else ""} -S {" ".join(installList)}'
+           ]
+
+    subprocess.run(args)
 
