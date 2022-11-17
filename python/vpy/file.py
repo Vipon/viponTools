@@ -22,8 +22,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import urllib.request
+from os import remove
+from shutil import move
+from zipfile import is_zipfile, ZipFile
+from tarfile import is_tarfile, TarFile
 
-def downloadFile(url, fn=None):
-    urllib.request.urlretrieve(url, fn)
+def extractTar(arch, out='.'):
+    with TarFile(arch, 'r') as t:
+        t.extractall(path=out)
+
+def extractZip(arch, out=None):
+    with ZipFile(arch, 'r') as z:
+        z.extractall(path=out)
+
+def extractFile(arch, out='.'):
+    if is_zipfile(arch):
+        extractZip(arch, out)
+    elif is_tarfile(arch):
+        extractTar(arch, out)
+
+def mvFile(src, dst):
+    move(src, dst)
+
+def rmFile(fn: str) -> None:
+    remove(fn)
 

@@ -27,15 +27,16 @@ import subprocess
 from os.path import dirname, realpath
 import sys
 curDir = dirname(realpath(__file__))
-libDir = dirname(dirname(curDir))
-sys.path.append(libDir)
+vpyDir = dirname(dirname(dirname(curDir)))
+sys.path.append(vpyDir)
 
-from lib.net import downloadFile
-from lib.os import execForOs, getForOs
-from lib.installArgs import installArgs
+from vpy.net import downloadFile
+from vpy.os import execForOs, getForOs
 
-WIN_URL = 'https://github.com/msys2/msys2-installer/releases/download/2022-09-04/msys2-x86_64-20220904.exe'
-WIN_FN = 'msys2.exe'
+VERSION = '3.24.1'
+
+WIN_URL = f'https://github.com/Kitware/CMake/releases/download/v{VERSION}/cmake-{VERSION}-windows-x86_64.msi'
+WIN_FN = f'cmake-{VERSION}-windows-x86_64.msi'
 
 MAC_URL = ''
 MAC_FN = ''
@@ -43,7 +44,7 @@ MAC_FN = ''
 LINUX_URL = ''
 LINUX_FN = ''
 
-def downloadMSYS2():
+def downloadVSCode():
     url = getForOs(
             linux = LINUX_URL,
             mac = MAC_URL,
@@ -57,34 +58,32 @@ def downloadMSYS2():
 
     downloadFile(url, fn)
 
-def installMSYS2ForLinux():
+def installVSCodeForLinux():
     return
 
-def installMSYS2ForMac():
+def installVSCodeForMac():
     return
 
-def installMSYS2ForWin():
-    args = [ WIN_FN
-           , '--default-answer'
-           , '--confirm-command'
-           , '--accept-licenses'
-           , '--root=C:\msys64'
-           , 'install'
-           ]
+def installVSCodeForWin():
+    subprocess.check_call(
+        [ 'MsiExec'
+        , '/i'
+        , WIN_FN
+        , 'ADD_CMAKE_TO_PATH=User'
+        , '/passive'
+        ]
+    )
 
-    print(args)
-    subprocess.check_call(args)
-
-def installMSYS2():
+def installVSCode():
     execForOs(
-        linux = installMSYS2ForLinux,
-        mac = installMSYS2ForMac,
-        win = installMSYS2ForWin
+        linux = installVSCodeForLinux,
+        mac = installVSCodeForMac,
+        win = installVSCodeForWin
     )
 
 def main():
-    downloadMSYS2()
-    installMSYS2()
+    downloadVSCode()
+    installVSCode()
 
 if __name__ == '__main__':
     main()

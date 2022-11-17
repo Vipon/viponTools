@@ -25,13 +25,13 @@
 from os.path import dirname, realpath
 import sys
 curDir = dirname(realpath(__file__))
-libDir = dirname(dirname(curDir))
-sys.path.append(libDir)
+vpyDir = dirname(dirname(dirname(curDir)))
+sys.path.append(vpyDir)
 
-from lib.net import downloadFile
-from lib.os import execForOs, getForOs, appendPath
-from lib.file import extractFile, mvFile
-from lib.dir import createDir
+from vpy.net import downloadFile
+from vpy.os import execForOs, getForOs, appendPath
+from vpy.file import extractFile, mvFile
+from vpy.dir import createDir
 
 VERSION = '1.10.2'
 BASE_URL = 'https://github.com/ninja-build/ninja/releases/download'

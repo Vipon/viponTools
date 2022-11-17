@@ -22,24 +22,58 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from shutil import move
-from zipfile import is_zipfile, ZipFile
-from tarfile import is_tarfile, TarFile
+import os
+import platform
 
-def extractTar(arch, out='.'):
-    with TarFile(arch, 'r') as t:
-        t.extractall(path=out)
+OS = platform.system()
 
-def extractZip(arch, out=None):
-    with ZipFile(arch, 'r') as z:
-        z.extractall(path=out)
+def isLinux():
+    return OS == 'Linux'
 
-def extractFile(arch, out='.'):
-    if is_zipfile(arch):
-        extractZip(arch, out)
-    elif is_tarfile(arch):
-        extractTar(arch, out)
+def isMacOsX():
+    return OS == 'Darwin'
 
-def mvFile(src, dst):
-    move(src, dst)
+def isWin():
+    return OS == 'Windows'
+
+def execForOs(linux=None, mac=None, win=None):
+    if isLinux():
+        if linux is None:
+            raise 'Where is no Linux hadler'
+        linux()
+    elif isMacOsX():
+        if mac is None:
+            raise 'Where is no Mac OS X hadler'
+        mac()
+    elif isWin():
+        if win is None:
+            raise 'Where is no Win hadler'
+        win()
+    else:
+        raise 'Unknown OS'
+
+def getForOs(linux=None, mac=None, win=None):
+    if isLinux():
+        return linux
+    elif isMacOsX():
+        return mac
+    elif isWin():
+        return win
+    else:
+        raise 'Unknown OS'
+
+def appendPath(newPath):
+    def appendNixPath():
+        return
+    def appendWinPath():
+        os.system(f'setx path "%path%;{newPath}"')
+
+    execForOs(
+        linux = appendNixPath,
+        mac = appendNixPath,
+        win = appendWinPath
+    )
+
+def cd(path: str) -> None:
+    os.chdir(path)
 
