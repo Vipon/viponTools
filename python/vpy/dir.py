@@ -22,13 +22,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+##  @package vpy.dir
+#   Library for manipulations with directories.
+
 import os
 from vpy.file import mvFile
 
-def createDir(path):
+##  Create directory
+#   @brief Create directory including its parents
+#   @param path Path to the directory
+def createDir(path: str) -> None:
     if not os.path.exists(path):
         os.makedirs(path)
 
-def mvDir(src, dst):
+##  Move directory
+#   @brief Move directory from src to dst
+#   @param src Path to the source directory
+#   @param dst Path to the destination directory
+def mvDir(src: str, dst: str) -> None:
     mvFile(src, dst)
 

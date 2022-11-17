@@ -106,7 +106,7 @@ def buildGnuLib():
                     ]
                 )
            ]
-    print(args)
+
     subprocess.check_call(args)
 
     args = [ shell
@@ -123,8 +123,8 @@ def buildGnuLib():
     subprocess.check_call(args)
 
 def main():
-    #installGnuLibDeps()
-    #downloadGnuLibSrcCode()
+    installGnuLibDeps()
+    downloadGnuLibSrcCode()
     buildGnuLib()
 
 if __name__ == '__main__':
