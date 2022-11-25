@@ -24,20 +24,27 @@
 
 import subprocess
 
-from os.path import dirname, realpath
+from os import listdir
+from os.path import dirname, realpath, join, splitext
 import sys
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
 from vpy.os import execForOs, getForOs
+from vpy.dir import createDir
+from vpy.file import cpFile
 
 import vpy.git as git
 import vpy.pacman as pacman
 
 GNULIB_GIT_URL = 'https://git.savannah.gnu.org/git/gnulib.git'
 GNULIB_SRC_PATH = realpath('./gnulib')
-GNULIB_INSTALL_PATH = realpath('./../../../../external/gnulib')
+GNULIB_BUILD_PATH = realpath('./../../../../external/gnulib')
+GNULIB_AFTER_BUILT_PATH = join(GNULIB_BUILD_PATH, 'ALL', 'gllib')
+GNULIB_INSTALL_PREFIX = realpath('./../../../../external')
+GNULIB_INSTALL_LIB_PATH = join(GNULIB_INSTALL_PREFIX, 'lib')
+GNULIB_INSTALL_INCLUDE_PATH = join(GNULIB_INSTALL_PREFIX, 'include')
 
 GNULIB_MSYS_DEPS = [ 'gcc'
                    , 'make'
@@ -67,18 +74,18 @@ GNULIB_MSYS_DEPS = [ 'gcc'
                    , 'openssh'
                    ]
 
-def installGnuLibDepsForWin():
-    pacman.install(GNULIB_MSYS_DEPS)
-
-def installGnuLibDepsForLinux():
-    # It's on Linux by default
-    return
-
-def installGnuLibDepsForMac():
-    # !TODO: add install via brew
-    return
-
 def installGnuLibDeps():
+    def installGnuLibDepsForWin():
+        pacman.install(GNULIB_MSYS_DEPS)
+
+    def installGnuLibDepsForLinux():
+        # It's on Linux by default
+        return
+
+    def installGnuLibDepsForMac():
+        # Dont need, install from brew.
+        return
+
     execForOs(
         linux = installGnuLibDepsForLinux,
         mac = installGnuLibDepsForMac,
@@ -86,46 +93,107 @@ def installGnuLibDeps():
     )
 
 def downloadGnuLibSrcCode():
-    git.clone([GNULIB_GIT_URL, GNULIB_SRC_PATH])
+    def downloadGnuLibSrcCodeWin():
+        git.clone([GNULIB_GIT_URL, GNULIB_SRC_PATH])
+
+    def downloadGnuLibSrcCodeLinux():
+        # It's on Linux by default
+        return
+
+    def downloadGnuLibSrcCodeMac():
+        # Dont need, install from brew.
+        return
+
+    execForOs(
+        linux = downloadGnuLibSrcCodeLinux,
+        mac = downloadGnuLibSrcCodeMac,
+        win = downloadGnuLibSrcCodeWin
+    )
 
 def buildGnuLib():
-    shell = pacman.PACMAN_SHELL
+    def buildGnuLibLinux():
+        # It's on Linux by default
+        return
 
-    args = [ shell
-           , '-lc'
-           , ' '.join(
-                    [ 'cd'
-                    , f'"{GNULIB_SRC_PATH}"'
-                    , '&&'
-                    , './gnulib-tool'
-                    , '--create-megatestdir'
-                    , '--with-tests'
-                    , '--dir'
-                    , f'"{GNULIB_INSTALL_PATH}"'
-                    , 'argp'
-                    ]
+    def buildGnuLibMac():
+        # Don't need to build. Should be installed from brew
+        return
+
+    def buildGnuLibWin():
+        shell = pacman.PACMAN_SHELL
+
+        args = [ shell
+            , '-lc'
+            , ' '.join(
+                        [ 'cd'
+                        , f'"{GNULIB_SRC_PATH}"'
+                        , '&&'
+                        , './gnulib-tool'
+                        , '--create-megatestdir'
+                        , '--with-tests'
+                        , '--dir'
+                        , f'"{GNULIB_BUILD_PATH}"'
+                        , 'argp'
+                        ]
+                    )
+            ]
+
+        subprocess.check_call(args)
+
+        args = [ shell
+            , '-lc'
+            , ' '.join(
+                        [ 'cd'
+                        , f'"{GNULIB_BUILD_PATH}"'
+                        , '&&'
+                        , './do-autobuild'
+                        ]
+                    )
+            ]
+
+        subprocess.check_call(args)
+
+    execForOs(
+        linux = buildGnuLibLinux,
+        mac = buildGnuLibMac,
+        win = buildGnuLibWin
+    )
+
+def installGnuLib():
+    def installGnuLibLinux():
+        # It's on Linux by default
+        return
+
+    def installGnuLibMac():
+        # !TODO: add install via brew
+        return
+
+    def installGnuLibWin():
+        createDir(GNULIB_INSTALL_LIB_PATH)
+        createDir(GNULIB_INSTALL_INCLUDE_PATH)
+        for f in listdir(GNULIB_AFTER_BUILT_PATH):
+            (_, ext) = splitext(f)
+            if ext == '.h':
+                cpFile( join(GNULIB_AFTER_BUILT_PATH, f)
+                      , join(GNULIB_INSTALL_INCLUDE_PATH, f)
                 )
-           ]
-
-    subprocess.check_call(args)
-
-    args = [ shell
-           , '-lc'
-           , ' '.join(
-                    [ 'cd'
-                    , f'"{GNULIB_INSTALL_PATH}"'
-                    , '&&'
-                    , './do-autobuild'
-                    ]
+            if ext == '.a' or ext == '.so':
+                cpFile( join(GNULIB_AFTER_BUILT_PATH, f)
+                      , join(GNULIB_INSTALL_LIB_PATH, f)
                 )
-           ]
 
-    subprocess.check_call(args)
+    execForOs(
+        linux = installGnuLibLinux,
+        mac = installGnuLibMac,
+        win = installGnuLibWin
+    )
+
 
 def main():
     installGnuLibDeps()
     downloadGnuLibSrcCode()
     buildGnuLib()
+    installGnuLib()
 
 if __name__ == '__main__':
     main()
