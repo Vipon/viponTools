@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 from os import remove
-from shutil import move
+from shutil import move, copyfile
 from zipfile import is_zipfile, ZipFile
 from tarfile import is_tarfile, TarFile
 
@@ -46,4 +46,7 @@ def mvFile(src, dst):
 
 def rmFile(fn: str) -> None:
     remove(fn)
+
+def cpFile(src: str, dst: str) -> None:
+    copyfile(src, dst)
 
