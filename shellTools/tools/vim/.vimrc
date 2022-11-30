@@ -68,7 +68,7 @@ filetype plugin on
 filetype indent on " file type based indentation
 
 " Indentation settings for using 4 spaces instead of tabs.
-autocmd FileType c,cpp,sh,java,txt,idl,cdl,edl set shiftwidth=4 softtabstop=4 expandtab
+autocmd FileType c,cpp,sh,java,txt,idl,cdl,edl,dml set shiftwidth=4 softtabstop=4 expandtab
 autocmd FileType haskell,cmake,vim,psl,yaml set shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType simgen set shiftwidth=4 softtabstop=4 expandtab
 
