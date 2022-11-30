@@ -57,6 +57,7 @@ installVimRc()
     cp "${ROOT}/.vimrc" ~/
     mkdir -p "${VIM_FILE_TYPE_DETECT_DIR}"
     cp "${ROOT}/kssLanguage.vim" "${VIM_FILE_TYPE_DETECT_DIR}"
+    cp "${ROOT}/simicsLanguage.vim" "${VIM_FILE_TYPE_DETECT_DIR}"
 }
 
 installPlugins()
