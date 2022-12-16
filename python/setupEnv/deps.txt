@@ -1,0 +1,12 @@
+tools:
+    ccache
+    cmake
+    doxygen
+    MSYS2
+    ninja
+    vs
+    vscode
+
+libs:
+    gnulib:
+        MSYS2
