@@ -48,8 +48,13 @@ setupEnv contains some scripts for crossplatform installation different tools an
 
 If you want to add new one just create new directory in tools/ or libs/ with the name of instance, put __install.py__ script and add you instance to the __deps.txt__ file.
 
+## setupEnv Arguments:
+|||
+|---------------|--------------------------------------------------------------------------------------|
+|-f, --deps-file| Path to file contains high-level setup instances and dependencies. Default: deps.txt |
+|||
+
 # !TODO:
-*   Add deps.txt as parameter, like -f.
 *   Add parameters for setup instances: version, install directory.
 *   Add deps.txt files for every instance. It's a basic list of target dependencies, but you still can add new ones to root deps.txt.
 

@@ -28,11 +28,12 @@ curDir = dirname(realpath(__file__))
 vpyDir = dirname(curDir)
 sys.path.append(vpyDir)
 
+import argparse
 import subprocess
 from enum import Enum
 from vpy.readFile import readWithSameIndent, seekLine
 
-DEPS_FILE = 'deps.txt'
+DEFAULT_DEPS_FILE = 'deps.txt'
 KEY_WORDS = ['libs:', 'tools:']
 
 class SetUpQueue:
@@ -148,8 +149,9 @@ class SetUpQueue:
         return s
 
     def printQueue(self):
+        print('SetUpQueue:')
         for i in self.queue:
-            print(i.name)
+            print(f'\t{i.name}')
 
     def exec(self):
         for i in self.queue:
@@ -163,12 +165,24 @@ class SetUpQueue:
 
             com = realpath(join(com, i.name, 'install.py'))
             args = ['python', com]
+            print(f'Installing {i.name}:')
+            print(f'\t{" ".join(args)}')
             subprocess.run(args)
 
             i.status = SetUpQueue.SetUpInstance.InstanceState.INSTALLED
 
+def parseArgs():
+    parser = argparse.ArgumentParser(description = 'Crossplatform tool for setting envinronment.')
+    parser.add_argument('-f', '--deps-file', metavar = 'PATH', nargs = '?',
+            default = DEFAULT_DEPS_FILE,
+            help = 'file contains high-level setup instances and dependencies')
+
+    return parser.parse_args()
+
 def main():
-    queue = SetUpQueue(DEPS_FILE)
+    args = parseArgs()
+    queue = SetUpQueue(args.deps_file)
+    queue.printQueue()
     queue.exec()
 
 if __name__ == '__main__':
