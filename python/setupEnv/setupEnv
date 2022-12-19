@@ -31,10 +31,16 @@ sys.path.append(vpyDir)
 import argparse
 import subprocess
 from enum import Enum
-from vpy.readFile import readWithSameIndent, seekLine
+from typing import List
+
+from vpy.importHelp import installImport
+from vpy.type import isStr, isDict
+
+installImport('yaml', 'pyyaml')
+import yaml
 
 DEFAULT_DEPS_FILE = 'deps.txt'
-KEY_WORDS = ['libs:', 'tools:']
+KEY_WORDS = ['libs', 'tools']
 
 class SetUpQueue:
     class SetUpInstance:
@@ -46,72 +52,53 @@ class SetUpQueue:
             LIBS = 0
             TOOLS = 1
 
-        def __getInstanceDepsList(self, f):
-            deps = list()
-            lines = readWithSameIndent(f)
-            for l in lines:
-                deps.append(l.strip())
-
-            return deps
-
-        def __init__(self, f, t: InstaceType):
-            name = f.readline().strip()
-            if (name == '') or (name in KEY_WORDS):
-                self.name = ''
-                return
-
+        def __init__(self, name: str, deps: List[str], t: InstaceType):
             self.name = name
+            self.deps = deps
             self.type = t
             self.status = SetUpQueue.SetUpInstance.InstanceState.NOT_INSTALL
-            self.depsList = None
-            if self.name[-1] == ':':
-                self.name = self.name[:-1]
-                self.depsList = self.__getInstanceDepsList(f)
 
         def __str__(self):
             s = f'{self.name}'
-            if self.depsList is None:
+            if self.deps is None:
                 return s
             else:
                 s += ':'
 
-            for d in self.depsList:
+            for d in self.deps:
                 s += f'\n\t{d}'
 
             return s
 
         def isIndependent(self):
-            return (self.depsList == None)
+            return (self.deps == None)
 
-    def __readInstances(self, f, t: SetUpInstance.InstaceType):
-        instances = list()
-        while True:
-            pos = f.tell()
-            instance = SetUpQueue.SetUpInstance(f, t)
-            if (instance.name == '') or (instance.name in KEY_WORDS):
-                f.seek(pos)
-                break
+    def ____parseInstances(self, keyWord: str, t: SetUpInstance.InstaceType) -> None:
+        name = None
+        deps = None
+
+        isDictionary = isDict(self.yaml[keyWord])
+        for i in self.yaml[keyWord]:
+            name = i
+            if isDictionary:
+                deps = self.yaml[keyWord][i]
+                if isStr(deps):
+                    deps = [deps]
             else:
-                instances.append(instance)
+                deps = None
+            instance = SetUpQueue.SetUpInstance(name, deps, t)
+            self.instances.append(instance)
 
-        return instances
-
-    def __readToolsList(self, f):
-        f.seek(0)
-        seekLine(f, 'tools:')
-        return self.__readInstances(f, SetUpQueue.SetUpInstance.InstaceType.TOOLS)
-
-    def __readLibsList(self, f):
-        f.seek(0)
-        seekLine(f, 'libs:')
-        return self.__readInstances(f, SetUpQueue.SetUpInstance.InstaceType.LIBS)
+    def __parseInstances(self) -> None:
+        self.____parseInstances('tools', SetUpQueue.SetUpInstance.InstaceType.TOOLS)
+        self.____parseInstances('libs', SetUpQueue.SetUpInstance.InstaceType.LIBS)
 
     def __addInstanceDepsInQueue(self, instance: SetUpInstance) -> None:
         if instance.isIndependent():
             return
 
-        for dep in instance.depsList:
-            for i in self.instancesList:
+        for dep in instance.deps:
+            for i in self.instances:
                 if i.name == dep:
                     self.__addInstanceDepsInQueue(i)
                     if i not in self.queue:
@@ -122,29 +109,30 @@ class SetUpQueue:
         self.queue.append(instance)
 
     def __createQueue(self):
-        fullList = self.toolsList + self.libsList
-        for i in fullList:
+        for i in self.instances:
             self.__addInstanceInQueue(i)
 
     def __init__(self, fn: str) -> None:
         depsFile = open(fn, 'r')
-
-        self.toolsList = self.__readToolsList(depsFile)
-        self.libsList = self.__readLibsList(depsFile)
-        self.instancesList = self.toolsList + self.libsList
+        self.yaml = yaml.safe_load(depsFile)
+        self.instances = list()
+        self.__parseInstances()
         self.queue = list()
-
         self.__createQueue()
+
         depsFile.close()
+
 
     def __str__(self):
         s = 'tools:'
-        for i in self.toolsList:
-            s += f'\n{i}'
+        for i in self.instances:
+            if i.type == SetUpQueue.SetUpInstance.InstaceType.TOOLS:
+                s += f'\n{i}'
 
         s += '\n\nlibs:'
-        for i in self.libsList:
-            s += f'\n{i}'
+        for i in self.instances:
+            if i.type == SetUpQueue.SetUpInstance.InstaceType.LIBS:
+                s += f'\n{i}'
 
         return s
 
