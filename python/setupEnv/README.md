@@ -55,6 +55,7 @@ If you want to add new one just create new directory in tools/ or libs/ with the
 |||
 
 # !TODO:
+*   Using yaml instead of our own text structure.
 *   Add parameters for setup instances: version, install directory.
 *   Add deps.txt files for every instance. It's a basic list of target dependencies, but you still can add new ones to root deps.txt.
 
