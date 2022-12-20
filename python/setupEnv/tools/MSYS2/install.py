@@ -22,14 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import subprocess
-
 from os.path import dirname, realpath
 import sys
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
+from vpy.cmd import execCmd, CalledProcessError
 from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs
 from vpy.installArgs import parseInstallArgs
@@ -37,6 +36,7 @@ import vpy.installArgs as vpy
 
 WIN_URL = 'https://github.com/msys2/msys2-installer/releases/download/2022-09-04/msys2-x86_64-20220904.exe'
 WIN_FN = 'msys2.exe'
+WIN_NOT_FAULT_ERROR = 'The directory you selected already exists and contains an installation.'
 vpy.DEFAULT_WIN_INSTALL_PREFIX = 'C:\msys64'
 
 MAC_URL = ''
@@ -78,7 +78,15 @@ def installMSYS2ForWin():
            , 'install'
            ]
 
-    subprocess.check_call(args)
+    try:
+        execCmd(args, captureOut=True)
+    except CalledProcessError as execError:
+        print(execError.output.decode("utf-8"), flush=True)
+        if WIN_NOT_FAULT_ERROR in execError.output.decode("utf-8"):
+            return
+        else:
+            exit(-1)
+
 
 def installMSYS2():
     execForOs(

@@ -22,14 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import subprocess
-
 from os.path import dirname, realpath
 import sys
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
+from vpy.cmd import execCmd
 from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs
 from vpy.installArgs import parseInstallArgs
@@ -89,7 +88,7 @@ def installCmakeForWin(args):
     if args.install_prefix is not None:
         com += [f'INSTALL_ROOT={vpy.INSTALL_PREFIX}']
 
-    subprocess.check_call(com)
+    execCmd(com)
 
 def installCmake(args):
     execForOs(

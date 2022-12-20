@@ -28,7 +28,7 @@ import shutil
 import argparse
 import subprocess
 
-from python.lib.os import isWin, isLinux, isMacOsX, getForOs
+from python.vpy.os import isWin, isLinux, isMacOsX, getForOs
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 OUTPUT_DIR = os.path.join(ROOT, 'output')
