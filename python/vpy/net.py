@@ -22,6 +22,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from vpy.importHelp import installImport
+installImport('progressbar', 'progressbar')
 import progressbar
 import urllib.request
 
