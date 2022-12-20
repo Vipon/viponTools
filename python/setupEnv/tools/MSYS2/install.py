@@ -32,15 +32,22 @@ sys.path.append(vpyDir)
 
 from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs
+from vpy.installArgs import parseInstallArgs
+import vpy.installArgs as vpy
 
 WIN_URL = 'https://github.com/msys2/msys2-installer/releases/download/2022-09-04/msys2-x86_64-20220904.exe'
 WIN_FN = 'msys2.exe'
+vpy.DEFAULT_WIN_INSTALL_PREFIX = 'C:\msys64'
 
 MAC_URL = ''
 MAC_FN = ''
 
 LINUX_URL = ''
 LINUX_FN = ''
+
+def parseArgs():
+    args = parseInstallArgs('Install MSYS2.')
+    return args
 
 def downloadMSYS2():
     url = getForOs(
@@ -67,7 +74,7 @@ def installMSYS2ForWin():
            , '--default-answer'
            , '--confirm-command'
            , '--accept-licenses'
-           , '--root=C:\msys64'
+           , f'--root={vpy.INSTALL_PREFIX}'
            , 'install'
            ]
 
@@ -81,6 +88,7 @@ def installMSYS2():
     )
 
 def main():
+    parseArgs()
     downloadMSYS2()
     installMSYS2()
 

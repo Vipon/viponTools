@@ -34,9 +34,11 @@ sys.path.append(vpyDir)
 from vpy.os import execForOs, getForOs
 from vpy.dir import createDir
 from vpy.file import cpFile
+from vpy.installArgs import parseInstallArgs
 
 import vpy.git as git
 import vpy.pacman as pacman
+import vpy.installArgs as vpy
 
 GNULIB_GIT_URL = 'https://git.savannah.gnu.org/git/gnulib.git'
 GNULIB_SRC_PATH = realpath('./gnulib')
@@ -73,6 +75,15 @@ GNULIB_MSYS_DEPS = [ 'gcc'
                    , 'mingw64/mingw-w64-x86_64-python'
                    , 'openssh'
                    ]
+
+def parseArgs():
+    args = parseInstallArgs('Install gnulib.')
+
+    global GNULIB_INSTALL_PREFIX
+    if args.install_prefix is not None:
+        GNULIB_INSTALL_PREFIX = vpy.INSTALL_PREFIX
+
+    return args
 
 def installGnuLibDeps():
     def installGnuLibDepsForWin():
@@ -188,8 +199,8 @@ def installGnuLib():
         win = installGnuLibWin
     )
 
-
 def main():
+    parseArgs()
     installGnuLibDeps()
     downloadGnuLibSrcCode()
     buildGnuLib()

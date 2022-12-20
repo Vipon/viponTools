@@ -25,7 +25,7 @@
 import subprocess
 
 import sys
-from os.path import dirname, realpath
+from os.path import dirname, realpath, join
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
@@ -34,24 +34,36 @@ from vpy.os import execForOs, getForOs, appendPath
 from vpy.dir import createDir, mvDir
 from vpy.net import downloadFile
 from vpy.file import extractFile
+from vpy.installArgs import parseInstallArgs
+import vpy.installArgs as vpy
 
-VERSION = '4.6.3'
+vpy.INSTALL_VERSION = '4.6.3'
 
-WIN_URL = f'https://github.com/ccache/ccache/releases/download/v{VERSION}/ccache-{VERSION}-windows-x86_64.zip'
-WIN_ARCHIVE = f'ccache-{VERSION}-windows-x86_64.zip'
-WIN_BIN_DIR = 'C:\\bin'
-WIN_CCACHE_DIR = f'ccache-{VERSION}-windows-x86_64'
-WIN_INSTALL_PATH = f'{WIN_BIN_DIR}\\ccache'
+WIN_URL = None
+WIN_ARCHIVE = None
+WIN_CCACHE_DIR = None
+WIN_INSTALL_PATH = None
 
 MAC_URL = ''
 MAC_ARCHIVE = ''
-MAC_BIN_DIR = ''
-MAC_INSTALL_PATH = ''
+MAC_INSTALL_PATH = '~/.local/bin'
 
 LINUX_URL = ''
 LINUX_ARCHIVE = ''
-LINUX_BIN_DIR = ''
-LINUX_INSTALL_PATH = ''
+LINUX_INSTALL_PATH = '~/.local/bin'
+
+def parseArgs():
+    args = parseInstallArgs('Install ccache.')
+
+    global WIN_URL
+    WIN_URL = f'https://github.com/ccache/ccache/releases/download/v{vpy.INSTALL_VERSION}/ccache-{vpy.INSTALL_VERSION}-windows-x86_64.zip'
+    global WIN_ARCHIVE
+    WIN_ARCHIVE = f'ccache-{vpy.INSTALL_VERSION}-windows-x86_64.zip'
+    global WIN_CCACHE_DIR
+    WIN_CCACHE_DIR = f'ccache-{vpy.INSTALL_VERSION}-windows-x86_64'
+
+    global WIN_INSTALL_PATH
+    WIN_INSTALL_PATH = join(vpy.INSTALL_BIN_DIR, 'ccache')
 
 def downloadCCache():
     url = getForOs(
@@ -76,12 +88,7 @@ def extractCCache():
     extractFile(arch)
 
 def createBinDir():
-    binDir = getForOs(
-                linux = LINUX_BIN_DIR,
-                mac = MAC_BIN_DIR,
-                win = WIN_BIN_DIR
-             )
-    createDir(binDir)
+    createDir(vpy.INSTALL_BIN_DIR)
 
 def installCCacheForLinux():
     return
@@ -110,6 +117,7 @@ def installCCache():
     appendPath(path)
 
 def main():
+    args = parseArgs()
     downloadCCache()
     extractCCache()
     installCCache()

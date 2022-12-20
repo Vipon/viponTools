@@ -32,7 +32,8 @@ sys.path.append(vpyDir)
 
 from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs
-
+from vpy.installArgs import parseInstallArgs
+import vpy.installArgs as vpy
 
 WIN_URL = 'https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user'
 WIN_FN = 'VSCodeUserSetup-x64.exe'
@@ -42,6 +43,10 @@ MAC_FN = ''
 
 LINUX_URL = ''
 LINUX_FN = ''
+
+def parseArgs():
+    args = parseInstallArgs('Install vscode.')
+    return args
 
 def downloadVSCode():
     url = getForOs(
@@ -62,23 +67,29 @@ def installVSCodeForLinux():
 def installVSCodeForMac():
     return
 
-def installVSCodeForWin():
-    subprocess.check_call(
-        [ WIN_FN
-        , '/SILENT'
-        ]
-    )
+def installVSCodeForWin(args):
+    com = [ WIN_FN
+          , '/SILENT'
+    ]
 
-def installVSCode():
+    if args.install_prefix is not None:
+        com += [f'/DIR={vpy.INSTALL_PREFIX}']
+
+    print(' '.join(com))
+    subprocess.check_call(com)
+
+def installVSCode(args):
     execForOs(
         linux = installVSCodeForLinux,
         mac = installVSCodeForMac,
-        win = installVSCodeForWin
+        win = installVSCodeForWin,
+        wargs = args
     )
 
 def main():
+    args = parseArgs()
     downloadVSCode()
-    installVSCode()
+    installVSCode(args)
 
 if __name__ == '__main__':
     main()

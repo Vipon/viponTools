@@ -25,6 +25,9 @@
 def isStr(v) -> bool:
     return isinstance(v, str)
 
+def isList(v) -> bool:
+    return  isinstance(v, list)
+
 def isDict(v) -> bool:
     return  isinstance(v, dict)
 
