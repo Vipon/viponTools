@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 import sys
-from os.path import dirname, realpath, join
+from os.path import dirname, realpath, join, isabs
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(curDir)
 sys.path.append(vpyDir)
@@ -34,7 +34,8 @@ from enum import Enum
 from typing import List
 
 from vpy.importHelp import installImport
-from vpy.type import isStr, isDict
+from vpy.type import isStr, isList, isDict
+from vpy.os import execForOs
 
 installImport('yaml', 'pyyaml')
 import yaml
@@ -52,41 +53,119 @@ class SetUpQueue:
             LIBS = 0
             TOOLS = 1
 
-        def __init__(self, name: str, deps: List[str], t: InstaceType):
+        def __init__( self
+                    , name : str
+                    , ver  : str
+                    , dir  : str
+                    , deps : List[str]
+                    , t    : InstaceType
+                    ):
             self.name = name
+            self.ver = ver
+            self.dir = dir
             self.deps = deps
             self.type = t
             self.status = SetUpQueue.SetUpInstance.InstanceState.NOT_INSTALL
 
         def __str__(self):
             s = f'{self.name}'
-            if self.deps is None:
-                return s
+            if (self.ver is None) and (self.dir is None):
+                if self.deps is None:
+                    return s
+                else:
+                    for d in self.deps:
+                        s += f'\n\t{d}'
+                    return s
             else:
                 s += ':'
 
-            for d in self.deps:
-                s += f'\n\t{d}'
+            if self.ver is not None:
+                s += f'\n\tver: {self.ver}'
+
+            if self.dir is not None:
+                s += f'\n\tdir: {self.dir}'
+
+            if self.deps is not None:
+                s += f'\n\tdeps:'
+                for d in self.deps:
+                    s += f'\n\t\t{d}'
 
             return s
 
         def isIndependent(self):
             return (self.deps == None)
 
+    def __parseInstanceParam(self, params):
+        def getOsParam(p):
+            def getLinuxParam(p):
+                if 'linux' in p:
+                    return p['linux']
+                else:
+                    return p
+            def getMacParam(p):
+                if 'mac' in p:
+                    return p['mac']
+                else:
+                    return p
+            def getWinParam(p):
+                if 'win' in p:
+                    return p['win']
+                else:
+                    return p
+            return execForOs(
+                linux = getLinuxParam,
+                largs = p,
+                mac = getMacParam,
+                margs = p,
+                win = getWinParam,
+                wargs = p,
+            )
+        ver  = None
+        dir  = None
+        deps = None
+
+        if isList(params):
+            deps = params
+
+        if 'ver' in params:
+            ver = getOsParam(params['ver'])
+        if 'dir' in params:
+            dir = getOsParam(params['dir'])
+        if 'deps' in params:
+            deps = getOsParam(params['deps'])
+
+        return (ver, dir, deps)
+
+    def __fixDirPath(self, dir):
+        if dir == None:
+            return
+
+        if isabs(dir):
+            return realpath(dir)
+        else:
+            return realpath(join(dirname(self.fn), dir))
+
     def ____parseInstances(self, keyWord: str, t: SetUpInstance.InstaceType) -> None:
         name = None
+        ver  = None
+        dir  = None
         deps = None
 
         isDictionary = isDict(self.yaml[keyWord])
         for i in self.yaml[keyWord]:
             name = i
             if isDictionary:
-                deps = self.yaml[keyWord][i]
+                params = self.yaml[keyWord][i]
+                (ver, dir, deps) = self.__parseInstanceParam(params)
+                dir = self.__fixDirPath(dir)
                 if isStr(deps):
                     deps = [deps]
             else:
+                ver  = None
+                dir  = None
                 deps = None
-            instance = SetUpQueue.SetUpInstance(name, deps, t)
+
+            instance = SetUpQueue.SetUpInstance(name, ver, dir, deps, t)
             self.instances.append(instance)
 
     def __parseInstances(self) -> None:
@@ -98,11 +177,18 @@ class SetUpQueue:
             return
 
         for dep in instance.deps:
+            i_count = 0
             for i in self.instances:
                 if i.name == dep:
                     self.__addInstanceDepsInQueue(i)
                     if i not in self.queue:
                         self.queue.append(i)
+                else:
+                    i_count += 1
+
+            if i_count == len(self.instances):
+                print(f'Cannot find dependence "{dep}" for instance "{instance.name}"')
+                exit(-1)
 
     def __addInstanceInQueue(self, instance: SetUpInstance) -> None:
         self.__addInstanceDepsInQueue(instance)
@@ -114,6 +200,7 @@ class SetUpQueue:
 
     def __init__(self, fn: str) -> None:
         depsFile = open(fn, 'r')
+        self.fn = fn
         self.yaml = yaml.safe_load(depsFile)
         self.instances = list()
         self.__parseInstances()
@@ -121,7 +208,6 @@ class SetUpQueue:
         self.__createQueue()
 
         depsFile.close()
-
 
     def __str__(self):
         s = 'tools:'
@@ -143,16 +229,20 @@ class SetUpQueue:
 
     def exec(self):
         for i in self.queue:
-            com = '.'
+            script = '.'
             if i.type == SetUpQueue.SetUpInstance.InstaceType.TOOLS:
-                com = join(com, 'tools')
+                script = join(script, 'tools')
             elif i.type == SetUpQueue.SetUpInstance.InstaceType.LIBS:
-                com = join(com, 'libs')
+                script = join(script, 'libs')
             else:
                 raise "Unknown instance type"
 
-            com = realpath(join(com, i.name, 'install.py'))
-            args = ['python', com]
+            script = realpath(join(script, i.name, 'install.py'))
+            args = ['python', script]
+            if i.ver is not None:
+                args += ['--install-version', str(i.ver)]
+            if i.dir is not None:
+                args += ['--install-prefix', i.dir]
             print(f'Installing {i.name}:')
             print(f'\t{" ".join(args)}')
             subprocess.run(args)

@@ -9,4 +9,6 @@ tools:
 
 libs:
     gnulib:
-        - MSYS2
+        dir: ./../../external
+        deps:
+            win: MSYS2

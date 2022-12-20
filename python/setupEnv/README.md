@@ -42,6 +42,8 @@ libs:
     - myLib1
 ```
 
+For more examples goto [wiki page](https://github.com/Vipon/viponTools/wiki/setupEnv)
+
 ## Add new installation scripts for setup
 setupEnv contains some scripts for crossplatform installation different tools and libs, whey can be found in corresponding directories.
 
@@ -52,8 +54,4 @@ If you want to add new one just create new directory in tools/ or libs/ with the
 |---------------|--------------------------------------------------------------------------------------|
 |-f, --deps-file| Path to file contains high-level setup instances and dependencies. Default: deps.txt |
 |||
-
-# !TODO:
-*   Add parameters for setup instances: version, install directory.
-*   Add deps.txt files for every instance. It's a basic list of target dependencies, but you still can add new ones to root deps.txt.
 
