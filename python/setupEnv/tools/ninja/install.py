@@ -32,34 +32,37 @@ from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs, appendPath
 from vpy.file import extractFile, mvFile
 from vpy.dir import createDir
+from vpy.installArgs import parseInstallArgs
+import vpy.installArgs as vpy
 
-VERSION = '1.10.2'
+vpy.INSTALL_VERSION = '1.10.2'
 BASE_URL = 'https://github.com/ninja-build/ninja/releases/download'
 
 WIN_ARCHIVE = 'ninja-win.zip'
 WIN_EXEC = 'ninja.exe'
-WIN_INSTALL_PATH = 'C:\\bin\\ninja'
 
 LINUX_ARCHIVE = 'ninja-linux.zip'
 LINUX_EXEC = 'ninja'
-LINUX_INSTALL_PATH = '~/.local/bin'
 
 MAC_ARCHIVE = 'ninja-mac.zip'
 MAC_EXEC = 'ninja'
-MAC_INSTALL_PATH = '~/.local/bin'
+
+def parseArgs():
+    args = parseInstallArgs('Install ninja.')
+    return args
 
 def downloadNinjaForLinux():
-    url = f'{BASE_URL}/v{VERSION}/{LINUX_ARCHIVE}'
+    url = f'{BASE_URL}/v{vpy.INSTALL_VERSION}/{LINUX_ARCHIVE}'
     fn = LINUX_ARCHIVE
     downloadFile(url, fn)
 
 def downloadNinjaForWin():
-    url = f'{BASE_URL}/v{VERSION}/{WIN_ARCHIVE}'
+    url = f'{BASE_URL}/v{vpy.INSTALL_VERSION}/{WIN_ARCHIVE}'
     fn = WIN_ARCHIVE
     downloadFile(url, fn)
 
 def downloadNinjaForMac():
-    url = f'{BASE_URL}/v{VERSION}/{MAC_ARCHIVE}'
+    url = f'{BASE_URL}/v{vpy.INSTALL_VERSION}/{MAC_ARCHIVE}'
     fn = MAC_ARCHIVE
     downloadFile(url, fn)
 
@@ -79,11 +82,7 @@ def extractNinja():
     extractFile(arch)
 
 def installNinja():
-    path =  getForOs(
-                linux = LINUX_INSTALL_PATH,
-                mac = MAC_INSTALL_PATH,
-                win = WIN_INSTALL_PATH
-            )
+    path =  vpy.INSTALL_BIN_DIR
     execFile =  getForOs(
                 linux = LINUX_EXEC,
                 mac = MAC_EXEC,
@@ -94,6 +93,7 @@ def installNinja():
     appendPath(path)
 
 def main():
+    args = parseArgs()
     downloadNinja()
     extractNinja()
     installNinja()

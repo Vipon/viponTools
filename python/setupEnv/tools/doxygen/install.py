@@ -32,9 +32,10 @@ sys.path.append(vpyDir)
 
 from vpy.net import downloadFile
 from vpy.os import execForOs
-from vpy.installArgs import installArgs
+from vpy.installArgs import parseInstallArgs
+import vpy.installArgs as vpy
 
-VERSION = '1.9.5'
+vpy.INSTALL_VERSION = '1.9.5'
 BASE_URL = 'https://sourceforge.net/projects/doxygen/files/rel-'
 INSTALL_DIR = None
 
@@ -48,22 +49,16 @@ MAC_URL = None
 MAC_BIN = 'Doxygen.dmg'
 
 def parseArgs():
-    args = installArgs('Install doxygen.')
-
-    global VERSION
-    if args.install_version == None:
-        args.install_version = VERSION
-    else:
-        VERSION = args.install_version
+    args = parseInstallArgs('Install doxygen.')
 
     global WIN_URL
-    WIN_URL = f'{BASE_URL}{VERSION}/doxygen-{VERSION}-setup.exe'
+    WIN_URL = f'{BASE_URL}{vpy.INSTALL_VERSION}/doxygen-{vpy.INSTALL_VERSION}-setup.exe'
     global MAC_URL
-    MAC_URL = f'{BASE_URL}{VERSION}/Doxygen-{VERSION}.dmg'
+    MAC_URL = f'{BASE_URL}{vpy.INSTALL_VERSION}/Doxygen-{vpy.INSTALL_VERSION}.dmg'
 
     global INSTALL_DIR
-    if args.install_dir != None:
-        INSTALL_DIR = args.install_dir
+    if args.install_prefix is not None:
+        INSTALL_DIR = args.install_prefix
 
     return args
 
@@ -99,9 +94,11 @@ def installDoxygenMac():
 def installDoxygenWin():
     args = [
           WIN_BIN
-        , f'{"/DIR=" + INSTALL_DIR if INSTALL_DIR is not None else ""}'
         , '/SILENT'
     ]
+
+    if INSTALL_DIR is not None:
+        args += [f'/DIR={INSTALL_DIR}']
 
     subprocess.check_call(args)
 
