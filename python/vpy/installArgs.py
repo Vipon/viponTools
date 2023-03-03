@@ -23,15 +23,55 @@
 # SOFTWARE.
 
 import argparse
+from os.path import join, realpath
+from vpy.os import getForOs
+
+INSTALL_PREFIX = None
+INSTALL_VERSION = None
+INSTALL_BIN_DIR = None
+INSTALL_LIB_DIR = None
+INSTALL_INCLUDE_DIR = None
+DEFAULT_WIN_INSTALL_PREFIX = 'C:\\'
+DEFAULT_MAC_INSTALL_PREFIX = '~/.local'
+DEFAULT_LINUX_INSTALL_PREFIX = '~/.local'
 
 def installArgs(descr: str):
     parser = argparse.ArgumentParser(description = descr)
     parser.add_argument('--install-version', metavar = 'VERSION', nargs = '?',
             default = None,
             help = 'number of version should be installed')
-    parser.add_argument('--install-dir', metavar = 'DIR_PATH', nargs = '?',
+    parser.add_argument('--install-prefix', metavar = 'DIR_PATH', nargs = '?',
             default = None,
-            help = 'path to install directory')
+            help = 'path to install directories: bin, lib, include')
 
     return parser.parse_args()
+
+def parseInstallArgs(descr: str):
+    args = installArgs(descr)
+
+    global INSTALL_VERSION
+    if args.install_version == None:
+        args.install_version = INSTALL_VERSION
+    else:
+        INSTALL_VERSION = args.install_version
+
+    global INSTALL_PREFIX
+    if args.install_prefix == None:
+        INSTALL_PREFIX = getForOs(
+                linux = DEFAULT_LINUX_INSTALL_PREFIX,
+                mac = DEFAULT_MAC_INSTALL_PREFIX,
+                win = DEFAULT_WIN_INSTALL_PREFIX
+        )
+    else:
+        INSTALL_PREFIX = args.install_prefix
+
+    INSTALL_PREFIX = realpath(INSTALL_PREFIX)
+    global INSTALL_BIN_DIR
+    INSTALL_BIN_DIR = join(INSTALL_PREFIX, 'bin')
+    global INSTALL_LIB_DIR
+    INSTALL_LIB_DIR = join(INSTALL_PREFIX, 'lib')
+    global INSTALL_INCLUDE_DIR
+    INSTALL_INCLUDE_DIR = join(INSTALL_PREFIX, 'include')
+
+    return args
 

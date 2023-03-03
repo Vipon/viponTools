@@ -36,19 +36,34 @@ def isMacOsX():
 def isWin():
     return OS == 'Windows'
 
-def execForOs(linux=None, mac=None, win=None):
+def execForOs( linux = None
+             , mac   = None
+             , win   = None
+             , largs = None
+             , margs = None
+             , wargs = None
+             ):
     if isLinux():
         if linux is None:
             raise 'Where is no Linux hadler'
-        linux()
+        if largs == None:
+            return linux()
+        else:
+            return linux(largs)
     elif isMacOsX():
         if mac is None:
             raise 'Where is no Mac OS X hadler'
-        mac()
+        if margs == None:
+            return mac()
+        else:
+            return mac(margs)
     elif isWin():
         if win is None:
             raise 'Where is no Win hadler'
-        win()
+        if wargs == None:
+            return win()
+        else:
+            return win(wargs)
     else:
         raise 'Unknown OS'
 

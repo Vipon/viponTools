@@ -32,7 +32,10 @@ sys.path.append(vpyDir)
 
 from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs
-from vpy.installArgs import installArgs
+from vpy.installArgs import parseInstallArgs
+import vpy.installArgs as vpy
+
+vpy.INSTALL_VERSION = '17'
 
 WIN_URL = ''
 WIN_FN = 'vs_professional.exe'
@@ -46,17 +49,10 @@ LINUX_FN = ''
 INSTALL_DIR = None
 
 def parseArgs():
-    args = installArgs('Install visual stuio.')
-
-    if args.install_version == None:
-        args.install_version = '17'
+    args = parseInstallArgs('Install Visual Stuio.')
 
     global WIN_URL
-    WIN_URL = f'https://aka.ms/vs/{args.install_version}/release/vs_professional.exe'
-
-    global INSTALL_DIR
-    if args.install_dir != None:
-        INSTALL_DIR = args.install_dir
+    WIN_URL = f'https://aka.ms/vs/{vpy.INSTALL_VERSION}/release/vs_professional.exe'
 
     return args
 
@@ -80,8 +76,8 @@ def installVSCodeForLinux():
 def installVSCodeForMac():
     return
 
-def installVSCodeForWin():
-    args = [ WIN_FN
+def installVSCodeForWin(args):
+    com = [ WIN_FN
            , '--passive'
            , '--norestart'
            , '--nocache'
@@ -94,24 +90,25 @@ def installVSCodeForWin():
            , 'Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset'
            ]
 
-    if INSTALL_DIR != None:
-        args.append('--installPath')
-        args.append(f'{INSTALL_DIR}')
+    if args.install_prefix != None:
+        com.append('--installPath')
+        com.append(f'{vpy.INSTALL_PREFIX}')
 
-    print(args)
-    subprocess.check_call(args)
+    print(' '.join(com))
+    subprocess.check_call(com)
 
-def installVSCode():
+def installVSCode(args):
     execForOs(
         linux = installVSCodeForLinux,
         mac = installVSCodeForMac,
-        win = installVSCodeForWin
+        win = installVSCodeForWin,
+        wargs = args
     )
 
 def main():
-    parseArgs()
+    args = parseArgs()
     downloadVSCode()
-    installVSCode()
+    installVSCode(args)
 
 if __name__ == '__main__':
     main()

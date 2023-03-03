@@ -32,19 +32,31 @@ sys.path.append(vpyDir)
 
 from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs
+from vpy.installArgs import parseInstallArgs
+import vpy.installArgs as vpy
 
-VERSION = '3.24.1'
+vpy.INSTALL_VERSION = '3.24.1'
 
-WIN_URL = f'https://github.com/Kitware/CMake/releases/download/v{VERSION}/cmake-{VERSION}-windows-x86_64.msi'
-WIN_FN = f'cmake-{VERSION}-windows-x86_64.msi'
+WIN_URL = None
+WIN_FN = None
 
-MAC_URL = ''
-MAC_FN = ''
+MAC_URL = None
+MAC_FN = None
 
-LINUX_URL = ''
-LINUX_FN = ''
+LINUX_URL = None
+LINUX_FN = None
 
-def downloadVSCode():
+def parseArgs():
+    args = parseInstallArgs('Install cmake.')
+
+    global WIN_URL
+    WIN_URL = f'https://github.com/Kitware/CMake/releases/download/v{vpy.INSTALL_VERSION}/cmake-{vpy.INSTALL_VERSION}-windows-x86_64.msi'
+    global WIN_FN
+    WIN_FN = f'cmake-{vpy.INSTALL_VERSION}-windows-x86_64.msi'
+
+    return args
+
+def downloadCmake():
     url = getForOs(
             linux = LINUX_URL,
             mac = MAC_URL,
@@ -58,32 +70,39 @@ def downloadVSCode():
 
     downloadFile(url, fn)
 
-def installVSCodeForLinux():
+def installCmakeForLinux():
+    # !TODO: Add linux installation
     return
 
-def installVSCodeForMac():
+def installCmakeForMac():
+    # !TODO: Add mac os installation
     return
 
-def installVSCodeForWin():
-    subprocess.check_call(
-        [ 'MsiExec'
-        , '/i'
-        , WIN_FN
-        , 'ADD_CMAKE_TO_PATH=User'
-        , '/passive'
-        ]
-    )
+def installCmakeForWin(args):
+    com = [ 'MsiExec'
+          , '/i'
+          , WIN_FN
+          , 'ADD_CMAKE_TO_PATH=User'
+          , '/passive'
+    ]
 
-def installVSCode():
+    if args.install_prefix is not None:
+        com += [f'INSTALL_ROOT={vpy.INSTALL_PREFIX}']
+
+    subprocess.check_call(com)
+
+def installCmake(args):
     execForOs(
-        linux = installVSCodeForLinux,
-        mac = installVSCodeForMac,
-        win = installVSCodeForWin
+        linux = installCmakeForLinux,
+        mac = installCmakeForMac,
+        win = installCmakeForWin,
+        wargs = args
     )
 
 def main():
-    downloadVSCode()
-    installVSCode()
+    args = parseArgs()
+    downloadCmake()
+    installCmake(args)
 
 if __name__ == '__main__':
     main()
