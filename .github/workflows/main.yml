@@ -1,0 +1,36 @@
+on: push
+jobs:
+  full-test:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v3
+      #- uses: actions/setup-python@v4
+      #  with:
+      #    python-version: '3.9.5'
+      #- name: Install Python
+      #  run: .\batch\tools\python\install.bat
+      #- name: Setup Envinronment
+      #  working-directory: python\setupEnv
+      #  run: python setupEnv
+      - name: Check Path
+        run: $env:path
+      - run: |
+          "C:\" >> $env:GITHUB_PATH
+      - run: $env:path
+      - name: Configure ninja
+        run: python configure --ninja --output ninja_output
+      - name: Build ninja
+        working-directory: ninja_output\
+        run: ninja -j
+      - name: Test ninja
+        working-directory: ninja_output\
+        run: ninja test
+      - name: Configure MSBuild
+        run: python configure --vs --output msbuild_output
+      - name: Build MSBuild
+        working-directory: msbuild_output\
+        run: cmake --build .
+      - name: Test MSBuild
+        working-directory: msbuild_output\
+        run: ctest -C Debug
+

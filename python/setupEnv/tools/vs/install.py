@@ -22,14 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import subprocess
-
 from os.path import dirname, realpath
 import sys
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
+from vpy.cmd import execCmd
 from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs
 from vpy.installArgs import parseInstallArgs
@@ -94,8 +93,8 @@ def installVSCodeForWin(args):
         com.append('--installPath')
         com.append(f'{vpy.INSTALL_PREFIX}')
 
-    print(' '.join(com))
-    subprocess.check_call(com)
+    execCmd(com)
+
 
 def installVSCode(args):
     execForOs(

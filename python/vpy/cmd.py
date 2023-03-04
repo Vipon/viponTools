@@ -22,14 +22,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import importlib.util
-from vpy.pip import pip
+import subprocess
+from typing import List
+from subprocess import CalledProcessError, PIPE
 
-##  Install import
-#   @brief Check if library installed, if not, install it
-#   @param impName name of import library
-#   @param installName installation name for pip
-def installImport(impName: str, installName: str) -> None:
-    if importlib.util.find_spec(impName) == None:
-        pip(['install', installName])
+##  Execute command
+#   @brief Execute command in shell
+#   @param com list of command arguments
+#   @param verbose print extra information, like executing command
+#   @param canFail should exceptions raise after fail or not
+def execCmd(com: List[str], verbose=True, canFail=True, captureOut=False):
+    if verbose:
+        print(' '.join(com), flush=True)
+
+    res = subprocess.run(com, check=canFail, capture_output=captureOut)
+
+    if verbose:
+        if res.stdout is not None:
+            print(res.stdout.decode("utf-8"), flush=True)
+        if res.stderr is not None:
+            print(res.stderr.decode("utf-8"), flush=True)
+
+    return res
 

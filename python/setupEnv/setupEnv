@@ -29,10 +29,10 @@ vpyDir = dirname(curDir)
 sys.path.append(vpyDir)
 
 import argparse
-import subprocess
 from enum import Enum
 from typing import List
 
+from vpy.cmd import execCmd
 from vpy.importHelp import installImport
 from vpy.type import isStr, isList, isDict
 from vpy.os import execForOs
@@ -225,7 +225,7 @@ class SetUpQueue:
     def printQueue(self):
         print('SetUpQueue:')
         for i in self.queue:
-            print(f'\t{i.name}')
+            print(f'\t{i.name}', flush=True)
 
     def exec(self):
         for i in self.queue:
@@ -243,9 +243,8 @@ class SetUpQueue:
                 args += ['--install-version', str(i.ver)]
             if i.dir is not None:
                 args += ['--install-prefix', i.dir]
-            print(f'Installing {i.name}:')
-            print(f'\t{" ".join(args)}')
-            subprocess.run(args)
+            print(f'Installing {i.name}:', flush=True)
+            execCmd(args)
 
             i.status = SetUpQueue.SetUpInstance.InstanceState.INSTALLED
 
