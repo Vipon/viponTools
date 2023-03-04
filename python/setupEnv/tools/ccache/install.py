@@ -22,8 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import subprocess
-
 import sys
 from os.path import dirname, realpath, join
 curDir = dirname(realpath(__file__))

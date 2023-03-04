@@ -22,8 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import subprocess
-
 from os import listdir
 from os.path import dirname, realpath, join, splitext
 import sys
@@ -31,6 +29,7 @@ curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
+from vpy.cmd import execCmd
 from vpy.os import execForOs, getForOs
 from vpy.dir import createDir
 from vpy.file import cpFile
@@ -42,7 +41,7 @@ import vpy.installArgs as vpy
 
 GNULIB_GIT_URL = 'https://git.savannah.gnu.org/git/gnulib.git'
 GNULIB_SRC_PATH = realpath('./gnulib')
-GNULIB_BUILD_PATH = realpath('./../../../../external/gnulib')
+GNULIB_BUILD_PATH = realpath(f'{dirname(__file__)}/../../../../external/gnulib')
 GNULIB_AFTER_BUILT_PATH = join(GNULIB_BUILD_PATH, 'ALL', 'gllib')
 GNULIB_INSTALL_PREFIX = realpath('./../../../../external')
 GNULIB_INSTALL_LIB_PATH = join(GNULIB_INSTALL_PREFIX, 'lib')
@@ -133,6 +132,7 @@ def buildGnuLib():
     def buildGnuLibWin():
         shell = pacman.PACMAN_SHELL
 
+        createDir(dirname(GNULIB_BUILD_PATH))
         args = [ shell
             , '-lc'
             , ' '.join(
@@ -149,7 +149,7 @@ def buildGnuLib():
                     )
             ]
 
-        subprocess.check_call(args)
+        execCmd(args)
 
         args = [ shell
             , '-lc'
@@ -162,7 +162,7 @@ def buildGnuLib():
                     )
             ]
 
-        subprocess.check_call(args)
+        execCmd(args)
 
     execForOs(
         linux = buildGnuLibLinux,
