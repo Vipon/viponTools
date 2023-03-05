@@ -542,13 +542,14 @@ public:
         return false;
     }
 
-    class iterator :
-        public std::iterator<
-            std::input_iterator_tag, // iterator_category
-            std::vector<double>      // value_type
-        >
-    {
+    class iterator {
     private:
+        using iterator_category = std::input_iterator_tag;
+        using value_type = std::vector<double>;
+        using differece_type = std::vector<double>;
+        using pointer = std::vector<double>*;
+        using reference = std::vector<double>&;
+
         friend class Matrix;
         using MatrixIt = std::vector<std::vector<double>>::iterator;
         MatrixIt it;
@@ -568,13 +569,14 @@ public:
         bool operator!=(iterator other) const { return (it != other.it); }
     };
 
-    class const_iterator :
-        public std::iterator<
-            std::output_iterator_tag,  // iterator_category
-            const std::vector<double> // value_type
-        >
-    {
+    class const_iterator {
     private:
+        using iterator_category = std::output_iterator_tag;
+        using value_type = const std::vector<double>;
+        using differece_type = const std::vector<double>;
+        using pointer = const std::vector<double>*;
+        using reference = const std::vector<double>&;
+
         friend class Matrix;
         using ConstMatrixIt = std::vector<std::vector<double>>::const_iterator;
         ConstMatrixIt it;

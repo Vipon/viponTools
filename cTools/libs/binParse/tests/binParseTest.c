@@ -35,10 +35,12 @@
 static void hookFooWithBar(char *argv0)
 {
     initBinParser(argv0);
+
     if (binParser.type == MACHO64)
         binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
     else
         binHook("foo", (const void *)bar);
+
     finiBinParser();
 }
 
@@ -46,7 +48,7 @@ int main(int argc, char *argv[])
 {
     UNUSED(argc);
 
-    VERBOSE = 1;
+    VERBOSE = 0;
 
     foo();
     bar();
