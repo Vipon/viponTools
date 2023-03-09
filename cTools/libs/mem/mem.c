@@ -65,10 +65,16 @@ void print_mem(uint8_t* mem, size_t size)
 // OS standard headers
 #if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
 # include <unistd.h>
+# include <sys/mman.h>
 
 long getPageSize(void)
 {
     return sysconf(_SC_PAGESIZE);
+}
+
+int Mprotect(void *addr, size_t len, int prot)
+{
+    return mprotect(addr, len, prot);
 }
 
 #elif defined(__WIN__)

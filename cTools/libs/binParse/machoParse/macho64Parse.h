@@ -156,8 +156,8 @@ typedef struct nlist_64 Macho64Sym;
  *      uint64_t vmsize;
  *      uint64_t fileoff;
  *      uint64_t filesize;
- *      vm_prot_t maxprot;
- *      vm_prot_t initprot;
+ *      vm_prot_t maxprot;  // maximal permissions r/w/x
+ *      vm_prot_t initprot; // initial permissions r/w/x
  *      uint32_t nsects;    // The number of section data structures
  *      uint32_t flags;
  *  };
@@ -167,17 +167,19 @@ typedef struct segment_command_64 Macho64Seg;
 /*
  *  struct section_64
  *  {
- *      char sectname[16];
- *      char segname[16];
+ *      char sectname[16];  // name of section
+ *      char segname[16];   // name of segment contains this section
  *      uint64_t addr;      // the virtual memory address
  *      uint64_t size;      // the size in bytes of the virtual memory
- *      uint32_t offset;
- *      uint32_t align;
- *      uint32_t reloff;
- *      uint32_t nreloc;
+ *      uint32_t offset;    // file offset for this section
+ *      uint32_t align;     // the power of two (for 8 bytes: align = 3)
+ *      uint32_t reloff;    // file offset of relocation entries
+ *      uint32_t nreloc;    // number of relocation entries
  *      uint32_t flags;
- *      uint32_t reserved1;
- *      uint32_t reserved2;
+ *      // Import section contains entries for imported symbols in correspond orders
+ *      // as in the indirect symbol table, start at index stored in reserved1.
+ *      uint32_t reserved1; // index into indirect symbol table
+ *      uint32_t reserved2; // size of stubs
  *  };
  */
 typedef struct section_64 Macho64Sect;
@@ -243,6 +245,7 @@ typedef struct section_64 Macho64Sect;
 
 typedef enum {  PAGEZERO_NSEG = 0,
                 TEXT_NSEG,
+                DATA_CONST_NSEG,
                 DATA_NSEG,
                 OBJC_NSEG,
                 IMPORT_NSEG,

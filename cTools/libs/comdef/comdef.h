@@ -80,6 +80,12 @@ extern int VERBOSE;
             fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);        \
             fprintf(stderr, "\n");                                          \
         )
+    #define LOG_WARNING(...)                    \
+        DEF_GUARD(                              \
+            if (VERBOSE) {                      \
+                WARNING(__VA_ARGS__);           \
+            }                                   \
+        )
     #ifdef ERROR
         #undef ERROR
     #endif /* ERROR */
