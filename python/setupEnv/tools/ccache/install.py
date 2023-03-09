@@ -28,12 +28,14 @@ curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
-from vpy.os import execForOs, getForOs, appendPath
+from vpy.os import execForOs, getForOs, appendPath, isWin, installPkg
 from vpy.dir import createDir, mvDir
 from vpy.net import downloadFile
 from vpy.file import extractFile
 from vpy.installArgs import parseInstallArgs
 import vpy.installArgs as vpy
+
+import vpy.brew as brew
 
 vpy.INSTALL_VERSION = '4.6.3'
 
@@ -62,6 +64,8 @@ def parseArgs():
 
     global WIN_INSTALL_PATH
     WIN_INSTALL_PATH = join(vpy.INSTALL_BIN_DIR, 'ccache')
+
+    return args
 
 def downloadCCache():
     url = getForOs(
@@ -116,9 +120,12 @@ def installCCache():
 
 def main():
     args = parseArgs()
-    downloadCCache()
-    extractCCache()
-    installCCache()
+    if isWin() or not args.default:
+        downloadCCache()
+        extractCCache()
+        installCCache()
+    else:
+        installPkg('ccache')
 
 if __name__ == '__main__':
     main()

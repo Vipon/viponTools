@@ -658,7 +658,7 @@ int32_t get_disp(const x86_64_instr *insn)
             if (get_modrm_size(insn))
                 disp = x86->disp;
             else
-                disp = (uint64_t)get_imm(insn) - insn->address - insn->size;
+                disp = (int32_t)((uint64_t)get_imm(insn) - insn->address - insn->size);
             break;
 
         default:

@@ -1,11 +1,7 @@
 tools:
     - ccache
     - cmake
-    - doxygen
-    - MSYS2
     - ninja
-    - vs
-    - vscode
     - capstone:
         ver: 3.0.5
         deps: cmake
@@ -15,6 +11,7 @@ tools:
 
 libs:
     argp:
-        dir: ./../../external
+        dir:
+            win: ./../../external
         deps:
             win: MSYS2

@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 import argparse
-from os.path import join, realpath
+from os.path import join, realpath, expanduser
 from vpy.os import getForOs
 
 INSTALL_PREFIX = None
@@ -32,8 +32,8 @@ INSTALL_BIN_DIR = None
 INSTALL_LIB_DIR = None
 INSTALL_INCLUDE_DIR = None
 DEFAULT_WIN_INSTALL_PREFIX = 'C:\\'
-DEFAULT_MAC_INSTALL_PREFIX = '~/.local'
-DEFAULT_LINUX_INSTALL_PREFIX = '~/.local'
+DEFAULT_MAC_INSTALL_PREFIX = expanduser('~/.local')
+DEFAULT_LINUX_INSTALL_PREFIX = expanduser('~/.local')
 
 def installArgs(descr: str):
     parser = argparse.ArgumentParser(description = descr)
@@ -43,6 +43,9 @@ def installArgs(descr: str):
     parser.add_argument('--install-prefix', metavar = 'DIR_PATH', nargs = '?',
             default = None,
             help = 'path to install directories: bin, lib, include')
+    parser.add_argument('--default', action = 'store_true',
+            default = False,
+            help = 'if flag is set, produce default install: brew, apt etc.')
 
     return parser.parse_args()
 
@@ -50,10 +53,10 @@ def parseInstallArgs(descr: str):
     args = installArgs(descr)
 
     global INSTALL_VERSION
-    if args.install_version == None:
-        args.install_version = INSTALL_VERSION
-    else:
+    if args.install_version is not None:
         INSTALL_VERSION = args.install_version
+    else:
+        args.default = True
 
     global INSTALL_PREFIX
     if args.install_prefix == None:
