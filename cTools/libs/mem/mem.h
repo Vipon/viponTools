@@ -36,36 +36,51 @@ void *Realloc(void *ptr, size_t size);
 
 void print_mem(uint8_t* mem, size_t size);
 
+/**
+ * \brief Returns system page size
+ * \return page size
+ */
 long getPageSize(void);
 
 
 /**
- * \brief round to the nearest multiple page size value which is lower then val
+ * \brief Rounds to the nearest multiple page size value which is lower then val
+ *
+ * \param val value need to be aligned
+ * \return aligned value
  */
 size_t alignToPageSize(size_t val);
 
 
 /**
- * \brief round to the nearest multiple page size value which is higher then val
+ * \brief Rounds to the nearest multiple page size value which is higher then val
+ *
+ * \param val value need to be aligned
+ * \return aligned value
  */
 size_t alignUpToPageSize(size_t val);
 
 
 /**
- * Describe:
- *  Copy num bytes from the dest to the source buffer. Coping from a firs to a
- *  last byte.
- * Input:
- *  source - point to source buffer.
- *  dest - point to destination.
- *  num - number of bytes that need to copy.
- * Output:
- *  Success:
- *      point to dest.
- *  Fail:
- *      NULL point.
+ * \brief Copies num bytes from the dest to the source buffer. Coping from a
+ *        firs to a last byte.
+ * \param source point to source buffer.
+ * \param dest point to destination.
+ * \param num number of bytes that need to copy.
+ * \return Success: point to dest.
+ *         Fail: NULL point.
  */
 uint8_t *directCopyBytes(const uint8_t *source, uint8_t *dest, size_t num);
+
+/**
+ * \brief Set memory protection.
+ * \param addr point to memory should be align to page size.
+ * \param len size of memory region.
+ * \param prot protection flags.
+ * \return Success: 0.
+ *         Fail: error code.
+ */
+int Mprotect(void *addr, size_t len, int prot);
 
 #endif /* __MEM_H */
 

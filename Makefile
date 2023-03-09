@@ -9,7 +9,7 @@ test: all
 
 .PHONY: release
 release:
-	./configure --release
+	./configure --release --gmake
 	cd output && make -j
 	cd output && make test
 	cd output && make install

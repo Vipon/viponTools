@@ -20,12 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+set(ARGS_LINK_LIBS mem string)
+if (APPLE)
+  list(APPEND ARGS_LINK_LIBS argp)
+endif (APPLE)
+
 add_vipon_library(
   NAME args
   TYPE SHARED
   HEADERS args.h
   SOURCES args.c
-  LINK_LIBS mem string
+  LINK_LIBS "${ARGS_LINK_LIBS}"
   INSTALL ON
 )
 
