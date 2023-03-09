@@ -142,7 +142,7 @@ void macho64PrintSymbol(const Macho64File *mf, const Macho64Sym *ms)
 void macho64PrintSymbols(const Macho64File *mf)
 {
     uint32_t i = 0;
-    uint32_t nsyms = macho64GetAmountSSym(mf);
+    uint32_t nsyms = (uint32_t)macho64GetAmountSSym(mf);
     printf("Symbol table:\n");
     for (i = 0; i < nsyms; ++i) {
         printf("%"PRIu32".\n", i);

@@ -25,6 +25,9 @@
 import os
 import platform
 
+from . import apt as apt
+from . import brew as brew
+
 OS = platform.system()
 
 def isLinux():
@@ -91,4 +94,23 @@ def appendPath(newPath):
 
 def cd(path: str) -> None:
     os.chdir(path)
+
+def linuxInstallPkg(name: str) -> None:
+    apt.install(name)
+
+def macInstallPkg(name: str) -> None:
+    brew.install(name)
+
+def winInstallPkg(name: str) -> None:
+    return
+
+def installPkg(name: str) -> None:
+    execForOs(
+        linux = linuxInstallPkg,
+        largs = name,
+        mac = macInstallPkg,
+        margs = name,
+        win = winInstallPkg,
+        wargs = name
+    )
 
