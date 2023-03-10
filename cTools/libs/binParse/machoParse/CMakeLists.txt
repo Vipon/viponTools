@@ -22,9 +22,19 @@
 
 add_vipon_library(
   NAME macho64Parse
-  TYPE STATIC
-  HEADERS macho64Parse.h
+  TYPE SHARED
+  HEADERS macho64Parse.h macho.h macho64.h
   SOURCES macho64Parse.c
+  LINK_LIBS file mem string
+  INSTALL ON
+)
+
+# Dynamic modification library must be static
+add_vipon_library(
+  NAME macho64DynMod
+  TYPE STATIC
+  HEADERS macho64DynMod.h
+  SOURCES macho64DynMod.c
   LINK_LIBS file mem string
   INSTALL ON
 )

@@ -828,7 +828,7 @@ void *pe64Hook(const PE64File *pe, const char *func, const void *hand)
         base = pe->optHeader->ImageBase;
 
     uint64_t i = 0;
-    uint64_t impNum = pe->importNum - 1;
+    uint64_t impNum = pe->importNum - 1; // Last entry is NULL padded
     for (i = 0; i < impNum; ++i) {
         PEImport *imp = pe->import + i;
         ThunkData64 *IAT = (ThunkData64*)(base + imp->FirstThunk);

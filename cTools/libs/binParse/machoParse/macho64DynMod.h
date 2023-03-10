@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,45 +22,25 @@
  * SOFTWARE.
  */
 
-#include "os.h"
-#include "foo.h"
-#include "bar.h"
-#include "test.h"
-#include "binParse.h"
+#ifndef __MACHO64_DYN_MOD
+#define __MACHO64_DYN_MOD
+
 #include "macho64Parse.h"
-#ifdef __WIN__
-    #include "pe64Printer.h"
-#endif /* __WIN__ */
-#include "comdef.h"
 
-static void hookFooWithBar(char *argv0)
-{
-    initBinParser(argv0);
+/***
+ *  Before:
+ *      If you need a file position, you should to save it
+ *  Input:
+ *      @mf - mach-o descriptor
+ *      @func - name of function, that is nedded to hooked
+ *      @hand - address of handler function
+ *  Output:
+ *      Success:
+ *          Old relocation addr
+ *      Fail:
+ *          NULL
+ */
+void *macho64Hook(const Macho64File *mf, const char *func, const void *hand);
 
-    if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
-    else
-        binHook("foo", (const void *)bar);
-
-    finiBinParser();
-}
-
-int main(int argc, char *argv[])
-{
-    UNUSED(argc);
-
-    VERBOSE = 0;
-
-    foo();
-    bar();
-    hookFooWithBar(argv[0]);
-
-    char *str1 = foo();
-    char *str2 = bar();
-    LOG("str1: %s", str1);
-    LOG("str2: %s", str2);
-    EXPECT_STR_EQ(str1, str2);
-
-    return 0;
-}
+#endif /* __MACHO64_DYN_MOD */
 

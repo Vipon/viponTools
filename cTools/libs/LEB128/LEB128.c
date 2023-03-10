@@ -88,7 +88,7 @@ uint8_t *fromULEB128(uint8_t *p, uint64_t *res)
         }
 
         byte = p[i];
-        *res |= (byte & (size_t)0x7F) << (i * 7);
+        *res |= (byte & (uint64_t)0x7F) << (i * 7);
 
         LOG("%zu. byte = 0x%.2"PRIX8" res = 0x%.16"PRIX64, i, byte, *res);
 

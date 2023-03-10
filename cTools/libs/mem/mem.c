@@ -77,6 +77,23 @@ int Mprotect(void *addr, size_t len, int prot)
     return mprotect(addr, len, prot);
 }
 
+const
+char *getMProtStr(int prot)
+{
+    char *mprotStr[] = {
+        ""      , // 000
+        "r"     , // 001
+        "w"     , // 010
+        "wr"    , // 011
+        "x"     , // 100
+        "xr"    , // 101
+        "xw"    , // 110
+        "xwr"   , // 111
+    };
+
+    return mprotStr[prot];
+}
+
 #elif defined(__WIN__)
 # include <malloc.h>
 # include <Windows.h>

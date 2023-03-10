@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(elfParse)
-add_subdirectory(machoParse)
-set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse macho64DynMod)
-if (WIN32)
-    add_subdirectory(peParse)
-    set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse pe64Parse pe64Printer macho64DynMod)
-endif (WIN32)
+set(PE64_PRINTER_SOURSES
+  pe64PrinterHeaders.c
+  pe64PrinterSections.c
+  pe64PrinterSymbols.c
+  pe64PrinterImports.c
+  pe64PrinterDelayImports.c
+)
+
+set(PE64_PRINTER_HEADERS
+  pe64Printer.h
+)
 
 add_vipon_library(
-  NAME binParse
+  NAME pe64Printer
   TYPE STATIC
-  HEADERS binParse.h
-  SOURCES binParse.c
-  LINK_LIBS ${BIN_PARSE_LIB_LIST}
+  SOURCES ${PE64_PRINTER_SOURSES}
+  HEADERS ${PE64_PRINTER_HEADERS}
+  LINK_LIBS pe64Parse
   INSTALL ON
 )
 
-add_subdirectory(tests)
+add_subdirectory(test)
 
