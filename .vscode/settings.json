@@ -87,6 +87,8 @@
         "*.idl": "cpp",
         "args.h": "c",
         "argp.h": "c",
-        "test.h": "c"
-    }
+        "test.h": "c",
+        "macho64printer.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

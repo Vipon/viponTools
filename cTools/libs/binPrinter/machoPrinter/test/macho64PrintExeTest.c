@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,44 +22,23 @@
  * SOFTWARE.
  */
 
-#include "os.h"
-#include "foo.h"
-#include "bar.h"
-#include "test.h"
-#include "binParse.h"
-#include "macho64Parse.h"
-#ifdef __WIN__
-    #include "pe64Printer.h"
-#endif /* __WIN__ */
 #include "comdef.h"
-
-static void hookFooWithBar(char *argv0)
-{
-    initBinParser(argv0);
-
-    if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
-    else
-        binHook("foo", (const void *)bar);
-
-    finiBinParser();
-}
+#include "macho64Parse.h"
+#include "macho64Printer.h"
 
 int main(int argc, char *argv[])
 {
     UNUSED(argc);
+    Macho64File *mf = macho64Parse(argv[0]);
 
-    VERBOSE = 0;
+    macho64PrintHeader(mf);
+    macho64PrintLComs(mf);
+    macho64PrintSegments(mf);
+    macho64PrintSections(mf);
+    macho64PrintFuncStarts(mf);
+    macho64PrintSymbols(mf);
 
-    foo();
-    bar();
-    hookFooWithBar(argv[0]);
-
-    char *str1 = foo();
-    char *str2 = bar();
-    LOG("str1: %s", str1);
-    LOG("str2: %s", str2);
-    EXPECT_STR_EQ(str1, str2);
+    macho64Free(mf);
 
     return 0;
 }

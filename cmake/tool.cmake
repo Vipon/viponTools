@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,50 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(elfParse)
-add_subdirectory(machoParse)
-set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse macho64DynMod)
-if (WIN32)
-    add_subdirectory(peParse)
-    set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse pe64Parse pe64Printer macho64DynMod)
-endif (WIN32)
+include_guard()
 
-add_vipon_library(
-  NAME binParse
-  TYPE STATIC
-  HEADERS binParse.h
-  SOURCES binParse.c
-  LINK_LIBS ${BIN_PARSE_LIB_LIST}
-  INSTALL ON
-)
+###############################################################################
+# Parameters:
+#   NAME - test name
+#   SOURCES - list of source files
+#   LINK_LIBRARIES - list of link libraries
+#   LINK_OPTIONS - extra link options
+#   INSTALL - if ON when install
+###############################################################################
+function(add_vipon_tool)
+  cmake_parse_arguments(ARG
+    # true_false_options
+    ""
+    # one_value_options
+    "NAME;INSTALL"
+    # multi_value_options
+    "SOURCES;LINK_LIBS;LINK_OPTIONS"
+    ${ARGN}
+  )
 
-add_subdirectory(tests)
+  add_executable(${ARG_NAME}
+    ${ARG_SOURCES}
+  )
+
+  target_link_libraries(${ARG_NAME}
+    ${ARG_LINK_LIBS}
+    comdef
+  )
+
+  target_include_directories(${ARG_NAME} INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}
+  )
+
+  target_link_options(${ARG_NAME}
+    PUBLIC ${ARG_LINK_OPTIONS}
+  )
+
+  if(ARG_INSTALL)
+    install(
+      TARGETS ${ARG_NAME}
+      DESTINATION ${INSTALL_BIN_DIR}
+    )
+  endif(ARG_INSTALL)
+
+endfunction(add_vipon_library)
 

@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(elfParse)
-add_subdirectory(machoParse)
-set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse macho64DynMod)
-if (WIN32)
-    add_subdirectory(peParse)
-    set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse pe64Parse pe64Printer macho64DynMod)
-endif (WIN32)
-
-add_vipon_library(
-  NAME binParse
-  TYPE STATIC
-  HEADERS binParse.h
-  SOURCES binParse.c
-  LINK_LIBS ${BIN_PARSE_LIB_LIST}
-  INSTALL ON
+add_vipon_test(
+  NAME macho64PrintExeTest
+  SOURCES macho64PrintExeTest.c
+  LINK_LIBS macho64Printer
 )
-
-add_subdirectory(tests)
 
