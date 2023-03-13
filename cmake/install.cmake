@@ -27,6 +27,12 @@ endif ()
 set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
 set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+if (APPLE)
+  list(APPEND CMAKE_INSTALL_RPATH "@loader_path/../lib")
+elseif (UNIX AND NOT APPLE)
+  list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+endif ()
+
 
 function(installFiles dir)
   foreach(file ${ARGN})

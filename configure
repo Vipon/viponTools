@@ -32,7 +32,8 @@ from python.vpy.os import isWin, isLinux, isMacOsX, getForOs
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 OUTPUT_DIR = os.path.join(ROOT, 'output')
-INSTALL_DIR = os.path.join(OUTPUT_DIR, 'viponTools')
+INSTALL_DIR_NAME = 'viponTools'
+INSTALL_DIR = os.path.join(OUTPUT_DIR, INSTALL_DIR_NAME)
 CMAKE_DIR = os.path.join(ROOT, 'cmake')
 TOOLCHAIN_DIR = os.path.join(CMAKE_DIR, 'toolchain')
 
@@ -74,7 +75,7 @@ def parseArgs():
 def finalizeArgs(args):
     if args.output != OUTPUT_DIR:
         if args.install_dir == INSTALL_DIR:
-            args.install_dir = os.path.join(args.output, 'install')
+            args.install_dir = os.path.abspath(os.path.join(args.output, INSTALL_DIR_NAME))
     if isLinux():
         if args.ninja or args.vs or args.xcode:
             args.gmake = False
