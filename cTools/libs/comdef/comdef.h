@@ -96,6 +96,12 @@ extern int VERBOSE;
             fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);      \
             fprintf(stderr, "\n");                                        \
         )
+    #define LOG_ERROR(...)                      \
+        DEF_GUARD(                              \
+            if (VERBOSE) {                      \
+                ERROR(__VA_ARGS__);             \
+            }                                   \
+        )
     #define PERROR(func)                                                \
         DEF_GUARD(                                                      \
             perror(SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT func); \

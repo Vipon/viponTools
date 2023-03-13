@@ -25,3 +25,12 @@ if (WIN32)
 endif (WIN32)
 add_subdirectory(machoPrinter)
 
+add_vipon_library(
+  NAME binPrinter
+  TYPE SHARED
+  HEADERS binPrinter.h
+  SOURCES binPrinter.c
+  LINK_LIBS binParse macho64Printer
+  INSTALL ON
+)
+

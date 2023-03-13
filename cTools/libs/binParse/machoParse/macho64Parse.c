@@ -1100,42 +1100,19 @@ Macho64Sect *macho64GetSectByIndx(const Macho64File *mf, uint64_t indx)
     if (macho64Check(mf) || indx == (uint64_t)-1)
         return NULL;
 
-    uint64_t i = 0;
-    Macho64Seg *seg = NULL;
-    if (IS_MACHO64_FILE_EXEC(mf))
-        seg = mf->segments[TEXT_NSEG];
-    else if (IS_MACHO64_FILE_OBJ(mf)) {
-        // Into the object file there is only one segment
-        seg = mf->segments[UNNAMED_NSEG];
-    } else {
-        ERROR("Unknown file type");
-        return NULL;
-    }
-
-    Macho64Sect *sect = (Macho64Sect*)((size_t)seg + sizeof(Macho64Seg));
-    for (i = 1; i <= seg->nsects; ++i) {
-       if (i == indx)
-            return sect;
-
-        sect = (Macho64Sect*)((size_t)sect + sizeof(Macho64Sect));
-    }
-
-    // This point is reached only if file executable or object
-    if (IS_MACHO64_FILE_EXEC(mf))
-        seg = mf->segments[DATA_NSEG];
-    else {
-        // Into the object file there are no more segments
-        return NULL;
-    }
-
-    uint64_t old_i = i ;
-    sect = (Macho64Sect*)((size_t)seg + sizeof(Macho64Seg));
-    for (i = 0; i <= seg->nsects; ++i) {
-        if ((i + old_i) == indx)
-            return sect;
-
-        sect = (Macho64Sect*)((size_t)sect + sizeof(Macho64Sect));
-    }
+    uint64_t sectNum = 1;
+    Macho64Sect *sect = NULL;
+    FOREACH_LOAD_COMMAND(mf,
+        if (lcom->cmd == LC_SEGMENT_64) {
+            const Macho64Seg *seg = (const Macho64Seg*)lcom;
+            if ((sectNum + seg->nsects) <= indx) {
+                sectNum += seg->nsects;
+            } else {
+                sect = (Macho64Sect*)((size_t)seg + sizeof(Macho64Seg));
+                return sect + (indx - sectNum);
+            }
+        }
+    );
 
     return NULL;
 }

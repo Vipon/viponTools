@@ -108,7 +108,9 @@ parseOpt(int key, char *arg, struct argp_state *state)
 {
     switch (key) {
     case ARGP_KEY_END:
+        return 0;
     case ARGP_KEY_NO_ARGS:
+        argp_usage(state);
         return 0;
     case ARGP_KEY_ARG:
         if (state->arg_num > NUM_ARGS) {

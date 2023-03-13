@@ -65,5 +65,5 @@ function(add_vipon_tool)
     )
   endif(ARG_INSTALL)
 
-endfunction(add_vipon_library)
+endfunction(add_vipon_tool)
 

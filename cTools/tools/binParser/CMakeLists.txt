@@ -29,6 +29,6 @@ add_vipon_tool(
   HEADERS "${BIN_PARSER_HEADERS}"
   SOURCES "${BIN_PARSER_SOURCES}"
   INSTALL ON
-  LINK_LIBS file macho64Parse LEB128
+  LINK_LIBS args binPrinter
 )
 
