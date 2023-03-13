@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2022 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,40 +22,24 @@
  * SOFTWARE.
  */
 
-#include "args.h"
-#include "test.h"
 #include "comdef.h"
+#include "macho64Parse.h"
+#include "macho64Printer.h"
 
-#include <stdbool.h>
-
-// Program documentation.
-static char doc[] = "Test args library";
-
-// A description of the arguments we accept.
-static char argsDoc[] = "ARG0 ARG1";
-
-const char progVersion[] = "0.0.1";
-
-bool isVerbose = false;
-
-static void argVerbose(const char *arg)
+int main(int argc, char *argv[])
 {
-    UNUSED(arg);
-    isVerbose = true;
-}
+    UNUSED(argc);
+    Macho64File *mf = macho64Parse(argv[0]);
 
-int main(int argc, char **argv)
-{
-    ADD_DOC(doc);
-    ADD_ARGS_DOC(argsDoc);
-    ADD_ARG(argVerbose, .name = "verbose"
-                      , .key = 'v'
-                      , .doc = "Produce verbose output"
-    );
-    ADD_VERSION(progVersion);
-    ARG_PARSE(argc, argv);
+    macho64PrintHeader(mf);
+    macho64PrintLComs(mf);
+    macho64PrintSegments(mf);
+    macho64PrintSections(mf);
+    macho64PrintFuncStarts(mf);
+    macho64PrintSymbols(mf);
 
-    EXPECT_BOOL_EQ(isVerbose, true);
+    macho64Free(mf);
+
     return 0;
 }
 

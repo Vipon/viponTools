@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2022 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,40 +22,25 @@
  * SOFTWARE.
  */
 
-#include "args.h"
-#include "test.h"
-#include "comdef.h"
+#ifndef __MACHO64_DYN_MOD
+#define __MACHO64_DYN_MOD
 
-#include <stdbool.h>
+#include "macho64Parse.h"
 
-// Program documentation.
-static char doc[] = "Test args library";
+/***
+ *  Before:
+ *      If you need a file position, you should to save it
+ *  Input:
+ *      @mf - mach-o descriptor
+ *      @func - name of function, that is nedded to hooked
+ *      @hand - address of handler function
+ *  Output:
+ *      Success:
+ *          Old relocation addr
+ *      Fail:
+ *          NULL
+ */
+void *macho64Hook(const Macho64File *mf, const char *func, const void *hand);
 
-// A description of the arguments we accept.
-static char argsDoc[] = "ARG0 ARG1";
-
-const char progVersion[] = "0.0.1";
-
-bool isVerbose = false;
-
-static void argVerbose(const char *arg)
-{
-    UNUSED(arg);
-    isVerbose = true;
-}
-
-int main(int argc, char **argv)
-{
-    ADD_DOC(doc);
-    ADD_ARGS_DOC(argsDoc);
-    ADD_ARG(argVerbose, .name = "verbose"
-                      , .key = 'v'
-                      , .doc = "Produce verbose output"
-    );
-    ADD_VERSION(progVersion);
-    ARG_PARSE(argc, argv);
-
-    EXPECT_BOOL_EQ(isVerbose, true);
-    return 0;
-}
+#endif /* __MACHO64_DYN_MOD */
 

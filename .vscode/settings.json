@@ -87,6 +87,15 @@
         "*.idl": "cpp",
         "args.h": "c",
         "argp.h": "c",
-        "test.h": "c"
-    }
+        "test.h": "c",
+        "macho64printer.h": "c",
+        "__hash_table": "c",
+        "__tree": "c",
+        "__tuple": "c",
+        "filesystem": "c",
+        "variant": "c",
+        "binprinter.h": "c",
+        "__node_handle": "c"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

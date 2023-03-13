@@ -26,190 +26,27 @@
 #define __MACHO64_PARSE_H
 
 #include "file.h"
+#include "macho64.h"
 
 /* C standard headers */
 #include <stddef.h>
+#include <stdint.h>
 #include <assert.h>
 
-/* binary format headers */
-#include <mach-o/fat.h>
-#include <mach-o/nlist.h>
-#include <mach-o/reloc.h>
-#include <mach-o/loader.h>
-#include <stdint.h>
-
 /*
- *  struct fat_header
- *  {
- *      uint32_t magic;     // FAT_MAGIC or FAT_MAGIC_64
- *      uint32_t nfat_arch; // number of structs that follow
- *  };
- */
-typedef struct fat_header FatHeader;
-
-/*
- *  struct fat_arch_64
- *  {
- *      cpu_type_t cputype;         // cpu specifier (int)
- *      cpu_subtype_t cpusubtype;   // machine specifier (int)
- *      uint32_t offset;            // file offset to this object file
- *      uint32_t size;              // size of this object file
- *      uint32_t align;
- *      uint32_t reserved;
- *  };
- */
-typedef struct fat_arch_64 FatArch64;
-
-/*
- *  struct mach_header_64
- *  {
- *      uint32_t magic;             // mach magic number identifier
- *      cpu_type_t cputype;         // cpu specifier
- *      cpu_subtype_t cpusubtype;   // machine specifier
- *      uint32_t filetype;          // type of file
- *      uint32_t ncmds;             // number of load commands
- *      uint32_t sizeofcmds;        // the size of all the load commands
- *      uint32_t flags;
- *      uint32_t reserved;
- *  };
- */
-typedef struct mach_header_64 Macho64Header;
-
-/*
- *  struct load_command
- *  {
- *      uint32_t cmd;       // type of load command
- *      uint32_t cmdsize;   // total size of command in bytes
- *  };
- */
-typedef struct load_command LoadCommand;
-
-/*
- *  struct symtab_command
- *  {
- *      uint_32 cmd;        // LC_SYMTAB
- *      uint_32 cmdsize;    // sizeof(struct symtab_command)
- *      uint_32 symoff;     // Offset from the start of the file to the
- *                          // location of the symbol table.
- *      uint_32 nsyms;      // Number of entries in the symbol table.
- *      uint_32 stroff;     // Offset from the start of the image to the
- *                          // location of the string table.
- *      uint_32 strsize;    // The size (in bytes) of the string table.
- *  };
- */
-typedef struct symtab_command SymtabCommand;
-
-/*
- *  struct dysymtab_command
- *  {
- *      uint32_t cmd;           // LC_DYSYMTAB
- *      uint32_t cmdsize;       // sizeof(struct dysymtab_command)
- *
- *  The local symbols are used only for debugging.
- *      uint32_t ilocalsym;     // index to local symbols in the symtab
- *      uint32_t nlocalsym;     // number of local symbols
- *
- *  The last two groups are used by the dynamic binding process.
- *      uint32_t iextdefsym;    // index to externally defined symbols
- *      uint32_t nextdefsym;    // number of externally defined symbols
- *      uint32_t iundefsym;     // Index of first undef symbol in the symtab
- *      uint32_t nundefsym;     // number of undefined symbols
- *
- *      uint32_t tocoff;
- *      uint32_t ntoc;
- *      uint32_t modtaboff;
- *      uint32_t nmodtab;
- *      uint32_t extrefsymoff;
- *      uint32_t nextrefsyms;
- *      uint32_t indirectsymoff;// Offset to the indirect symbol table
- *      uint32_t nindirectsyms; // Number of indirect symbol table entries
- *      uint32_t extreloff;
- *      uint32_t nextrel;
- *      uint32_t locreloff;
- *      uint32_t nlocrel;
- *  };
- */
-typedef struct dysymtab_command DysymtabCommand;
-
-/*
- *  Describes an entry in the symbol table for 64-bit architectures.
- *  struct nlist_64
- *  {
- *      union {
- *          uint32_t n_strx;    // index into the string table
- *      } n_un;
- *      uint8_t n_type;         // byte value consisting of data
- *      uint8_t n_sect;         // number of the section
- *      int16_t n_desc;         // add info about this symbol
- *      uint64_t n_value;       // value of the symbol, depends on type
- *  };
- */
-typedef struct nlist_64 Macho64Sym;
-
-/*
- *  struct segment_command_64
- *  {
- *      uint32_t cmd;
- *      uint32_t cmdsize;
- *      char segname[16];
- *      uint64_t vmaddr;
- *      uint64_t vmsize;
- *      uint64_t fileoff;
- *      uint64_t filesize;
- *      vm_prot_t maxprot;  // maximal permissions r/w/x
- *      vm_prot_t initprot; // initial permissions r/w/x
- *      uint32_t nsects;    // The number of section data structures
- *      uint32_t flags;
- *  };
- */
-typedef struct segment_command_64 Macho64Seg;
-
-/*
- *  struct section_64
- *  {
- *      char sectname[16];  // name of section
- *      char segname[16];   // name of segment contains this section
- *      uint64_t addr;      // the virtual memory address
- *      uint64_t size;      // the size in bytes of the virtual memory
- *      uint32_t offset;    // file offset for this section
- *      uint32_t align;     // the power of two (for 8 bytes: align = 3)
- *      uint32_t reloff;    // file offset of relocation entries
- *      uint32_t nreloc;    // number of relocation entries
- *      uint32_t flags;
- *      // Import section contains entries for imported symbols in correspond orders
- *      // as in the indirect symbol table, start at index stored in reserved1.
- *      uint32_t reserved1; // index into indirect symbol table
- *      uint32_t reserved2; // size of stubs
- *  };
- */
-typedef struct section_64 Macho64Sect;
-
-/*
- *  struct relocation_info {
- *      int32_t     r_address;
- *      uint32_t    r_symbolnum:24,
- *                  r_pcrel:1,  // was relocated pc relative already
- *                  r_length:2, // 0=byte, 1=word, 2=long, 3=quad
- *                  r_extern:1, // does not include value of sym referenced
- *                  r_type:4;   // if not 0, machine specific relocation type
- *  };
- */
- typedef struct relocation_info MachoRelocInfo;
-
-/*
- * If this symbol is defined in specific section, it's static symbol.
+ * If symbol is defined in specific section, it's static symbol.
  */
 #define IS_MACHO64_SYM_STATIC(sym)     ((sym.n_type & N_SECT) == N_SECT)
 
 /*
- * If this symbol is defined in __text section and we could to refer to it
+ * If symbol is defined in __text section and we could to refer to it
  * from other files, it is function.
  */
 #define IS_MACHO64_SYM_FUNC(sym)       (sym.n_type == (N_SECT | N_EXT) &&\
                                         sym.n_sect == 1)
 
 /*
- * If this symbol is defined in section (not __Text,__text) and we
+ * If symbol is defined in section (not __Text,__text) and we
  * could to refer to it from other files, it's a global data.
  */
 #define IS_MACHO64_SYM_GDATA(sym)      (sym.n_type == (N_SECT | N_EXT) &&\
@@ -220,11 +57,6 @@ typedef struct section_64 Macho64Sect;
  * to it from other files, it is label or static function in mach-o.
  */
 #define IS_MACHO64_SYM_LABEL(sym)      (sym.n_type == N_SECT)
-
-/*
- * If any of these bits set, a symbolic debugging entry
- */
-#define IS_MACHO64_DEBUG_SYM(sym)      (sym.n_type & N_STAB)
 
 /*
  * Symbol could be just UNDEFINED(N_UNDF) or external (N_EXT | N_UNDF). In both
@@ -257,19 +89,35 @@ typedef enum {  PAGEZERO_NSEG = 0,
                 MAX_NSEG } nseg; /* number of a segment */
 
 typedef struct Macho64File {
-    char            *fn;
-    FileD           fd;
-    uint32_t        type;
-    Macho64Header   *header;
-    uint8_t         *lcom;
-    SymtabCommand   *symtabCmd;
-    DysymtabCommand *dynsymCmd;
-    Macho64Sym      *symtab;
-    Macho64Sym      *sortSymtab;
-    uint32_t        *indirectSymtab;
-    char            *symNameTab;
-    Macho64Seg      *segments[MAX_NSEG];
+    char              *fn;
+    FileD             fd;
+    uint32_t          type;
+    Macho64Header     *header;
+    uint8_t           *lcom;
+    SymtabCommand     *symtabCmd;
+    DysymtabCommand   *dynsymCmd;
+    Macho64Sym        *symtab;
+    Macho64Sym        *sortSymtab;
+    uint32_t          *indirectSymtab;
+    char              *symNameTab;
+    Macho64Seg        *segments[MAX_NSEG];
+    MachoLinkEditData *funcStarts;
+    uint32_t          numDyLibCom;
+    MachoDylibCommand **dylibCom;
 } Macho64File;
+
+#define FOREACH_LOAD_COMMAND(mf, code)                      \
+    DEF_GUARD (                                             \
+        uint32_t i = 0;                                     \
+        uint32_t cmdsize = 0;                               \
+        uint32_t ncmds = mf->header->ncmds;                 \
+        LoadCommand *lcom = (LoadCommand*)(void*)mf->lcom;  \
+        for (i = 0; i < ncmds; ++i) {                       \
+            lcom = (LoadCommand*) ((size_t)lcom + cmdsize); \
+            cmdsize = lcom->cmdsize;                        \
+            code;                                           \
+        }                                                   \
+    )
 
 #ifdef __WIN__
 typedef enum : uint64_t {
@@ -360,8 +208,7 @@ MACHO64_ERROR macho64Check(const Macho64File *mf);
  *  Fail:
  *      MACHO64_INV_ARG
  */
-MACHO64_ERROR macho64PrintSymbol(const Macho64File *mf, const Macho64Sym *ms);
-MACHO64_ERROR macho64PrintSymbols(const Macho64File *mf);
+
 
 /***
  * Description:
@@ -835,21 +682,6 @@ uint64_t macho64GetDSymIndxByName(const Macho64File *mf, const char *name);
  *  Input:
  *      @mf - mach-o descriptor
  *      @func - name of function, that is nedded to hooked
- *      @hand - address of handler function
- *  Output:
- *      Success:
- *          Old relocation addr
- *      Fail:
- *          NULL
- */
-void *macho64Hook(const Macho64File *mf, const char *func, const void *hand);
-
-/***
- *  Before:
- *      If you need a file position, you should to save it
- *  Input:
- *      @mf - mach-o descriptor
- *      @func - name of function, that is nedded to hooked
  *  Output:
  *      Success:
  *          Relocation addr for @func
@@ -857,6 +689,13 @@ void *macho64Hook(const Macho64File *mf, const char *func, const void *hand);
  *          NULL
  */
 void *macho64GetRelocDataAddr(const Macho64File *mf, const char *func);
+
+const char *macho64GetDylibName(const MachoDylibCommand *dl);
+
+uint64_t macho64GetImportSymbolPosInSectByIndx( const Macho64File *mf
+                                              , const Macho64Sect *importSect
+                                              , uint64_t indx
+                                              );
 
 #endif /* __MACHO64_PARSE_H */
 

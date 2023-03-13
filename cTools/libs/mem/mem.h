@@ -82,5 +82,8 @@ uint8_t *directCopyBytes(const uint8_t *source, uint8_t *dest, size_t num);
  */
 int Mprotect(void *addr, size_t len, int prot);
 
+const
+char *getMProtStr(int prot);
+
 #endif /* __MEM_H */
 

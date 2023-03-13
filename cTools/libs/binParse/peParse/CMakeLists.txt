@@ -29,26 +29,3 @@ add_vipon_library(
   INSTALL ON
 )
 
-set(PE64_PRINTER_SOURSES
-  pe64PrinterHeaders.c
-  pe64PrinterSections.c
-  pe64PrinterSymbols.c
-  pe64PrinterImports.c
-  pe64PrinterDelayImports.c
-)
-
-set(PE64_PRINTER_HEADERS
-  pe64Printer.h
-)
-
-add_vipon_library(
-  NAME pe64Printer
-  TYPE STATIC
-  SOURCES ${PE64_PRINTER_SOURSES}
-  HEADERS ${PE64_PRINTER_HEADERS}
-  LINK_LIBS pe64Parse
-  INSTALL ON
-)
-
-add_subdirectory(test)
-

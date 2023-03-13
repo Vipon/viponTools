@@ -478,7 +478,7 @@ static ELF32_ERROR elf32ParseRelaDyn(Elf32File *elf32)
 Elf32File *elf32Parse(const char *fn)
 {
     if (fn == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -491,28 +491,28 @@ Elf32File *elf32Parse(const char *fn)
 
     Elf32File *elf32 = (Elf32File*) Calloc(1, sizeof(Elf32File));
     if (elf32 == NULL) {
-        ERROR("Cannot allocate %zu bytes", sizeof(Elf32File));
+        LOG_ERROR("Cannot allocate %zu bytes", sizeof(Elf32File));
         goto eexit_0;
     }
 
     elf32->fd = fd;
     uint32_t nameSize = (uint32_t)(strlen(fn) * sizeof(char));
     if ((elf32->fn = (char*) Calloc(nameSize, sizeof(char))) == NULL) {
-        ERROR("Cannot allocate %u bytes", nameSize);
+        LOG_ERROR("Cannot allocate %u bytes", nameSize);
         goto eexit_1;
     }
 
     strncpy(elf32->fn, fn, nameSize);
 
     if (elf32ParseHeader(elf32)) {
-        ERROR("Cannot parse elf32 header");
+        LOG_ERROR("Cannot parse elf32 header");
         goto eexit_1;
     }
 
     if (elf32ParseSections(elf32)) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
             /* Object file must have sections for linker */
-            ERROR("There is no section headers table");
+            LOG_ERROR("There is no section headers table");
             goto eexit_1;
         } else
             WARNING("There is no section headers table");
@@ -521,7 +521,7 @@ Elf32File *elf32Parse(const char *fn)
     if (elf32ParseSegments(elf32)) {
         if (IS_ELF32_FILE_EXEC(elf32)) {
             /* Exec file must have segments for loader */
-            ERROR("There are no program headers");
+            LOG_ERROR("There are no program headers");
             goto eexit_1;
         } else
             WARNING("There are no program headers");
@@ -530,7 +530,7 @@ Elf32File *elf32Parse(const char *fn)
     if (elf32ParseSymbols(elf32)) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
             /* Object file must have symbols for linker */
-            ERROR("There is no symbols table");
+            LOG_ERROR("There is no symbols table");
             goto eexit_1;
         } else
             WARNING("There is no symbols table");
@@ -539,7 +539,7 @@ Elf32File *elf32Parse(const char *fn)
 
     if (elf32ParseSectNameTab(elf32)) {
         if (elf32->symtab || elf32->dynsym) {
-            ERROR("There is no section name table");
+            LOG_ERROR("There is no section name table");
             goto eexit_1;
         } else
             WARNING("There is no section name table");
@@ -547,7 +547,7 @@ Elf32File *elf32Parse(const char *fn)
 
     if (elf32ParseSymNameTab(elf32)) {
         if (elf32->symtab || elf32->dynsym) {
-            ERROR("Cannot parse symbol name table.");
+            LOG_ERROR("Cannot parse symbol name table.");
             goto eexit_1;
         } else
             WARNING("Cannot parse symbol name table.");
@@ -555,7 +555,7 @@ Elf32File *elf32Parse(const char *fn)
 
     if (elf32ParseDynSymNameTab(elf32)) {
         if (elf32->dynsym != NULL) {
-            ERROR("Cannot parse dynamic symbol name table.");
+            LOG_ERROR("Cannot parse dynamic symbol name table.");
             goto eexit_1;
         } else
             WARNING("Cannot parse dynamic symbol name table.");
@@ -563,7 +563,7 @@ Elf32File *elf32Parse(const char *fn)
 
     if (elf32ParseRelaPlt(elf32)) {
         if (elf32->dynsym) {
-            ERROR("There is no " RELAPLT " table");
+            LOG_ERROR("There is no " RELAPLT " table");
             goto eexit_1;
         } else
             WARNING("There is no " RELAPLT " table");
@@ -571,7 +571,7 @@ Elf32File *elf32Parse(const char *fn)
 
     if (elf32ParseRelaDyn(elf32)) {
         if (elf32->dynsym) {
-            ERROR("There is no " RELADYN " table");
+            LOG_ERROR("There is no " RELADYN " table");
             goto eexit_1;
         } else
             WARNING("There is no " RELADYN " table");
@@ -591,7 +591,7 @@ eexit_0:
 void elf32Free(Elf32File *elf32)
 {
     if (elf32 == NULL) {
-        ERROR("Try to free NULL ptr stuct");
+        LOG_ERROR("Try to free NULL ptr stuct");
         return;
     }
 
@@ -683,18 +683,18 @@ void elf32Free(Elf32File *elf32)
 ELF32_ERROR elf32Check(const Elf32File *elf32)
 {
     if (elf32 == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
     if (elf32->header == NULL) {
-        ERROR("Uninitialized field elf32->header.");
+        LOG_ERROR("Uninitialized field elf32->header.");
         return ELF32_NO_HEADER;
     }
 
     if (elf32->segments == NULL) {
         if (IS_ELF32_FILE_EXEC(elf32)) {
-            ERROR("Uninitialized field elf32->segments.");
+            LOG_ERROR("Uninitialized field elf32->segments.");
             return ELF32_NO_SEGMENTS;
         } else
             WARNING("Uninitialized field elf32->segments.");
@@ -702,7 +702,7 @@ ELF32_ERROR elf32Check(const Elf32File *elf32)
 
     if (elf32->sections == NULL) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
-            ERROR("Uninitialized field elf32->sections.");
+            LOG_ERROR("Uninitialized field elf32->sections.");
             return ELF32_NO_SECTIONS;
         } else
             WARNING("Uninitialized field elf32->sections.");
@@ -710,7 +710,7 @@ ELF32_ERROR elf32Check(const Elf32File *elf32)
 
     if (elf32->symtab == NULL) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
-            ERROR("Uninitialized field elf32->symtab.");
+            LOG_ERROR("Uninitialized field elf32->symtab.");
             return ELF32_NO_SYMTAB;
         } else
             WARNING("Uninitialized field elf32->symtab.");
@@ -718,7 +718,7 @@ ELF32_ERROR elf32Check(const Elf32File *elf32)
 
     if (elf32->sortSymtab == NULL) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
-            ERROR("Uninitialized field elf32->sortSymtab.");
+            LOG_ERROR("Uninitialized field elf32->sortSymtab.");
             return ELF32_NO_SYMTAB;
         } else
             WARNING("Uninitialized field elf32->sortSymtab.");
@@ -729,7 +729,7 @@ ELF32_ERROR elf32Check(const Elf32File *elf32)
 
     if (elf32->relaplt == NULL) {
         if (elf32->dynsym != NULL) {
-            ERROR("Uninitialized field elf32->relTabs.relaplt.");
+            LOG_ERROR("Uninitialized field elf32->relTabs.relaplt.");
             return ELF32_NO_RELAPLT;
         } else
             WARNING("Uninitialized field elf32->relTabs.relaplt.\n");
@@ -737,7 +737,7 @@ ELF32_ERROR elf32Check(const Elf32File *elf32)
 
     if (elf32->reladyn == NULL) {
         if (elf32->dynsym != NULL) {
-            ERROR("Uninitialized field elf32->relTabs.reladyn.");
+            LOG_ERROR("Uninitialized field elf32->relTabs.reladyn.");
             return ELF32_NO_RELADYN;
         } else
             WARNING("Uninitialized field elf32->relTabs.reladyn.\n");
@@ -745,7 +745,7 @@ ELF32_ERROR elf32Check(const Elf32File *elf32)
 
     if (elf32->sectNameTab == NULL) {
         if (elf32->symtab) {
-            ERROR("Uninitialized field elf32->sectNameTab.");
+            LOG_ERROR("Uninitialized field elf32->sectNameTab.");
             return ELF32_NO_SH_NAME_TAB;
         } else
             WARNING("Uninitialized field elf32->sectNameTab.");
@@ -753,7 +753,7 @@ ELF32_ERROR elf32Check(const Elf32File *elf32)
 
     if (elf32->symNameTab  == NULL) {
         if (elf32->symtab != NULL) {
-            ERROR("Uninitialized field elf32->symNameTab.");
+            LOG_ERROR("Uninitialized field elf32->symNameTab.");
             return ELF32_NO_SYM_NAME_TAB;
         } else {
             WARNING("Uninitialized field elf32->symNameTab.\n");
@@ -762,7 +762,7 @@ ELF32_ERROR elf32Check(const Elf32File *elf32)
 
     if (elf32->dynSymNameTab  == NULL) {
         if (elf32->dynsym != NULL) {
-            ERROR("Uninitialized field elf32->dynSymNameTab.");
+            LOG_ERROR("Uninitialized field elf32->dynSymNameTab.");
             return ELF32_NO_DYN_SYM_NAME_TAB;
         } else {
             WARNING("Uninitialized field elf32->dynSymNameTab.\n");
@@ -830,7 +830,7 @@ ELF32_ERROR elf32PrintSymbols(const Elf32File *elf32)
 Elf32Sym *elf32GetSymByName(const Elf32File *elf32, const char *name)
 {
     if (elf32Check(elf32) || name == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -863,7 +863,7 @@ Elf32Sym *elf32GetSymByName(const Elf32File *elf32, const char *name)
 char *elf32GetSymName(const Elf32File *elf32, const Elf32Sym *sym)
 {
     if (elf32Check(elf32) || sym == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -886,7 +886,7 @@ int elf32CmpSym(const void *a, const void *b)
 Elf32Sym *elf32GetSSymTab(const Elf32File *elf32)
 {
     if (elf32 == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -897,7 +897,7 @@ Elf32Sym *elf32GetSSymTab(const Elf32File *elf32)
 Elf32Sym *elf32GetSSymSortTab(const Elf32File *elf32)
 {
     if (elf32 == NULL || elf32->sortSymtab == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -908,7 +908,7 @@ Elf32Sym *elf32GetSSymSortTab(const Elf32File *elf32)
 uint32_t elf32GetAmountSSym(const Elf32File *elf32)
 {
     if (elf32 == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -919,7 +919,7 @@ uint32_t elf32GetAmountSSym(const Elf32File *elf32)
 uint32_t elf32GetSSymAddr(const Elf32Sym *sym)
 {
     if (sym == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -930,7 +930,7 @@ uint32_t elf32GetSSymAddr(const Elf32Sym *sym)
 uint32_t elf32GetAddrSymByName(const Elf32File *elf32, const char *name)
 {
     if (elf32Check(elf32) || name == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -942,7 +942,7 @@ uint32_t elf32GetAddrSymByName(const Elf32File *elf32, const char *name)
 uint32_t elf32GetSSymSize(const Elf32File *elf32, const Elf32Sym *sym)
 {
     if (elf32 == NULL || sym == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -953,7 +953,7 @@ uint32_t elf32GetSSymSize(const Elf32File *elf32, const Elf32Sym *sym)
 uint32_t elf32GetSSymFileoff(const Elf32File *elf32, const Elf32Sym *sym)
 {
     if (elf32Check(elf32) || sym == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -967,7 +967,7 @@ uint32_t elf32GetSSymFileoff(const Elf32File *elf32, const Elf32Sym *sym)
 uint32_t elf32GetDSymIndxByName(const Elf32File *elf32, const char *name)
 {
     if (elf32Check(elf32) || name == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -989,7 +989,7 @@ uint32_t elf32GetDSymIndxByName(const Elf32File *elf32, const char *name)
 uint32_t elf32GetAmountSeg(const Elf32File *elf32)
 {
     if (elf32Check(elf32)) {
-        ERROR("Invalid argument");
+        LOG_ERROR("Invalid argument");
         return ELF32_INV_ARG;
     }
 
@@ -1003,7 +1003,7 @@ Elf32Shdr *elf32GetSectByType(const Elf32File *elf32, const Elf32Word shType)
        || elf32->header == NULL
        || elf32->sections == NULL
        ) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -1028,7 +1028,7 @@ Elf32Shdr *elf32GetSectByName(const Elf32File *elf32, const char* name)
        || elf32->sections == NULL
        || name == NULL
        ) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -1055,7 +1055,7 @@ Elf32Shdr *elf32GetSectByName(const Elf32File *elf32, const char* name)
 Elf32Shdr *elf32GetLastLoadableSect(const Elf32File *elf32)
 {
     if (elf32Check(elf32)) {
-        ERROR("Invalid argument");
+        LOG_ERROR("Invalid argument");
         return NULL;
     }
 
@@ -1076,7 +1076,7 @@ Elf32Shdr *elf32GetLastLoadableSect(const Elf32File *elf32)
 void *elf32ReadSect(const Elf32File *elf32, const Elf32Shdr *sectionHeader)
 {
     if (elf32 == NULL || IS_INV_FD(elf32->fd) || sectionHeader == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -1091,7 +1091,7 @@ void *elf32ReadSect(const Elf32File *elf32, const Elf32Shdr *sectionHeader)
 
     void *section = readFromFile(fd, &shOffset, shSize);
     if (section == NULL) {
-        ERROR("Cannot read from file.");
+        LOG_ERROR("Cannot read from file.");
         return NULL;
     }
 
@@ -1102,7 +1102,7 @@ void *elf32ReadSect(const Elf32File *elf32, const Elf32Shdr *sectionHeader)
 uint32_t elf32GetAmountSect(const Elf32File *elf32)
 {
     if (elf32Check(elf32)) {
-        ERROR("Invalid argument");
+        LOG_ERROR("Invalid argument");
         return ELF32_INV_ARG;
     }
 
@@ -1113,7 +1113,7 @@ uint32_t elf32GetAmountSect(const Elf32File *elf32)
 const char* elf32GetSectName(const Elf32File *elf32, const Elf32Shdr *sect)
 {
     if (elf32Check(elf32) || sect == NULL) {
-        ERROR("Invalid argument");
+        LOG_ERROR("Invalid argument");
         return NULL;
     }
 
@@ -1125,7 +1125,7 @@ const char* elf32GetSectName(const Elf32File *elf32, const Elf32Shdr *sect)
 uint32_t elf32GetSectSize(const Elf32Shdr *elf32Sect)
 {
     if (elf32Sect == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -1136,7 +1136,7 @@ uint32_t elf32GetSectSize(const Elf32Shdr *elf32Sect)
 uint32_t elf32GetSectAddr(const Elf32Shdr *elf32Sect)
 {
     if (elf32Sect == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -1147,7 +1147,7 @@ uint32_t elf32GetSectAddr(const Elf32Shdr *elf32Sect)
 uint32_t elf32GetSectFileoff(const Elf32Shdr *elf32Sect)
 {
     if (elf32Sect == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
@@ -1164,13 +1164,13 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
        || sect == NULL
        || addr == (uint32_t)-1
        ) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
     const char *sectName = elf32GetSectName(elf32, sect);
     if (sectName == NULL) {
-        ERROR("getSectName().");
+        LOG_ERROR("getSectName().");
         return ELF32_NO_SECTION;
     }
 
@@ -1178,7 +1178,7 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
     size += strlen(sectName);
     char *relaSectName = (char*)Malloc(size);
     if (relaSectName == NULL) {
-        ERROR("Cannot alloc %u bytes.", size);
+        LOG_ERROR("Cannot alloc %u bytes.", size);
         return ELF32_NO_MEM;
     }
 
@@ -1187,13 +1187,13 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
 
     Elf32Shdr *relaSect = elf32GetSectByName(elf32, relaSectName);
     if (relaSect == NULL) {
-        ERROR("Cannot get the section %s.", relaSectName);
+        LOG_ERROR("Cannot get the section %s.", relaSectName);
         return ELF32_NO_SECTION;
     }
 
     Elf32Rel *rela = elf32ReadSect(elf32, relaSect);
     if (rela == NULL) {
-        ERROR("elf32ReadSect()");
+        LOG_ERROR("elf32ReadSect()");
         return ELF32_NO_SECTION;
     }
 
@@ -1223,14 +1223,14 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
     }
 
     if (i == relaAmount) {
-        ERROR("There is no relocation info");
+        LOG_ERROR("There is no relocation info");
         return ELF32_NO_RELOCATION;
     }
 
     if (ELF32_R_TYPE(rela[i].r_info) == R_386_32) {
         return (uint32_t)rela[i].r_addend;
     } else {
-        ERROR("Unknown relocation type.");
+        LOG_ERROR("Unknown relocation type.");
         return ELF32_NO_RELOCATION;
     }
 }
@@ -1242,7 +1242,7 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
        || func == NULL
        || hand == NULL
        ) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -1251,7 +1251,7 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
      */
     uint32_t symbolIndex = elf32GetDSymIndxByName(elf32, func);
     if (symbolIndex == (uint32_t)-1) {
-        ERROR("Cannot get an index of a dynamic symbol %s.", func);
+        LOG_ERROR("Cannot get an index of a dynamic symbol %s.", func);
         return NULL;
     }
 
@@ -1261,7 +1261,7 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
      */
     Elf32Shdr *relplt = elf32GetSectByName(elf32, RELAPLT);
     if (relplt == NULL) {
-        ERROR("Cannot get the section " RELAPLT);
+        LOG_ERROR("Cannot get the section " RELAPLT);
         return NULL;
     }
 
@@ -1296,7 +1296,7 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
 void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func)
 {
     if (elf32Check(elf32) || func == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -1305,7 +1305,7 @@ void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func)
      */
     uint32_t symbolIndex = elf32GetDSymIndxByName(elf32, func);
     if (symbolIndex == (uint32_t)-1) {
-        ERROR("Cannot get an index of a dynamic symbol %s.", func);
+        LOG_ERROR("Cannot get an index of a dynamic symbol %s.", func);
         return NULL;
     }
 
@@ -1315,7 +1315,7 @@ void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func)
      */
     Elf32Shdr *relplt = elf32GetSectByName(elf32, RELAPLT);
     if (relplt == NULL) {
-        ERROR("Cannot get the section " RELAPLT ".");
+        LOG_ERROR("Cannot get the section " RELAPLT ".");
         return NULL;
     }
 

@@ -29,8 +29,10 @@
 
 static size_t NUM_OPTS = 0;
 static size_t OPTS_LEN = 0;
+static unsigned NUM_ARGS = 0;
 static struct argp_option* opts = NULL;
 static ARG_HAND *hands = NULL;
+static ARGS_HAND argsHand = NULL;
 static struct argp argp = {0};
 
 int addArg(const Arg* arg)
@@ -71,6 +73,18 @@ void addArgsDoc(const char* argsDoc)
     argp.args_doc = argsDoc;
 }
 
+void setNumArgs(unsigned num)
+{
+    if (num > 0)
+        --num;
+    NUM_ARGS = num;
+}
+
+void setArgsHand(ARGS_HAND hand)
+{
+    argsHand = hand;
+}
+
 void addVersion(const char* version)
 {
     // version of program
@@ -92,17 +106,36 @@ static ARG_HAND getHandle(int key)
 static error_t
 parseOpt(int key, char *arg, struct argp_state *state)
 {
-    UNUSED(state);
-    if (key == ARGP_KEY_END || key == ARGP_KEY_NO_ARGS) {
+    switch (key) {
+    case ARGP_KEY_END:
         return 0;
+    case ARGP_KEY_NO_ARGS:
+        argp_usage(state);
+        return 0;
+    case ARGP_KEY_ARG:
+        if (state->arg_num > NUM_ARGS) {
+            /* Too many arguments.\n" */
+            argp_usage(state);
+        }
+
+        if (argsHand) {
+            argsHand(arg, state->arg_num);
+        } else {
+            printf("There is no handler for args\n");
+            return ARGP_ERR_UNKNOWN;
+        }
+        break;
+    default:
+    {
+        ARG_HAND hand = getHandle(key);
+        if (hand == NULL) {
+            return ARGP_ERR_UNKNOWN;
+        }
+        hand(arg);
+        break;
+    }
     }
 
-    ARG_HAND hand = getHandle(key);
-    if (hand == NULL) {
-        return ARGP_ERR_UNKNOWN;
-    }
-
-    hand(arg);
     return 0;
 }
 

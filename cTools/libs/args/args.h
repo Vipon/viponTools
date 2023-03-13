@@ -27,7 +27,7 @@
 
 #include <argp.h>
 
-typedef void(*ARG_HAND)(char*);
+typedef void(*ARG_HAND)(const char*);
 
 typedef struct Arg {
     // full argument name (--Name)
@@ -66,6 +66,13 @@ void addDoc(const char* doc);
 
 #define ADD_ARGS_DOC(argsDoc) addArgsDoc(argsDoc);
 void addArgsDoc(const char* argsDoc);
+
+#define SET_NUM_ARGS(num) setNumArgs(num);
+void setNumArgs(unsigned num);
+
+typedef void(*ARGS_HAND)(const char*, unsigned num);
+#define SET_ARGS_HAND(hand) setArgsHand(hand);
+void setArgsHand(ARGS_HAND hand);
 
 #define ADD_VERSION(version) addVersion(version);
 void addVersion(const char* version);
