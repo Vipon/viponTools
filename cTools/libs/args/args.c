@@ -75,8 +75,6 @@ void addArgsDoc(const char* argsDoc)
 
 void setNumArgs(unsigned num)
 {
-    if (num > 0)
-        --num;
     NUM_ARGS = num;
 }
 
@@ -110,10 +108,16 @@ parseOpt(int key, char *arg, struct argp_state *state)
     case ARGP_KEY_END:
         return 0;
     case ARGP_KEY_NO_ARGS:
-        argp_usage(state);
+        if (NUM_ARGS) {
+            argp_usage(state);
+            return ARGP_ERR_UNKNOWN;
+        }
         return 0;
+    case ARGP_KEY_ERROR:
+        argp_usage(state);
+        return ARGP_ERR_UNKNOWN;
     case ARGP_KEY_ARG:
-        if (state->arg_num > NUM_ARGS) {
+        if (state->arg_num >= NUM_ARGS) {
             /* Too many arguments.\n" */
             argp_usage(state);
         }
@@ -124,7 +128,8 @@ parseOpt(int key, char *arg, struct argp_state *state)
             printf("There is no handler for args\n");
             return ARGP_ERR_UNKNOWN;
         }
-        break;
+
+        return 0;
     default:
     {
         ARG_HAND hand = getHandle(key);
@@ -132,12 +137,12 @@ parseOpt(int key, char *arg, struct argp_state *state)
             return ARGP_ERR_UNKNOWN;
         }
         hand(arg);
-        break;
+        return 0;
     }
     }
-
-    return 0;
 }
+
+
 
 error_t argParse(int argc, char** argv)
 {
