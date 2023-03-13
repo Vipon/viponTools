@@ -47,11 +47,27 @@ static char doc[] = "Extra program description";
 ADD_DOC(doc);
 ```
 
-### Add arguments description for --usage
+### ARGS
+#### Add arguments description for --usage
 For adding extra description just use: ADD_ARGS_DOC.
 ```
 static char argsDoc[] = "ARG0 ARG1";
 ADD_ARGS_DOC(argsDoc);
+```
+
+#### Specify how many args should be passed to a program
+```
+SET_NUM_ARGS(num);
+```
+
+#### Set handler for program arguments
+```
+/***
+ * arg - contains argument
+ * num - number of argument in command line
+ */
+void hand(const char *arg, unsigned num);
+SET_ARGS_HAND(hand);
 ```
 
 ### Add program version for --version

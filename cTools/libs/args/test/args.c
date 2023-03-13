@@ -38,7 +38,7 @@ const char progVersion[] = "0.0.1";
 
 bool isVerbose = false;
 
-static void argVerbose(char *arg)
+static void argVerbose(const char *arg)
 {
     UNUSED(arg);
     isVerbose = true;
