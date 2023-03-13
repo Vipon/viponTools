@@ -1,36 +1,36 @@
-on: push
+name: macos-latest-test
+on: [push]
 jobs:
   full-test:
-    runs-on: windows-2019
+    runs-on: macos-latest
     steps:
+      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v3
-      #- uses: actions/setup-python@v4
-      #  with:
-      #    python-version: '3.9.5'
-      #- name: Install Python
-      #  run: .\batch\tools\python\install.bat
-      #- name: Setup Envinronment
-      #  working-directory: python\setupEnv
-      #  run: python setupEnv
-      - name: Check Path
-        run: $env:path
-      - run: |
-          "C:\" >> $env:GITHUB_PATH
-      - run: $env:path
-      - name: Configure ninja
-        run: python configure --ninja --output ninja_output
-      - name: Build ninja
-        working-directory: ninja_output\
-        run: ninja -j
-      - name: Test ninja
-        working-directory: ninja_output\
-        run: ninja test
-      - name: Configure MSBuild
-        run: python configure --vs --output msbuild_output
-      - name: Build MSBuild
-        working-directory: msbuild_output\
-        run: cmake --build .
-      - name: Test MSBuild
-        working-directory: msbuild_output\
-        run: ctest -C Debug
+      - run: brew install ccache
+      - run: brew install cmake
+      - run: brew install coreutils
+      - run: brew install argp-standalone
+      - run: ./shellTools/tools/capstone/install.sh
+      - run: ./shellTools/tools/keystone/install.sh
+      - name: Configure with gmake
+        run: ./configure --gmake --output gmake_output
+      - name: Gmake build
+        working-directory: gmake_output/
+        run: CPATH="${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/${LIBRARY_PATH}" make -j
+        env:
+          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
+          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
+      - name: Gmake test
+        working-directory: gmake_output/
+        run: make test
+      - name: Gmake install
+        working-directory: gmake_output/
+        run: make install
+      - name: Make achive
+        working-directory: gmake_output/
+        run: tar -czvf ../viponTools.tar.gz viponTools
+      - uses: actions/upload-artifact@v3
+        with:
+          name: viponTools
+          path: viponTools.tar.gz
 
