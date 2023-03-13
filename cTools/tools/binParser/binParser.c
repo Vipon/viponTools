@@ -26,6 +26,7 @@
 #include "comdef.h"
 #include "binPrinter.h"
 
+#include <stdlib.h>
 #include <stdbool.h>
 
 static const char doc[] =
@@ -87,12 +88,14 @@ void printLComs(const char *arg)
     flags[LCOMS] = true;
 }
 
-
 static
 void initParser(const char* fn, unsigned num)
 {
     UNUSED(num);
-    initBinPrinter(fn);
+    if (initBinPrinter(fn)) {
+        ERROR("Unknown bin format");
+        exit(EXIT_FAILURE);
+    }
 }
 
 int main(int argc, char *argv[])

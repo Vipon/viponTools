@@ -40,7 +40,9 @@ BinPrinter binPrinter = {};
 
 int initBinPrinter(const char *fn)
 {
-    initBinParser(fn);
+    if (initBinParser(fn)) {
+        return -1;
+    }
 
     switch(binParser.type) {
     case MACHO64:

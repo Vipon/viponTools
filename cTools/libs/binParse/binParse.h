@@ -33,7 +33,7 @@ typedef enum {
     PE64,
     ELF32,
     MACHO32,
-    PE32
+    PE32,
 } BIN_FILE_TYPE;
 
 // !TODO: shoud be enum
