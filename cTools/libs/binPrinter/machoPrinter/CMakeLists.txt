@@ -35,7 +35,7 @@ add_vipon_library(
   HEADERS macho64Printer.h
   SOURCES "${MACHO64_PRINTER_SOURCES}"
   INSTALL ON
-  LINK_LIBS file macho64Parse LEB128
+  LINK_LIBS file LEB128 macho64Parse
 )
 
 if (APPLE)
