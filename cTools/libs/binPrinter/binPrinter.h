@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2022 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,40 +22,29 @@
  * SOFTWARE.
  */
 
-#include "args.h"
-#include "test.h"
-#include "comdef.h"
+#include "os.h"
+#include "binParse.h"
 
-#include <stdbool.h>
+typedef void (*BinPrintHeader)(const BinFilePtr bin);
+typedef void (*BinPrintSymbols)(const BinFilePtr bin);
+typedef void (*BinPrintSections)(const BinFilePtr bin);
+typedef void (*BinPrintSegments)(const BinFilePtr bin);
+typedef void (*BinPrintFuncStarts)(const BinFilePtr bin);
+typedef void (*BinPrintLComs)(const BinFilePtr bin);
 
-// Program documentation.
-static char doc[] = "Test args library";
+typedef struct {
+    BinPrintHeader printHeader;
+    BinPrintSymbols printSymbols;
+    BinPrintSections printSections;
+    BinPrintSegments printSegments;
+    struct {
+        BinPrintFuncStarts printFuncStarts;
+        BinPrintLComs printLComs;
+    } macho;
+} BinPrinter;
 
-// A description of the arguments we accept.
-static char argsDoc[] = "ARG0 ARG1";
+extern BinPrinter binPrinter;
 
-const char progVersion[] = "0.0.1";
-
-bool isVerbose = false;
-
-static void argVerbose(const char *arg)
-{
-    UNUSED(arg);
-    isVerbose = true;
-}
-
-int main(int argc, char **argv)
-{
-    ADD_DOC(doc);
-    ADD_ARGS_DOC(argsDoc);
-    ADD_ARG(argVerbose, .name = "verbose"
-                      , .key = 'v'
-                      , .doc = "Produce verbose output"
-    );
-    ADD_VERSION(progVersion);
-    ARG_PARSE(argc, argv);
-
-    EXPECT_BOOL_EQ(isVerbose, true);
-    return 0;
-}
+EXPORT_FUNC(int initBinPrinter(const char *fn));
+EXPORT_FUNC(void finiBinPrinter(void));
 

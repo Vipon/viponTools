@@ -25,7 +25,6 @@
 #ifndef _BIN_PARSE_H
 #define _BIN_PARSE_H
 
-#include "macho64Parse.h"
 #include <stdint.h>
 
 typedef enum {
@@ -48,8 +47,8 @@ typedef BinFilePtr (*BinParse)(const char*);
 typedef void (*BinFree)(void*);
 typedef void* (*BinHook)(const BinFilePtr, const char*, const void*);
 typedef BIN_ERROR (*BinFullCheck)(const BinFilePtr);
-typedef BIN_ERROR (*BinPrintSymbol)(const BinFilePtr, const BinSymPtr);
-typedef BIN_ERROR (*BinPrintSymbols)(const BinFilePtr);
+//typedef BIN_ERROR (*BinPrintSymbol)(const BinFilePtr, const BinSymPtr);
+//typedef BIN_ERROR (*BinPrintSymbols)(const BinFilePtr);
 typedef BinSymPtr (*BinGetSymByName)(const BinFilePtr, const char*);
 typedef char* (*BinGetSymName)(const BinFilePtr, const BinSymPtr);
 typedef int (*BinCmpSym)(const void*, const void*);
@@ -80,8 +79,8 @@ typedef struct {
     BinFree                free;
     BinHook                hook;
     BinFullCheck           check;
-    BinPrintSymbol         printSymbol;
-    BinPrintSymbols        printSymbols;
+    //BinPrintSymbol         printSymbol;
+    //BinPrintSymbols        printSymbols;
     BinGetSymByName        getSymByName;
     BinGetSymName          getSymName;
     BinCmpSym              cmpSym;

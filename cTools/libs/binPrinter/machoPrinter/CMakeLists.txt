@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(elfParse)
-add_subdirectory(machoParse)
-set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse macho64DynMod)
-if (WIN32)
-    add_subdirectory(peParse)
-    set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse pe64Parse pe64Printer macho64DynMod)
-endif (WIN32)
-
-add_vipon_library(
-  NAME binParse
-  TYPE STATIC
-  HEADERS binParse.h
-  SOURCES binParse.c
-  LINK_LIBS ${BIN_PARSE_LIB_LIST}
-  INSTALL ON
+set(MACHO64_PRINTER_SOURCES
+  macho64PrinterHeaders.c
+  macho64PrinterSymbols.c
+  macho64PrinterSections.c
+  macho64PrinterSegments.c
+  macho64PrinterFuncStarts.c
+  macho64PrinterLoadCommands.c
 )
 
-add_subdirectory(tests)
+add_vipon_library(
+  NAME macho64Printer
+  TYPE SHARED
+  HEADERS macho64Printer.h
+  SOURCES "${MACHO64_PRINTER_SOURCES}"
+  INSTALL ON
+  LINK_LIBS file LEB128 macho64Parse
+)
+
+if (APPLE)
+  add_subdirectory(test)
+endif (APPLE)
 

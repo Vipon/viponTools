@@ -27,6 +27,7 @@
 #include "bar.h"
 #include "test.h"
 #include "binParse.h"
+#include "macho64Parse.h"
 #ifdef __WIN__
     #include "pe64Printer.h"
 #endif /* __WIN__ */

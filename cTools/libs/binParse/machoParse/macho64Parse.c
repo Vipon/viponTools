@@ -145,7 +145,7 @@ static MACHO64_ERROR macho64ParseLCommands(Macho64File *mf)
 
 /***
  * Description:
- *  Function initializes symtabCmd and dynsymCmd fields in mf.
+ *  Function initializes symtabCmd field in mf.
  * Input:
  *  @mf - point to target Macho64File structure with initialized header and lcom
  * Output:
@@ -159,16 +159,10 @@ static MACHO64_ERROR macho64ParseSymtabCom(Macho64File *mf)
     if (mf == NULL || mf->lcom == NULL)
         return MACHO64_INV_ARG;
 
-    uint32_t i = 0;
-    uint32_t ncmds = mf->header->ncmds;
-    uint32_t cmdsize = 0;
-    LoadCommand *lcom = (LoadCommand*)(void*)mf->lcom;
-    for (i = 0; i < ncmds; ++i) {
-        lcom = (LoadCommand*) ((size_t)lcom + cmdsize);
-        cmdsize = lcom->cmdsize;
+    FOREACH_LOAD_COMMAND(mf,
         if (lcom->cmd == LC_SYMTAB)
             mf->symtabCmd = (SymtabCommand*)lcom;
-    }
+    )
 
     if (mf->symtabCmd == NULL)
         return MACHO64_NO_SYMTAB_CMD;
@@ -339,7 +333,8 @@ static MACHO64_ERROR macho64ParseInderectSymtab(Macho64File *mf)
  *  Fail:
  *      MACHO64_INV_ARG
  */
-static MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
+static
+MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
 {
     if (mf == NULL || mf->header == NULL || mf->lcom == NULL)
         return MACHO64_INV_ARG;
@@ -370,6 +365,51 @@ static MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
                 mf->segments[UNNAMED_NSEG] = (Macho64Seg*)(void*)lc;
         }
     }
+
+    return MACHO64_OK;
+}
+
+static
+MACHO64_ERROR macho64ParseFuncStarts(Macho64File *mf)
+{
+    if (mf == NULL || mf->header == NULL || mf->lcom == NULL)
+        return MACHO64_INV_ARG;
+
+    FOREACH_LOAD_COMMAND(mf,
+        if (lcom->cmd == LC_FUNCTION_STARTS) {
+            mf->funcStarts = (MachoLinkEditData*)lcom;
+        }
+    );
+
+    return MACHO64_OK;
+}
+
+static
+MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
+{
+    if (mf == NULL || mf->header == NULL || mf->lcom == NULL)
+        return MACHO64_INV_ARG;
+
+    FOREACH_LOAD_COMMAND(mf,
+        if (lcom->cmd == LC_LOAD_DYLIB) {
+            ++(mf->numDyLibCom);
+        }
+    );
+
+    if (mf->numDyLibCom == 0) {
+        mf->dylibCom = NULL;
+        return MACHO64_OK;
+    }
+
+    mf->dylibCom = (MachoDylibCommand**)
+        Malloc(sizeof(MachoDylibCommand*) * mf->numDyLibCom);
+
+    uint32_t j = 0;
+    FOREACH_LOAD_COMMAND(mf,
+        if (lcom->cmd == LC_LOAD_DYLIB) {
+            mf->dylibCom[j++] = (MachoDylibCommand*)lcom;
+        }
+    );
 
     return MACHO64_OK;
 }
@@ -432,7 +472,7 @@ Macho64File *macho64Parse(const char *fn)
     }
 
     if (macho64ParseDysymtabCom(mf)) {
-        WARNING("Cannot parse mach=o dysyntab commd");
+        WARNING("Cannot parse mach-o dysyntab commd");
     } else
         if (macho64ParseInderectSymtab(mf)) {
             ERROR("Cannot parse mach-o inderect symbol table");
@@ -446,6 +486,9 @@ Macho64File *macho64Parse(const char *fn)
         } else
             WARNING("Cannot parse mach-o segment commands.");
     }
+
+    macho64ParseFuncStarts(mf);
+    macho64ParseDylibCom(mf);
 
     return mf;
 
@@ -500,6 +543,11 @@ void macho64Free(Macho64File *mf)
     if (mf->symNameTab) {
         Free(mf->symNameTab);
         mf->symNameTab = NULL;
+    }
+
+    if (mf->dylibCom) {
+        Free(mf->dylibCom);
+        mf->dylibCom = NULL;
     }
 
     Free(mf);
@@ -561,48 +609,9 @@ MACHO64_ERROR macho64Check(const Macho64File *mf)
             return MACHO64_NO_INDIRECT_SYM_TAB;
         }
 
-    if ((mf->segments[DATA_NSEG] == NULL || mf->segments[TEXT_NSEG] == NULL)
-        && mf->segments[UNNAMED_NSEG] == NULL) {
+    if (mf->segments[TEXT_NSEG] == NULL && mf->segments[UNNAMED_NSEG] == NULL) {
         ERROR("Uninitialized field mf->segments.");
         return MACHO64_NO_SEGMENTS;
-    }
-
-    return MACHO64_OK;
-}
-
-MACHO64_ERROR macho64PrintSymbol(const Macho64File *mf, const Macho64Sym *ms)
-{
-    if (mf == NULL || ms == NULL || mf->symNameTab == NULL)
-        return MACHO64_INV_ARG;
-
-
-    char *symname = mf->symNameTab;
-    uint32_t n_strx = ms->n_un.n_strx;
-    printf("\tname:\t%s\n", &symname[n_strx]);
-    printf("\t\ttype:\t0x%x\n", ms->n_type);
-    printf("\t\tsect:\t%d\n", ms->n_sect);
-    printf("\t\tdesc:\t%d\n", ms->n_desc);
-    printf("\t\tvalue:\t%"PRIu64"\n", ms->n_value);
-
-    return MACHO64_OK;
-}
-
-MACHO64_ERROR macho64PrintSymbols(const Macho64File *mf)
-{
-    if (mf == NULL || mf->symtab == NULL || mf->symNameTab == NULL)
-        return MACHO64_INV_ARG;
-
-    uint32_t i = 0;
-    uint32_t nsyms = mf->symtabCmd->nsyms;
-    char *symname = mf->symNameTab;
-    printf("Symbol table:\n");
-    for (i = 0; i < nsyms; ++i) {
-        uint32_t n_strx = mf->symtab[i].n_un.n_strx;
-        printf("\t%u.\tname:\t%s\n", i, &symname[n_strx]);
-        printf("\t\ttype:\t0x%x\n", mf->symtab[i].n_type);
-        printf("\t\tsect:\t%d\n", mf->symtab[i].n_sect);
-        printf("\t\tdesc:\t%d\n", mf->symtab[i].n_desc);
-        printf("\t\tvalue:\t%"PRIu64"\n", mf->symtab[i].n_value);
     }
 
     return MACHO64_OK;
@@ -650,7 +659,7 @@ Macho64Sym *macho64GetSymByName(const Macho64File *mf, const char *name)
     for (i = 0; i < num; ++i) {
         uint32_t indx = mf->symtab[i].n_un.n_strx;
         char *curName = &(mf->symNameTab[indx]);
-        if (!IS_MACHO64_DEBUG_SYM(mf->symtab[i]) &&
+        if (!IS_MACHO64_SYM_DEBUG(mf->symtab[i]) &&
                     (strcmp(name, curName) == 0)) {
             return &(mf->symtab[i]);
         }
@@ -662,27 +671,24 @@ Macho64Sym *macho64GetSymByName(const Macho64File *mf, const char *name)
 
 Macho64Sym *macho64GetSSymByAddr(const Macho64File *mf, uint64_t addr)
 {
-    LOG("START macho64GetSSymByAddr\n");
-    if (macho64Check(mf) || addr == (uint64_t)-1)
+    if (mf == NULL || mf->sortSymtab == NULL || addr == (uint64_t)-1)
         return NULL;
 
     size_t i = 0;
     size_t sym_num = macho64GetAmountSSym(mf);
     for (i = 0; i < sym_num; ++i)
-        if (!IS_MACHO64_DEBUG_SYM(mf->sortSymtab[i])) {
+        if (!IS_MACHO64_SYM_DEBUG(mf->sortSymtab[i])) {
             if (mf->sortSymtab[i].n_value == addr) {
-                LOG("END macho64GetSSymByAddr\n");
                 return &mf->sortSymtab[i];
             }
         }
 
-    LOG("END macho64GetSSymByAddr\n");
     return NULL;
 }
 
 char *macho64GetSymName(const Macho64File *mf, const Macho64Sym *ms)
 {
-    if (macho64Check(mf) || ms == NULL)
+    if (mf == NULL || mf->symNameTab == NULL || ms == NULL)
         return NULL;
 
     uint32_t indx = ms->n_un.n_strx;
@@ -699,7 +705,7 @@ uint64_t macho64GetSymIndxByName(const Macho64File *mf, const char *name)
     for (i = 0; i < num; ++i) {
         uint32_t indx = mf->symtab[i].n_un.n_strx;
         char *curName = &(mf->symNameTab[indx]);
-        if (!IS_MACHO64_DEBUG_SYM(mf->symtab[i]) &&
+        if (!IS_MACHO64_SYM_DEBUG(mf->symtab[i]) &&
                     strcmp(name, curName) == 0)
             return i;
     }
@@ -744,7 +750,7 @@ uint64_t macho64GetSSymTabFileoff(const Macho64File *mf)
 
 uint64_t macho64GetAmountSSym(const Macho64File *mf)
 {
-    if (macho64Check(mf))
+    if (mf == NULL || mf->symtabCmd == NULL)
         return MACHO64_INV_ARG;
 
     return mf->symtabCmd->nsyms;
@@ -845,7 +851,7 @@ uint64_t macho64GetFuncSize(const Macho64File *mf, const Macho64Sym *ms)
         do {
             ++i;
             if (mf->sortSymtab[i].n_sect != ms->n_sect  &&
-                !IS_MACHO64_DEBUG_SYM(mf->sortSymtab[i])   &&
+                !IS_MACHO64_SYM_DEBUG(mf->sortSymtab[i])   &&
                 !IS_MACHO64_UNDEF_SYM(mf->sortSymtab[i]))
                 break;
 
@@ -1094,42 +1100,19 @@ Macho64Sect *macho64GetSectByIndx(const Macho64File *mf, uint64_t indx)
     if (macho64Check(mf) || indx == (uint64_t)-1)
         return NULL;
 
-    uint64_t i = 0;
-    Macho64Seg *seg = NULL;
-    if (IS_MACHO64_FILE_EXEC(mf))
-        seg = mf->segments[TEXT_NSEG];
-    else if (IS_MACHO64_FILE_OBJ(mf)) {
-        // Into the object file there is only one segment
-        seg = mf->segments[UNNAMED_NSEG];
-    } else {
-        ERROR("Unknown file type");
-        return NULL;
-    }
-
-    Macho64Sect *sect = (Macho64Sect*)((size_t)seg + sizeof(Macho64Seg));
-    for (i = 1; i <= seg->nsects; ++i) {
-       if (i == indx)
-            return sect;
-
-        sect = (Macho64Sect*)((size_t)sect + sizeof(Macho64Sect));
-    }
-
-    // This point is reached only if file executable or object
-    if (IS_MACHO64_FILE_EXEC(mf))
-        seg = mf->segments[DATA_NSEG];
-    else {
-        // Into the object file there are no more segments
-        return NULL;
-    }
-
-    uint64_t old_i = i ;
-    sect = (Macho64Sect*)((size_t)seg + sizeof(Macho64Seg));
-    for (i = 0; i <= seg->nsects; ++i) {
-        if ((i + old_i) == indx)
-            return sect;
-
-        sect = (Macho64Sect*)((size_t)sect + sizeof(Macho64Sect));
-    }
+    uint64_t sectNum = 1;
+    Macho64Sect *sect = NULL;
+    FOREACH_LOAD_COMMAND(mf,
+        if (lcom->cmd == LC_SEGMENT_64) {
+            const Macho64Seg *seg = (const Macho64Seg*)lcom;
+            if ((sectNum + seg->nsects) <= indx) {
+                sectNum += seg->nsects;
+            } else {
+                sect = (Macho64Sect*)((size_t)seg + sizeof(Macho64Seg));
+                return sect + (indx - sectNum);
+            }
+        }
+    );
 
     return NULL;
 }
@@ -1343,7 +1326,6 @@ uint64_t macho64GetDSymIndxByName(const Macho64File *mf, const char *name)
     return MACHO64_NO_SYMBOL;
 }
 
-static
 uint64_t macho64GetImportSymbolPosInSectByIndx( const Macho64File *mf
                                               , const Macho64Sect *importSect
                                               , uint64_t indx
@@ -1365,73 +1347,6 @@ uint64_t macho64GetImportSymbolPosInSectByIndx( const Macho64File *mf
 
     // Get target index in import table
     return (i -= start);
-}
-
-void *macho64Hook(const Macho64File *mf, const char *func, const void *hand)
-{
-    if(macho64Check(mf) || func == NULL || hand == NULL)
-        return NULL;
-
-    uint64_t *rel_addr = NULL;
-    uint64_t indx = macho64GetDSymIndxByName(mf, func);
-    if (IS_MACHO64_ERROR(indx)) {
-        ERROR("Cannot get index of the symbol %s", func);
-        return NULL;
-    }
-
-    /***
-     * reserved1 in __Data.__la_symbol_ptr section contains a start position
-     * of Lazy Symbols indexes in indirect tables.
-     */
-    Macho64Sect *lazyImportSect = macho64GetSectByName(mf, "__la_symbol_ptr");
-    /***
-     * __got section contains imports for non-lazy inderect symbols
-    */
-    Macho64Sect *nonLazyImportSect = macho64GetSectByName(mf, "__got");
-    if ((lazyImportSect == NULL) && (nonLazyImportSect == NULL)) {
-        LOG_WARNING("Trere are no __la_symbol_ptr and __got sections.");
-        return NULL;
-    }
-
-    Macho64Sect *importSect = lazyImportSect;
-    uint64_t i = macho64GetImportSymbolPosInSectByIndx(mf, importSect, indx);
-    if (IS_MACHO64_ERROR(i)) {
-        importSect = nonLazyImportSect;
-        i = macho64GetImportSymbolPosInSectByIndx(mf, importSect, indx);
-        if (IS_MACHO64_ERROR(i)) {
-            ERROR("Cannot find symbol position in import sections");
-            return NULL;
-        }
-    }
-
-    // Get seed for work with randomize adress space
-    Macho64Sym *_mach_hook = macho64GetSymByName(mf, "_macho64Hook");
-    if (_mach_hook == NULL)  {
-        ERROR("Cannot get the symbol _mach_hook");
-        return NULL;
-    }
-
-    uint64_t _mach_hook_addr = macho64GetSSymAddr(_mach_hook);
-    if (IS_MACHO64_ERROR(_mach_hook_addr)) {
-        ERROR("Cannot get an addr of symbol _mach_hook");
-        return NULL;
-    }
-
-    uint64_t seed = (uint64_t)macho64Hook - _mach_hook_addr;
-
-    // Get real virtual address of import table start
-    uint64_t *real_vaddr = (uint64_t*)(importSect->addr + seed);
-    uint64_t mprotect_real_vaddr = alignToPageSize((size_t)real_vaddr);
-    size_t mprotect_size = importSect->addr + seed - mprotect_real_vaddr + importSect->size;
-
-    rel_addr = (uint64_t*)(real_vaddr[i]);
-    if (Mprotect((void*)mprotect_real_vaddr, mprotect_size, PROT_WRITE | PROT_READ)) {
-        ERROR("Cannot change memory protection");
-        return NULL;
-    }
-    real_vaddr[i] = (uint64_t)hand;
-
-    return rel_addr;
 }
 
 void *macho64GetRelocDataAddr(const Macho64File *mf, const char *func)
@@ -1466,19 +1381,19 @@ void *macho64GetRelocDataAddr(const Macho64File *mf, const char *func)
     i -= __la->reserved1;
 
     // Get seed for work with randomize adress space
-    Macho64Sym *_mach_hook = macho64GetSymByName(mf, "_mach064Hook");
-    if (_mach_hook == NULL)  {
-        ERROR("Cannot get the symbol _mach_hook");
+    Macho64Sym *_macho64GetRelocDataAddr = macho64GetSymByName(mf, "_macho64GetRelocDataAddr");
+    if (_macho64GetRelocDataAddr == NULL)  {
+        ERROR("Cannot get the symbol _macho64GetRelocDataAddr");
         return NULL;
     }
 
-    uint64_t _mach_hook_addr = macho64GetSSymAddr(_mach_hook);
-    if (IS_MACHO64_ERROR(_mach_hook_addr)) {
-        ERROR("Cannot get an addr of symbol _mach_hook");
+    uint64_t _macho64GetRelocDataAddr_addr = macho64GetSSymAddr(_macho64GetRelocDataAddr);
+    if (IS_MACHO64_ERROR(_macho64GetRelocDataAddr_addr)) {
+        ERROR("Cannot get an addr of symbol _macho64GetRelocDataAddr");
         return NULL;
     }
 
-    uint64_t seed = (uint64_t)macho64Hook - _mach_hook_addr;
+    uint64_t seed = (uint64_t)macho64GetRelocDataAddr - _macho64GetRelocDataAddr_addr;
 
     // Get real virtual address of import table start
     uint64_t *real_vaddr = (uint64_t*)(__la->addr + seed);
@@ -1486,5 +1401,10 @@ void *macho64GetRelocDataAddr(const Macho64File *mf, const char *func)
     rel_addr = (uint64_t*)(real_vaddr[i]);
 
     return rel_addr;
+}
+
+const char *macho64GetDylibName(const MachoDylibCommand *dl)
+{
+    return (char*)(((size_t)dl) + dl->dylib.name.offset);
 }
 

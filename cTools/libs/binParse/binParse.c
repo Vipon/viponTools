@@ -32,6 +32,7 @@
 #include "elf64Parse.h"
 #include "elf32Parse.h"
 #include "macho64Parse.h"
+#include "macho64DynMod.h"
 
 BinParser binParser;
 
@@ -40,8 +41,8 @@ BinParser binParser;
     binParser.free = (BinFree)&type ## Free; \
     binParser.hook = (BinHook)&type ## Hook; \
     binParser.check = (BinFullCheck) &type ## Check; \
-    binParser.printSymbol = (BinPrintSymbol) &type ## PrintSymbol; \
-    binParser.printSymbols = (BinPrintSymbols) &type ## PrintSymbols; \
+    /* binParser.printSymbol = (BinPrintSymbol) &type ## PrintSymbol; */ \
+    /* binParser.printSymbols = (BinPrintSymbols) &type ## PrintSymbols; */ \
     binParser.getSymByName = (BinGetSymByName) &type ## GetSymByName; \
     binParser.getSymName = (BinGetSymName) &type ## GetSymName; \
     binParser.cmpSym = (BinCmpSym) &type ## CmpSym; \
