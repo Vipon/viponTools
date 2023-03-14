@@ -1,7 +1,6 @@
-name: macos-latest-test
 on: [push]
 jobs:
-  full-test:
+  macos-latest:
     runs-on: macos-latest
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
@@ -31,6 +30,37 @@ jobs:
         run: tar -czvf ../viponTools.tar.gz viponTools
       - uses: actions/upload-artifact@v3
         with:
-          name: viponTools
+          name: viponTools_macos
+          path: viponTools.tar.gz
+  ubuntu-2004:
+    runs-on: ubuntu-20.04
+    steps:
+      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
+      - uses: actions/checkout@v3
+      - run: sudo apt install ccache
+      - run: sudo apt install cmake
+      - run: sudo apt install coreutils
+      - run: ./shellTools/tools/capstone/install.sh
+      - run: ./shellTools/tools/keystone/install.sh
+      - name: Configure with gmake
+        run: ./configure --gmake --output gmake_output
+      - name: Gmake build
+        working-directory: gmake_output/
+        run: CPATH="${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/${LIBRARY_PATH}" make -j
+        env:
+          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
+          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
+      - name: Gmake test
+        working-directory: gmake_output/
+        run: make test
+      - name: Gmake install
+        working-directory: gmake_output/
+        run: make install
+      - name: Make achive
+        working-directory: gmake_output/
+        run: tar -czvf ../viponTools.tar.gz viponTools
+      - uses: actions/upload-artifact@v3
+        with:
+          name: viponTools_Ubuntu
           path: viponTools.tar.gz
 
