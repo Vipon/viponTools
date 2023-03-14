@@ -57,7 +57,7 @@ jobs:
         with:
           name: viponTools_macos
           path: viponTools.tar.gz
-  ubuntu-2004-gmake:
+  ubuntu-2004-gmake-debug:
     runs-on: ubuntu-20.04
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
@@ -106,7 +106,7 @@ jobs:
         working-directory: gmake_release/
         run: make install
       - name: Make achive
-        working-directory: gmgmake_releaseake/
+        working-directory: gmake_releaseake/
         run: tar -czvf ../viponTools.tar.gz viponTools
       - uses: actions/upload-artifact@v3
         with:
