@@ -106,7 +106,7 @@ jobs:
         working-directory: gmake_release/
         run: make install
       - name: Make achive
-        working-directory: gmake_releaseake/
+        working-directory: gmake_release/
         run: tar -czvf ../viponTools.tar.gz viponTools
       - uses: actions/upload-artifact@v3
         with:
