@@ -29,7 +29,7 @@ vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
 from vpy.net import downloadFile
-from vpy.os import execForOs, getForOs, appendPath
+from vpy.os import execForOs, getForOs, appendPath, isMacOsX, installPkg
 from vpy.file import extractFile, mvFile
 from vpy.dir import createDir
 from vpy.installArgs import parseInstallArgs
@@ -94,9 +94,13 @@ def installNinja():
 
 def main():
     args = parseArgs()
-    downloadNinja()
-    extractNinja()
-    installNinja()
+
+    if isMacOsX() and args.default:
+        installPkg('ninja')
+    else:
+        downloadNinja()
+        extractNinja()
+        installNinja()
 
 if __name__ == '__main__':
     main()

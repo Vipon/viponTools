@@ -24,7 +24,6 @@
 
 import subprocess
 from typing import List
-from subprocess import CalledProcessError, PIPE
 
 ##  Execute command
 #   @brief Execute command in shell

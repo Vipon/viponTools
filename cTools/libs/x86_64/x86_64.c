@@ -196,7 +196,7 @@ void write_16_bytes_nops(void *addr)
 
 uint8_t *put_pop_q_riprel(uint8_t *dest, uint64_t ip, uint64_t pop_addr)
 {
-    int32_t disp = pop_addr - ip - SIZE_POP_Q_RIPREL;
+    int32_t disp = (int32_t)(pop_addr - ip - SIZE_POP_Q_RIPREL);
 
     directCopyBytes(POP_Q_RIPREL, dest, 2); /* Opcode + ModR/M */
     directCopyBytes((uint8_t*)&disp, &dest[2], sizeof(int32_t)); /* disp32 */
@@ -207,7 +207,7 @@ uint8_t *put_pop_q_riprel(uint8_t *dest, uint64_t ip, uint64_t pop_addr)
 
 uint8_t *put_cmp_b_riprel(uint8_t *dest, uint64_t ip, uint64_t mem_addr, int8_t byte)
 {
-    int32_t disp = mem_addr - ip - SIZE_CMP_B_RIPREL;
+    int32_t disp = (int32_t)(mem_addr - ip - SIZE_CMP_B_RIPREL);
 
     directCopyBytes(CMP_B_RIPREL, dest, 2); /* Opcode + ModR/M */
     directCopyBytes((uint8_t*)&disp, &dest[2], sizeof(int32_t)); /* disp32 */
@@ -219,7 +219,7 @@ uint8_t *put_cmp_b_riprel(uint8_t *dest, uint64_t ip, uint64_t mem_addr, int8_t 
 
 uint8_t *put_jmp_rel8(uint8_t *dest, uint64_t ip, uint64_t jmp_addr, X86_INSTR_TYPE type)
 {
-    uint8_t disp = jmp_addr - ip - SIZE_JMP_REL8;
+    uint8_t disp = (uint8_t)(jmp_addr - ip - SIZE_JMP_REL8);
 
     size_t num = 1; // opcode size
 
@@ -373,7 +373,7 @@ uint8_t *put_jmp_rel8(uint8_t *dest, uint64_t ip, uint64_t jmp_addr, X86_INSTR_T
 
 uint8_t *put_jmp_rel32(uint8_t *dest, uint64_t ip, uint64_t jmp_addr)
 {
-    uint32_t disp = jmp_addr - ip - sizeof(JMP_REL32);
+    uint32_t disp = (uint32_t)(jmp_addr - ip - sizeof(JMP_REL32));
 
     size_t num = 1; // opcode size
 
@@ -386,7 +386,7 @@ uint8_t *put_jmp_rel32(uint8_t *dest, uint64_t ip, uint64_t jmp_addr)
 
 uint8_t *put_jcc_rel32(uint8_t *dest, size_t ip, size_t jmp_addr, X86_INSTR_TYPE type)
 {
-    uint32_t disp = jmp_addr - ip - SIZE_JCC_REL32;
+    uint32_t disp = (uint32_t)(jmp_addr - ip - SIZE_JCC_REL32);
 
     size_t num = 2; // opcode size
 
@@ -468,7 +468,7 @@ uint8_t *put_jcc_rel32(uint8_t *dest, size_t ip, size_t jmp_addr, X86_INSTR_TYPE
 
 uint8_t *put_call_rel32(uint8_t *dest, size_t ip, size_t call_addr)
 {
-    uint32_t disp = call_addr - ip - sizeof(CALL_REL32);
+    uint32_t disp = (uint32_t)(call_addr - ip - sizeof(CALL_REL32));
 
     size_t num = 1; // opcode size
 

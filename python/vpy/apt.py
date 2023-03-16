@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env python3
 #
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valera
+# Copyright (c) 2023 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,45 +22,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-SCRIPT_DIR="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
-CCACHE_ROOT="${SCRIPT_DIR}/ccache"
-CCACHE_BUILD_DIR="${CCACHE_ROOT}/build"
-CCACHE_VERSION="4.3"
-CCACHE_INSTALL_PATH="${HOME}/.local"
-CCACHE_BUILD_TYPE="Release"
+from .cmd import execCmd
 
-downloadCCacheSrcCode()
-{
-    wget "https://github.com/ccache/ccache/archive/refs/tags/v${CCACHE_VERSION}.tar.gz" \
-        -O ccache.tar.gz
-    mkdir ${CCACHE_ROOT}
-    tar -xzvf ccache.tar.gz -C "${CCACHE_ROOT}" --strip-components 1
-}
+APT = 'apt'
 
-buildCCache()
-{
-    mkdir "${CCACHE_BUILD_DIR}"
-    cd "${CCACHE_BUILD_DIR}"
-    cmake -DCMAKE_BUILD_TYPE="${CCACHE_BUILD_TYPE}"       \
-          -DCMAKE_INSTALL_PREFIX="${CCACHE_INSTALL_PATH}" \
-          -DZSTD_FROM_INTERNET=ON                         \
-          ..
-    make -j8
-}
+def install(name):
+    com = [ 'sudo'
+          , APT
+          , 'install'
+          , name
+          ]
 
-installCCache()
-{
-    cd "${CCACHE_BUILD_DIR}"
-    make install
-}
-
-main()
-{
-    cd "${SCRIPT_DIR}"
-    downloadCCacheSrcCode
-    buildCCache
-    installCCache
-}
-
-main "$@"
+    return execCmd(com)
 

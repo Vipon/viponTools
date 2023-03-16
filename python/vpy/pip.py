@@ -30,6 +30,7 @@ from typing import List
 #   @brief exec pip command
 #   @param com list of pip's command line arguments
 def pip(com: List[str]) -> None:
+    print(sys.executable)
     args = [ sys.executable
            , '-m'
            , 'pip'

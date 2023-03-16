@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import importlib
 import importlib.util
 from vpy.pip import pip
 
@@ -32,4 +33,5 @@ from vpy.pip import pip
 def installImport(impName: str, installName: str) -> None:
     if importlib.util.find_spec(impName) == None:
         pip(['install', installName])
+        importlib.invalidate_caches()
 
