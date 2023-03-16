@@ -30,10 +30,11 @@ vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
 from vpy.cmd import execCmd
-from vpy.os import execForOs, getForOs
+from vpy.os import execForOs, isWin, isMacOsX
 from vpy.dir import createDir
 from vpy.file import cpFile
 from vpy.installArgs import parseInstallArgs
+import vpy.brew as brew
 
 import vpy.git as git
 import vpy.pacman as pacman
@@ -200,11 +201,14 @@ def installGnuLib():
     )
 
 def main():
-    parseArgs()
-    installGnuLibDeps()
-    downloadGnuLibSrcCode()
-    buildGnuLib()
-    installGnuLib()
+    args = parseArgs()
+    if isWin() or not args.default:
+        installGnuLibDeps()
+        downloadGnuLibSrcCode()
+        buildGnuLib()
+        installGnuLib()
+    elif isMacOsX():
+        brew.install('argp-standalone')
 
 if __name__ == '__main__':
     main()

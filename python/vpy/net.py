@@ -22,26 +22,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from vpy.importHelp import installImport
-installImport('progressbar', 'progressbar')
-import progressbar
-import urllib.request
-
-pbar = None
-
-def showProgress(blockNum, blockSize, totalSize):
-    global pbar
-    if pbar is None:
-        pbar = progressbar.ProgressBar(maxval=totalSize)
-        pbar.start()
-
-    downloaded = blockNum * blockSize
-    if downloaded < totalSize:
-        pbar.update(downloaded)
-    else:
-        pbar.finish()
-        pbar = None
+import requests
 
 def downloadFile(url: str, fn: str=None) -> None:
-    urllib.request.urlretrieve(url, fn, showProgress)
+    with open(fn, 'wb') as f:
+        r = requests.get(url, allow_redirects=True)
+        f.write(r.content)
 

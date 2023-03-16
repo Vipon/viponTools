@@ -1,16 +1,31 @@
 on: [push]
 jobs:
+  macos-latest-default-debug:
+    runs-on: macos-latest
+    steps:
+      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
+      - uses: actions/checkout@v3
+      - run: ./setup.sh
+      - name: Configure with xcode
+        run: ./configure
+      - name: XCode build
+        working-directory: output/
+        run: CPATH="${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}" xcodebuild -scheme ALL_BUILD
+        env:
+          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
+          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
+      - name: XCode test
+        working-directory: output/
+        run: xcodebuild -scheme RUN_TESTS
+      - name: XCode install
+        working-directory: output/
+        run: xcodebuild -scheme install
   macos-latest-gmake-debug:
     runs-on: macos-latest
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v3
-      - run: brew install ccache
-      - run: brew install cmake
-      - run: brew install coreutils
-      - run: brew install argp-standalone
-      - run: ./shellTools/tools/capstone/install.sh
-      - run: ./shellTools/tools/keystone/install.sh
+      - run: ./setup.sh
       - name: Configure with gmake
         run: ./configure --gmake --output gmake
       - name: Gmake build
@@ -25,17 +40,32 @@ jobs:
       - name: Gmake install
         working-directory: gmake/
         run: make install
+  macos-latest-ninja-debug:
+    runs-on: macos-latest
+    steps:
+      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
+      - uses: actions/checkout@v3
+      - run: ./setup.sh
+      - name: Configure with ninja
+        run: ./configure --ninja --output ninja
+      - name: Ninja build
+        working-directory: ninja/
+        run: CPATH="${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}" ninja
+        env:
+          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
+          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
+      - name: Ninja test
+        working-directory: ninja/
+        run: ninja test
+      - name: Ninja install
+        working-directory: ninja/
+        run: ninja install
   macos-latest-gmake-release:
     runs-on: macos-latest
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v3
-      - run: brew install ccache
-      - run: brew install cmake
-      - run: brew install coreutils
-      - run: brew install argp-standalone
-      - run: ./shellTools/tools/capstone/install.sh
-      - run: ./shellTools/tools/keystone/install.sh
+      - run: ./setup.sh
       - name: Configure release
         run: ./configure --gmake --release --output gmake_release
       - name: Release build
@@ -62,11 +92,7 @@ jobs:
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v3
-      - run: sudo apt install ccache
-      - run: sudo apt install cmake
-      - run: sudo apt install coreutils
-      - run: ./shellTools/tools/capstone/install.sh
-      - run: ./shellTools/tools/keystone/install.sh
+      - run: ./setup.sh
       - name: Configure with gmake
         run: ./configure --gmake --output gmake
       - name: Gmake build
@@ -81,16 +107,33 @@ jobs:
       - name: Gmake install
         working-directory: gmake/
         run: make install
+  ubuntu-2004-ninja-debug:
+    runs-on: ubuntu-20.04
+    steps:
+      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
+      - uses: actions/checkout@v3
+      - run: ./setup.sh
+      - run: chmod 0744 "${HOME}/.local/bin/ninja"
+      - name: Configure with ninja
+        run: ./configure --ninja --output ninja
+      - name: Ninja build
+        working-directory: ninja/
+        run: CPATH="${HOME}/.local/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:${LIBRARY_PATH}" ninja
+        env:
+          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
+          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
+      - name: Ninja test
+        working-directory: ninja/
+        run: ninja test
+      - name: Ninja install
+        working-directory: ninja/
+        run: ninja install
   ubuntu-2004-gmake-release:
     runs-on: ubuntu-20.04
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v3
-      - run: sudo apt install ccache
-      - run: sudo apt install cmake
-      - run: sudo apt install coreutils
-      - run: ./shellTools/tools/capstone/install.sh
-      - run: ./shellTools/tools/keystone/install.sh
+      - run: ./setup.sh
       - name: Configure release
         run: ./configure --gmake --release --output gmake_release
       - name: Release build

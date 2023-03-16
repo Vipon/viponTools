@@ -30,7 +30,7 @@ sys.path.append(vpyDir)
 
 from vpy.cmd import execCmd
 from vpy.net import downloadFile
-from vpy.os import execForOs, getForOs
+from vpy.os import execForOs, getForOs, isWin, installPkg
 from vpy.installArgs import parseInstallArgs
 import vpy.installArgs as vpy
 
@@ -100,8 +100,11 @@ def installCmake(args):
 
 def main():
     args = parseArgs()
-    downloadCmake()
-    installCmake(args)
+    if isWin() or not args.default:
+        downloadCmake()
+        installCmake(args)
+    else:
+        installPkg('cmake')
 
 if __name__ == '__main__':
     main()

@@ -101,17 +101,26 @@ class SetUpQueue:
                 if 'linux' in p:
                     return p['linux']
                 else:
-                    return p
+                    if isStr(p):
+                        return p
+                    else:
+                        return None
             def getMacParam(p):
                 if 'mac' in p:
                     return p['mac']
                 else:
-                    return p
+                    if isStr(p):
+                        return p
+                    else:
+                        return None
             def getWinParam(p):
                 if 'win' in p:
                     return p['win']
                 else:
-                    return p
+                    if isStr(p):
+                        return p
+                    else:
+                        return None
             return execForOs(
                 linux = getLinuxParam,
                 largs = p,
@@ -145,32 +154,47 @@ class SetUpQueue:
         else:
             return realpath(join(dirname(self.fn), dir))
 
+    def __fixDeps(self, deps):
+        if deps == None:
+            return
+
+        if isStr(deps):
+            return [deps]
+
     def ____parseInstances(self, keyWord: str, t: SetUpInstance.InstaceType) -> None:
         name = None
         ver  = None
         dir  = None
         deps = None
 
-        isDictionary = isDict(self.yaml[keyWord])
         for i in self.yaml[keyWord]:
-            name = i
-            if isDictionary:
-                params = self.yaml[keyWord][i]
-                (ver, dir, deps) = self.__parseInstanceParam(params)
-                dir = self.__fixDirPath(dir)
-                if isStr(deps):
-                    deps = [deps]
+            if isDict(i):
+                for j in i:
+                    name = j
+                    params = i[j]
+                    (ver, dir, deps) = self.__parseInstanceParam(params)
+                    dir = self.__fixDirPath(dir)
+                    deps = self.__fixDeps(deps)
             else:
-                ver  = None
-                dir  = None
-                deps = None
+                name = i
+                if isDict(self.yaml[keyWord]):
+                    params = self.yaml[keyWord][i]
+                    (ver, dir, deps) = self.__parseInstanceParam(params)
+                    dir = self.__fixDirPath(dir)
+                    deps = self.__fixDeps(deps)
+                else:
+                    ver  = None
+                    dir  = None
+                    deps = None
 
             instance = SetUpQueue.SetUpInstance(name, ver, dir, deps, t)
             self.instances.append(instance)
 
     def __parseInstances(self) -> None:
-        self.____parseInstances('tools', SetUpQueue.SetUpInstance.InstaceType.TOOLS)
-        self.____parseInstances('libs', SetUpQueue.SetUpInstance.InstaceType.LIBS)
+        if 'tools' in self.yaml:
+            self.____parseInstances('tools', SetUpQueue.SetUpInstance.InstaceType.TOOLS)
+        if 'libs' in self.yaml:
+            self.____parseInstances('libs', SetUpQueue.SetUpInstance.InstaceType.LIBS)
 
     def __addInstanceDepsInQueue(self, instance: SetUpInstance) -> None:
         if instance.isIndependent():
@@ -229,7 +253,7 @@ class SetUpQueue:
 
     def exec(self):
         for i in self.queue:
-            script = '.'
+            script = dirname(__file__)
             if i.type == SetUpQueue.SetUpInstance.InstaceType.TOOLS:
                 script = join(script, 'tools')
             elif i.type == SetUpQueue.SetUpInstance.InstaceType.LIBS:
@@ -238,7 +262,7 @@ class SetUpQueue:
                 raise "Unknown instance type"
 
             script = realpath(join(script, i.name, 'install.py'))
-            args = ['python', script]
+            args = [sys.executable, script]
             if i.ver is not None:
                 args += ['--install-version', str(i.ver)]
             if i.dir is not None:
