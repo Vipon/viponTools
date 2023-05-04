@@ -2,14 +2,14 @@
 
 ## Description
 
-If you want to contribute or use my libs, you are welcome!
+If you want to contribute or use my tools/libs, you are welcome!
 
 ## Clone
 ```
 git clone -c core.symlinks=true https://github.com/Vipon/viponTools
 ```
-## Setup environment
 
+## Setup environment
 ### Windows
 Scripts bellow will automatically download and install at least:
 * python3, ninja, vscode, cmake, ccache, visual studio
@@ -23,7 +23,14 @@ Need to add to PATH:
 * {INSTALL_DIR}\MSBuild\Current\Bin
 
 ### Linux
+```
+./setup.sh
+```
+
 ### MacOS
+```
+./setup.sh
+```
 
 ## Configure, Build and Testing
 ### GnuMake
