@@ -25,6 +25,7 @@ set(MACHO64_PRINTER_SOURCES
   macho64PrinterSymbols.c
   macho64PrinterSections.c
   macho64PrinterSegments.c
+  macho64PrinterCodeSign.c
   macho64PrinterFuncStarts.c
   macho64PrinterLoadCommands.c
 )

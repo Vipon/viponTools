@@ -104,6 +104,7 @@ typedef struct Macho64File {
     MachoLinkEditData *funcStarts;
     uint32_t          numDyLibCom;
     MachoDylibCommand **dylibCom;
+    MachoLinkEditData *sign;
 } Macho64File;
 
 #define FOREACH_LOAD_COMMAND(mf, code)                      \

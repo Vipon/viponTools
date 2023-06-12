@@ -34,7 +34,7 @@ BinPrinter binPrinter = {};
     binPrinter.printSections = (BinPrintSections)&(type ## PrintSections); \
     binPrinter.printSegments = (BinPrintSegments)&(type ## PrintSegments);
 
-#define INIT_MACHO_PRINT_FUN(type) \
+#define INIT_MACHO_PRINT_FUNC(type) \
     binPrinter.macho.printFuncStarts = (BinPrintFuncStarts)&(type ## PrintFuncStarts); \
     binPrinter.macho.printLComs = (BinPrintLComs)&(type ## PrintLComs);
 
@@ -47,7 +47,7 @@ int initBinPrinter(const char *fn)
     switch(binParser.type) {
     case MACHO64:
         INIT_BIN_PRINTER(macho64);
-        INIT_MACHO_PRINT_FUN(macho64);
+        INIT_MACHO_PRINT_FUNC(macho64);
         break;
     /*
     case ELF64:

@@ -22,25 +22,24 @@
  * SOFTWARE.
  */
 
-#include "comdef.h"
-#include "macho64Parse.h"
 #include "macho64Printer.h"
 
-int main(int argc, char *argv[])
+void macho64PrintCodeSign(const Macho64File *mf)
 {
-    UNUSED(argc);
-    Macho64File *mf = macho64Parse(argv[0]);
+    /***
+     * Code signing is an essential part of build process. It is required for
+     * installing and distributing an iOS app. After signing, the
+     * LC_CODE_SIGNATURE load command is appended to the mach-o binary.
+     * Since code signing is the last step of the build process
+     * (you shouldn't alter anything after signing), this load command is
+     * always at the end of a binary.
+     *
+     * In a universal binary, each architecture is signed independently.
+    */
+    FileD fd = mf->fd;
+    size_t foff = mf->sign->dataoff;
+    size_t fsize = mf->sign->datasize;
+    uint8_t *fs = readFromFile(fd, &foff, fsize);
 
-    macho64PrintHeader(mf);
-    macho64PrintLComs(mf);
-    macho64PrintSegments(mf);
-    macho64PrintSections(mf);
-    macho64PrintFuncStarts(mf);
-    macho64PrintSymbols(mf);
-    macho64PrintCodeSign(mf);
-
-    macho64Free(mf);
-
-    return 0;
 }
 
