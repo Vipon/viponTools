@@ -45,6 +45,8 @@
  */
 typedef struct fat_header FatHeader;
 
+typedef struct fat_arch FatArch;
+
 /***
  *  struct load_command
  *  {
