@@ -30,6 +30,7 @@
 typedef enum {
     ELF64 = 0,
     MACHO64,
+    FATMACHO64,
     PE64,
     ELF32,
     MACHO32,

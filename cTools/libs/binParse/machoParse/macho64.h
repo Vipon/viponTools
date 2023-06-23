@@ -36,8 +36,8 @@
  *  {
  *      cpu_type_t cputype;         // cpu specifier (int)
  *      cpu_subtype_t cpusubtype;   // machine specifier (int)
- *      uint32_t offset;            // file offset to this object file
- *      uint32_t size;              // size of this object file
+ *      uint64_t offset;            // file offset to this object file
+ *      uint64_t size;              // size of this object file
  *      uint32_t align;
  *      uint32_t reserved;
  *  };

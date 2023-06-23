@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,28 +36,30 @@
 #include <string.h>
 #include <inttypes.h>
 
-/***
- * Description:
- *  Function returns a mach-o FatHeader struct from a file.
- * Input:
- *  @mf - macho64 file descriptor.
- * Output:
- *  Success:
- *      point to readed FatHeader struct.
- *  Fail:
- *      NULL point.
- * After:
- *  Need to free memory.
- */
-static FatHeader *macho64ParseFatHeader(const Macho64File *mf)
+static MACHO64_ERROR macho64ParseArch(Macho64File *mf)
 {
-    if (mf == NULL || IS_INV_FD(mf->fd))
-        return NULL;
+    if (mf == NULL || mf->header == NULL)
+        return MACHO64_INV_ARG;
 
-    FileD fd = mf->fd;
-    size_t off = 0;
-    size_t size = sizeof(FatHeader);
-    return (FatHeader*)readFromFile(fd, (size_t*)&off, size);
+    switch (mf->header->cputype) {
+    case CPU_TYPE_X86:
+        mf->arch = X86;
+        break;
+    case CPU_TYPE_X86_64:
+        mf->arch = X86_64;
+        break;
+    case CPU_TYPE_ARM:
+        mf->arch = ARM;
+        break;
+    case CPU_TYPE_ARM64:
+        mf->arch = ARM64;
+        break;
+    default:
+        mf->arch = UNKNOWN_ARCH;
+        break;
+    };
+
+    return MACHO64_OK;
 }
 
 /***
@@ -69,46 +71,33 @@ static FatHeader *macho64ParseFatHeader(const Macho64File *mf)
  *  Success:
  *      MACHO64_OK.
  *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_FAT_BIN, MACHO64_NO_HEADER.
+ *      MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_NO_HEADER.
  */
-static MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
+static MACHO64_ERROR macho64ParseHeader(Macho64File *mf, size_t off)
 {
     if (mf == NULL || IS_INV_FD(mf->fd))
         return MACHO64_INV_ARG;
 
     FileD fd = mf->fd;
-    size_t off = 0;
     size_t h_size = sizeof(Macho64Header);
 
-    FatHeader *fatHead = macho64ParseFatHeader(mf);
-    if (fatHead == NULL)
+    mf->header = (Macho64Header*)readFromFile(fd, &off, h_size);
+    if (mf->header == NULL)
         return MACHO64_NO_MEM;
 
-    switch (fatHead->magic) {
-    case FAT_MAGIC:
-    case FAT_CIGAM:
-    case FAT_MAGIC_64:
-    case FAT_CIGAM_64:
-        // !TODO: add working with fat binary
-        Free(fatHead);
-        return MACHO64_FAT_BIN;
+    macho64ParseArch(mf);
+
+    LOG("off %lu, magic %x", off, mf->header->magic);
+    switch (mf->header->magic) {
     case MH_MAGIC:
     case MH_CIGAM:
         // 32-bit macho file
-        Free(fatHead);
         return MACHO64_NO_HEADER;
     case MH_MAGIC_64:
     case MH_CIGAM_64:
-        mf->header = (Macho64Header*)readFromFile(fd, &off, h_size);
-        if (mf->header == NULL) {
-            Free(fatHead);
-            return MACHO64_NO_MEM;
-        }
-
-        Free(fatHead);
+        mf->type = mf->header->filetype;
         return MACHO64_OK;
     default:
-        Free(fatHead);
         return MACHO64_NO_HEADER;
     }
 }
@@ -118,19 +107,20 @@ static MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
  *  Function init mach-o LoadCommands of a Macho64File @mf.
  * Input:
  *  @mf - point to target Macho64File structure with initialized header
+ *  @hOff - offset to the Macho64Header in the file
  * Output:
  *  Success:
  *      MACHO64_OK
  *  Fail:
  *      MACHO64_INV_ARG, MACHO64_NO_LOAD_COMMAND, MACHO64_NO_MEM
  */
-static MACHO64_ERROR macho64ParseLCommands(Macho64File *mf)
+static MACHO64_ERROR macho64ParseLCommands(Macho64File *mf, size_t hOff)
 {
     if (mf == NULL || IS_INV_FD(mf->fd) || mf->header == NULL)
         return MACHO64_INV_ARG;
 
     FileD fd = mf->fd;
-    size_t off = sizeof(Macho64Header);
+    size_t off = hOff + sizeof(Macho64Header);
     size_t size = (size_t)mf->header->sizeofcmds;
     if (mf->header->ncmds == 0)
         return MACHO64_NO_LOAD_COMMAND;
@@ -414,6 +404,67 @@ MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
     return MACHO64_OK;
 }
 
+MACHO64_ERROR _macho64Parse(Macho64File *mf, size_t off)
+{
+    MACHO64_ERROR err = macho64ParseHeader(mf, off);
+    if (err) {
+        ERROR("Cannot parse mach-o header");
+        return err;
+    }
+
+    err = macho64ParseLCommands(mf, off);
+    if (err) {
+        ERROR("Cannot parse mach-o load commands");
+        return err;
+    }
+
+    err = macho64ParseSymtabCom(mf);
+    if (err) {
+        if (IS_MACHO64_FILE_OBJ(mf)) {
+            ERROR("Cannot parse mach-o symtab command");
+            return err;
+        } else
+            WARNING("Cannot parse mach-o symtab command %ld", err);
+    } else {
+        err = macho64ParseSymTab(mf);
+        if (err) {
+            ERROR("Cannot parse mach-o symbols table");
+            return err;
+        } else
+            macho64ParseSortSymTab(mf);
+
+        err = macho64ParseSymNameTab(mf);
+        if (err) {
+            ERROR("Cannot parse mach-o symbol name tabls.");
+            return err;
+        }
+    }
+
+    err = macho64ParseDysymtabCom(mf);
+    if (err) {
+        WARNING("Cannot parse mach-o dysyntab commd");
+    } else {
+        err = macho64ParseInderectSymtab(mf);
+        if (err) {
+            ERROR("Cannot parse mach-o inderect symbol table");
+            return err;
+        }
+    }
+
+    err = macho64ParseSegCom(mf);
+    if (err) {
+        if (IS_MACHO64_FILE_EXEC(mf)) {
+            ERROR("Cannot parse mach-o segment commands.");
+            return err;
+        } else
+            WARNING("Cannot parse mach-o segment commands.");
+    }
+
+    macho64ParseFuncStarts(mf);
+    macho64ParseDylibCom(mf);
+    return MACHO64_OK;
+}
+
 Macho64File *macho64Parse(const char *fn)
 {
     if (fn == NULL)
@@ -440,55 +491,8 @@ Macho64File *macho64Parse(const char *fn)
 
     strncpy(mf->fn, fn, nameLen);
 
-    if (macho64ParseHeader(mf)) {
-        ERROR("Cannot parse mach-o header");
+    if (_macho64Parse(mf, 0))
         goto eexit_1;
-    }
-
-    mf->type = mf->header->filetype;
-
-    if (macho64ParseLCommands(mf)) {
-        ERROR("Cannot parse mach-o load commands");
-        goto eexit_1;
-    }
-
-    if (macho64ParseSymtabCom(mf)) {
-        if (IS_MACHO64_FILE_OBJ(mf)) {
-            ERROR("Cannot parse mach-o symtab command");
-            goto eexit_1;
-        } else
-            WARNING("Cannot parse mach-o symtab command");
-    } else {
-        if (macho64ParseSymTab(mf)) {
-            ERROR("Cannot parse mach-o symbols table");
-            goto eexit_1;
-        } else
-            macho64ParseSortSymTab(mf);
-
-        if (macho64ParseSymNameTab(mf)) {
-            ERROR("Cannot parse mach-o symbol name tabls.");
-            goto eexit_1;
-        }
-    }
-
-    if (macho64ParseDysymtabCom(mf)) {
-        WARNING("Cannot parse mach-o dysyntab commd");
-    } else
-        if (macho64ParseInderectSymtab(mf)) {
-            ERROR("Cannot parse mach-o inderect symbol table");
-            goto eexit_1;
-        }
-
-    if (macho64ParseSegCom(mf)) {
-        if (IS_MACHO64_FILE_EXEC(mf)) {
-            ERROR("Cannot parse mach-o segment commands.");
-            goto eexit_1;
-        } else
-            WARNING("Cannot parse mach-o segment commands.");
-    }
-
-    macho64ParseFuncStarts(mf);
-    macho64ParseDylibCom(mf);
 
     return mf;
 

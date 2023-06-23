@@ -3,3 +3,4 @@ output/*
 .clangd/*
 *.tar.gz
 .cache/*
+.DS_Store

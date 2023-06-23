@@ -22,10 +22,10 @@
 
 add_subdirectory(elfParse)
 add_subdirectory(machoParse)
-set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse macho64DynMod)
+set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse macho64DynMod fatMacho64Parse fatMacho64DynMod)
 if (WIN32)
     add_subdirectory(peParse)
-    set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse pe64Parse pe64Printer macho64DynMod)
+    append(BIN_PARSE_LIB_LIST pe64Parse pe64Printer)
 endif (WIN32)
 
 add_vipon_library(
