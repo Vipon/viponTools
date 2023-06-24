@@ -36,7 +36,7 @@ static Arch binParserArch = ARCH;
 static const char doc[] =
     "Binary parser. Support binare format: mach-o (64 bit), elf (32,64 bit), pe (64 bit)";
 static const char argsDoc[] = "BIN_FILE";
-static const char progVersion[] = "0.0.1";
+static const char progVersion[] = "0.1.0";
 
 typedef enum {
     HEADER = 0,
