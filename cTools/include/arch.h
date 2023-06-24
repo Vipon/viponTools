@@ -45,7 +45,7 @@ typedef enum {
 # if defined(i386) || defined(__i386) || defined(__i386__)
 #  define IA32_DEFINED 1
 #  define ARCH X86
-# endif
+# endif /* __i386__ */
 
 # if defined(__amd64) || defined(__amd64__) || defined(__x86_64) || defined(__x86_64__)
 #  define IA32_DEFINED 1
@@ -53,19 +53,23 @@ typedef enum {
 #  define AMD64_DEFINED 1
 #  define X86_64_DEFINED 1
 #  define ARCH X86_64
-# endif
+# endif /* __x86_64__ */
 
 # if defined(__aarch64__)
 #  define ARM64_DEFINED 1
 #  define ARMV8_DEFINED 1
 #  define AARCH64_DEFINED 1
 #  define ARCH AARCH64
-# endif
+# endif /* __aarch64__ */
 
 # if defined(__arm__)
 #  define ARM32_DEFINED 1
 #  define ARCH ARM
-# endif
+# endif /* __arm__ */
+
+# ifndef ARCH
+#  define ARCH UNKNOWN_ARCH
+# endif /* ARCH */
 #else
 # error Unknown compiler type
 #endif

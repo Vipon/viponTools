@@ -99,7 +99,8 @@
         "macho64dynmod.h": "c",
         "fatmacho64parse.h": "c",
         "macho64parse.h": "c",
-        "locale": "c"
+        "locale": "c",
+        "fatmacho64printer.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

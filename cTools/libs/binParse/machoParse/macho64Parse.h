@@ -92,7 +92,7 @@ typedef enum {  PAGEZERO_NSEG = 0,
 typedef struct Macho64File {
     char              *fn;
     FileD             fd;
-    uint32_t          hOff; // file offset to mach-o header
+    uint64_t          hOff; // file offset to mach-o header
     uint32_t          type;
     Arch              arch;
     Macho64Header     *header;
@@ -175,7 +175,7 @@ Macho64File *macho64Parse(const char *fn);
  * !TODO: rework, currently should be internal use only, but also need for
  * fatMacho64Parse
  */
-MACHO64_ERROR _macho64Parse(Macho64File *mf, size_t off);
+MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off);
 
 /***
  * Before:
