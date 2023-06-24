@@ -25,6 +25,7 @@
 #include "binParse.h"
 #include "binPrinter.h"
 #include "macho64Printer.h"
+#include "fatMacho64Printer.h"
 
 BinPrinter binPrinter = {};
 
@@ -38,6 +39,9 @@ BinPrinter binPrinter = {};
     binPrinter.macho.printFuncStarts = (BinPrintFuncStarts)&(type ## PrintFuncStarts); \
     binPrinter.macho.printLComs = (BinPrintLComs)&(type ## PrintLComs);
 
+#define INIT_FAT_MACHO_PRINT_FUN(type) \
+    binPrinter.fatMacho.printFatHeader = (BinPrintFatHeader)&(type ## PrintHeader);
+
 int initBinPrinter(const char *fn)
 {
     if (initBinParser(fn)) {
@@ -48,6 +52,11 @@ int initBinPrinter(const char *fn)
     case MACHO64:
         INIT_BIN_PRINTER(macho64);
         INIT_MACHO_PRINT_FUN(macho64);
+        break;
+    case FATMACHO64:
+        INIT_BIN_PRINTER(fatMacho64);
+        INIT_MACHO_PRINT_FUN(fatMacho64);
+        INIT_FAT_MACHO_PRINT_FUN(fatMacho64);
         break;
     /*
     case ELF64:

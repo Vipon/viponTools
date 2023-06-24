@@ -25,6 +25,7 @@
 #ifndef __FAT_MACHO64_PARSE_H
 #define __FAT_MACHO64_PARSE_H
 
+#include "arch.h"
 #include "comdef.h"
 #include "macho64Parse.h"
 
@@ -38,6 +39,8 @@ typedef struct FatMacho64File {
     FatArch64   *fatArch64;
     Macho64File *mf;
 } FatMacho64File;
+
+extern Arch fatMacho64ParseArch;
 
 /***
  * Description:
@@ -87,9 +90,9 @@ MACHO64_ERROR fatMacho64Check(const FatMacho64File *ff);
 Macho64File* fatMacho64GetMacho64ByArch(FatMacho64File *ff, Arch arch);
 const Macho64File* fatMacho64GetConstMacho64ByArch(const FatMacho64File *ff, Arch arch);
 
-Macho64Sym *fatMacho64GetSymByName(const FatMacho64File *ff, const char *name, Arch arch);
+Macho64Sym *fatMacho64GetSymByName(const FatMacho64File *ff, const char *name);
 
-char *fatMacho64GetSymName(const FatMacho64File *ff, const Macho64Sym *ms, Arch arch);
+char *fatMacho64GetSymName(const FatMacho64File *ff, const Macho64Sym *ms);
 
 static INLINE
 int fatMacho64CmpSym(const void *a, const void *b)
@@ -97,10 +100,10 @@ int fatMacho64CmpSym(const void *a, const void *b)
     return macho64CmpSym(a, b);
 }
 
-Macho64Sym *fatMacho64GetSSymTab(const FatMacho64File *ff, Arch arch);
-Macho64Sym *fatMacho64GetSSymSortTab(const FatMacho64File *ff, Arch arch);
+Macho64Sym *fatMacho64GetSSymTab(const FatMacho64File *ff);
+Macho64Sym *fatMacho64GetSSymSortTab(const FatMacho64File *ff);
 
-uint64_t fatMacho64GetAmountSSym(const FatMacho64File *ff, Arch arch);
+uint64_t fatMacho64GetAmountSSym(const FatMacho64File *ff);
 
 static INLINE
 uint64_t fatMacho64GetSSymAddr(const Macho64Sym *ms)
@@ -108,23 +111,23 @@ uint64_t fatMacho64GetSSymAddr(const Macho64Sym *ms)
     return macho64GetSSymAddr(ms);
 }
 
-uint64_t fatMacho64GetAddrSymByName(const FatMacho64File *ff, const char *name, Arch arch);
+uint64_t fatMacho64GetAddrSymByName(const FatMacho64File *ff, const char *name);
 
-uint64_t fatMacho64GetSSymSize(const FatMacho64File *ff, const Macho64Sym *ms, Arch arch);
+uint64_t fatMacho64GetSSymSize(const FatMacho64File *ff, const Macho64Sym *ms);
 
-uint64_t fatMacho64GetSSymFileoff(const FatMacho64File *ff, const Macho64Sym *sym, Arch arch);
+uint64_t fatMacho64GetSSymFileoff(const FatMacho64File *ff, const Macho64Sym *sym);
 
-uint64_t fatMacho64GetAmountSeg(const FatMacho64File *ff, Arch arch);
+uint64_t fatMacho64GetAmountSeg(const FatMacho64File *ff);
 
-Macho64Sect *fatMacho64GetSectByName(const FatMacho64File *ff, const char *name, Arch arch);
+Macho64Sect *fatMacho64GetSectByName(const FatMacho64File *ff, const char *name);
 
-Macho64Sect *fatMacho64GetLastLoadableSect(const FatMacho64File *ff, Arch arch);
+Macho64Sect *fatMacho64GetLastLoadableSect(const FatMacho64File *ff);
 
-void *fatMacho64ReadSect(const FatMacho64File *ff, const Macho64Sect *sect, Arch arch);
+void *fatMacho64ReadSect(const FatMacho64File *ff, const Macho64Sect *sect);
 
-uint64_t fatMacho64GetAmountSect(const FatMacho64File *ff, Arch arch);
+uint64_t fatMacho64GetAmountSect(const FatMacho64File *ff);
 
-const char* fatMacho64GetSectName(const FatMacho64File *ff, const Macho64Sect *sect, Arch arch);
+const char* fatMacho64GetSectName(const FatMacho64File *ff, const Macho64Sect *sect);
 
 static INLINE
 uint64_t fatMacho64GetSectSize(const Macho64Sect *sect)

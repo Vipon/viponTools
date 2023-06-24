@@ -61,10 +61,10 @@ typedef struct load_command LoadCommand;
  *  {
  *      uint_32 cmd;        // LC_SYMTAB
  *      uint_32 cmdsize;    // sizeof(struct symtab_command)
- *      uint_32 symoff;     // Offset from the start of the file to the
+ *      uint_32 symoff;     // Offset from the start of the image to the
  *                          // location of the symbol table.
  *      uint_32 nsyms;      // Number of entries in the symbol table.
- *      uint_32 stroff;     // Offset from the start of the file to the
+ *      uint_32 stroff;     // Offset from the start of the image to the
  *                          // location of the string table.
  *      uint_32 strsize;    // The size (in bytes) of the string table.
  *  };
@@ -93,7 +93,7 @@ typedef struct symtab_command SymtabCommand;
  *      uint32_t nmodtab;
  *      uint32_t extrefsymoff;
  *      uint32_t nextrefsyms;
- *      uint32_t indirectsymoff;// Offset to the indirect symbol table
+ *      uint32_t indirectsymoff;// Image Offset to the indirect symbol table
  *      uint32_t nindirectsyms; // Number of indirect symbol table entries
  *      uint32_t extreloff;
  *      uint32_t nextrel;
