@@ -33,6 +33,8 @@
 #include "elf32Parse.h"
 #include "macho64Parse.h"
 #include "macho64DynMod.h"
+#include "fatMacho64Parse.h"
+#include "fatMacho64DynMod.h"
 
 BinParser binParser;
 
@@ -78,6 +80,9 @@ int initBinParser(const char *fn)
     } else if ((bin = macho64Parse(fn)) != NULL) {
         binParser.type = MACHO64;
         INIT_BIN_PARSER_FUNCS(macho64);
+    } else if ((bin = fatMacho64Parse(fn)) != NULL) {
+        binParser.type = FATMACHO64;
+        INIT_BIN_PARSER_FUNCS(fatMacho64);
 #ifdef __WIN__
     } else if ((bin = pe64Parse(fn)) != NULL) {
         binParser.type = PE64;

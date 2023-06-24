@@ -29,6 +29,15 @@ add_vipon_library(
   INSTALL ON
 )
 
+add_vipon_library(
+  NAME fatMacho64Parse
+  TYPE SHARED
+  HEADERS fatMacho64Parse.h
+  SOURCES fatMacho64Parse.c
+  LINK_LIBS macho64Parse file mem string
+  INSTALL ON
+)
+
 # Dynamic modification library must be static
 add_vipon_library(
   NAME macho64DynMod
@@ -39,3 +48,12 @@ add_vipon_library(
   INSTALL ON
 )
 
+# Dynamic modification library must be static
+add_vipon_library(
+  NAME fatMacho64DynMod
+  TYPE STATIC
+  HEADERS fatMacho64DynMod.h
+  SOURCES fatMacho64DynMod.c
+  LINK_LIBS file mem string
+  INSTALL ON
+)

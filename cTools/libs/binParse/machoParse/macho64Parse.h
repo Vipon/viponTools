@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 #ifndef __MACHO64_PARSE_H
 #define __MACHO64_PARSE_H
 
+#include "arch.h"
 #include "file.h"
 #include "macho64.h"
 
@@ -91,7 +92,9 @@ typedef enum {  PAGEZERO_NSEG = 0,
 typedef struct Macho64File {
     char              *fn;
     FileD             fd;
+    uint64_t          hOff; // file offset to mach-o header
     uint32_t          type;
+    Arch              arch;
     Macho64Header     *header;
     uint8_t           *lcom;
     SymtabCommand     *symtabCmd;
@@ -141,7 +144,7 @@ typedef enum {
     MACHO64_NO_SYMTAB_CMD,
     MACHO64_NO_LOAD_COMMAND,
     MACHO64_NO_HEADER,
-    MACHO64_FAT_BIN,
+    MACHO64_NO_FAT_HEADER,
     MACHO64_NO_MEM,
     MACHO64_INV_ARG,
     MACHO64_OK = 0
@@ -168,19 +171,37 @@ static_assert(((int64_t)MACHO64_INV_ARG) < 0, "ERRORS must be negative");
  *  Need to call macho64Free
  */
 Macho64File *macho64Parse(const char *fn);
+/***
+ * !TODO: rework, currently should be internal use only, but also need for
+ * fatMacho64Parse
+ */
+MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off);
 
 /***
  * Before:
  *  You must completed all jobs with this Macho64File, otherwise you will free
  *  all information about this file including sections, symbols etc
  * Description:
- *  Free memory from Macho64File structure @mf
+ *  Free memory of Macho64File structure @mf
  * Input:
  *  @mf - point to Macho64File structer, that is necessary to free
  * After:
  *  @mf should be assigned to = NULL
  */
 void macho64Free(Macho64File *mf);
+
+/***
+ * Before:
+ *  You must completed all jobs with this Macho64File, otherwise you will free
+ *  all information about this file including sections, symbols etc
+ * Description:
+ *  Clean all internal structure of @mf, but pointer will be valid.
+ * Input:
+ *  @mf - point to Macho64File structure should be cleaned
+ * After:
+ *  @mf should be freed after
+ */
+void macho64Clean(Macho64File *mf);
 
 /***
  * Description:
@@ -196,19 +217,6 @@ void macho64Free(Macho64File *mf);
  *      MACHO64_NO_SYM_NAME_TAB, MACHO64_NO_INDIRECT_SYM_TAB, MACHO64_NO_SEGMENTS
  */
 MACHO64_ERROR macho64Check(const Macho64File *mf);
-
-/***
- * Description:
- *  Function prints all symbols in @mf with information
- * Input:
- *  @mf - point to target Macho64File
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG
- */
-
 
 /***
  * Description:
@@ -361,7 +369,7 @@ uint64_t macho64GetAmountSSym(const Macho64File *mf);
 uint64_t macho64GetSSymAddr(const Macho64Sym *ms);
 
 // TODO
-uint64_t macho64GetAddrSymByName(const Macho64File *elf64, const char *name);
+uint64_t macho64GetAddrSymByName(const Macho64File *mf, const char *name);
 
 /***
  * Description:
@@ -696,6 +704,5 @@ uint64_t macho64GetImportSymbolPosInSectByIndx( const Macho64File *mf
                                               , const Macho64Sect *importSect
                                               , uint64_t indx
                                               );
-
 #endif /* __MACHO64_PARSE_H */
 
