@@ -24,13 +24,14 @@ if (WIN32)
     add_subdirectory(pePrinter)
 endif (WIN32)
 add_subdirectory(machoPrinter)
+add_subdirectory(fatMachoPrinter)
 
 add_vipon_library(
   NAME binPrinter
   TYPE SHARED
   HEADERS binPrinter.h
   SOURCES binPrinter.c
-  LINK_LIBS binParse macho64Printer
+  LINK_LIBS binParse macho64Printer fatMacho64Printer
   INSTALL ON
 )
 

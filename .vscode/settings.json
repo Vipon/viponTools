@@ -98,7 +98,8 @@
         "__node_handle": "c",
         "macho64dynmod.h": "c",
         "fatmacho64parse.h": "c",
-        "macho64parse.h": "c"
+        "macho64parse.h": "c",
+        "locale": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

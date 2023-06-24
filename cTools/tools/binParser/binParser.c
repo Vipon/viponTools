@@ -39,6 +39,7 @@ typedef enum {
     SEGMENTS,
     SECTIONS,
     SYMBOLS,
+    FAT_HEADER,
     FUNC_STARTS,
     LCOMS,
     NUM_FLAGS
@@ -72,6 +73,13 @@ void printSegments(const char *arg)
 {
     UNUSED(arg);
     flags[SEGMENTS] = true;
+}
+
+static
+void printFatHeader(const char *arg)
+{
+    UNUSED(arg);
+    flags[FAT_HEADER] = true;
 }
 
 static
@@ -126,8 +134,13 @@ int main(int argc, char *argv[])
                         , .flags = OPTION_ARG_OPTIONAL
                         , .doc = "print all symbols"
     );
+    ADD_ARG(printFatHeader, .name = "fat-header"
+                          , .key = 149
+                          , .flags = OPTION_ARG_OPTIONAL
+                          , .doc = "macho: print fat header information"
+    );
     ADD_ARG(printFuncStarts, .name = "func-starts"
-                           , .key = 'f'
+                           , .key = 151
                            , .flags = OPTION_ARG_OPTIONAL
                            , .doc = "macho: print information about func starts"
     );
@@ -149,6 +162,10 @@ int main(int argc, char *argv[])
     }
     if (flags[SYMBOLS]) {
         binPrinter.printSymbols(binParser.bin);
+    }
+    if (flags[FAT_HEADER]) {
+        LOG("call print header 1");
+        binPrinter.fatMacho.printFatHeader(binParser.bin);
     }
     if (flags[FUNC_STARTS]) {
         binPrinter.macho.printFuncStarts(binParser.bin);

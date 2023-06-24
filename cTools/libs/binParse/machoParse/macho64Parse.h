@@ -92,6 +92,7 @@ typedef enum {  PAGEZERO_NSEG = 0,
 typedef struct Macho64File {
     char              *fn;
     FileD             fd;
+    uint32_t          hOff; // file offset to mach-o header
     uint32_t          type;
     Arch              arch;
     Macho64Header     *header;
@@ -181,13 +182,26 @@ MACHO64_ERROR _macho64Parse(Macho64File *mf, size_t off);
  *  You must completed all jobs with this Macho64File, otherwise you will free
  *  all information about this file including sections, symbols etc
  * Description:
- *  Free memory from Macho64File structure @mf
+ *  Free memory of Macho64File structure @mf
  * Input:
  *  @mf - point to Macho64File structer, that is necessary to free
  * After:
  *  @mf should be assigned to = NULL
  */
 void macho64Free(Macho64File *mf);
+
+/***
+ * Before:
+ *  You must completed all jobs with this Macho64File, otherwise you will free
+ *  all information about this file including sections, symbols etc
+ * Description:
+ *  Clean all internal structure of @mf, but pointer will be valid.
+ * Input:
+ *  @mf - point to Macho64File structure should be cleaned
+ * After:
+ *  @mf should be freed after
+ */
+void macho64Clean(Macho64File *mf);
 
 /***
  * Description:
