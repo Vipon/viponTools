@@ -407,7 +407,7 @@ MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
     return MACHO64_OK;
 }
 
-MACHO64_ERROR _macho64Parse(Macho64File *mf, size_t off)
+MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off)
 {
     if (mf == NULL)
         return MACHO64_INV_ARG;

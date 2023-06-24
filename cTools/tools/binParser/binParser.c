@@ -22,12 +22,16 @@
  * SOFTWARE.
  */
 
+#include "arch.h"
 #include "args.h"
 #include "comdef.h"
+#include "string.h"
 #include "binPrinter.h"
 
 #include <stdlib.h>
 #include <stdbool.h>
+
+static Arch binParserArch = ARCH;
 
 static const char doc[] =
     "Binary parser. Support binare format: mach-o (64 bit), elf (32,64 bit), pe (64 bit)";
@@ -97,6 +101,27 @@ void printLComs(const char *arg)
 }
 
 static
+Arch getArchByName(const char* arch)
+{
+    if (strcmp(arch, "x86") == 0)
+        return X86;
+    if (strcmp(arch, "x86_64") == 0)
+        return X86_64;
+    if (strcmp(arch, "arm") == 0)
+        return ARM;
+    if (strcmp(arch, "aarch64") == 0)
+        return AARCH64;
+
+    return UNKNOWN_ARCH;
+}
+
+static
+void setArch(const char *arg)
+{
+    binParserArch = getArchByName(arg);
+}
+
+static
 void initParser(const char* fn, unsigned num)
 {
     UNUSED(num);
@@ -135,12 +160,12 @@ int main(int argc, char *argv[])
                         , .doc = "print all symbols"
     );
     ADD_ARG(printFatHeader, .name = "fat-header"
-                          , .key = 149
+                          , .key = 151
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "macho: print fat header information"
     );
     ADD_ARG(printFuncStarts, .name = "func-starts"
-                           , .key = 151
+                           , .key = 152
                            , .flags = OPTION_ARG_OPTIONAL
                            , .doc = "macho: print information about func starts"
     );
@@ -149,8 +174,15 @@ int main(int argc, char *argv[])
                       , .flags = OPTION_ARG_OPTIONAL
                       , .doc = "macho: print load commands"
     );
+    ADD_ARG(setArch, .name = "mcpu"
+                   , .key = 'm'
+                   , .arg = "CPU_TYPE"
+                   , .flags = OPTION_ARG_OPTIONAL
+                   , .doc = "set up cpu type for parser"
+    );
 
     ARG_PARSE(argc, argv);
+    setupBinPrinterArch(binParserArch);
 
     if (flags[HEADER])
         binPrinter.printHeader(binParser.bin);
@@ -164,7 +196,6 @@ int main(int argc, char *argv[])
         binPrinter.printSymbols(binParser.bin);
     }
     if (flags[FAT_HEADER]) {
-        LOG("call print header 1");
         binPrinter.fatMacho.printFatHeader(binParser.bin);
     }
     if (flags[FUNC_STARTS]) {

@@ -82,6 +82,17 @@ int initBinPrinter(const char *fn)
     return 0;
 }
 
+void setupBinPrinterArch(Arch arch)
+{
+    switch(binParser.type) {
+    case FATMACHO64:
+        fatMacho64ParseArch = arch;
+        return;
+    default:
+        return;
+    }
+}
+
 void finiBinPrinter(void)
 {
     finiBinParser();
