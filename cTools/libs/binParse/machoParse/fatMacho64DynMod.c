@@ -22,41 +22,20 @@
  * SOFTWARE.
  */
 
-#include "mem.h"
-#include "LEB128.h"
-#include "macho64Printer.h"
+#include "arch.h"
+#include "fatMacho64Parse.h"
+#include "macho64DynMod.h"
+#include "fatMacho64DynMod.h"
 
-#include <inttypes.h>
-
-void macho64PrintFuncStarts(const Macho64File *mf)
+void *fatMacho64Hook(const FatMacho64File *ff, const char *func, const void *hand)
 {
-    /***
-     * LC_FUNCTION_STARTS:
-     *  The first value is the offset from the start of the __TEXT segment
-     *  to the start of the first function. The remaining values is the offset
-     *  to the start of the next function.
-     *
-     *  Offsets are writeen in ULEB128 format.
-     */
-    printf("Function starts:\n");
-    FileD fd = mf->fd;
-    size_t foff = mf->hOff + mf->funcStarts->dataoff;
-    size_t fsize = mf->funcStarts->datasize;
-    uint8_t *fs = readFromFile(fd, &foff, fsize);
+    if (ff == NULL)
+        return NULL;
 
-    uint64_t baseAddr = mf->segments[TEXT_NSEG]->vmaddr;
-    uint8_t *p = fs;
-    printf("%18s %18s %s\n", "offset", "vaddr", "func");
-    while (p < fs + fsize) {
-        uint64_t off = 0;
-        p = fromULEB128(p, &off);
-        baseAddr += off;
+    const Macho64File *mf = fatMacho64GetConstMacho64ByArch(ff, ARCH);
+    if (mf == NULL)
+        return NULL;
 
-        const Macho64Sym *sym = macho64GetSSymByAddr(mf, baseAddr);
-        const char *sname = macho64GetSymName(mf, sym);
-        printf("0x%.16"PRIx64" 0x%.16"PRIx64" %s\n", off, baseAddr, sname);
-    }
-
-    Free(fs);
+    return macho64Hook(mf, func, hand);
 }
 

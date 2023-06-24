@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set(COMDEF_HEADERS comdef.h)
-set(COMDEF_SOURCES comdef.c)
-
-add_library(comdef SHARED
-  ${COMDEF_SOURCES}
-  ${COMDEF_HEADERS}
+set(FAT_MACHO64_PRINTER_SOURCES
+    fatMacho64Printer.c
 )
 
-install(
-  TARGETS comdef
-  DESTINATION ${INSTALL_LIB_DIR}
-)
-
-installHeaders("${COMDEF_HEADERS}")
-
-target_include_directories(comdef INTERFACE
-  ${CMAKE_CURRENT_LIST_DIR}
+add_vipon_library(
+  NAME fatMacho64Printer
+  TYPE SHARED
+  HEADERS fatMacho64Printer.h
+  SOURCES "${FAT_MACHO64_PRINTER_SOURCES}"
+  INSTALL ON
+  LINK_LIBS file LEB128 fatMacho64Parse macho64Printer
 )
 

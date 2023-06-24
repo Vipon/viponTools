@@ -23,6 +23,7 @@
  */
 
 #include "os.h"
+#include "arch.h"
 #include "binParse.h"
 
 typedef void (*BinPrintHeader)(const BinFilePtr bin);
@@ -31,6 +32,7 @@ typedef void (*BinPrintSections)(const BinFilePtr bin);
 typedef void (*BinPrintSegments)(const BinFilePtr bin);
 typedef void (*BinPrintFuncStarts)(const BinFilePtr bin);
 typedef void (*BinPrintLComs)(const BinFilePtr bin);
+typedef void (*BinPrintFatHeader)(const BinFilePtr bin);
 
 typedef struct {
     BinPrintHeader printHeader;
@@ -41,10 +43,14 @@ typedef struct {
         BinPrintFuncStarts printFuncStarts;
         BinPrintLComs printLComs;
     } macho;
+    struct {
+        BinPrintFatHeader printFatHeader;
+    } fatMacho;
 } BinPrinter;
 
 extern BinPrinter binPrinter;
 
 EXPORT_FUNC(int initBinPrinter(const char *fn));
+EXPORT_FUNC(void setupBinPrinterArch(Arch arch));
 EXPORT_FUNC(void finiBinPrinter(void));
 

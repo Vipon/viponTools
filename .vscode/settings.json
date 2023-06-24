@@ -95,7 +95,21 @@
         "filesystem": "c",
         "variant": "c",
         "binprinter.h": "c",
-        "__node_handle": "c"
+        "__node_handle": "c",
+        "macho64dynmod.h": "c",
+        "fatmacho64parse.h": "c",
+        "macho64parse.h": "c",
+        "locale": "c",
+        "fatmacho64printer.h": "c"
     },
-    "C_Cpp.errorSquiggles": "enabled"
+    "C_Cpp.errorSquiggles": "enabled",
+
+    // The number of spaces a tab is equal to.
+    "editor.tabSize": 4,
+
+    // Insert spaces when pressing Tab.
+    "editor.insertSpaces": true,
+
+    // When opening a file, `editor.tabSize` and `editor.insertSpaces` will be detected based on the file contents.
+    "editor.detectIndentation": false
 }
