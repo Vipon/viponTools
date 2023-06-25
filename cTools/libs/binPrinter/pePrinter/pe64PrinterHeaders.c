@@ -187,7 +187,7 @@ static void pe64PrintTimeStamp(const FileHeader *fileHeader)
     if (fileHeader == NULL)
         return;
 
-    time_t time = fileHeader->TimeDateStamp;
+    time_t time = (time_t)fileHeader->TimeDateStamp;
     printf("%s", asctime(localtime(&time)));
 }
 
@@ -362,7 +362,7 @@ static void pe64PrintImageBase(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.16llx", optHeader->ImageBase);
+    printf("%.16"PRIx64, (uint64_t)optHeader->ImageBase);
 }
 
 static void pe64PrintSectionAlignment(const OptHeader64 *optHeader)
@@ -532,7 +532,7 @@ static void pe64PrintStackSizeReserve(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.16llx", optHeader->SizeOfStackReserve);
+    printf("%.16"PRIx64, (uint64_t)optHeader->SizeOfStackReserve);
 }
 
 static void pe64PrintStackSizeCommit(const OptHeader64 *optHeader)
@@ -540,7 +540,7 @@ static void pe64PrintStackSizeCommit(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.16llx", optHeader->SizeOfStackCommit);
+    printf("%.16"PRIx64, (uint64_t)optHeader->SizeOfStackCommit);
 }
 
 static void pe64PrintHeapSizeReserve(const OptHeader64 *optHeader)
@@ -548,7 +548,7 @@ static void pe64PrintHeapSizeReserve(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.16llx", optHeader->SizeOfHeapReserve);
+    printf("%.16"PRIx64, (uint64_t)optHeader->SizeOfHeapReserve);
 }
 
 static void pe64PrintHeapSizeCommit(const OptHeader64 *optHeader)
@@ -556,7 +556,7 @@ static void pe64PrintHeapSizeCommit(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.16llx", optHeader->SizeOfHeapCommit);
+    printf("%.16"PRIx64, (uint64_t)optHeader->SizeOfHeapCommit);
 }
 
 static void pe64PrintLoaderFlags(const OptHeader64 *optHeader)

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,21 @@
  * SOFTWARE.
  */
 
-#ifndef _FOO_H
-#define _FOO_H
+#ifndef __BIN_DYN_MOD_H
+#define __BIN_DYN_MOD_H
 
-char *foo(void);
+#include "arch.h"
+#include "binParse.h"
 
-#endif /* _FOO_H */
+typedef void* (*BinHook)(const BinFilePtr, const char*, const void*);
+
+typedef struct {
+    BinHook hook;
+} BinDynMod;
+
+extern BinDynMod binDynMod;
+
+EXPORT_FUNC(int initBinDynMod(BIN_FILE_TYPE type));
+
+#endif /* __BIN_DYN_MOD_H */
 
