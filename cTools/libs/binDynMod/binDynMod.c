@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,43 +23,52 @@
  */
 
 #include "os.h"
-#include "foo.h"
-#include "bar.h"
-#include "test.h"
 #include "binParse.h"
-#include "macho64Parse.h"
+#include "binDynMod.h"
 #ifdef __WIN__
-    #include "pe64Printer.h"
+# include "pe64DynMod.h"
 #endif /* __WIN__ */
-#include "comdef.h"
+#ifdef __LINUX__
+# include "elf32DynMod.h"
+# include "elf64DynMod.h"
+#endif /* __LINUX__ */
+#ifdef __MAC_OS_X__
+# include "macho64DynMod.h"
+# include "fatMacho64DynMod.h"
+#endif /* __MAC_OS_X__ */
 
-static void hookFooWithBar(char *argv0)
+BinDynMod binDynMod = {};
+
+#define INIT_BIN_DYN_MOD(type)               \
+    binDynMod.hook = (BinHook)&type ## Hook;
+
+int initBinDynMod(BIN_FILE_TYPE type)
 {
-    initBinParser(argv0);
-
-    if (binParser.type == MACHO64)
-        binHook(MACHO64_SYM_PREF "foo", (const void *)bar);
-    else
-        binHook("foo", (const void *)bar);
-
-    finiBinParser();
-}
-
-int main(int argc, char *argv[])
-{
-    UNUSED(argc);
-
-    VERBOSE = 0;
-
-    foo();
-    bar();
-    hookFooWithBar(argv[0]);
-
-    char *str1 = foo();
-    char *str2 = bar();
-    LOG("str1: %s", str1);
-    LOG("str2: %s", str2);
-    EXPECT_STR_EQ(str1, str2);
+    switch(type) {
+#ifdef __MAC_OS_X__
+    case MACHO64:
+        INIT_BIN_DYN_MOD(macho64);
+        break;
+    case FATMACHO64:
+        INIT_BIN_DYN_MOD(fatMacho64);
+        break;
+#endif /* __MAC_OS_X__ */
+#ifdef __LINUX__
+    case ELF64:
+        INIT_BIN_DYN_MOD(elf64);
+        break;
+    case ELF32:
+        INIT_BIN_DYN_MOD(elf32);
+        break;
+#endif /* __LINUX__ */
+#ifdef __WIN__
+    case PE64:
+        INIT_BIN_DYN_MOD(pe64);
+        break;
+#endif /* __WIN__ */
+    default:
+        return -1;
+    }
 
     return 0;
 }

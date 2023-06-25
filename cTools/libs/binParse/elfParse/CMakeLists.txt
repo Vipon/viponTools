@@ -22,7 +22,7 @@
 
 add_vipon_library(
   NAME elf64Parse
-  TYPE STATIC
+  TYPE SHARED
   HEADERS elf64Parse.h
   SOURCES elf64Parse.c
   LINK_LIBS file mem string
@@ -31,14 +31,10 @@ add_vipon_library(
 
 add_vipon_library(
   NAME elf32Parse
-  TYPE STATIC
+  TYPE SHARED
   HEADERS elf32Parse.h
   SOURCES elf32Parse.c
   LINK_LIBS file mem string
   INSTALL ON
 )
-
-if (NOT WIN32 AND NOT APPLE)
-  add_subdirectory(tests)
-endif ()
 

@@ -25,26 +25,18 @@
 #include "os.h"
 #include "comdef.h"
 #include "binParse.h"
-#ifdef __WIN__
-    #include "pe64Parse.h"
-    #include "pe64Printer.h"
-#endif /* __WIN__ */
+#include "pe64Parse.h"
 #include "elf64Parse.h"
 #include "elf32Parse.h"
 #include "macho64Parse.h"
-#include "macho64DynMod.h"
 #include "fatMacho64Parse.h"
-#include "fatMacho64DynMod.h"
 
 BinParser binParser;
 
 #define INIT_BIN_PARSER_FUNCS(type) \
     binParser.parse = (BinParse)&type ## Parse; \
     binParser.free = (BinFree)&type ## Free; \
-    binParser.hook = (BinHook)&type ## Hook; \
     binParser.check = (BinFullCheck) &type ## Check; \
-    /* binParser.printSymbol = (BinPrintSymbol) &type ## PrintSymbol; */ \
-    /* binParser.printSymbols = (BinPrintSymbols) &type ## PrintSymbols; */ \
     binParser.getSymByName = (BinGetSymByName) &type ## GetSymByName; \
     binParser.getSymName = (BinGetSymName) &type ## GetSymName; \
     binParser.cmpSym = (BinCmpSym) &type ## CmpSym; \
@@ -83,13 +75,11 @@ int initBinParser(const char *fn)
     } else if ((bin = fatMacho64Parse(fn)) != NULL) {
         binParser.type = FATMACHO64;
         INIT_BIN_PARSER_FUNCS(fatMacho64);
-#ifdef __WIN__
     } else if ((bin = pe64Parse(fn)) != NULL) {
         binParser.type = PE64;
         INIT_BIN_PARSER_FUNCS(pe64);
-#endif /* __WIN__ */
     } else {
-        //ERROR("Unknown FileType\n");
+        LOG_ERROR("Unknown FileType\n");
         return -1;
     }
 
@@ -97,15 +87,8 @@ int initBinParser(const char *fn)
     return 0;
 }
 
-
 void finiBinParser()
 {
     binParser.free(binParser.bin);
-}
-
-
-void *binHook(const char *func, const void *hand)
-{
-    return binParser.hook(binParser.bin, func, hand);
 }
 

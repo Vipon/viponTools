@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,39 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+set(ELF64_DYN_MOD_SOURCES
+  elf64DynMod.c
+)
+
+set(ELF64_DYN_MOD_HEADERS
+  elf64DynMod.h
+)
+
+# Dynamic modification library must be static
 add_vipon_library(
-  NAME macho64Parse
-  TYPE SHARED
-  HEADERS macho64Parse.h macho.h macho64.h
-  SOURCES macho64Parse.c
-  LINK_LIBS file mem string
+  NAME elf64DynMod
+  TYPE STATIC
+  HEADERS ${ELF64_DYN_MOD_HEADERS}
+  SOURCES ${ELF64_DYN_MOD_SOURCES}
+  LINK_LIBS file mem string elf64Parse
   INSTALL ON
 )
 
+set(ELF32_DYN_MOD_SOURCES
+  elf32DynMod.c
+)
+
+set(ELF32_DYN_MOD_HEADERS
+  elf32DynMod.h
+)
+
+# Dynamic modification library must be static
 add_vipon_library(
-  NAME fatMacho64Parse
-  TYPE SHARED
-  HEADERS fatMacho64Parse.h
-  SOURCES fatMacho64Parse.c
-  LINK_LIBS macho64Parse file mem string
+  NAME elf32DynMod
+  TYPE STATIC
+  HEADERS ${ELF32_DYN_MOD_HEADERS}
+  SOURCES ${ELF32_DYN_MOD_SOURCES}
+  LINK_LIBS file mem string elf32Parse
   INSTALL ON
 )
 

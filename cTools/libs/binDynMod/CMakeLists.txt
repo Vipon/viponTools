@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_library(BINFOO SHARED
-  foo.c
+set(BIN_DYN_MOD_SOURCES binDynMod.c)
+set(BIN_DYN_MOD_HEADERS binDynMod.h)
+set(BIN_DYN_MOD_LIB_LIST binParse)
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+  add_subdirectory(peDynMod)
+  list(APPEND BIN_DYN_MOD_LIB_LIST pe64DynMod)
+endif ()
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+  add_subdirectory(elfDynMod)
+  list(APPEND BIN_DYN_MOD_LIB_LIST elf64DynMod elf32DynMod)
+endif ()
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+  add_subdirectory(machoDynMod)
+  list(APPEND BIN_DYN_MOD_LIB_LIST macho64DynMod fatMacho64DynMod)
+endif ()
+
+add_vipon_library(
+  NAME binDynMod
+  TYPE STATIC
+  HEADERS ${BIN_DYN_MOD_HEADERS}
+  SOURCES ${BIN_DYN_MOD_SOURCES}
+  LINK_LIBS ${BIN_DYN_MOD_LIB_LIST}
+  INSTALL ON
 )
 
-add_library(BINBAR SHARED
-  bar.c
-)
-
-add_vipon_test(
-  NAME binParseTest
-  SOURCES binParseTest.c
-  LINK_LIBS binParse BINFOO BINBAR
-)
+add_subdirectory(test)
 

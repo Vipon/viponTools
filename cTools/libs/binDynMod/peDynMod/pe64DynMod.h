@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-#include "foo.h"
+#ifndef __PE_64_DYN_MOD_H
+#define __PE_64_DYN_MOD_H
 
-static char FOO[] = "foo";
+#include "pe64Parse.h"
 
-char *foo(void)
-{
-    return FOO;
-}
+void *pe64Hook(const PE64File *pe, const char *func, const void *hand);
+
+#endif /* __PE_64_DYN_MOD_H */
 

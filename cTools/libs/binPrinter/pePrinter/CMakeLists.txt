@@ -34,12 +34,14 @@ set(PE64_PRINTER_HEADERS
 
 add_vipon_library(
   NAME pe64Printer
-  TYPE STATIC
+  TYPE SHARED
   SOURCES ${PE64_PRINTER_SOURSES}
   HEADERS ${PE64_PRINTER_HEADERS}
   LINK_LIBS pe64Parse
   INSTALL ON
 )
 
-add_subdirectory(test)
+if (WIN32)
+  add_subdirectory(test)
+endif (WIN32)
 

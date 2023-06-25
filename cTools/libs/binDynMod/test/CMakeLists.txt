@@ -20,21 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_vipon_library(
-  NAME macho64Parse
-  TYPE SHARED
-  HEADERS macho64Parse.h macho.h macho64.h
-  SOURCES macho64Parse.c
-  LINK_LIBS file mem string
-  INSTALL ON
+add_library(BINFOO SHARED
+  foo.c
 )
 
-add_vipon_library(
-  NAME fatMacho64Parse
-  TYPE SHARED
-  HEADERS fatMacho64Parse.h
-  SOURCES fatMacho64Parse.c
-  LINK_LIBS macho64Parse file mem string
-  INSTALL ON
+add_library(BINBAR SHARED
+  bar.c
+)
+
+add_vipon_test(
+  NAME binDynModTest
+  SOURCES binDynModTest.c
+  LINK_LIBS binDynMod BINFOO BINBAR
 )
 

@@ -564,22 +564,6 @@ uint64_t elf64GetRelocForAddr(const Elf64File *elf64, const Elf64Shdr *sect, uin
  *  If you need a file position, you should to save it.
  * Input:
  *  elf64 - Elf64File structer with initialized field fd.
- *  func - name of function, that is nedded to hooked.
- *  hand - address of handler function.
- * Output:
- *  Success:
- *      Old relocation addr.
- *  Fail:
- *      NULL point.
- */
-void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand);
-
-
-/***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  elf64 - Elf64File structer with initialized field fd.
  *  func - name of function, that is nedded.
  * Output:
  *  Success:

@@ -26,7 +26,7 @@ project(cTools
   VERSION 1.0
 )
 
-include_directories(AFTER include)
+include_directories(AFTER include include/Windows)
 add_subdirectory(libs)
 add_subdirectory(tools)
 

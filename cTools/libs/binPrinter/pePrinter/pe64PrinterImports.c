@@ -38,7 +38,7 @@ static void pe64PrintImportName(const PE64File *pe, const PEImport *import)
 
     FileD fd = pe->fd;
     uint64_t off = pe64AddrToFileOff(pe, import->Name);
-    char *name = readFromFile(fd, &off, 256);
+    char *name = readFromFile(fd, (size_t*)&off, 256);
     printf("%s", name);
     Free(name);
 }
@@ -85,11 +85,11 @@ void pe64PrintINT(const PE64File *pe, ThunkData64 *INT)
 
     if (IS_BIT_SET(AddressOfData, 63)) {
         // Import by number
-        printf("%.4llx", CLR_BIT(AddressOfData, 63));
+        printf("%.4"PRIx64, (uint64_t)CLR_BIT(AddressOfData, 63));
     } else {
         // Import by name
         uint64_t importByNameOff = pe64AddrToFileOff(pe, AddressOfData);
-        ImportByName *importByName = readFromFile(fd, &importByNameOff, 256);
+        ImportByName *importByName = readFromFile(fd, (size_t*)&importByNameOff, 256);
         printf("%.4hx %s", importByName->Hint, importByName->Name);
         Free(importByName);
     }
@@ -130,7 +130,7 @@ void pe64PrintImport(const PE64File *pe, const PEImport *import)
     FileD fd = pe->fd;
     uint64_t off = pe64AddrToFileOff(pe, import->OriginalFirstThunk);
     for(;;) {
-        ThunkData64 *INT = readFromFile(fd, &off, sizeof(ThunkData64));
+        ThunkData64 *INT = readFromFile(fd, (size_t*)&off, sizeof(ThunkData64));
         uint64_t AddressOfData = INT->u1.AddressOfData;
 
         if (AddressOfData) {

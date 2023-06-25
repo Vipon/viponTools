@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -348,7 +348,6 @@ static_assert(((int64_t)PE64_INV_ARG) < 0, "ERRORS must be negative");
 
 PE64File *pe64Parse(const char *fn);
 void pe64Free(PE64File *pe);
-void *pe64Hook(const PE64File *pe, const char *func, const void *hand);
 
 PE64_ERROR pe64Check(const PE64File *pe);
 
