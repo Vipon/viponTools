@@ -22,7 +22,7 @@
 
 add_vipon_library(
   NAME file
-  TYPE STATIC
+  TYPE SHARED
   HEADERS file.h
   SOURCES file.c
   LINK_LIBS mem

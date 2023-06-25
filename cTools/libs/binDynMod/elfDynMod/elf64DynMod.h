@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,20 @@
  * SOFTWARE.
  */
 
-#ifndef _BAR_H
-#define _BAR_H
+#include "elf64Parse.h"
 
-char *bar(void);
-
-#endif /* _BAR_H */
+/***
+ * Before:
+ *  If you need a file position, you should to save it.
+ * Input:
+ *  elf64 - Elf64File structer with initialized field fd.
+ *  func - name of function, that is nedded to hooked.
+ *  hand - address of handler function.
+ * Output:
+ *  Success:
+ *      Old relocation addr.
+ *  Fail:
+ *      NULL point.
+ */
+void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand);
 

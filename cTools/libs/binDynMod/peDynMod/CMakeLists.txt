@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_library(elfFoo SHARED
-  foo.c
+set(PE64_DYN_MOD_SOURCES
+  pe64DynMod.c
 )
 
-add_library(elfBar SHARED
-  bar.c
+set(PE64_DYN_MOD_HEADERS
+  pe64DynMod.h
 )
 
-add_vipon_test(
-  NAME elfParseTest
-  SOURCES elfParseTest.c
-  LINK_LIBS elf64Parse elfFoo elfBar
+# Dynamic modification library must be static
+add_vipon_library(
+  NAME pe64DynMod
+  TYPE STATIC
+  SOURCES ${PE64_DYN_MOD_SOURCES}
+  HEADERS ${PE64_DYN_MOD_HEADERS}
+  LINK_LIBS file mem string
+  INSTALL ON
 )
 

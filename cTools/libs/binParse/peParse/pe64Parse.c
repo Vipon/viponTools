@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,8 @@
 #include "stdlib.h"
 #include "pe64Parse.h"
 
+#include <inttypes.h>
+
 static PE64_ERROR pe64ParseDosHeader(PE64File *pe)
 {
     if (pe == NULL || IS_INV_FD(pe->fd))
@@ -38,7 +40,7 @@ static PE64_ERROR pe64ParseDosHeader(PE64File *pe)
     FileD fd = pe->fd;
     uint64_t off = 0;
     uint64_t hSize = sizeof(DosHeader);
-    DosHeader *header = (DosHeader*) readFromFile(fd, &off, hSize);
+    DosHeader *header = (DosHeader*) readFromFile(fd, (size_t*)&off, hSize);
     if (header == NULL)
         return PE64_NO_MEM;
 
@@ -78,7 +80,7 @@ static PE64_ERROR pe64ParseFileHeader(PE64File *pe)
     FileD fd = pe->fd;
     uint64_t off = 0;
     uint64_t size = sizeof(FileHeader);
-    FileHeader *fileHeader = (FileHeader*) readFromFile(fd, &off, size);
+    FileHeader *fileHeader = (FileHeader*) readFromFile(fd, (size_t*)&off, size);
     if (fileHeader == NULL)
         return PE64_NO_MEM;
 
@@ -94,7 +96,7 @@ static PE64_ERROR pe64ParseNTHeader(PE64File *pe)
     FileD fd = pe->fd;
     uint64_t off = (uint64_t)pe->dosHeader->e_lfanew;
     uint64_t hSize = sizeof(NTHeader64);
-    NTHeader64 *header = (NTHeader64*) readFromFile(fd, &off, hSize);
+    NTHeader64 *header = (NTHeader64*) readFromFile(fd, (size_t*)&off, hSize);
     if (header == NULL)
         return PE64_NO_MEM;
 
@@ -127,7 +129,7 @@ static PE64_ERROR pe64ParseSections(PE64File *pe)
     else
         return PE64_NO_SECTIONS;
 
-    PESection *sections = readFromFile(fd, &off, size);
+    PESection *sections = readFromFile(fd, (size_t*)&off, size);
     if (sections == NULL)
         return PE64_NO_SECTIONS;
 
@@ -151,7 +153,7 @@ static PE64_ERROR pe64ParseImport(PE64File *pe)
         return PE64_NO_IMPORTS;
 
     uint64_t off = pe64AddrToFileOff(pe, importAddr);
-    PEImport *import = readFromFile(fd, &off, size);
+    PEImport *import = readFromFile(fd, (size_t*)&off, size);
     if (import == NULL)
         return PE64_NO_MEM;
 
@@ -174,7 +176,7 @@ static PE64_ERROR pe64ParseDelayImport(PE64File *pe)
         return PE64_NO_DELIMP;
 
     uint64_t off = pe64AddrToFileOff(pe, delimpAddr);
-    PEDelimp *delimp = readFromFile(fd, &off, size);
+    PEDelimp *delimp = readFromFile(fd, (size_t*)&off, size);
     if (delimp == NULL)
         return PE64_NO_MEM;
 
@@ -197,7 +199,7 @@ static PE64_ERROR pe64ParseExport(PE64File *pe)
         return PE64_NO_EXPORTS;
 
     uint64_t off = pe64AddrToFileOff(pe, expAddr);
-    PEExport *exp= readFromFile(fd, &off, size);
+    PEExport *exp= readFromFile(fd, (size_t*)&off, size);
     if (exp == NULL)
         return PE64_NO_MEM;
 
@@ -224,7 +226,7 @@ static PE64_ERROR pe64ParseSymtab(PE64File *pe)
 
     uint64_t num = pe->fileHeader->NumberOfSymbols;
     uint64_t size = num * sizeof(PESymbol);
-    PESymbol *symtab = readFromFile(fd, &off, size);
+    PESymbol *symtab = readFromFile(fd, (size_t*)&off, size);
     if (symtab == NULL)
         return PE64_NO_SYMTAB;
 
@@ -274,11 +276,11 @@ static PE64_ERROR pe64ParseStrtab(PE64File *pe)
     uint64_t symOff = pe->fileHeader->PointerToSymbolTable;
     uint64_t symNum = pe->fileHeader->NumberOfSymbols;
     uint64_t strtabOff = symOff + symNum * sizeof(PESymbol);
-    uint32_t *strtabSize = readFromFile(fd, &strtabOff, sizeof(uint32_t));
+    uint32_t *strtabSize = readFromFile(fd, (size_t*)&strtabOff, sizeof(uint32_t));
     if (strtabSize == NULL)
         return PE64_NO_MEM;
 
-    char *strtab = readFromFile(fd, &strtabOff, *strtabSize);
+    char *strtab = readFromFile(fd, (size_t*)&strtabOff, *strtabSize);
     if (strtab == NULL)
         return PE64_NO_MEM;
 
@@ -335,7 +337,8 @@ static PE64_ERROR pe64ParseMaybeObj(PE64File *pe)
     }
 
     uint64_t off = sizeof (FileHeader);
-    char *firstSectName = readFromFile(peCopy.fd, &off, sizeof(TEXT_SECT_NAME) + 1);
+    char *firstSectName = readFromFile(peCopy.fd, (size_t*)&off,
+                                sizeof(TEXT_SECT_NAME) + 1);
     if (firstSectName == NULL)
         return PE64_NO_MEM;
 
@@ -353,7 +356,7 @@ static PE64_ERROR pe64ParseMaybeObj(PE64File *pe)
 PE64File *pe64Parse(const char *fn)
 {
     if (fn == NULL) {
-        ERROR("Invalid arguments");
+        LOG_ERROR("Invalid arguments");
         return NULL;
     }
 
@@ -365,14 +368,14 @@ PE64File *pe64Parse(const char *fn)
 
     PE64File *pe = (PE64File*) Calloc(1, sizeof(PE64File));
     if (pe == NULL) {
-        ERROR("Cannot allocate %zu bytes", sizeof(PE64File));
+        LOG_ERROR("Cannot allocate %zu bytes", sizeof(PE64File));
         goto eexit_0;
     }
 
     pe->fd = fd;
     uint64_t nameSize = strlen(fn) * sizeof(char);
     if ((pe->fn = (char*) Calloc(nameSize, sizeof(char))) == NULL) {
-        ERROR("Cannot allocate %zu bytes", nameSize);
+        LOG_ERROR("Cannot allocate %"PRIu64" bytes", nameSize);
         goto eexit_1;
     }
 
@@ -380,18 +383,18 @@ PE64File *pe64Parse(const char *fn)
 
     if (pe64ParseMaybeObj(pe)) {
         if (pe64ParseDosHeader(pe)) {
-            ERROR("Cannot parse dos header");
+            LOG_ERROR("Cannot parse dos header");
             goto eexit_1;
         }
 
         if (pe64ParseNTHeader(pe)) {
-            ERROR("Cannot parse nt header");
+            LOG_ERROR("Cannot parse nt header");
             goto eexit_1;
         }
     }
 
     if (pe64ParseSections(pe)) {
-        ERROR("Cannot parse sections");
+        LOG_ERROR("Cannot parse sections");
         goto eexit_1;
     }
 
@@ -403,17 +406,17 @@ PE64File *pe64Parse(const char *fn)
 
     if (pe64ParseSymtab(pe)) {
         if (IS_PE64_FILE_OBJ(pe)) {
-            ERROR("Cannot parse symbol table");
+            LOG_ERROR("Cannot parse symbol table");
             goto eexit_1;
         }
     } else if (pe64ParseSortSymTab(pe)) {
-        ERROR("Cannot parse sorted symbol table");
+        LOG_ERROR("Cannot parse sorted symbol table");
         goto eexit_1;
     }
 
     if (pe64ParseStrtab(pe)) {
         if (IS_PE64_FILE_OBJ(pe)) {
-            ERROR("Cannot parse string table");
+            LOG_ERROR("Cannot parse string table");
             goto eexit_1;
         }
     }
@@ -609,7 +612,7 @@ const char *pe64GetSectName(const PE64File *pe, const PESection *sect)
         else
             return pe64GetShortSectName(pe, sect);
     default:
-        ERROR("Unknown file type");
+        LOG_ERROR("Unknown file type");
         return NULL;
     }
 }
@@ -692,7 +695,7 @@ PESymbol *pe64GetSymByName(const PE64File *pe, const char *name)
             return sym;
     }
 
-    ERROR("There is no symbol %s.", name);
+    LOG_ERROR("There is no symbol %s.", name);
     return NULL;
 }
 
@@ -814,62 +817,5 @@ PE64_ERROR pe64Check(const PE64File *pe)
         return PE64_INV_ARG;
 
     return PE64_OK;
-}
-
-void *pe64Hook(const PE64File *pe, const char *func, const void *hand)
-{
-    if (pe == NULL || func == NULL || hand == NULL)
-        return NULL;
-
-    size_t base = 0;
-    if (pe->optHeader->DllCharacteristics & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE)
-        base = (size_t)GetModuleHandle(NULL);
-    else
-        base = pe->optHeader->ImageBase;
-
-    uint64_t i = 0;
-    uint64_t impNum = pe->importNum - 1; // Last entry is NULL padded
-    for (i = 0; i < impNum; ++i) {
-        PEImport *imp = pe->import + i;
-        ThunkData64 *IAT = (ThunkData64*)(base + imp->FirstThunk);
-        ThunkData64 *INT = (ThunkData64*)(base + imp->OriginalFirstThunk);
-
-        if (imp ->TimeDateStamp == (DWORD)-1) {
-            // Static bound
-            // !TODO: Add check in bound libs
-            break;
-        }
-
-        uint64_t j = 0;
-        for (;;++j) {
-            ImportByName *importByName = (ImportByName*)(base + INT[j].u1.AddressOfData);
-            if (INT[j].u1.AddressOfData == 0)
-                break;
-
-            if (IS_BIT_SET(INT[j].u1.AddressOfData, 63)) {
-                // Import by number
-                // !TODO: Add check symbol name in export table of libs
-                break;
-            }
-
-            char *name = importByName->Name;
-            if (strcmp(name, func) == 0) {
-                void *oldVal = (void*)IAT[j].u1.Function;
-
-                DWORD oldProtect = 0;
-                void *addr = (void*)alignToPageSize((size_t)(IAT + j));
-                size_t pageSize = (size_t)getPageSize();
-
-                VirtualProtect(addr, pageSize, PAGE_READWRITE, &oldProtect);
-                IAT[j].u1.Function = (size_t)hand;
-                VirtualProtect(addr, pageSize, oldProtect, &oldProtect);
-                return oldVal;
-            }
-        }
-    }
-
-    // !TODO: Add hook for delay imports
-
-    return NULL;
 }
 

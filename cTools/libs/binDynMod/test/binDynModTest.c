@@ -22,12 +22,55 @@
  * SOFTWARE.
  */
 
+#include "os.h"
+#include "foo.h"
 #include "bar.h"
+#include "arch.h"
+#include "test.h"
+#include "comdef.h"
+#include "binDynMod.h"
+#ifdef __WIN__
+# include "pe64DynMod.h"
+#endif /* __WIN__ */
+#ifdef __LINUX__
+# include "elf32DynMod.h"
+# include "elf64DynMod.h"
+#endif /* __LINUX__ */
+#ifdef __MAC_OS_X__
+# include "macho64DynMod.h"
+# include "fatMacho64DynMod.h"
+#endif /* __MAC_OS_X__ */
 
-static char BAR[] = "bar";
-
-char *bar(void)
+static void hookFooWithBar(char *argv0)
 {
-    return BAR;
+    initBinParser(argv0);
+    initBinDynMod(binParser.type);
+
+#ifdef __MAC_OS_X__
+    binDynMod.hook(binParser.bin, MACHO64_SYM_PREF "foo", (const void *)bar);
+#else
+    binDynMod.hook(binParser.bin, "foo", (const void *)bar);
+#endif
+
+    finiBinParser();
+}
+
+int main(int argc, char *argv[])
+{
+    UNUSED(argc);
+
+    VERBOSE = 0;
+
+    foo();
+    bar();
+    hookFooWithBar(argv[0]);
+
+    char *str1 = foo();
+    char *str2 = bar();
+    LOG("str1: %s", str1);
+    LOG("str2: %s", str2);
+    EXPECT_STR_EQ(str1, str2);
+
+    return 0;
 }
 

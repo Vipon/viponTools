@@ -100,12 +100,19 @@
         "fatmacho64parse.h": "c",
         "macho64parse.h": "c",
         "locale": "c",
-        "fatmacho64printer.h": "c"
+        "fatmacho64printer.h": "c",
+        "fatmacho64dynmod.h": "c",
+        "binparse.h": "c",
+        "elf32dynmod.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 
     // The number of spaces a tab is equal to.
     "editor.tabSize": 4,
+
+    "[cmake]": {
+        "editor.tabSize": 2
+    },
 
     // Insert spaces when pressing Tab.
     "editor.insertSpaces": true,

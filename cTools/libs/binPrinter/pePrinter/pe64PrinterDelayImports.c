@@ -44,7 +44,7 @@ static void pe64PrintDelayImportName(const PE64File *pe, const PEDelimp *delimp)
         off = pe64AddrToFileOff(pe, delimp->rvaDLLName - pe->optHeader->ImageBase);
     }
 
-    char *name = readFromFile(fd, &off, 256);
+    char *name = readFromFile(fd, (size_t*)&off, 256);
     printf("%s", name);
     Free(name);
 }
@@ -106,7 +106,7 @@ static void pe64PrintDelayImportTimeStamp(const PEDelimp *delimp)
         return;
 
     if (delimp->dwTimeStamp) {
-        time_t time = delimp->dwTimeStamp;
+        time_t time = (time_t)delimp->dwTimeStamp;
         printf("%s", asctime(localtime(&time)));
     } else
         printf("%u", 0);
@@ -151,7 +151,7 @@ void pe64PrintDelayImport(const PE64File *pe, const PEDelimp *delimp)
     FileD fd = pe->fd;
     uint64_t off = pe64AddrToFileOff(pe, delimp->rvaINT);
     for(;;) {
-        ThunkData64 *INT = readFromFile(fd, &off, sizeof(ThunkData64));
+        ThunkData64 *INT = readFromFile(fd, (size_t*)&off, sizeof(ThunkData64));
         uint64_t AddressOfData = INT->u1.AddressOfData;
 
         if (AddressOfData) {
