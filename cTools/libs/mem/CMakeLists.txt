@@ -22,7 +22,7 @@
 
 add_vipon_library(
   NAME mem
-  TYPE STATIC
+  TYPE SHARED
   HEADERS mem.h
   SOURCES mem.c
   INSTALL ON

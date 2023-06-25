@@ -46,10 +46,7 @@ typedef void* BinSectPtr;
 
 typedef BinFilePtr (*BinParse)(const char*);
 typedef void (*BinFree)(void*);
-typedef void* (*BinHook)(const BinFilePtr, const char*, const void*);
 typedef BIN_ERROR (*BinFullCheck)(const BinFilePtr);
-//typedef BIN_ERROR (*BinPrintSymbol)(const BinFilePtr, const BinSymPtr);
-//typedef BIN_ERROR (*BinPrintSymbols)(const BinFilePtr);
 typedef BinSymPtr (*BinGetSymByName)(const BinFilePtr, const char*);
 typedef char* (*BinGetSymName)(const BinFilePtr, const BinSymPtr);
 typedef int (*BinCmpSym)(const void*, const void*);
@@ -78,10 +75,7 @@ typedef struct {
     BinFilePtr             bin;
     BinParse               parse;
     BinFree                free;
-    BinHook                hook;
     BinFullCheck           check;
-    //BinPrintSymbol         printSymbol;
-    //BinPrintSymbols        printSymbols;
     BinGetSymByName        getSymByName;
     BinGetSymName          getSymName;
     BinCmpSym              cmpSym;

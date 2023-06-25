@@ -404,6 +404,7 @@ typedef struct _IMAGE_VXD_HEADER {
 #define	IMAGE_DIRECTORY_ENTRY_BASERELOC		5
 #define	IMAGE_DIRECTORY_ENTRY_DEBUG		6
 #define	IMAGE_DIRECTORY_ENTRY_COPYRIGHT		7
+#define IMAGE_DIRECTORY_ENTRY_ARCHITECTURE  7
 #define	IMAGE_DIRECTORY_ENTRY_GLOBALPTR		8   /* (MIPS GP) */
 #define	IMAGE_DIRECTORY_ENTRY_TLS		9
 #define	IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG	10
@@ -763,6 +764,7 @@ typedef IMAGE_AUX_SYMBOL *PIMAGE_AUX_SYMBOL;
 #define IMAGE_SYM_CLASS_FILE                0x0067
 #define IMAGE_SYM_CLASS_SECTION             0x0068
 #define IMAGE_SYM_CLASS_WEAK_EXTERNAL       0x0069
+#define IMAGE_SYM_CLASS_CLR_TOKEN           0x006b
 
 #define N_BTMASK                            0x000F
 #define N_TMASK                             0x0030
@@ -857,7 +859,7 @@ typedef struct _IMAGE_IMPORT_DESCRIPTOR {
 	union {
 		DWORD	Characteristics; /* 0 for terminating null import descriptor  */
 		DWORD	OriginalFirstThunk;	/* RVA to original unbound IAT */
-	} DUMMYUNIONNAME;
+	};
 	DWORD	TimeDateStamp;	/* 0 if not bound,
 				 * -1 if bound, and real date\time stamp
 				 *    in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT

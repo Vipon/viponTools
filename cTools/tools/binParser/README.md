@@ -7,8 +7,8 @@ The followed table shows support platforms and binary formats. macho files forma
 |       | MacOsX | Win | Linux |
 |-------|:------:|:---:|:-----:|
 |macho64|   X    |  X  |   X   |
-|elf64  |        |     |       |
-|PE64   |        |  X  |       |
+|elf64  |   X    |  X  |   X   |
+|PE64   |   X    |  X  |   X   |
 
 ## Command Line Arguments
 | Short Arg | Long Arg      | Description |

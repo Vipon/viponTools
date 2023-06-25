@@ -20,9 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if (WIN32)
-    add_subdirectory(pePrinter)
-endif (WIN32)
+add_subdirectory(pePrinter)
 add_subdirectory(machoPrinter)
 add_subdirectory(fatMachoPrinter)
 
@@ -31,7 +29,7 @@ add_vipon_library(
   TYPE SHARED
   HEADERS binPrinter.h
   SOURCES binPrinter.c
-  LINK_LIBS binParse macho64Printer fatMacho64Printer
+  LINK_LIBS binParse macho64Printer fatMacho64Printer pe64Printer
   INSTALL ON
 )
 

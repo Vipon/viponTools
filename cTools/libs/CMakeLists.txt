@@ -22,6 +22,7 @@
 
 add_subdirectory(binParse)
 add_subdirectory(binPrinter)
+add_subdirectory(binDynMod)
 add_subdirectory(comdef)
 add_subdirectory(containers)
 add_subdirectory(file)

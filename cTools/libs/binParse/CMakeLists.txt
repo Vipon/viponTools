@@ -20,22 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+add_subdirectory(peParse)
 add_subdirectory(elfParse)
 add_subdirectory(machoParse)
-set(BIN_PARSE_LIB_LIST elf64Parse elf32Parse macho64Parse macho64DynMod fatMacho64Parse fatMacho64DynMod)
-if (WIN32)
-    add_subdirectory(peParse)
-    append(BIN_PARSE_LIB_LIST pe64Parse pe64Printer)
-endif (WIN32)
+
+set(BIN_PARSE_LIB_LIST
+  pe64Parse
+  elf64Parse
+  elf32Parse
+  macho64Parse
+  fatMacho64Parse
+)
 
 add_vipon_library(
   NAME binParse
-  TYPE STATIC
+  TYPE SHARED
   HEADERS binParse.h
   SOURCES binParse.c
   LINK_LIBS ${BIN_PARSE_LIB_LIST}
   INSTALL ON
 )
-
-add_subdirectory(tests)
 

@@ -559,23 +559,6 @@ uint32_t elf32GetSectFileoff(const Elf32Shdr *sect);
  */
 uint32_t elf32GetRelocForAddr(const Elf32File *elf32, const Elf32Shdr *sect, uint32_t addr);
 
-
-/***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  elf32 - Elf32File structer with initialized field fd.
- *  func - name of function, that is nedded to hooked.
- *  hand - address of handler function.
- * Output:
- *  Success:
- *      Old relocation addr.
- *  Fail:
- *      NULL point.
- */
-void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand);
-
-
 /***
  * Before:
  *  If you need a file position, you should to save it.
