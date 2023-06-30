@@ -4,3 +4,4 @@ output/*
 *.tar.gz
 .cache/*
 .DS_Store
+external
