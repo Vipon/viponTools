@@ -30,6 +30,10 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/toolchain/cflags/cflags.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/common.cmake)
 include(CTest)
 
+if (NOT VIPON_TOOLS_LIB_TYPE)
+  set(VIPON_TOOLS_LIB_TYPE SHARED)
+endif (NOT VIPON_TOOLS_LIB_TYPE)
+
 if (NOT VIPON_TOOLS_EXTERNAL_DIR)
   set(VIPON_TOOLS_EXTERNAL_DIR "${CMAKE_CURRENT_LIST_DIR}/external")
   set(VIPON_TOOLS_EXTERNAL_LIB_DIR "${VIPON_TOOLS_EXTERNAL_DIR}/lib")
