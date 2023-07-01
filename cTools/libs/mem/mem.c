@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valera
+ * Copyright (c) 2021-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -77,23 +77,6 @@ int Mprotect(void *addr, size_t len, int prot)
     return mprotect(addr, len, prot);
 }
 
-const
-char *getMProtStr(int prot)
-{
-    char *mprotStr[] = {
-        ""      , // 000
-        "r"     , // 001
-        "w"     , // 010
-        "wr"    , // 011
-        "x"     , // 100
-        "xr"    , // 101
-        "xw"    , // 110
-        "xwr"   , // 111
-    };
-
-    return mprotStr[prot];
-}
-
 #elif defined(__WIN__)
 # include <malloc.h>
 # include <Windows.h>
@@ -138,5 +121,22 @@ uint8_t *directCopyBytes(const uint8_t *source, uint8_t *dest, size_t num)
         dest[i] = source[i];
 
     return dest;
+}
+
+const
+char *getMProtStr(int prot)
+{
+    char *mprotStr[] = {
+        ""      , // 000
+        "r"     , // 001
+        "w"     , // 010
+        "wr"    , // 011
+        "x"     , // 100
+        "xr"    , // 101
+        "xw"    , // 110
+        "xwr"   , // 111
+    };
+
+    return mprotStr[prot];
 }
 

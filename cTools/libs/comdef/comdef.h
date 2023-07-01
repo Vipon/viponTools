@@ -25,6 +25,7 @@
 #ifndef __COMDEF_H
 #define __COMDEF_H
 
+#include "os.h"
 #include "arch.h"
 
 #ifndef PAGE_SIZE
@@ -86,21 +87,18 @@ extern int VERBOSE;
                 WARNING(__VA_ARGS__);           \
             }                                   \
         )
-    #ifdef ERROR
-        #undef ERROR
-    #endif /* ERROR */
-    #define ERROR(...)                                                    \
+    #define VT_ERROR(...)                                                 \
         DEF_GUARD(                                                        \
             fprintf(stderr, SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT \
                             __VA_ARGS__);                                 \
             fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);      \
             fprintf(stderr, "\n");                                        \
         )
-    #define LOG_ERROR(...)                      \
-        DEF_GUARD(                              \
-            if (VERBOSE) {                      \
-                ERROR(__VA_ARGS__);             \
-            }                                   \
+    #define LOG_ERROR(...)              \
+        DEF_GUARD(                      \
+            if (VERBOSE) {              \
+                VT_ERROR(__VA_ARGS__);  \
+            }                           \
         )
     #define PERROR(func)                                                \
         DEF_GUARD(                                                      \
@@ -151,7 +149,7 @@ extern int VERBOSE;
     }
 
     template<typename ...Args>
-    void ERROR(Args&& ...args)
+    void VT_PERROR(Args&& ...args)
     {
         std::cerr << SET_RED_COLOR_TEXT "ERROR: " RESET_COLOR_TEXT;
         (std::cerr << ... << args);
@@ -186,9 +184,9 @@ extern int VERBOSE;
         {                           \
             WARNING(__VA_ARGS__)    \
         }
-    #define ERROR_DEBUG(...)    \
-        {                       \
-            ERROR(__VA_ARGS__)  \
+    #define ERROR_DEBUG(...)      \
+        {                         \
+            VT_ERROR(__VA_ARGS__) \
         }
     #define PERROR_DEBUG(func)  \
         {                       \
@@ -232,7 +230,9 @@ extern int VERBOSE;
     #define INLINE inline
 #endif
 
-#define FALLTHROUGH __attribute__((fallthrough))
+#ifndef FALLTHROUGH
+# define FALLTHROUGH __attribute__((fallthrough))
+#endif /* FALLTHROUGH */
 
 #endif /* __COMDEF_H */
 

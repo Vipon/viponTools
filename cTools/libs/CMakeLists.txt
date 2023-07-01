@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2020-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+add_subdirectory(mem)
+add_subdirectory(file)
+add_subdirectory(string)
+add_subdirectory(args)
 add_subdirectory(binParse)
 add_subdirectory(binPrinter)
 add_subdirectory(binDynMod)
 add_subdirectory(comdef)
 add_subdirectory(containers)
-add_subdirectory(file)
 add_subdirectory(LEB128)
-add_subdirectory(mem)
 if (NOT APPLE)
 add_subdirectory(perfAnalysis)
 endif (NOT APPLE)
-add_subdirectory(string)
 add_subdirectory(test)
 if (NOT WIN32)
-  add_subdirectory(args)
   add_subdirectory(x86_64)
 endif (NOT WIN32)
 

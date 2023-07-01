@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2022 Konychev Valerii
+ * Copyright (c) 2022-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,9 +34,9 @@ static char doc[] = "Test args library";
 // A description of the arguments we accept.
 static char argsDoc[] = "ARG0 ARG1";
 
-const char progVersion[] = "0.0.1";
+static const char progVersion[] = "0.0.1";
 
-bool isVerbose = false;
+static bool isVerbose = false;
 
 static void argVerbose(const char *arg)
 {

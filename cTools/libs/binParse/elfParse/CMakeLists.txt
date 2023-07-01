@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2020-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 
 add_vipon_library(
   NAME elf64Parse
-  TYPE SHARED
+  TYPE ${LIB_TYPE}
   HEADERS elf64Parse.h
   SOURCES elf64Parse.c
   LINK_LIBS file mem string
@@ -31,7 +31,7 @@ add_vipon_library(
 
 add_vipon_library(
   NAME elf32Parse
-  TYPE SHARED
+  TYPE ${LIB_TYPE}
   HEADERS elf32Parse.h
   SOURCES elf32Parse.c
   LINK_LIBS file mem string

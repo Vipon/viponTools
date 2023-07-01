@@ -34,7 +34,7 @@ add_vipon_library(
   TYPE STATIC
   SOURCES ${PE64_DYN_MOD_SOURCES}
   HEADERS ${PE64_DYN_MOD_HEADERS}
-  LINK_LIBS file mem string
+  LINK_LIBS file mem string pe64Parse
   INSTALL ON
 )
 

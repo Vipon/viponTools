@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@
 #ifndef _STRING_H
 #define _STRING_H
 
+#include "os.h"
+
 /* C standard headers */
 #include <stddef.h>
 #include <stdint.h>
@@ -33,10 +35,13 @@
  * Description:
  *  Function is similar to strlen.
  */
+EXPORT_FUNC
 size_t strlen(const char *addr);
 
+EXPORT_FUNC
 int strcmp(const char *s1, const char *s2);
 
+EXPORT_FUNC
 char *strncpy(char * __restrict dst, const char * __restrict src, size_t n);
 
 /***
@@ -64,7 +69,9 @@ char *strncpy(char * __restrict dst, const char * __restrict src, size_t n);
  *  The strntoi64() function works just like the strtoi64() function, but looks
  *  only at first sz base.
  */
+EXPORT_FUNC
 int64_t strtoi64(const char *str, char **end, int base);
+EXPORT_FUNC
 int64_t strntoi64(const char *str, size_t sz, char **end, int base);
 
 /***
@@ -74,6 +81,7 @@ int64_t strntoi64(const char *str, size_t sz, char **end, int base);
  *  Return:
  *      The memcpy() function returns a pointer to dest.
  */
+EXPORT_FUNC
 void *memcpy(void *dest, const void *src, size_t n);
 
 /*
@@ -86,6 +94,7 @@ void *memcpy(void *dest, const void *src, size_t n);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 char *copyString(const char *src, char* dest);
 
 #endif

@@ -138,21 +138,21 @@ FatMacho64File *fatMacho64Parse(const char *fn)
 
     FatMacho64File *ff = (FatMacho64File*) Calloc(1, sizeof(FatMacho64File));
     if (ff == NULL) {
-        ERROR("Cannot allocate %zu bytes", sizeof(FatMacho64File));
+        LOG_ERROR("Cannot allocate %zu bytes", sizeof(FatMacho64File));
         goto eexit_0;
     }
 
     ff->fd = fd;
     size_t nameLen = strlen(fn) + 1;
     if ((ff->fn = (char*) Calloc(nameLen, sizeof(char))) == NULL) {
-        ERROR("Cannot allocate %zu bytes", nameLen);
+        LOG_ERROR("Cannot allocate %zu bytes", nameLen);
         goto eexit_1;
     }
 
     strncpy(ff->fn, fn, nameLen);
 
     if (macho64FatParseHeader(ff)) {
-        ERROR("Cannot parse mach-o fat header");
+        LOG_ERROR("Cannot parse mach-o fat header");
         goto eexit_1;
     }
 

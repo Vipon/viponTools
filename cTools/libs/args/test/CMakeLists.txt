@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2022 Konychev Valerii
+# Copyright (c) 2022-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+set(ARGS_TEST_LINK_LIBS args mem string)
+if (APPLE OR WIN32)
+  list(APPEND ARGS_TEST_LINK_LIBS argp)
+endif (APPLE OR WIN32)
+
 add_vipon_test(
     NAME argsTest
     SOURCES args.c
-    LINK_LIBS args
+    LINK_LIBS ${ARGS_TEST_LINK_LIBS}
     CMD_LINE -v
 )
 

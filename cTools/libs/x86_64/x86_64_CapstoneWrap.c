@@ -53,13 +53,13 @@ ERR_DISASM_WRAP init_x86_64_disassembler()
 
     /* csopen(hardware architecture, hardware mode, handler) */
     if (cs_open(CS_ARCH_X86, CS_MODE_64, &disasm) != CS_ERR_OK) {
-        ERROR("Cannot initialize disassembler.");
+        LOG_ERROR("Cannot initialize disassembler.");
         return ERR_DISASM_WRAP_INIT;
     }
 
     /* turn on detail information. */
     if (cs_option(disasm, CS_OPT_DETAIL, CS_OPT_ON) != CS_ERR_OK) {
-        ERROR("Cannot turn on detail feature.");
+        LOG_ERROR("Cannot turn on detail feature.");
         cs_close(&disasm);
         return ERR_DISASM_WRAP_CHANGE_OPT;
     }
@@ -87,7 +87,7 @@ ERR_DISASM_WRAP init_instr(x86_64_instr **insn)
     LOG("start init_instr\n");
     *insn = cs_malloc(disasm);
     if (insn == NULL) {
-        ERROR("Cannot allocate memory\n");
+        LOG_ERROR("Cannot allocate memory\n");
         return ERR_DISASM_WRAP_ALLOC;
     }
 
@@ -102,7 +102,7 @@ int get_instr(x86_64_instr *insn, const uint8_t *addr, uint64_t ip)
     int code_size = X86_MAX_INSTR_LEN;
 
     if (!cs_disasm_iter(disasm, &addr, (size_t*)&code_size, &ip, insn)) {
-        ERROR("Cannot diasm instruction IP %"PRIx64".", ip);
+        LOG_ERROR("Cannot diasm instruction IP %"PRIx64".", ip);
         return (int)ERR_DISASM_WRAP_DISASM_PROCESS;
     }
 
@@ -704,7 +704,7 @@ int64_t get_instr_num(const uint8_t *src, uint64_t src_size, uint64_t ip)
     /* init instruction descriptor */
     x86_64_instr *insn = NULL;
     if (init_instr(&insn) == ERR_DISASM_WRAP_ALLOC) {
-        ERROR("Cannot alloc memory for instruction descriptor.");
+        LOG_ERROR("Cannot alloc memory for instruction descriptor.");
         return ERR_DISASM_WRAP_ALLOC;
     }
 
@@ -714,7 +714,7 @@ int64_t get_instr_num(const uint8_t *src, uint64_t src_size, uint64_t ip)
     const uint8_t *addr = src;
     for (RIP = ip; RIP < ip + src_size; RIP += instr_len, addr += instr_len) {
         if (get_instr(insn, addr, RIP) == ERR_DISASM_WRAP_DISASM_PROCESS) {
-            ERROR("Cannot diasm instruction RIP %#"PRIx64".", RIP);
+            LOG_ERROR("Cannot diasm instruction RIP %#"PRIx64".", RIP);
             free_instr(&insn);
             return ERR_DISASM_WRAP_DISASM_PROCESS;
         }
@@ -737,7 +737,7 @@ int64_t get_code_size(const uint8_t *src, uint64_t src_size)
     /* init instruction descriptor */
     x86_64_instr *insn = NULL;
     if (init_instr(&insn) == ERR_DISASM_WRAP_ALLOC) {
-        ERROR("Cannot alloc memory for instruction descriptor.");
+        LOG_ERROR("Cannot alloc memory for instruction descriptor.");
         return ERR_DISASM_WRAP_ALLOC;
     }
 
@@ -748,7 +748,7 @@ int64_t get_code_size(const uint8_t *src, uint64_t src_size)
     const uint8_t *addr = src;
     for (RIP = ip; RIP < ip + src_size; RIP += instr_len, addr += instr_len) {
         if (get_instr(insn, addr, RIP) == ERR_DISASM_WRAP_DISASM_PROCESS) {
-            ERROR("Cannot diasm instruction RIP %#"PRIx64".", RIP);
+            LOG_ERROR("Cannot diasm instruction RIP %#"PRIx64".", RIP);
             free_instr(&insn);
             return ERR_DISASM_WRAP_DISASM_PROCESS;
         }
@@ -771,7 +771,7 @@ ERR_DISASM_WRAP get_jmp_target( x86_64_instr *insn,
     LOG("start get_jmp_target\n");
     UNUSED(ip);
     if (insn == NULL || jmp_target == NULL) {
-        ERROR("Invalid arguments.");
+        LOG_ERROR("Invalid arguments.");
         return ERR_DISASM_WRAP_BAD_ARG;
     }
 
@@ -783,7 +783,7 @@ ERR_DISASM_WRAP get_jmp_target( x86_64_instr *insn,
     switch (x86_op[0].type) {
     case X86_OP_REG:
         /* !TODO: absolute jmp/call register */
-        ERROR("Face with absolute jmp/call register.");
+        LOG_ERROR("Face with absolute jmp/call register.");
         err = ERR_DISASM_WRAP_DETECT_JMP_TARGET;
         break;
 
@@ -799,7 +799,7 @@ ERR_DISASM_WRAP get_jmp_target( x86_64_instr *insn,
             *jmp_target = *((size_t*)((size_t)src + instr_len + S32_TO_U64(x86->disp)));
         } else {
             /* !TODO: absolute jmp/call mem */
-            ERROR("Face with absolute jmp/call mem.");
+            LOG_ERROR("Face with absolute jmp/call mem.");
             err = ERR_DISASM_WRAP_DETECT_JMP_TARGET;
         }
 
@@ -998,7 +998,7 @@ uint8_t *put_jcc_32(const x86_64_instr *insn,
     case X86_INS_JCXZ:
     case X86_INS_JECXZ:
     case X86_INS_JRCXZ:
-        ERROR("There is no JCXZ rel32 instr.\n");
+        LOG_ERROR("There is no JCXZ rel32 instr.\n");
         break;
     case X86_INS_JE:
         return put_jcc_rel32(dest, ip, jmp_point, JE);
@@ -1025,7 +1025,7 @@ uint8_t *put_jcc_32(const x86_64_instr *insn,
     case X86_INS_JS:
         return put_jcc_rel32(dest, ip, jmp_point, JS);
     default:
-        ERROR("UNKNOWN COMMAND.");
+        LOG_ERROR("UNKNOWN COMMAND.");
         break;
     }
 
@@ -1043,7 +1043,7 @@ int64_t is_instr_jmp_target(const uint8_t  *start,
     x86_64_instr *pInsn = NULL;
     ERR_DISASM_WRAP d_err = init_instr(&pInsn);
     if (d_err != ERR_DISASM_WRAP_OK) {
-        ERROR("init_instr.\n"
+        LOG_ERROR("init_instr.\n"
             "%s", get_disasmwrap_error_string(d_err));
         return d_err;
     }
@@ -1059,7 +1059,7 @@ int64_t is_instr_jmp_target(const uint8_t  *start,
 
         d_err = (ERR_DISASM_WRAP)get_instr(pInsn, source, instr_ip);
         if (d_err < 0) {
-            ERROR("Cannot diasm instr RIP %#"PRIx64"."
+            LOG_ERROR("Cannot diasm instr RIP %#"PRIx64"."
                 "%s", instr_ip, get_disasmwrap_error_string(d_err));
             free_instr(&pInsn);
             return d_err ;
@@ -1071,7 +1071,7 @@ int64_t is_instr_jmp_target(const uint8_t  *start,
             d_err = get_jmp_target(pInsn, source, instr_ip, &target);
             if (d_err != ERR_DISASM_WRAP_OK) {
                 EXEC_CODE_DEBUG(print_x86_instr(stdout, pInsn));
-                ERROR("get_jmp_target().\n"
+                LOG_ERROR("get_jmp_target().\n"
                     "%s", get_disasmwrap_error_string(d_err));
                 free_instr(&pInsn);
                 return d_err;

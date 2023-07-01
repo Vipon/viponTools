@@ -31,7 +31,7 @@ void fatMacho64PrintHeader(const FatMacho64File *ff)
     if (mf == NULL)
         return;
 
-    return macho64PrintHeader(mf);
+    macho64PrintHeader(mf);
 }
 
 void fatMacho64PrintSymbols(const FatMacho64File *ff)
@@ -40,7 +40,7 @@ void fatMacho64PrintSymbols(const FatMacho64File *ff)
     if (mf == NULL)
         return;
 
-    return macho64PrintSymbols(mf);
+    macho64PrintSymbols(mf);
 }
 
 void fatMacho64PrintSections(const FatMacho64File *ff)
@@ -49,7 +49,7 @@ void fatMacho64PrintSections(const FatMacho64File *ff)
     if (mf == NULL)
         return;
 
-    return macho64PrintSections(mf);
+    macho64PrintSections(mf);
 }
 
 void fatMacho64PrintSegments(const FatMacho64File *ff)
@@ -58,7 +58,7 @@ void fatMacho64PrintSegments(const FatMacho64File *ff)
     if (mf == NULL)
         return;
 
-    return macho64PrintSegments(mf);
+    macho64PrintSegments(mf);
 }
 
 void fatMacho64PrintFuncStarts(const FatMacho64File *ff)
@@ -67,7 +67,7 @@ void fatMacho64PrintFuncStarts(const FatMacho64File *ff)
     if (mf == NULL)
         return;
 
-    return macho64PrintFuncStarts(mf);
+    macho64PrintFuncStarts(mf);
 }
 
 void fatMacho64PrintLComs(const FatMacho64File *ff)
@@ -76,6 +76,6 @@ void fatMacho64PrintLComs(const FatMacho64File *ff)
     if (mf == NULL)
         return;
 
-    return macho64PrintLComs(mf);
+    macho64PrintLComs(mf);
 }
 

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -361,7 +361,7 @@ uint8_t *put_jmp_rel8(uint8_t *dest, uint64_t ip, uint64_t jmp_addr, X86_INSTR_T
         directCopyBytes(JZ_REL8, dest, num);
         break;
     default:
-        ERROR("UNKNOWN COMMAND.");
+        LOG_ERROR("UNKNOWN COMMAND.");
         return NULL;
     }
 
@@ -456,7 +456,7 @@ uint8_t *put_jcc_rel32(uint8_t *dest, size_t ip, size_t jmp_addr, X86_INSTR_TYPE
         directCopyBytes(JS_REL32, dest, num);
         break;
     default:
-        ERROR("UNKNOWN COMMAND.");
+        LOG_ERROR("UNKNOWN COMMAND.");
         return NULL;
     }
 

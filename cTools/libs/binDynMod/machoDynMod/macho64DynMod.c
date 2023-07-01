@@ -34,7 +34,7 @@ void *macho64Hook(const Macho64File *mf, const char *func, const void *hand)
     uint64_t *rel_addr = NULL;
     uint64_t indx = macho64GetDSymIndxByName(mf, func);
     if (IS_MACHO64_ERROR(indx)) {
-        ERROR("Cannot get index of the symbol %s", func);
+        LOG_ERROR("Cannot get index of the symbol %s", func);
         return NULL;
     }
 
@@ -58,7 +58,7 @@ void *macho64Hook(const Macho64File *mf, const char *func, const void *hand)
         importSect = nonLazyImportSect;
         i = macho64GetImportSymbolPosInSectByIndx(mf, importSect, indx);
         if (IS_MACHO64_ERROR(i)) {
-            ERROR("Cannot find symbol position in import sections");
+            LOG_ERROR("Cannot find symbol position in import sections");
             return NULL;
         }
     }
@@ -66,13 +66,13 @@ void *macho64Hook(const Macho64File *mf, const char *func, const void *hand)
     // Get seed for work with randomize adress space
     Macho64Sym *_mach_hook = macho64GetSymByName(mf, "_macho64Hook");
     if (_mach_hook == NULL)  {
-        ERROR("Cannot get the symbol _mach_hook");
+        LOG_ERROR("Cannot get the symbol _mach_hook");
         return NULL;
     }
 
     uint64_t _mach_hook_addr = macho64GetSSymAddr(_mach_hook);
     if (IS_MACHO64_ERROR(_mach_hook_addr)) {
-        ERROR("Cannot get an addr of symbol _mach_hook");
+        LOG_ERROR("Cannot get an addr of symbol _mach_hook");
         return NULL;
     }
 
@@ -85,7 +85,7 @@ void *macho64Hook(const Macho64File *mf, const char *func, const void *hand)
 
     rel_addr = (uint64_t*)(real_vaddr[i]);
     if (Mprotect((void*)mprotect_real_vaddr, mprotect_size, PROT_WRITE | PROT_READ)) {
-        ERROR("Cannot change memory protection");
+        LOG_ERROR("Cannot change memory protection");
         return NULL;
     }
     real_vaddr[i] = (uint64_t)hand;

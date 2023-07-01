@@ -37,7 +37,7 @@ add_vipon_test(
   NAME pe64PrintExeTest
   SOURCES pe64PrintExeTest.c
   # Delay load doesn't work without delayimp.lib
-  LINK_LIBS pe64Printer delayLib delayimp.lib
+  LINK_LIBS pe64Printer delayLib file mem string delayimp.lib
   LINK_FLAGS ${TEST_LINK_FLAGS}
 )
 
@@ -55,7 +55,7 @@ endif ()
 add_vipon_test(
   NAME pe64PrintObjTest
   SOURCES pe64PrintObjTest.c
-  LINK_LIBS pe64Printer
+  LINK_LIBS pe64Printer file mem string
   CMD_LINE "${TEST_FILE}"
   DEPENDS testObjFile
 )

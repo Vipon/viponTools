@@ -38,8 +38,9 @@ static struct argp argp = {0};
 int addArg(const Arg* arg)
 {
     if (NUM_OPTS == OPTS_LEN) {
-        struct argp_option* new_opts = Calloc(NUM_OPTS + 10, sizeof(struct argp_option));
-        ARG_HAND *new_hands = Calloc(NUM_OPTS + 10, sizeof(ARG_HAND));
+        struct argp_option* new_opts =
+            (struct argp_option*) Calloc(NUM_OPTS + 10, sizeof(struct argp_option));
+        ARG_HAND *new_hands = (ARG_HAND *) Calloc(NUM_OPTS + 10, sizeof(ARG_HAND));
         if (new_opts == NULL || new_hands == NULL) {
             return -1;
         }

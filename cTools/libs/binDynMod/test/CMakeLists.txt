@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2020-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,6 @@ add_library(BINBAR SHARED
 add_vipon_test(
   NAME binDynModTest
   SOURCES binDynModTest.c
-  LINK_LIBS binDynMod BINFOO BINBAR
+  LINK_LIBS binDynMod macho64Parse BINFOO BINBAR file mem string
 )
 

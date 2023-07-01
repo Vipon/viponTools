@@ -23,7 +23,7 @@
 set(COMDEF_HEADERS comdef.h)
 set(COMDEF_SOURCES comdef.c)
 
-add_library(comdef SHARED
+add_library(comdef STATIC
   ${COMDEF_SOURCES}
   ${COMDEF_HEADERS}
 )

@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2020-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,20 @@
 
 add_vipon_library(
   NAME macho64Parse
-  TYPE SHARED
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS macho64Parse.h macho.h macho64.h
   SOURCES macho64Parse.c
   LINK_LIBS file mem string
   INSTALL ON
 )
 
+set(FAT_MACHO_PARSE_TYPE ${VIPON_TOOLS_LIB_TYPE})
+if (WIN32)
+  set(FAT_MACHO_PARSE_TYPE STATIC)
+endif (WIN32)
 add_vipon_library(
   NAME fatMacho64Parse
-  TYPE SHARED
+  TYPE ${FAT_MACHO_PARSE_TYPE}
   HEADERS fatMacho64Parse.h
   SOURCES fatMacho64Parse.c
   LINK_LIBS macho64Parse file mem string
