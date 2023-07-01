@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2022 Konychev Valerii
+# Copyright (c) 2022-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,13 +21,13 @@
 # SOFTWARE.
 
 set(ARGS_LINK_LIBS mem string)
-if (APPLE)
+if (APPLE OR WIN32)
   list(APPEND ARGS_LINK_LIBS argp)
-endif (APPLE)
+endif (APPLE OR WIN32)
 
 add_vipon_library(
   NAME args
-  TYPE SHARED
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS args.h
   SOURCES args.c
   LINK_LIBS "${ARGS_LINK_LIBS}"

@@ -432,7 +432,7 @@ MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off)
             LOG_ERROR("Cannot parse mach-o symtab command");
             return err;
         } else
-            LOG_WARNING("Cannot parse mach-o symtab command %ld", err);
+            LOG_WARNING("Cannot parse mach-o symtab command");
     } else {
         err = macho64ParseSymTab(mf);
         if (err) {

@@ -64,10 +64,19 @@ function(add_vipon_library)
   target_include_directories(${ARG_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
   if(ARG_INSTALL)
-    install(
-      TARGETS ${ARG_NAME}
-      DESTINATION ${INSTALL_LIB_DIR}
-    )
+    if (WIN32)
+      if (ARG_TYPE STREQUAL "SHARED")
+        install(
+          TARGETS ${ARG_NAME}
+          DESTINATION ${INSTALL_BIN_DIR}
+        )
+      endif ()
+    else (WIN32)
+      install(
+        TARGETS ${ARG_NAME}
+        DESTINATION ${INSTALL_LIB_DIR}
+      )
+    endif (WIN32)
 
     installHeaders("${ARG_HEADERS}")
   endif(ARG_INSTALL)
@@ -130,18 +139,24 @@ function(add_vipon_import_library)
   target_include_directories(${ARG_NAME} INTERFACE ${ARG_INCLUDE_DIR})
 
   if(ARG_INSTALL)
-    install(
-      FILES "${ARG_LIB_DIR}/${NAME_${ARG_NAME}}"
-      DESTINATION ${INSTALL_LIB_DIR}
-    )
-
     if (WIN32)
       if (ARG_TYPE STREQUAL "SHARED")
         install(
-          FILES "${ARG_LIB_DIR}/${ARG_NAME}.lib"
+          FILES "${ARG_LIB_DIR}/${NAME_${ARG_NAME}}"
+                "${ARG_LIB_DIR}/${ARG_NAME}.lib"
+          DESTINATION ${INSTALL_BIN_DIR}
+        )
+      else ()
+        install(
+          FILES "${ARG_LIB_DIR}/${NAME_${ARG_NAME}}"
           DESTINATION ${INSTALL_LIB_DIR}
         )
       endif ()
+    else (WIN32)
+      install(
+        FILES "${ARG_LIB_DIR}/${NAME_${ARG_NAME}}"
+        DESTINATION ${INSTALL_LIB_DIR}
+      )
     endif (WIN32)
 
     addPrefix("${ARG_INCLUDE_DIR}/" ARG_HEADERS "${ARG_HEADERS}")

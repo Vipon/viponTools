@@ -25,6 +25,7 @@
 #ifndef __VECTOR_H
 #define __VECTOR_H
 
+#include "os.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -43,21 +44,31 @@ typedef struct {
         }                                                              \
     } while(0);
 
+EXPORT_FUNC
 int initVector(Vector *v, size_t capacity, size_t elemSize);
 
+EXPORT_FUNC
 void freeVector(Vector *v);
 
+EXPORT_FUNC
 uint8_t *beginVector(Vector *v);
+
+EXPORT_FUNC
 uint8_t *endVector(Vector *v);
 
+EXPORT_FUNC
 int resizeVector(Vector *v, size_t capacity);
 
+EXPORT_FUNC
 int pushBackVector(Vector *v, const void* elem);
 
+EXPORT_FUNC
 void *popBackVector(Vector *v);
 
+EXPORT_FUNC
 int setElemVector(Vector *v, size_t num, const void *elem);
 
+EXPORT_FUNC
 void *getElemVector(Vector *v, size_t num);
 
 

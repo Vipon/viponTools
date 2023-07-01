@@ -49,7 +49,7 @@ typedef enum {
     NUM_FLAGS
 } BinParserOpt;
 
-bool flags[NUM_FLAGS] = {};
+static bool flags[NUM_FLAGS] = {};
 
 static
 void printHeader(const char *arg)
@@ -126,7 +126,7 @@ void initParser(const char* fn, unsigned num)
 {
     UNUSED(num);
     if (initBinPrinter(fn)) {
-        ERROR("Unknown bin format");
+        LOG_ERROR("Unknown bin format");
         exit(EXIT_FAILURE);
     }
 }

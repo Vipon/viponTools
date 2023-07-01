@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,8 @@
 
 #include "os.h"
 
-EXPORT_FUNC(char *foo(void));
+EXPORT_FUNC
+char *foo(void);
 
 #endif /* _FOO_H */
 
