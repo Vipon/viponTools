@@ -163,8 +163,7 @@ LinearFunc linearRegression(const Matrix& X, const Vector& y)
     double J = DBL_MAX;
     double J_old = J;
 
-    size_t i = 0;
-    for (;;++i) {
+    for (;;) {
         J = calculateJ(theta, normalX, normalY);
         for (size_t i = 0; i < X.size().second; ++i)
             dJ[i] = derivativeJkn(theta, normalX, normalY, i);

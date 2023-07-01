@@ -87,7 +87,7 @@ int initBinParser(const char *fn)
     return 0;
 }
 
-void finiBinParser()
+void finiBinParser(void)
 {
     binParser.free(binParser.bin);
 }

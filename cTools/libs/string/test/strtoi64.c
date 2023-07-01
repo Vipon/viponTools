@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-static int zeroBase16()
+static int zeroBase16(void)
 {
     char str0[] = "0xDEADBEEF";
     int64_t val0 = 0xDEADBEEF;
@@ -42,7 +42,7 @@ static int zeroBase16()
     return 0;
 }
 
-static int zeroBase10()
+static int zeroBase10(void)
 {
     char str[] = "1234567890";
     int64_t val = 1234567890;
@@ -57,7 +57,7 @@ static int zeroBase10()
     return 0;
 }
 
-static int zeroBase8()
+static int zeroBase8(void)
 {
     char str[] = "0744";
     int64_t val = 0744;

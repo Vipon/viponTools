@@ -155,4 +155,58 @@ jobs:
         with:
           name: viponTools_Ubuntu
           path: viponTools.tar.gz
+  windows-ninja-debug-static:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: .\setup.bat
+      - name: Configure MSVC Debug
+        run: python .\configure --ninja
+      - name: Ninja Build Test Install
+        uses: ./.github/actions/ninja_build_test_install
+        with:
+          shell: cmd
+          working-directory: output
+  windows-msvc-debug-static:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: .\setup.bat
+      - name: Configure MSVC Debug
+        run: python .\configure --vs
+      - name: MSVC Build
+        working-directory: output
+        run: cmake --build . --config Debug
+      - name: MSVC Test
+        working-directory: output
+        run: ctest -C Debug
+      - name: MSVC Install
+        working-directory: output
+        run: cmake --install . --config Debug
+  windows-msvc-release-shared:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: .\setup.bat
+      - name: Configure MSVC Release
+        run: python .\configure --vs --release --dyn-libs
+      - name: MSVC Build
+        working-directory: output
+        run: cmake --build . --config Release
+      - name: MSVC Test
+        working-directory: output
+        run: ctest -C Release
+      - name: MSVC Install
+        working-directory: output
+        run: cmake --install . --config Release
+      - name: Make Achive
+        working-directory: output
+        run: tar -czvf ../viponTools.tar.gz viponTools
+      - uses: actions/upload-artifact@v3
+        with:
+          name: viponTools_windows
+          path: viponTools.tar.gz
 

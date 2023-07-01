@@ -70,6 +70,11 @@ function(add_vipon_library)
           TARGETS ${ARG_NAME}
           DESTINATION ${INSTALL_BIN_DIR}
         )
+      else ()
+        install(
+          TARGETS ${ARG_NAME}
+          DESTINATION ${INSTALL_LIB_DIR}
+        )
       endif ()
     else (WIN32)
       install(
