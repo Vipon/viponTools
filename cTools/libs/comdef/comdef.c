@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "os.h"
 #include "comdef.h"
 
 int VERBOSE = 0;

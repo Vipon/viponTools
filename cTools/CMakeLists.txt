@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2020-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,11 @@ project(cTools
   VERSION 1.0
 )
 
-include_directories(AFTER include include/Windows)
+include_directories(AFTER include)
+if (NOT WIN32)
+  include_directories(AFTER include/Windows)
+endif ()
+
 add_subdirectory(libs)
 add_subdirectory(tools)
-
 

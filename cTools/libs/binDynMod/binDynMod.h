@@ -25,6 +25,7 @@
 #ifndef __BIN_DYN_MOD_H
 #define __BIN_DYN_MOD_H
 
+#include "os.h"
 #include "arch.h"
 #include "binParse.h"
 
@@ -36,7 +37,8 @@ typedef struct {
 
 extern BinDynMod binDynMod;
 
-EXPORT_FUNC(int initBinDynMod(BIN_FILE_TYPE type));
+EXPORT_FUNC
+int initBinDynMod(BIN_FILE_TYPE type);
 
 #endif /* __BIN_DYN_MOD_H */
 

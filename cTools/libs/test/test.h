@@ -31,21 +31,21 @@
 #ifndef __cplusplus
     #include <stdlib.h>
 
-    #define EXPECT_FUNC_EQ(func, res)       \
-        if (func != res) {                  \
-            ERROR(STRINGIZE(func) " fail"); \
-            exit(EXIT_FAILURE);             \
+    #define EXPECT_FUNC_EQ(func, res)          \
+        if (func != res) {                     \
+            VT_ERROR(STRINGIZE(func) " fail"); \
+            exit(EXIT_FAILURE);                \
         }
 
-    #define EXPECT_VAL_EQ(val, res, format)                                         \
-        if (val != res) {                                                           \
-            ERROR(STRINGIZE(val) "- expect: " format " result: " format, res, val); \
-            exit(EXIT_FAILURE);                                                     \
+    #define EXPECT_VAL_EQ(val, res, format)                                            \
+        if (val != res) {                                                              \
+            VT_ERROR(STRINGIZE(val) "- expect: " format " result: " format, res, val); \
+            exit(EXIT_FAILURE);                                                        \
         }
 
     #define EXPECT_VAL_NOT_EQ(val, res, format) \
         if (val == res) {                       \
-            /*ERROR(format);*/                      \
+            VT_ERROR(format);                   \
             exit(EXIT_FAILURE);                 \
         }
 
@@ -53,21 +53,28 @@
     #define EXPECT_SIZET_EQ(val, res) EXPECT_VAL_EQ(val, res, "%zu")
     #define EXPECT_BOOL_EQ(val, res) EXPECT_VAL_EQ(val, res, "%d")
 
-    #define EXPECT_STR_EQ(str0, str1)                     \
-        if (strcmp(str0, str1)) {                         \
-            /*ERROR("expect: %s | result: %s", str0, str1);*/ \
-            exit(EXIT_FAILURE);                           \
+    #define EXPECT_STR_EQ(str0, str1)                        \
+        if (strcmp(str0, str1)) {                            \
+            VT_ERROR("expect: %s | result: %s", str0, str1); \
+            exit(EXIT_FAILURE);                              \
         }
 
 #else // __cplusplus
     #include <cstdlib>
 
-    #define EXPECT_EQ(func, res)               \
-        if (func != res) {                     \
-            ERROR(func, " isn't equal ", res); \
-            exit(EXIT_FAILURE);                \
+    #define EXPECT_EQ(func, res)                  \
+        if (func != res) {                        \
+            VT_PERROR(func, " isn't equal ", res); \
+            exit(EXIT_FAILURE);                   \
         }
 
+    #define EXPECT_VAL_EQ(val, res, format)                                            \
+        if (val != res) {                                                              \
+            VT_PERROR(STRINGIZE(val) "- expect: " format " result: " format, res, val); \
+            exit(EXIT_FAILURE);                                                        \
+        }
+
+    #define EXPECT_BOOL_EQ(val, res) EXPECT_VAL_EQ(val, res, "%d")
 #endif // __cplusplus
 
 #endif /* __TEST_H */

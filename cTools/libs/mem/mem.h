@@ -25,21 +25,29 @@
 #ifndef __MEM_H
 #define __MEM_H
 
+#include "os.h"
+
 // C standard headers
 #include <stdint.h>
 #include <stddef.h>
 
+EXPORT_FUNC
 void Free(void *ptr);
+EXPORT_FUNC
 void *Malloc(size_t num);
+EXPORT_FUNC
 void *Calloc(size_t num, size_t elem_size);
+EXPORT_FUNC
 void *Realloc(void *ptr, size_t size);
 
+EXPORT_FUNC
 void print_mem(uint8_t* mem, size_t size);
 
 /**
  * \brief Returns system page size
  * \return page size
  */
+EXPORT_FUNC
 long getPageSize(void);
 
 
@@ -49,6 +57,7 @@ long getPageSize(void);
  * \param val value need to be aligned
  * \return aligned value
  */
+EXPORT_FUNC
 size_t alignToPageSize(size_t val);
 
 
@@ -58,6 +67,7 @@ size_t alignToPageSize(size_t val);
  * \param val value need to be aligned
  * \return aligned value
  */
+EXPORT_FUNC
 size_t alignUpToPageSize(size_t val);
 
 
@@ -70,6 +80,7 @@ size_t alignUpToPageSize(size_t val);
  * \return Success: point to dest.
  *         Fail: NULL point.
  */
+EXPORT_FUNC
 uint8_t *directCopyBytes(const uint8_t *source, uint8_t *dest, size_t num);
 
 /**
@@ -80,10 +91,11 @@ uint8_t *directCopyBytes(const uint8_t *source, uint8_t *dest, size_t num);
  * \return Success: 0.
  *         Fail: error code.
  */
+EXPORT_FUNC
 int Mprotect(void *addr, size_t len, int prot);
 
-const
-char *getMProtStr(int prot);
+EXPORT_FUNC
+const char *getMProtStr(int prot);
 
 #endif /* __MEM_H */
 

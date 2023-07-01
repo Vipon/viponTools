@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valera
+ * Copyright (c) 2021-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,13 +46,21 @@
 #if defined(_WIN32) || defined(_WIN64)
 # ifndef __WIN__
 #  define __WIN__
+#  define DLLEXPORT __declspec(dllexport)
+#  define DLLIMPORT __declspec(dllimport)
 # endif
 #endif
 
 #ifdef __WIN__
-    #define EXPORT_FUNC(func) __declspec(dllexport) func
-#else
-    #define EXPORT_FUNC(func) func
+# define EXPORT_FUNC DLLEXPORT
+# ifdef BUILD_DLL
+#  define EXPORT_VAR DLLEXPORT
+# else /* BUILD_DLL */
+#  define EXPORT_VAR DLLIMPORT
+# endif /* BUILD_DLL */
+#else /* __WIN__ */
+# define EXPORT_FUNC
+# define EXPORT_VAR
 #endif /* __WIN__ */
 
 #endif /* __OS_H */

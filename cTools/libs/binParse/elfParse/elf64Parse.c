@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,12 +32,6 @@
 
 /* c standard headers */
 #include <inttypes.h>
-
-#ifdef __WIN__
-// windows.h defines itsown ERROR
-# undef ERROR
-# define ERROR(...)
-#endif
 
 /***
  * Before:

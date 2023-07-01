@@ -170,11 +170,13 @@ static_assert(((int64_t)MACHO64_INV_ARG) < 0, "ERRORS must be negative");
  * After:
  *  Need to call macho64Free
  */
+EXPORT_FUNC
 Macho64File *macho64Parse(const char *fn);
 /***
  * !TODO: rework, currently should be internal use only, but also need for
  * fatMacho64Parse
  */
+EXPORT_FUNC
 MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off);
 
 /***
@@ -188,6 +190,7 @@ MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off);
  * After:
  *  @mf should be assigned to = NULL
  */
+EXPORT_FUNC
 void macho64Free(Macho64File *mf);
 
 /***
@@ -201,6 +204,7 @@ void macho64Free(Macho64File *mf);
  * After:
  *  @mf should be freed after
  */
+EXPORT_FUNC
 void macho64Clean(Macho64File *mf);
 
 /***
@@ -216,6 +220,7 @@ void macho64Clean(Macho64File *mf);
  *      MACHO64_NO_SYMTAB_CMD, MACHO64_NO_SYMTAB, MACHO64_NO_SORT_SYMTAB,
  *      MACHO64_NO_SYM_NAME_TAB, MACHO64_NO_INDIRECT_SYM_TAB, MACHO64_NO_SEGMENTS
  */
+EXPORT_FUNC
 MACHO64_ERROR macho64Check(const Macho64File *mf);
 
 /***
@@ -229,6 +234,7 @@ MACHO64_ERROR macho64Check(const Macho64File *mf);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 MACHO64_ERROR macho64PrintIndirectSymTab(const Macho64File *mf);
 
 /***
@@ -243,6 +249,7 @@ MACHO64_ERROR macho64PrintIndirectSymTab(const Macho64File *mf);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 Macho64Sym *macho64GetSymByIndx(const Macho64File *mf, uint64_t indx);
 
 /***
@@ -257,6 +264,7 @@ Macho64Sym *macho64GetSymByIndx(const Macho64File *mf, uint64_t indx);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 Macho64Sym *macho64GetSymByName(const Macho64File *mf, const char *name);
 
 /***
@@ -271,6 +279,7 @@ Macho64Sym *macho64GetSymByName(const Macho64File *mf, const char *name);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 Macho64Sym *macho64GetSSymByAddr(const Macho64File *mf, uint64_t addr);
 
 /***
@@ -285,6 +294,7 @@ Macho64Sym *macho64GetSSymByAddr(const Macho64File *mf, uint64_t addr);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 char *macho64GetSymName(const Macho64File *mf, const Macho64Sym *ms);
 
 /***
@@ -299,9 +309,11 @@ char *macho64GetSymName(const Macho64File *mf, const Macho64Sym *ms);
  *  Fail:
  *      -1
  */
+EXPORT_FUNC
 uint64_t macho64GetSymIndxByName(const Macho64File *mf, const char *name);
 
 // !TODO
+EXPORT_FUNC
 uint64_t macho64GetDSymIndx(const Macho64File *mf, const char *name);
 
 /***
@@ -312,6 +324,7 @@ uint64_t macho64GetDSymIndx(const Macho64File *mf, const char *name);
  *  -1 - if (a->addr < b->addr)
  *  0 - if (a->addr == b->addr)
  */
+EXPORT_FUNC
 int macho64CmpSym(const void *a, const void *b);
 
 /***
@@ -325,7 +338,9 @@ int macho64CmpSym(const void *a, const void *b);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 Macho64Sym *macho64GetSSymTab(const Macho64File *mf);
+EXPORT_FUNC
 Macho64Sym *macho64GetSSymSortTab(const Macho64File *mf);
 
 /***
@@ -339,6 +354,7 @@ Macho64Sym *macho64GetSSymSortTab(const Macho64File *mf);
  *  Fail:
  *      -1
  */
+EXPORT_FUNC
 uint64_t macho64GetSSymTabFileoff(const Macho64File *mf);
 
 /***
@@ -352,6 +368,7 @@ uint64_t macho64GetSSymTabFileoff(const Macho64File *mf);
  *  Fail:
  *      -1
  */
+EXPORT_FUNC
 uint64_t macho64GetAmountSSym(const Macho64File *mf);
 
 /***
@@ -366,9 +383,11 @@ uint64_t macho64GetAmountSSym(const Macho64File *mf);
  *  Fail:
  *      -1
  */
+EXPORT_FUNC
 uint64_t macho64GetSSymAddr(const Macho64Sym *ms);
 
 // TODO
+EXPORT_FUNC
 uint64_t macho64GetAddrSymByName(const Macho64File *mf, const char *name);
 
 /***
@@ -380,6 +399,7 @@ uint64_t macho64GetAddrSymByName(const Macho64File *mf, const char *name);
  * Output:
  *  Always success
  */
+EXPORT_FUNC
 void macho64SetSSymAddr(Macho64Sym *ms, uint64_t addr);
 
 /***
@@ -396,8 +416,11 @@ void macho64SetSSymAddr(Macho64Sym *ms, uint64_t addr);
  *  Fail:
  *      MACHO64_INV_ARG, MACHO64_NO_SYMBOL
  */
+EXPORT_FUNC
 uint64_t macho64GetFuncSize(const Macho64File *mf, const Macho64Sym *ms);
+EXPORT_FUNC
 uint64_t macho64GetGDataSize(const Macho64File *mf, const Macho64Sym *ms);
+EXPORT_FUNC
 uint64_t macho64GetSSymSize(const Macho64File *mf, const Macho64Sym *ms);
 
 /***
@@ -412,6 +435,7 @@ uint64_t macho64GetSSymSize(const Macho64File *mf, const Macho64Sym *ms);
  *  Fail:
  *      MACHO64_INV_ARG, MACHO64_NO_FILE_TYPE
  */
+EXPORT_FUNC
 uint64_t macho64GetSSymFileoff(const Macho64File *mf, const Macho64Sym *sym);
 
 /***
@@ -425,6 +449,7 @@ uint64_t macho64GetSSymFileoff(const Macho64File *mf, const Macho64Sym *sym);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 uint64_t macho64GetAmountSeg(const Macho64File *mf);
 
 /***
@@ -438,6 +463,7 @@ uint64_t macho64GetAmountSeg(const Macho64File *mf);
  *  Fail:
  *      NULL
  */
+EXPORT_FUNC
 Macho64Seg *macho64GetDataSeg(const Macho64File *mf);
 
 /***
@@ -451,6 +477,7 @@ Macho64Seg *macho64GetDataSeg(const Macho64File *mf);
  *  Fail:
  *      NULL
  */
+EXPORT_FUNC
 Macho64Seg *macho64GetLastSeg(const Macho64File *mf);
 
 /***
@@ -464,6 +491,7 @@ Macho64Seg *macho64GetLastSeg(const Macho64File *mf);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 uint64_t macho64GetSegSize(const Macho64Seg *seg);
 
 /***
@@ -477,6 +505,7 @@ uint64_t macho64GetSegSize(const Macho64Seg *seg);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 uint64_t macho64GetSegAddr(const Macho64Seg *seg);
 
 /***
@@ -490,6 +519,7 @@ uint64_t macho64GetSegAddr(const Macho64Seg *seg);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 uint64_t macho64GetSegFileoff(const Macho64Seg *seg);
 
 /***
@@ -504,6 +534,7 @@ uint64_t macho64GetSegFileoff(const Macho64Seg *seg);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 Macho64Sect *macho64GetSectByName(const Macho64File *mf, const char *name);
 
 /***
@@ -518,6 +549,7 @@ Macho64Sect *macho64GetSectByName(const Macho64File *mf, const char *name);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 Macho64Sect *macho64GetSectByAddr(const Macho64File *mf, uint64_t addr);
 
 /***
@@ -532,6 +564,7 @@ Macho64Sect *macho64GetSectByAddr(const Macho64File *mf, uint64_t addr);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 Macho64Sect *macho64GetSectByIndx(const Macho64File *mf, uint64_t indx);
 
 /***
@@ -545,8 +578,11 @@ Macho64Sect *macho64GetSectByIndx(const Macho64File *mf, uint64_t indx);
  *  Fail:
  *      NULL point
  */
+EXPORT_FUNC
 Macho64Sect *macho64GetAllSect(const Macho64Seg *seg);
+EXPORT_FUNC
 Macho64Sect *macho64GetLastSect(const Macho64Seg *seg);
+EXPORT_FUNC
 Macho64Sect *macho64GetLastLoadableSect(const Macho64File *mf);
 
 /***
@@ -561,6 +597,7 @@ Macho64Sect *macho64GetLastLoadableSect(const Macho64File *mf);
  *  Fail:
  *    NULL point
  */
+EXPORT_FUNC
 void *macho64ReadSect(const Macho64File *mf, const Macho64Sect *sect);
 
 /***
@@ -574,6 +611,7 @@ void *macho64ReadSect(const Macho64File *mf, const Macho64Sect *sect);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 uint64_t macho64GetAmountSect(const Macho64File *mf);
 
 /***
@@ -588,6 +626,7 @@ uint64_t macho64GetAmountSect(const Macho64File *mf);
  *  Fail:
  *      NULL
  */
+EXPORT_FUNC
 const char* macho64GetSectName(const Macho64File *mf, const Macho64Sect *sect);
 
 /***
@@ -601,6 +640,7 @@ const char* macho64GetSectName(const Macho64File *mf, const Macho64Sect *sect);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 uint64_t macho64GetSectSize(const Macho64Sect *sect);
 
 /***
@@ -614,6 +654,7 @@ uint64_t macho64GetSectSize(const Macho64Sect *sect);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 uint64_t macho64GetSectAddr(const Macho64Sect *sect);
 
 /***
@@ -627,6 +668,7 @@ uint64_t macho64GetSectAddr(const Macho64Sect *sect);
  *  Fail:
  *      MACHO64_INV_ARG
  */
+EXPORT_FUNC
 uint64_t macho64GetSectFileoff(const Macho64Sect *sect);
 
 /***
@@ -637,6 +679,7 @@ uint64_t macho64GetSectFileoff(const Macho64Sect *sect);
  *  Output:
  *      File position in a mach-o file of a relocation
  */
+EXPORT_FUNC
 uint64_t macho64GetSectRelocFileoff(const Macho64Sect *sect);
 
 /***
@@ -647,11 +690,14 @@ uint64_t macho64GetSectRelocFileoff(const Macho64Sect *sect);
  *  Output:
  *      number of relocations
  */
+EXPORT_FUNC
 uint64_t macho64GetSectRelocNum(const Macho64Sect *sect);
 
+EXPORT_FUNC
 uint64_t macho64GetRelocAddr(const Macho64Sect *sect, const MachoRelocInfo *rel);
 
 
+EXPORT_FUNC
 void macho64ChangeRelocAddr(MachoRelocInfo *rel, int32_t diff);
 
 /***
@@ -668,6 +714,7 @@ void macho64ChangeRelocAddr(MachoRelocInfo *rel, int32_t diff);
  *  Fail:
  *      MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_NO_RELOCATION
  */
+EXPORT_FUNC
 uint64_t macho64GetRelocForAddr(const Macho64File *mf, const Macho64Sect *sect, uint64_t addr);
 
 /***
@@ -682,6 +729,7 @@ uint64_t macho64GetRelocForAddr(const Macho64File *mf, const Macho64Sect *sect, 
  *  Fail:
  *      MACHO64_INV_ARG, MACHO64_NO_SYMBOL
  */
+EXPORT_FUNC
 uint64_t macho64GetDSymIndxByName(const Macho64File *mf, const char *name);
 
 /***
@@ -696,10 +744,13 @@ uint64_t macho64GetDSymIndxByName(const Macho64File *mf, const char *name);
  *      Fail:
  *          NULL
  */
+EXPORT_FUNC
 void *macho64GetRelocDataAddr(const Macho64File *mf, const char *func);
 
+EXPORT_FUNC
 const char *macho64GetDylibName(const MachoDylibCommand *dl);
 
+EXPORT_FUNC
 uint64_t macho64GetImportSymbolPosInSectByIndx( const Macho64File *mf
                                               , const Macho64Sect *importSect
                                               , uint64_t indx
