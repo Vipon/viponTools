@@ -43,9 +43,6 @@ if (NOT VIPON_TOOLS_EXTERNAL_DIR)
   set(VIPON_TOOLS_EXTERNAL_INCLUDE_DIR "${VIPON_TOOLS_EXTERNAL_DIR}/include")
 endif (NOT VIPON_TOOLS_EXTERNAL_DIR)
 
-include_directories(AFTER "${VIPON_TOOLS_EXTERNAL_INCLUDE_DIR}")
-link_directories(AFTER "${VIPON_TOOLS_EXTERNAL_LIB_DIR}")
-
 add_subdirectory(${VIPON_TOOLS_EXTERNAL_DIR})
 add_subdirectory(cTools)
 add_subdirectory(cxx)
