@@ -32,6 +32,8 @@ endif()
 
 if (MSVC)
   append_cflags(WARNING_FLAGS
+    -Wno-cast-align
+    -Wno-switch-enum
     -Wno-unknown-argument
     -Wno-reserved-id-macro
     -Wno-extra-semi-stmt
@@ -61,6 +63,7 @@ endif (MSVC)
 if (WIN32)
   append_cflags(WARNING_FLAGS
     -Wno-deprecated-declarations
+    -Wno-ignored-attributes
   )
 endif (WIN32)
 
