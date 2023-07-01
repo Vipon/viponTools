@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2023 Konychev Valerii
+# Copyright (c) 2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,26 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
-project(viponTools
-  LANGUAGES C CXX
-  VERSION 1.0
-)
-
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/toolchain/cflags/cflags.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/common.cmake)
-include(CTest)
-
-if (NOT VIPON_TOOLS_EXTERNAL_DIR)
-  set(VIPON_TOOLS_EXTERNAL_DIR "${CMAKE_CURRENT_LIST_DIR}/external")
-  set(VIPON_TOOLS_EXTERNAL_LIB_DIR "${VIPON_TOOLS_EXTERNAL_DIR}/lib")
-  set(VIPON_TOOLS_EXTERNAL_INCLUDE_DIR "${VIPON_TOOLS_EXTERNAL_DIR}/include")
-endif (NOT VIPON_TOOLS_EXTERNAL_DIR)
-
-include_directories(AFTER "${VIPON_TOOLS_EXTERNAL_INCLUDE_DIR}")
-link_directories(AFTER "${VIPON_TOOLS_EXTERNAL_LIB_DIR}")
-
-add_subdirectory(${VIPON_TOOLS_EXTERNAL_DIR})
-add_subdirectory(cTools)
-add_subdirectory(cxx)
+if (WIN32)
+  add_vipon_import_library(
+    NAME argp
+    TYPE SHARED
+    LIB_DIR "${CMAKE_CURRENT_LIST_DIR}/lib"
+    INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include"
+    HEADERS argp.h getopt.h
+    INSTALL ON
+  )
+endif (WIN32)
 
