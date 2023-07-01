@@ -30,6 +30,7 @@ include_guard()
 #   SOURCES - list of source files
 #   LINK_LIBRARIES - list of link libraries
 #   LINK_OPTIONS - extra link options
+#   DEFINES - extra defines for compiler
 #   INSTALL - if ON when install
 ###############################################################################
 function(add_vipon_library)
@@ -39,7 +40,7 @@ function(add_vipon_library)
     # one_value_options
     "NAME;TYPE;INSTALL"
     # multi_value_options
-    "HEADERS;SOURCES;LINK_LIBS;LINK_OPTIONS"
+    "HEADERS;SOURCES;LINK_LIBS;LINK_OPTIONS;DEFINES"
     ${ARGN}
   )
 
@@ -53,13 +54,14 @@ function(add_vipon_library)
     comdef
   )
 
-  target_include_directories(${ARG_NAME} INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}
-  )
-
-  target_link_options(${ARG_NAME}
-    PUBLIC ${ARG_LINK_OPTIONS}
-  )
+  target_link_options(${ARG_NAME} PUBLIC ${ARG_LINK_OPTIONS})
+  target_compile_definitions(${ARG_NAME} PRIVATE ${ARG_DEFINES})
+  if (WIN32)
+    if (ARG_TYPE STREQUAL "SHARED")
+      target_compile_definitions(${ARG_NAME} PRIVATE BUILD_DLL)
+    endif ()
+  endif (WIN32)
+  target_include_directories(${ARG_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
   if(ARG_INSTALL)
     install(
