@@ -1,0 +1,24 @@
+inputs:
+  shell:
+    description: 'shell for running ninja'
+    required: true
+  working-directory:
+    description: 'path to working directory'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Ninja Build
+      working-directory: ${{ inputs.working-directory }}
+      run: ninja
+      shell: ${{ inputs.shell }}
+    - name: Ninja Test
+      working-directory: ${{ inputs.working-directory }}
+      run: ninja test
+      shell: ${{ inputs.shell }}
+    - name: Ninja Install
+      working-directory: ${{ inputs.working-directory }}
+      run: ninja install
+      shell: ${{ inputs.shell }}
+

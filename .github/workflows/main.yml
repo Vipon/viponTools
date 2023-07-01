@@ -4,84 +4,84 @@ jobs:
     runs-on: macos-latest
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - run: ./setup.sh
-      - name: Configure with xcode
+      - name: Configure Debug Xcode
         run: ./configure
-      - name: XCode build
-        working-directory: output/
-        run: CPATH="${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}" xcodebuild -scheme ALL_BUILD
-        env:
-          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
-          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
-      - name: XCode test
-        working-directory: output/
-        run: xcodebuild -scheme RUN_TESTS
-      - name: XCode install
-        working-directory: output/
-        run: xcodebuild -scheme install
+      - name: Set Env
+        uses: ./.github/actions/set_env
+        with:
+          shell: bash
+          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
+          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
+      - name: Xcode Built Test Install
+        uses: ./.github/actions/xcode_build_test_install
+        with:
+          shell: bash
+          working-directory: output
   macos-latest-gmake-debug:
     runs-on: macos-latest
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - run: ./setup.sh
-      - name: Configure with gmake
+      - name: Configure Debug Gmake
         run: ./configure --gmake --output gmake
-      - name: Gmake build
-        working-directory: gmake/
-        run: CPATH="${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}" make -j
-        env:
-          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
-          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
-      - name: Gmake test
-        working-directory: gmake/
-        run: make test
-      - name: Gmake install
-        working-directory: gmake/
-        run: make install
+      - name: Set Env
+        uses: ./.github/actions/set_env
+        with:
+          shell: bash
+          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
+          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
+      - name: Gmake Built Test Install
+        uses: ./.github/actions/gmake_build_test_install
+        with:
+          shell: bash
+          working-directory: gmake
   macos-latest-ninja-debug:
     runs-on: macos-latest
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - run: ./setup.sh
-      - name: Configure with ninja
+      - name: Configure Debug Ninja
         run: ./configure --ninja --output ninja
-      - name: Ninja build
-        working-directory: ninja/
-        run: CPATH="${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}" ninja
-        env:
-          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
-          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
-      - name: Ninja test
-        working-directory: ninja/
-        run: ninja test
-      - name: Ninja install
-        working-directory: ninja/
-        run: ninja install
+      - name: Set Env
+        uses: ./.github/actions/set_env
+        with:
+          shell: bash
+          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
+          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
+      - name: Ninja Build Test Install
+        uses: ./.github/actions/ninja_build_test_install
+        with:
+          shell: bash
+          working-directory: ninja
   macos-latest-gmake-release:
     runs-on: macos-latest
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - run: ./setup.sh
-      - name: Configure release
+      - name: Configure Gmake Release
         run: ./configure --gmake --release --output gmake_release
-      - name: Release build
-        working-directory: gmake_release/
-        run: CPATH="${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}" make -j
-        env:
-          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
-          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
-      - name: Release test
-        working-directory: gmake_release/
-        run: make test
-      - name: Release install
-        working-directory: gmake_release/
-        run: make install
-      - name: Make achive
-        working-directory: gmake_release/
+      - name: Set Env
+        uses: ./.github/actions/set_env
+        with:
+          shell: bash
+          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
+          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
+      - name: Gmake Built Test Install
+        uses: ./.github/actions/gmake_build_test_install
+        with:
+          shell: bash
+          working-directory: gmake_release
+      - name: Make Achive
+        working-directory: gmake_release
         run: tar -czvf ../viponTools.tar.gz viponTools
       - uses: actions/upload-artifact@v3
         with:
@@ -91,65 +91,65 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - run: ./setup.sh
-      - name: Configure with gmake
+      - name: Configure Debug Gmake
         run: ./configure --gmake --output gmake
-      - name: Gmake build
-        working-directory: gmake/
-        run: CPATH="${HOME}/.local/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:${LIBRARY_PATH}" make -j
-        env:
-          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
-          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
-      - name: Gmake test
-        working-directory: gmake/
-        run: make test
-      - name: Gmake install
-        working-directory: gmake/
-        run: make install
+      - name: Set Env
+        uses: ./.github/actions/set_env
+        with:
+          shell: bash
+          cpath: ${HOME}/.local/include:${CPATH}
+          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
+      - name: Gmake Built Test Install
+        uses: ./.github/actions/gmake_build_test_install
+        with:
+          shell: bash
+          working-directory: gmake
   ubuntu-2004-ninja-debug:
     runs-on: ubuntu-20.04
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - run: ./setup.sh
       - run: chmod 0744 "${HOME}/.local/bin/ninja"
-      - name: Configure with ninja
+      - name: Configure Debug Ninja
         run: ./configure --ninja --output ninja
-      - name: Ninja build
-        working-directory: ninja/
-        run: CPATH="${HOME}/.local/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:${LIBRARY_PATH}" ninja
-        env:
-          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
-          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
-      - name: Ninja test
-        working-directory: ninja/
-        run: ninja test
-      - name: Ninja install
-        working-directory: ninja/
-        run: ninja install
+      - name: Set Env
+        uses: ./.github/actions/set_env
+        with:
+          shell: bash
+          cpath: ${HOME}/.local/include:${CPATH}
+          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
+      - name: Ninja Build Test Install
+        uses: ./.github/actions/ninja_build_test_install
+        with:
+          shell: bash
+          working-directory: ninja
   ubuntu-2004-gmake-release:
     runs-on: ubuntu-20.04
     steps:
       - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - run: ./setup.sh
-      - name: Configure release
+      - name: Configure Gmake Release
         run: ./configure --gmake --release --output gmake_release
-      - name: Release build
-        working-directory: gmake_release/
-        run: CPATH="${HOME}/.local/include:${CPATH}" LIBRARY_PATH="${HOME}/.local/lib:${LIBRARY_PATH}" make -j
-        env:
-          DYLD_LIBRARY_PATH: ${HOME}/.local/lib:${DYLD_LIBRARY_PATH}
-          LD_LIBRARY_PATH: ${HOME}/.local/lib:${LD_LIBRARY_PATH}
-      - name: Release test
-        working-directory: gmake_release/
-        run: make test
-      - name: Release install
-        working-directory: gmake_release/
-        run: make install
-      - name: Make achive
-        working-directory: gmake_release/
+      - name: Set Env
+        uses: ./.github/actions/set_env
+        with:
+          shell: bash
+          cpath: ${HOME}/.local/include:${CPATH}
+          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
+      - name: Gmake Build Test Install
+        uses: ./.github/actions/gmake_build_test_install
+        with:
+          shell: bash
+          working-directory: gmake_release
+      - name: Make Achive
+        working-directory: gmake_release
         run: tar -czvf ../viponTools.tar.gz viponTools
       - uses: actions/upload-artifact@v3
         with:
