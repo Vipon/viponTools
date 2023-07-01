@@ -1,0 +1,24 @@
+inputs:
+  shell:
+    description: 'shell for running make'
+    required: true
+  working-directory:
+    description: 'path to working directory'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Gmake Build
+      working-directory: ${{ inputs.working-directory }}
+      run: make -j
+      shell: ${{ inputs.shell }}
+    - name: Gmake Test
+      working-directory: ${{ inputs.working-directory }}
+      run: make test
+      shell: ${{ inputs.shell }}
+    - name: Gmake Install
+      working-directory: ${{ inputs.working-directory }}
+      run: make install
+      shell: ${{ inputs.shell }}
+
