@@ -103,7 +103,8 @@
         "fatmacho64printer.h": "c",
         "fatmacho64dynmod.h": "c",
         "binparse.h": "c",
-        "elf32dynmod.h": "c"
+        "elf32dynmod.h": "c",
+        "arch.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 
