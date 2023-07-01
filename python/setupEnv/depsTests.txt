@@ -13,5 +13,4 @@ libs:
     argp:
         dir:
             win: ./../../external
-        deps:
-            win: MSYS2
+

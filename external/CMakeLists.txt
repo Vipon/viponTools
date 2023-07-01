@@ -21,9 +21,6 @@
 # SOFTWARE.
 
 if (WIN32)
-  include_directories(AFTER "${VIPON_TOOLS_EXTERNAL_INCLUDE_DIR}")
-  link_directories(AFTER "${VIPON_TOOLS_EXTERNAL_LIB_DIR}")
-
   add_vipon_import_library(
     NAME argp
     TYPE SHARED
