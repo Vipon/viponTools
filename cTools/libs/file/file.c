@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@
 size_t getFileSize(int fd)
 {
     if (fd < 0) {
-        ERROR("Invalid arguments.");
+        LOG_ERROR("Invalid arguments.");
         return (size_t)-1;
     }
 
@@ -87,7 +87,7 @@ void *readFromFile(int fd, size_t *off, size_t size)
 void *mapFileForRead(int fd, size_t fileSize)
 {
     if (fd < 0 || fileSize == (size_t)-1) {
-        ERROR("Invalid arguments.");
+        LOG_ERROR("Invalid arguments.");
         return MAP_FAILED;
     }
 

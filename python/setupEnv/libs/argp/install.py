@@ -22,8 +22,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from os import listdir
-from os.path import dirname, realpath, join, splitext
+from os import chdir, getcwd
+from os.path import dirname, realpath, join
 import sys
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
@@ -32,181 +32,105 @@ sys.path.append(vpyDir)
 from vpy.cmd import execCmd
 from vpy.os import execForOs, isWin, isMacOsX
 from vpy.dir import createDir
-from vpy.file import cpFile
 from vpy.installArgs import parseInstallArgs
 import vpy.brew as brew
 
 import vpy.git as git
-import vpy.pacman as pacman
 import vpy.installArgs as vpy
 
-GNULIB_GIT_URL = 'https://git.savannah.gnu.org/git/gnulib.git'
-GNULIB_SRC_PATH = realpath('./gnulib')
-GNULIB_BUILD_PATH = realpath(f'{dirname(__file__)}/../../../../external/gnulib')
-GNULIB_AFTER_BUILT_PATH = join(GNULIB_BUILD_PATH, 'ALL', 'gllib')
-GNULIB_INSTALL_PREFIX = realpath('./../../../../external')
-GNULIB_INSTALL_LIB_PATH = join(GNULIB_INSTALL_PREFIX, 'lib')
-GNULIB_INSTALL_INCLUDE_PATH = join(GNULIB_INSTALL_PREFIX, 'include')
-
-GNULIB_MSYS_DEPS = [ 'gcc'
-                   , 'make'
-                   , 'm4'
-                   , 'autoconf'
-                   , 'automake'
-                   , 'bash'
-                   , 'coreutils'
-                   , 'diffutils'
-                   , 'patch'
-                   , 'grep'
-                   , 'gawk'
-                   , 'gettext'
-                   , 'bison'
-                   , 'gperf'
-                   , 'texinfo'
-                   , 'sed'
-                   , 'libtool'
-                   , 'tar'
-                   , 'flex'
-                   , 'python3'
-                   , 'unzip'
-                   , 'rsync'
-                   , 'mingw64/mingw-w64-x86_64-emacs'
-                   , 'mingw-w64-x86_64-toolchain'
-                   , 'mingw64/mingw-w64-x86_64-python'
-                   , 'openssh'
-                   ]
+ARGP_GIT_URL = 'https://github.com/Vipon/win-argp.git'
+ARGP_SRC_PATH = realpath(join(dirname(__file__), './win-argp'))
+ARGP_BUILD_PATH = join(ARGP_SRC_PATH, 'build')
+ARGP_INSTALL_PREFIX = realpath(f'{dirname(__file__)}/../../../../external')
 
 def parseArgs():
     args = parseInstallArgs('Install gnulib.')
 
-    global GNULIB_INSTALL_PREFIX
+    global ARGP_INSTALL_PREFIX
     if args.install_prefix is not None:
-        GNULIB_INSTALL_PREFIX = vpy.INSTALL_PREFIX
+        ARGP_INSTALL_PREFIX = vpy.INSTALL_PREFIX
 
     return args
 
-def installGnuLibDeps():
-    def installGnuLibDepsForWin():
-        pacman.install(GNULIB_MSYS_DEPS)
+def downloadArgpSrcCode():
+    def downloadArgpSrcCodeWin():
+        git.clone([ARGP_GIT_URL, ARGP_SRC_PATH])
 
-    def installGnuLibDepsForLinux():
+    def downloadArgpSrcCodeLinux():
         # It's on Linux by default
         return
 
-    def installGnuLibDepsForMac():
+    def downloadArgpSrcCodeMac():
         # Dont need, install from brew.
         return
 
     execForOs(
-        linux = installGnuLibDepsForLinux,
-        mac = installGnuLibDepsForMac,
-        win = installGnuLibDepsForWin
+        linux = downloadArgpSrcCodeLinux,
+        mac = downloadArgpSrcCodeMac,
+        win = downloadArgpSrcCodeWin
     )
 
-def downloadGnuLibSrcCode():
-    def downloadGnuLibSrcCodeWin():
-        git.clone([GNULIB_GIT_URL, GNULIB_SRC_PATH])
-
-    def downloadGnuLibSrcCodeLinux():
+def buildArgp():
+    def buildArgpLinux():
         # It's on Linux by default
         return
 
-    def downloadGnuLibSrcCodeMac():
-        # Dont need, install from brew.
-        return
-
-    execForOs(
-        linux = downloadGnuLibSrcCodeLinux,
-        mac = downloadGnuLibSrcCodeMac,
-        win = downloadGnuLibSrcCodeWin
-    )
-
-def buildGnuLib():
-    def buildGnuLibLinux():
-        # It's on Linux by default
-        return
-
-    def buildGnuLibMac():
+    def buildArgpMac():
         # Don't need to build. Should be installed from brew
         return
 
-    def buildGnuLibWin():
-        shell = pacman.PACMAN_SHELL
+    def buildArgpWin():
+        cwd = getcwd()
+        createDir(ARGP_BUILD_PATH)
+        chdir(ARGP_BUILD_PATH)
 
-        createDir(dirname(GNULIB_BUILD_PATH))
-        args = [ shell
-            , '-lc'
-            , ' '.join(
-                        [ 'cd'
-                        , f'"{GNULIB_SRC_PATH}"'
-                        , '&&'
-                        , './gnulib-tool'
-                        , '--create-megatestdir'
-                        , '--with-tests'
-                        , '--dir'
-                        , f'"{GNULIB_BUILD_PATH}"'
-                        , 'argp'
-                        ]
-                    )
-            ]
+        cmd = [ 'cmake'
+              , f'-DWIN_ARGP_INSTALL_PREFIX={ARGP_INSTALL_PREFIX}'
+              , '..'
+              ]
+        execCmd(cmd)
 
-        execCmd(args)
+        cmd = [ 'cmake', '--build', '.', '--config Release']
+        execCmd(cmd)
 
-        args = [ shell
-            , '-lc'
-            , ' '.join(
-                        [ 'cd'
-                        , f'"{GNULIB_BUILD_PATH}"'
-                        , '&&'
-                        , './do-autobuild'
-                        ]
-                    )
-            ]
-
-        execCmd(args)
+        chdir(cwd)
 
     execForOs(
-        linux = buildGnuLibLinux,
-        mac = buildGnuLibMac,
-        win = buildGnuLibWin
+        linux = buildArgpLinux,
+        mac = buildArgpMac,
+        win = buildArgpWin
     )
 
-def installGnuLib():
-    def installGnuLibLinux():
+def installArgp():
+    def installArgpLinux():
         # It's on Linux by default
         return
 
-    def installGnuLibMac():
-        # !TODO: add install via brew
+    def installArgpMac():
+        brew.install('argp-standalone')
         return
 
-    def installGnuLibWin():
-        createDir(GNULIB_INSTALL_LIB_PATH)
-        createDir(GNULIB_INSTALL_INCLUDE_PATH)
-        for f in listdir(GNULIB_AFTER_BUILT_PATH):
-            (_, ext) = splitext(f)
-            if ext == '.h':
-                cpFile( join(GNULIB_AFTER_BUILT_PATH, f)
-                      , join(GNULIB_INSTALL_INCLUDE_PATH, f)
-                )
-            if ext == '.a' or ext == '.so':
-                cpFile( join(GNULIB_AFTER_BUILT_PATH, f)
-                      , join(GNULIB_INSTALL_LIB_PATH, f)
-                )
+    def installArgpWin():
+        cwd = getcwd()
+        chdir(ARGP_BUILD_PATH)
+
+        cmd = [ 'cmake', '--install', '.', '--config Release']
+        execCmd(cmd)
+
+        chdir(cwd)
 
     execForOs(
-        linux = installGnuLibLinux,
-        mac = installGnuLibMac,
-        win = installGnuLibWin
+        linux = installArgpLinux,
+        mac = installArgpMac,
+        win = installArgpWin
     )
 
 def main():
     args = parseArgs()
     if isWin() or not args.default:
-        installGnuLibDeps()
-        downloadGnuLibSrcCode()
-        buildGnuLib()
-        installGnuLib()
+        downloadArgpSrcCode()
+        buildArgp()
+        installArgp()
     elif isMacOsX():
         brew.install('argp-standalone')
 

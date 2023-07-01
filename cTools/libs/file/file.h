@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -88,10 +88,15 @@ typedef DWORD FileFlag;
 #define IS_VLD_FD(fd) (fd != INV_FD)
 #define IS_INV_FD(fd) (fd == INV_FD)
 
-FileD open(const char *fn, FileFlag flags);
-void close(FileD fd);
-off_t lseek(FileD fd, off_t offset, int whence);
 typedef intmax_t ssize_t;
+
+EXPORT_FUNC
+FileD open(const char *fn, FileFlag flags);
+EXPORT_FUNC
+void close(FileD fd);
+EXPORT_FUNC
+off_t lseek(FileD fd, off_t offset, int whence);
+EXPORT_FUNC
 ssize_t read(FileD fd, void *buf, size_t count);
 
 #else
@@ -109,6 +114,7 @@ ssize_t read(FileD fd, void *buf, size_t count);
  *
  * \return size of files or -1.
  */
+EXPORT_FUNC
 size_t getFileSize(FileD fd);
 
 /*
@@ -126,6 +132,7 @@ size_t getFileSize(FileD fd);
  * After:
  *  Need to free memory.
  */
+EXPORT_FUNC
 void *readFromFile(FileD fd, size_t *off, size_t size);
 
 #endif /* _FILE_H */

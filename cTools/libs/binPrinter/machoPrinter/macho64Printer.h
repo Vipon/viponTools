@@ -63,16 +63,36 @@ extern const Macho64Platform MACHO64_PLATFORM[];
 typedef Macho64Flag Macho64Tool;
 extern const Macho64Tool MACHO64_TOOL[];
 
-EXPORT_FUNC(void macho64PrintHeader(const Macho64File *mf));
-EXPORT_FUNC(void macho64PrintSymbol(const Macho64File *mf, const Macho64Sym *ms));
-EXPORT_FUNC(void macho64PrintSymbols(const Macho64File *mf));
-EXPORT_FUNC(void macho64PrintSection(const Macho64Sect *sect));
-EXPORT_FUNC(void macho64PrintSectionsInSegment(const Macho64Seg *seg));
-EXPORT_FUNC(void macho64PrintSections(const Macho64File *mf));
-EXPORT_FUNC(void macho64PrintSegment(const Macho64Seg *seg));
-EXPORT_FUNC(void macho64PrintSegments(const Macho64File *mf));
-EXPORT_FUNC(void macho64PrintFuncStarts(const Macho64File *mf));
-EXPORT_FUNC(void macho64PrintLComs(const Macho64File *mf));
+EXPORT_FUNC
+void macho64PrintHeader(const Macho64File *mf);
+
+EXPORT_FUNC
+void macho64PrintSymbol(const Macho64File *mf, const Macho64Sym *ms);
+
+EXPORT_FUNC
+void macho64PrintSymbols(const Macho64File *mf);
+
+EXPORT_FUNC
+void macho64PrintSection(const Macho64Sect *sect);
+
+EXPORT_FUNC
+void macho64PrintSectionsInSegment(const Macho64Seg *seg);
+
+EXPORT_FUNC
+void macho64PrintSections(const Macho64File *mf);
+
+EXPORT_FUNC
+void macho64PrintSegment(const Macho64Seg *seg);
+
+EXPORT_FUNC
+void macho64PrintSegments(const Macho64File *mf);
+
+EXPORT_FUNC
+void macho64PrintFuncStarts(const Macho64File *mf);
+
+EXPORT_FUNC
+void macho64PrintLComs(const Macho64File *mf);
+
 
 #endif /* __MACHO_64_PRINTER_H */
 

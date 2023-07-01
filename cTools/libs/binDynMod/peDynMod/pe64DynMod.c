@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+#include "mem.h"
+#include "bits.h"
 #include "Windows.h"
 #include "pe64DynMod.h"
 

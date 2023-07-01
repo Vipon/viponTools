@@ -26,10 +26,15 @@ add_subdirectory(fatMachoPrinter)
 
 add_vipon_library(
   NAME binPrinter
-  TYPE SHARED
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS binPrinter.h
   SOURCES binPrinter.c
+  DEFINES BUILD_DLL
   LINK_LIBS binParse macho64Printer fatMacho64Printer pe64Printer
   INSTALL ON
 )
+
+if (WIN32)
+  target_compile_definitions(binPrinter PRIVATE BUILD_DLL)
+endif (WIN32)
 

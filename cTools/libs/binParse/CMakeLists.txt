@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2020-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ set(BIN_PARSE_LIB_LIST
 
 add_vipon_library(
   NAME binParse
-  TYPE SHARED
+  TYPE STATIC
   HEADERS binParse.h
   SOURCES binParse.c
   LINK_LIBS ${BIN_PARSE_LIB_LIST}

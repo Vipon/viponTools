@@ -48,9 +48,16 @@ typedef struct {
     } fatMacho;
 } BinPrinter;
 
+EXPORT_VAR
 extern BinPrinter binPrinter;
 
-EXPORT_FUNC(int initBinPrinter(const char *fn));
-EXPORT_FUNC(void setupBinPrinterArch(Arch arch));
-EXPORT_FUNC(void finiBinPrinter(void));
+EXPORT_FUNC
+int initBinPrinter(const char *fn);
+
+EXPORT_FUNC
+void setupBinPrinterArch(Arch arch);
+
+EXPORT_FUNC
+void finiBinPrinter(void);
+
 

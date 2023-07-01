@@ -88,6 +88,7 @@ void fatMacho64Free(FatMacho64File *ff);
 MACHO64_ERROR fatMacho64Check(const FatMacho64File *ff);
 
 Macho64File* fatMacho64GetMacho64ByArch(FatMacho64File *ff, Arch arch);
+
 const Macho64File* fatMacho64GetConstMacho64ByArch(const FatMacho64File *ff, Arch arch);
 
 Macho64Sym *fatMacho64GetSymByName(const FatMacho64File *ff, const char *name);
@@ -101,6 +102,7 @@ int fatMacho64CmpSym(const void *a, const void *b)
 }
 
 Macho64Sym *fatMacho64GetSSymTab(const FatMacho64File *ff);
+
 Macho64Sym *fatMacho64GetSSymSortTab(const FatMacho64File *ff);
 
 uint64_t fatMacho64GetAmountSSym(const FatMacho64File *ff);

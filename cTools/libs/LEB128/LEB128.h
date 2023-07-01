@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,14 @@
 #ifndef __LEB128_H
 #define __LEB128_H
 
+#include "os.h"
 #include <stdint.h>
 #include <stdlib.h>
 
+EXPORT_FUNC
 uint8_t* toULEB128(uint64_t v, uint8_t* buf, size_t size);
+
+EXPORT_FUNC
 uint8_t* fromULEB128(uint8_t* p, uint64_t* res);
 
 #endif /* __LEB128_H */

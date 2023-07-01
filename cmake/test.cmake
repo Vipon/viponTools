@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valerii
+# Copyright (c) 2021-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@ function(add_vipon_test)
     ${ARG_SOURCES}
   )
 
-  if (NOT ${ARG_DEPENDS} EQUAL "")
+  if (ARG_DEPENDS)
     add_dependencies(${ARG_NAME} ${ARG_DEPENDS})
   endif()
 
@@ -63,6 +63,32 @@ function(add_vipon_test)
     NAME ${ARG_NAME}
     COMMAND ./${ARG_NAME} ${ARG_CMD_LINE}
   )
+
+  if (WIN32)
+    if (MINGW)
+      set(TEST_PATH_${ARG_NAME} "PATH=\$\{PATH\}:${VIPON_TOOLS_EXTERNAL_LIB_DIR}")
+    else (MINGW)
+      set(TEST_PATH_${ARG_NAME} "PATH=%PATH%\;${VIPON_TOOLS_EXTERNAL_LIB_DIR}")
+    endif (MINGW)
+
+    foreach(elem ${ARG_LINK_LIBS})
+      if (TARGET ${elem})
+        get_target_property(PATH_TO_LIB ${elem} BINARY_DIR)
+        if (MSVC)
+          set(PATH_TO_LIB "${PATH_TO_LIB}\\${CMAKE_BUILD_TYPE}")
+        endif (MSVC)
+        if (MINGW)
+          string(APPEND TEST_PATH_${ARG_NAME} ":${PATH_TO_LIB}")
+        else (MINGW)
+          string(APPEND TEST_PATH_${ARG_NAME} "\;${PATH_TO_LIB}")
+        endif (MINGW)
+      endif (TARGET ${elem})
+    endforeach(elem)
+
+    set_tests_properties(${ARG_NAME}
+      PROPERTIES ENVIRONMENT "${TEST_PATH_${ARG_NAME}}"
+    )
+  endif (WIN32)
 
   file(
     COPY ${ARG_TEST_FILES}

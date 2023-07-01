@@ -25,6 +25,7 @@
 #ifndef _ARGS_H
 #define _ARGS_H
 
+#include "os.h"
 #include <argp.h>
 
 typedef void(*ARG_HAND)(const char*);
@@ -59,25 +60,32 @@ typedef struct Arg {
     };                    \
     addArg(&loc_arg);     \
 }
+EXPORT_FUNC
 int addArg(const Arg* arg);
 
 #define ADD_DOC(doc) addDoc(doc);
+EXPORT_FUNC
 void addDoc(const char* doc);
 
 #define ADD_ARGS_DOC(argsDoc) addArgsDoc(argsDoc);
+EXPORT_FUNC
 void addArgsDoc(const char* argsDoc);
 
 #define SET_NUM_ARGS(num) setNumArgs(num);
+EXPORT_FUNC
 void setNumArgs(unsigned num);
 
 typedef void(*ARGS_HAND)(const char*, unsigned num);
 #define SET_ARGS_HAND(hand) setArgsHand(hand);
+EXPORT_FUNC
 void setArgsHand(ARGS_HAND hand);
 
 #define ADD_VERSION(version) addVersion(version);
+EXPORT_FUNC
 void addVersion(const char* version);
 
 #define ARG_PARSE(argc, argv) argParse(argc, argv);
+EXPORT_FUNC
 error_t argParse(int argc, char** argv);
 
 #endif /* _ARGS_H */

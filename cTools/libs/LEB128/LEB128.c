@@ -33,12 +33,12 @@
 uint8_t* toULEB128(uint64_t v, uint8_t* buf, size_t size)
 {
     if (buf == NULL) {
-        ERROR("NULL pointer.");
+        LOG_ERROR("NULL pointer.");
         return NULL;
     }
 
     if (size == (size_t)-1) {
-        ERROR("wrong size of buffer.");
+        LOG_ERROR("wrong size of buffer.");
         return NULL;
     }
 
@@ -47,7 +47,7 @@ uint8_t* toULEB128(uint64_t v, uint8_t* buf, size_t size)
 
     do {
         if (i >= size) {
-            ERROR("not enough space in buffer.");
+            LOG_ERROR("not enough space in buffer.");
             return NULL;
         }
 
@@ -74,7 +74,7 @@ uint8_t* toULEB128(uint64_t v, uint8_t* buf, size_t size)
 uint8_t *fromULEB128(uint8_t *p, uint64_t *res)
 {
     if (p == NULL || res == NULL) {
-        ERROR("NULL pointer.");
+        LOG_ERROR("NULL pointer.");
         return NULL;
     }
 
@@ -83,7 +83,7 @@ uint8_t *fromULEB128(uint8_t *p, uint64_t *res)
 
     do {
         if (i >= sizeof(*res)) {
-            ERROR("wrong ULEB128 record %"PRIu64".", *(uint64_t*)(void*)p);
+            LOG_ERROR("wrong ULEB128 record %"PRIu64".", *(uint64_t*)(void*)p);
             return NULL;
         }
 

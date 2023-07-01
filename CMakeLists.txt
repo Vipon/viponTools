@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2020-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,23 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/toolchain/cflags/cflags.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/common.cmake)
 include(CTest)
 
+if (NOT VIPON_TOOLS_LIB_TYPE)
+  set(VIPON_TOOLS_LIB_TYPE SHARED)
+  if (WIN32)
+    set(VIPON_TOOLS_LIB_TYPE STATIC)
+  endif (WIN32)
+endif (NOT VIPON_TOOLS_LIB_TYPE)
+
+if (NOT VIPON_TOOLS_EXTERNAL_DIR)
+  set(VIPON_TOOLS_EXTERNAL_DIR "${CMAKE_CURRENT_LIST_DIR}/external")
+  set(VIPON_TOOLS_EXTERNAL_LIB_DIR "${VIPON_TOOLS_EXTERNAL_DIR}/lib")
+  set(VIPON_TOOLS_EXTERNAL_INCLUDE_DIR "${VIPON_TOOLS_EXTERNAL_DIR}/include")
+endif (NOT VIPON_TOOLS_EXTERNAL_DIR)
+
+include_directories(AFTER "${VIPON_TOOLS_EXTERNAL_INCLUDE_DIR}")
+link_directories(AFTER "${VIPON_TOOLS_EXTERNAL_LIB_DIR}")
+
+add_subdirectory(${VIPON_TOOLS_EXTERNAL_DIR})
 add_subdirectory(cTools)
 add_subdirectory(cxx)
 
