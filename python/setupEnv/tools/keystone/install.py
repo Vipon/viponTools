@@ -29,7 +29,7 @@ curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
 sys.path.append(vpyDir)
 
-from vpy.os import installPkg
+from vpy.os import installPkg, isWin
 from vpy.dir import createDir
 from vpy.net import downloadFile
 from vpy.file import extractFile
@@ -89,6 +89,9 @@ def buildAndInstallKeystone():
     os.chdir(cwd)
 
 def main():
+    if isWin():
+        return
+
     args = parseArgs()
     if not args.default:
         downloadSrcKeystone()

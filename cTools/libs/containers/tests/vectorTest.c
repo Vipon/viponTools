@@ -29,7 +29,7 @@
 #include <stddef.h>
 
 
-static int initVectorTest()
+static int initVectorTest(void)
 {
     Vector v;
 
@@ -47,7 +47,7 @@ static int initVectorTest()
 }
 
 
-static int pushBackVectorTest()
+static int pushBackVectorTest(void)
 {
     Vector v;
     const size_t capacity = 100;
@@ -68,7 +68,7 @@ static int pushBackVectorTest()
 }
 
 
-static int popBackVectorTest()
+static int popBackVectorTest(void)
 {
     Vector v;
     int i = 0;
@@ -96,7 +96,7 @@ static void addElemVector(void *p, int a)
 }
 
 
-static int forEachVectorTest()
+static int forEachVectorTest(void)
 {
     Vector v;
     int i = 0;
