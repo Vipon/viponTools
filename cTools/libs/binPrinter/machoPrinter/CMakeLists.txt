@@ -38,7 +38,5 @@ add_vipon_library(
   LINK_LIBS file LEB128 macho64Parse
 )
 
-if (APPLE)
-  add_subdirectory(test)
-endif (APPLE)
+add_subdirectory(test)
 

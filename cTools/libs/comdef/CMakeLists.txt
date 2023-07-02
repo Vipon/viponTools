@@ -23,7 +23,7 @@
 set(COMDEF_HEADERS comdef.h)
 set(COMDEF_SOURCES comdef.c)
 
-add_library(comdef STATIC
+add_library(comdef ${VIPON_TOOLS_LIB_TYPE}
   ${COMDEF_SOURCES}
   ${COMDEF_HEADERS}
 )
@@ -38,4 +38,12 @@ installHeaders("${COMDEF_HEADERS}")
 target_include_directories(comdef INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}
 )
+
+if (WIN32)
+  if (VIPON_TOOLS_LIB_TYPE STREQUAL "SHARED")
+    target_compile_definitions(comdef PRIVATE COMDEF_SHARED_LIB)
+  else ()
+    target_compile_definitions(comdef PRIVATE STATIC_LIB)
+  endif ()
+endif (WIN32)
 

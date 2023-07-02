@@ -186,7 +186,7 @@ void macho64PrintLComLoadDylib(const Macho64File *mf, const LoadCommand *lc)
                                          , (char*)(((size_t)dl) + dl->dylib.name.offset)
                                          , dl->dylib.name.offset);
     time_t time = dl->dylib.timestamp;
-    printf("%9s: %s"                     , "timestamp", asctime(localtime(&time)));
+    printf("%9s: %s"                     , "timestamp", asctime(gmtime(&time)));
     printf("%9s: %"PRIu32".%"PRIu32".%"PRIu32"\n"
                                          , "dylib ver"
                                          , dl->dylib.current_version >> 16

@@ -29,16 +29,18 @@ add_vipon_library(
   INSTALL ON
 )
 
-set(FAT_MACHO_PARSE_TYPE ${VIPON_TOOLS_LIB_TYPE})
-if (WIN32)
-  set(FAT_MACHO_PARSE_TYPE STATIC)
-endif (WIN32)
 add_vipon_library(
   NAME fatMacho64Parse
-  TYPE ${FAT_MACHO_PARSE_TYPE}
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS fatMacho64Parse.h
   SOURCES fatMacho64Parse.c
   LINK_LIBS macho64Parse file mem string
   INSTALL ON
 )
+
+if (WIN32)
+  if (VIPON_TOOLS_LIB_TYPE STREQUAL "SHARED")
+    target_compile_definitions(fatMacho64Parse PRIVATE FAT_MACHO64_PARSE_SHARED_LIB)
+  endif ()
+endif (WIN32)
 

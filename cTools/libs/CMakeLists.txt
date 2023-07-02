@@ -20,16 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+add_subdirectory(comdef)
 add_subdirectory(mem)
 add_subdirectory(file)
 add_subdirectory(string)
+add_subdirectory(LEB128)
+add_subdirectory(containers)
 add_subdirectory(args)
 add_subdirectory(binParse)
 add_subdirectory(binPrinter)
 add_subdirectory(binDynMod)
-add_subdirectory(comdef)
-add_subdirectory(containers)
-add_subdirectory(LEB128)
 if (NOT APPLE)
 add_subdirectory(perfAnalysis)
 endif (NOT APPLE)

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valera
+ * Copyright (c) 2021-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ typedef enum {
 #if defined(__GNUC__) || defined(__clang__)
 # if defined(i386) || defined(__i386) || defined(__i386__)
 #  define IA32_DEFINED 1
+#  define NATIVE_SIZE 4
 #  define ARCH X86
 # endif /* __i386__ */
 
@@ -52,6 +53,7 @@ typedef enum {
 #  define IA32E_DEFINED 1
 #  define AMD64_DEFINED 1
 #  define X86_64_DEFINED 1
+#  define NATIVE_SIZE 8
 #  define ARCH X86_64
 # endif /* __x86_64__ */
 
@@ -59,11 +61,13 @@ typedef enum {
 #  define ARM64_DEFINED 1
 #  define ARMV8_DEFINED 1
 #  define AARCH64_DEFINED 1
+#  define NATIVE_SIZE 8
 #  define ARCH AARCH64
 # endif /* __aarch64__ */
 
 # if defined(__arm__)
 #  define ARM32_DEFINED 1
+#  define NATIVE_SIZE 4
 #  define ARCH ARM
 # endif /* __arm__ */
 

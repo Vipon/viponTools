@@ -46,21 +46,21 @@
 #if defined(_WIN32) || defined(_WIN64)
 # ifndef __WIN__
 #  define __WIN__
-#  define DLLEXPORT __declspec(dllexport)
-#  define DLLIMPORT __declspec(dllimport)
 # endif
 #endif
 
 #ifdef __WIN__
+# define DLLEXPORT __declspec(dllexport)
+# define DLLIMPORT __declspec(dllimport)
 # define EXPORT_FUNC DLLEXPORT
-# ifdef BUILD_DLL
-#  define EXPORT_VAR DLLEXPORT
-# else /* BUILD_DLL */
-#  define EXPORT_VAR DLLIMPORT
-# endif /* BUILD_DLL */
+# define EXPORT_VAR DLLEXPORT
+# define IMPORT_VAR DLLIMPORT
 #else /* __WIN__ */
 # define EXPORT_FUNC
 # define EXPORT_VAR
+# define IMPORT_VAR
+# define DLLEXPORT
+# define DLLIMPORT
 #endif /* __WIN__ */
 
 #endif /* __OS_H */

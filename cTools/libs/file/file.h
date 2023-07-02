@@ -28,6 +28,7 @@
 #include "os.h"
 
 // C standard headers
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -134,6 +135,16 @@ size_t getFileSize(FileD fd);
  */
 EXPORT_FUNC
 void *readFromFile(FileD fd, size_t *off, size_t size);
+
+/***
+ * Output:
+ *  Success:
+ *      0 or number of different string.
+ *  Fail:
+ *      -1
+ */
+EXPORT_FUNC
+int cmpFiles(const char *a, const char *b);
 
 #endif /* _FILE_H */
 

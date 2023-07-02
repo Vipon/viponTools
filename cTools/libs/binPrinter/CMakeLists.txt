@@ -29,12 +29,8 @@ add_vipon_library(
   TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS binPrinter.h
   SOURCES binPrinter.c
-  DEFINES BUILD_DLL
+  DEFINES BIN_PRINTER_SHARED_LIB
   LINK_LIBS binParse macho64Printer fatMacho64Printer pe64Printer
   INSTALL ON
 )
-
-if (WIN32)
-  target_compile_definitions(binPrinter PRIVATE BUILD_DLL)
-endif (WIN32)
 

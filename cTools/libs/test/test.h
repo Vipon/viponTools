@@ -59,6 +59,14 @@
             exit(EXIT_FAILURE);                              \
         }
 
+    #define EXPECT_FILE_EQ(fa, fb)                                                 \
+        DEF_GUARD(                                                                 \
+            int err = cmpFiles(fa, fb);                                             \
+            if (err) {                                                             \
+                VT_ERROR("file %s and %s are different in line %d ", fa, fb, err); \
+                exit(EXIT_FAILURE);                                                \
+            }                                                                      \
+        )
 #else // __cplusplus
     #include <cstdlib>
 

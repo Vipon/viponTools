@@ -22,14 +22,26 @@
  * SOFTWARE.
  */
 
+#include "test.h"
+#include "file.h"
 #include "comdef.h"
 #include "macho64Parse.h"
 #include "macho64Printer.h"
 
+#include <stdio.h>
+
+static const char TESTOUT[] = "macho64PrintExeTest.txt";
+
 int main(int argc, char *argv[])
 {
     UNUSED(argc);
-    Macho64File *mf = macho64Parse(argv[0]);
+    Macho64File *mf = macho64Parse(argv[1]);
+    if (mf == NULL) {
+        VT_ERROR("Cannot parse %s", argv[1]);
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *f = freopen(TESTOUT, "w", stdout);
 
     macho64PrintHeader(mf);
     macho64PrintLComs(mf);
@@ -39,6 +51,10 @@ int main(int argc, char *argv[])
     macho64PrintSymbols(mf);
 
     macho64Free(mf);
+
+    fclose(f);
+
+    EXPECT_FILE_EQ(TESTOUT, argv[2]);
 
     return 0;
 }

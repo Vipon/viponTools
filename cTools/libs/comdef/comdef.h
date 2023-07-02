@@ -32,6 +32,13 @@
     #define PAGE_SIZE 4096
 #endif /* PAGE_SIZE */
 
+#ifdef COMDEF_SHARED_LIB
+EXPORT_VAR
+#else /* COMDEF_SHARED_LIB */
+# if !defined(STATIC_LIB)
+IMPORT_VAR
+# endif /* STATIC_LIB*/
+#endif /* COMDEF_SHARED_LIB */
 extern int VERBOSE;
 
 #ifndef UNUSED

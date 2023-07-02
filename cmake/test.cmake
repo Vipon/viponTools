@@ -50,14 +50,8 @@ function(add_vipon_test)
     add_dependencies(${ARG_NAME} ${ARG_DEPENDS})
   endif()
 
-  target_link_options(${ARG_NAME} BEFORE
-    PUBLIC ${ARG_LINK_FLAGS}
-  )
-
-  target_link_libraries(${ARG_NAME}
-    vTest
-    ${ARG_LINK_LIBS}
-  )
+  target_link_options(${ARG_NAME} BEFORE PUBLIC ${ARG_LINK_FLAGS})
+  target_link_libraries(${ARG_NAME} vTest ${ARG_LINK_LIBS})
 
   add_test(
     NAME ${ARG_NAME}

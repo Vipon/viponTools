@@ -233,6 +233,7 @@ static_assert(((int32_t)ELF32_INV_ARG) < 0, "ERRORS must be negative");
  * After:
  *  need to call function void elf32Free(Elf32File *elf32).
  */
+EXPORT_FUNC
 Elf32File *elf32Parse(const char *fn);
 
 
@@ -245,6 +246,7 @@ Elf32File *elf32Parse(const char *fn);
  * After:
  *  you should to assigned elf32 = NULL.
  */
+EXPORT_FUNC
 void elf32Free(Elf32File *elf32);
 
 
@@ -257,6 +259,7 @@ void elf32Free(Elf32File *elf32);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 ELF32_ERROR elf32Check(const Elf32File *elf32);
 
 
@@ -271,7 +274,9 @@ ELF32_ERROR elf32Check(const Elf32File *elf32);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 ELF32_ERROR elf32PrintSymbol(const Elf32File *elf32, const Elf32Sym *sym);
+EXPORT_FUNC
 ELF32_ERROR elf32PrintSymbols(const Elf32File *elf32);
 
 
@@ -290,6 +295,7 @@ ELF32_ERROR elf32PrintSymbols(const Elf32File *elf32);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 Elf32Sym *elf32GetSymByName(const Elf32File *elf32, const char *name);
 
 
@@ -305,6 +311,7 @@ Elf32Sym *elf32GetSymByName(const Elf32File *elf32, const char *name);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 char *elf32GetSymName(const Elf32File *elf32, const Elf32Sym *sym);
 
 
@@ -313,6 +320,7 @@ char *elf32GetSymName(const Elf32File *elf32, const Elf32Sym *sym);
  *  Function for work with qsort. Functions compare addresses of symbols and
  *  returns 1/-1/0 if a->addr >/</== b->addr.
  */
+EXPORT_FUNC
 int elf32CmpSym(const void *a, const void *b);
 
 
@@ -327,7 +335,9 @@ int elf32CmpSym(const void *a, const void *b);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 Elf32Sym *elf32GetSSymTab(const Elf32File *elf32);
+EXPORT_FUNC
 Elf32Sym *elf32GetSSymSortTab(const Elf32File *elf32);
 
 
@@ -342,6 +352,7 @@ Elf32Sym *elf32GetSSymSortTab(const Elf32File *elf32);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetAmountSSym(const Elf32File *elf32);
 
 
@@ -356,6 +367,7 @@ uint32_t elf32GetAmountSSym(const Elf32File *elf32);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetSSymAddr(const Elf32Sym *sym);
 
 
@@ -372,6 +384,7 @@ uint32_t elf32GetSSymAddr(const Elf32Sym *sym);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetAddrSymByName(const Elf32File *elf32, const char *name);
 
 
@@ -386,6 +399,7 @@ uint32_t elf32GetAddrSymByName(const Elf32File *elf32, const char *name);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetSSymSize(const Elf32File *elf32, const Elf32Sym *sym);
 
 
@@ -401,6 +415,7 @@ uint32_t elf32GetSSymSize(const Elf32File *elf32, const Elf32Sym *sym);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetSSymFileoff(const Elf32File *elf32, const Elf32Sym *sym);
 
 
@@ -417,6 +432,7 @@ uint32_t elf32GetSSymFileoff(const Elf32File *elf32, const Elf32Sym *sym);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetDSymIndxByName(const Elf32File *elf32, const char *name);
 
 
@@ -430,6 +446,7 @@ uint32_t elf32GetDSymIndxByName(const Elf32File *elf32, const char *name);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetAmountSeg(const Elf32File *elf32);
 
 
@@ -442,6 +459,7 @@ uint32_t elf32GetAmountSeg(const Elf32File *elf32);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 Elf32Shdr *elf32GetSectByType(const Elf32File *elf32, const Elf32Word sh_type);
 
 
@@ -458,7 +476,9 @@ Elf32Shdr *elf32GetSectByType(const Elf32File *elf32, const Elf32Word sh_type);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 Elf32Shdr *elf32GetSectByName(const Elf32File *elf32, const char* name);
+EXPORT_FUNC
 Elf32Shdr *elf32GetLastLoadableSect(const Elf32File *elf32);
 
 
@@ -476,6 +496,7 @@ Elf32Shdr *elf32GetLastLoadableSect(const Elf32File *elf32);
  * After:
  *  need to free memory
  */
+EXPORT_FUNC
 void *elf32ReadSect(const Elf32File *elf32, const Elf32Shdr *sectionHeader);
 
 
@@ -483,6 +504,7 @@ void *elf32ReadSect(const Elf32File *elf32, const Elf32Shdr *sectionHeader);
  * Description:
  *  Function returns an amount of sections in the binary file.
  */
+EXPORT_FUNC
 uint32_t elf32GetAmountSect(const Elf32File *elf32);
 
 
@@ -498,6 +520,7 @@ uint32_t elf32GetAmountSect(const Elf32File *elf32);
  *  Fail:
  *      NULL.
  */
+EXPORT_FUNC
 const char* elf32GetSectName(const Elf32File *elf32, const Elf32Shdr *sect);
 
 
@@ -512,6 +535,7 @@ const char* elf32GetSectName(const Elf32File *elf32, const Elf32Shdr *sect);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetSectSize(const Elf32Shdr *elf32Sect);
 
 
@@ -526,6 +550,7 @@ uint32_t elf32GetSectSize(const Elf32Shdr *elf32Sect);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetSectAddr(const Elf32Shdr *sect);
 
 
@@ -540,6 +565,7 @@ uint32_t elf32GetSectAddr(const Elf32Shdr *sect);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint32_t elf32GetSectFileoff(const Elf32Shdr *sect);
 
 
@@ -557,6 +583,7 @@ uint32_t elf32GetSectFileoff(const Elf32Shdr *sect);
  *  Fail:
  *      NULL.
  */
+EXPORT_FUNC
 uint32_t elf32GetRelocForAddr(const Elf32File *elf32, const Elf32Shdr *sect, uint32_t addr);
 
 /***
@@ -571,6 +598,7 @@ uint32_t elf32GetRelocForAddr(const Elf32File *elf32, const Elf32Shdr *sect, uin
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func);
 
 #endif /* _ELF32_PARSE_H */

@@ -25,6 +25,7 @@
 #ifndef _BIN_PARSE_H
 #define _BIN_PARSE_H
 
+#include "os.h"
 #include <stdint.h>
 
 typedef enum {
@@ -100,10 +101,20 @@ typedef struct {
     //BinGetRelocDataAddr    getRelocDataAddr;
 } BinParser;
 
+#ifdef BIN_PARSER_SHARED_LIB
+EXPORT_VAR
+#else /* BIN_PARSER_SHARED_LIB */
+# ifndef STATIC_LIB
+IMPORT_VAR
+# endif /* STATIC_LIB*/
+#endif /* BIN_PARSER_SHARED_LIB */
 extern BinParser binParser;
 
+EXPORT_FUNC
 int initBinParser(const char *fn);
+EXPORT_FUNC
 void finiBinParser(void);
+EXPORT_FUNC
 void *binHook(const char *func, const void *hand);
 
 #endif /* _BIN_PARSE_H */
