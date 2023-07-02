@@ -22,7 +22,7 @@
 
 add_vipon_library(
   NAME pe64Parse
-  TYPE ${LIB_TYPE}
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
   SOURCES pe64Parse.c
   HEADERS pe64Parse.h
   LINK_LIBS file mem string

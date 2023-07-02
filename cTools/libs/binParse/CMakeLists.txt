@@ -34,10 +34,16 @@ set(BIN_PARSE_LIB_LIST
 
 add_vipon_library(
   NAME binParse
-  TYPE STATIC
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS binParse.h
   SOURCES binParse.c
   LINK_LIBS ${BIN_PARSE_LIB_LIST}
   INSTALL ON
 )
+
+if (WIN32)
+  if (VIPON_TOOLS_LIB_TYPE STREQUAL "SHARED")
+    target_compile_definitions(binParse PRIVATE BIN_PARSER_SHARED_LIB)
+  endif ()
+endif (WIN32)
 

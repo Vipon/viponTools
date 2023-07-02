@@ -232,6 +232,7 @@ static_assert(((int64_t)ELF64_INV_ARG) < 0, "ERRORS must be negative");
  * After:
  *  need to call function void elf64Free(Elf64File *elf64).
  */
+EXPORT_FUNC
 Elf64File *elf64Parse(const char *fn);
 
 
@@ -244,6 +245,7 @@ Elf64File *elf64Parse(const char *fn);
  * After:
  *  you should to assigned elf64 = NULL.
  */
+EXPORT_FUNC
 void elf64Free(Elf64File *elf64);
 
 
@@ -256,6 +258,7 @@ void elf64Free(Elf64File *elf64);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 ELF64_ERROR elf64Check(const Elf64File *elf64);
 
 
@@ -270,7 +273,9 @@ ELF64_ERROR elf64Check(const Elf64File *elf64);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 ELF64_ERROR elf64PrintSymbol(const Elf64File *elf64, const Elf64Sym *sym);
+EXPORT_FUNC
 ELF64_ERROR elf64PrintSymbols(const Elf64File *elf64);
 
 
@@ -289,6 +294,7 @@ ELF64_ERROR elf64PrintSymbols(const Elf64File *elf64);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 Elf64Sym *elf64GetSymByName(const Elf64File *elf64, const char *name);
 
 
@@ -304,6 +310,7 @@ Elf64Sym *elf64GetSymByName(const Elf64File *elf64, const char *name);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 char *elf64GetSymName(const Elf64File *elf64, const Elf64Sym *sym);
 
 
@@ -312,6 +319,7 @@ char *elf64GetSymName(const Elf64File *elf64, const Elf64Sym *sym);
  *  Function for work with qsort. Functions compare addresses of symbols and
  *  returns 1/-1/0 if a->addr >/</== b->addr.
  */
+EXPORT_FUNC
 int elf64CmpSym(const void *a, const void *b);
 
 
@@ -326,7 +334,9 @@ int elf64CmpSym(const void *a, const void *b);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 Elf64Sym *elf64GetSSymTab(const Elf64File *elf64);
+EXPORT_FUNC
 Elf64Sym *elf64GetSSymSortTab(const Elf64File *elf64);
 
 
@@ -341,6 +351,7 @@ Elf64Sym *elf64GetSSymSortTab(const Elf64File *elf64);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetAmountSSym(const Elf64File *elf64);
 
 
@@ -355,6 +366,7 @@ uint64_t elf64GetAmountSSym(const Elf64File *elf64);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetSSymAddr(const Elf64Sym *sym);
 
 
@@ -371,6 +383,7 @@ uint64_t elf64GetSSymAddr(const Elf64Sym *sym);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetAddrSymByName(const Elf64File *elf64, const char *name);
 
 
@@ -385,6 +398,7 @@ uint64_t elf64GetAddrSymByName(const Elf64File *elf64, const char *name);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetSSymSize(const Elf64File *elf64, const Elf64Sym *sym);
 
 
@@ -400,6 +414,7 @@ uint64_t elf64GetSSymSize(const Elf64File *elf64, const Elf64Sym *sym);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetSSymFileoff(const Elf64File *elf64, const Elf64Sym *sym);
 
 
@@ -416,6 +431,7 @@ uint64_t elf64GetSSymFileoff(const Elf64File *elf64, const Elf64Sym *sym);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetDSymIndxByName(const Elf64File *elf64, const char *name);
 
 
@@ -429,6 +445,7 @@ uint64_t elf64GetDSymIndxByName(const Elf64File *elf64, const char *name);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetAmountSeg(const Elf64File *elf64);
 
 
@@ -441,6 +458,7 @@ uint64_t elf64GetAmountSeg(const Elf64File *elf64);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 Elf64Shdr *elf64GetSectByType(const Elf64File *elf64, const Elf64Word sh_type);
 
 
@@ -457,7 +475,9 @@ Elf64Shdr *elf64GetSectByType(const Elf64File *elf64, const Elf64Word sh_type);
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 Elf64Shdr *elf64GetSectByName(const Elf64File *elf64, const char* name);
+EXPORT_FUNC
 Elf64Shdr *elf64GetLastLoadableSect(const Elf64File *elf64);
 
 
@@ -475,6 +495,7 @@ Elf64Shdr *elf64GetLastLoadableSect(const Elf64File *elf64);
  * After:
  *  need to free memory
  */
+EXPORT_FUNC
 void *elf64ReadSect(const Elf64File *elf64, const Elf64Shdr *sectionHeader);
 
 
@@ -482,6 +503,7 @@ void *elf64ReadSect(const Elf64File *elf64, const Elf64Shdr *sectionHeader);
  * Description:
  *  Function returns an amount of sections in the binary file.
  */
+EXPORT_FUNC
 uint64_t elf64GetAmountSect(const Elf64File *elf64);
 
 
@@ -497,6 +519,7 @@ uint64_t elf64GetAmountSect(const Elf64File *elf64);
  *  Fail:
  *      NULL.
  */
+EXPORT_FUNC
 const char* elf64GetSectName(const Elf64File *elf64, const Elf64Shdr *sect);
 
 
@@ -511,6 +534,7 @@ const char* elf64GetSectName(const Elf64File *elf64, const Elf64Shdr *sect);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetSectSize(const Elf64Shdr *elf64Sect);
 
 
@@ -525,6 +549,7 @@ uint64_t elf64GetSectSize(const Elf64Shdr *elf64Sect);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetSectAddr(const Elf64Shdr *sect);
 
 
@@ -539,6 +564,7 @@ uint64_t elf64GetSectAddr(const Elf64Shdr *sect);
  *  Fail:
  *      -1.
  */
+EXPORT_FUNC
 uint64_t elf64GetSectFileoff(const Elf64Shdr *sect);
 
 
@@ -556,6 +582,7 @@ uint64_t elf64GetSectFileoff(const Elf64Shdr *sect);
  *  Fail:
  *      NULL.
  */
+EXPORT_FUNC
 uint64_t elf64GetRelocForAddr(const Elf64File *elf64, const Elf64Shdr *sect, uint64_t addr);
 
 
@@ -571,6 +598,7 @@ uint64_t elf64GetRelocForAddr(const Elf64File *elf64, const Elf64Shdr *sect, uin
  *  Fail:
  *      NULL point.
  */
+EXPORT_FUNC
 void *elf64GetRelocDataAddr(const Elf64File *elf64, const char *func);
 
 #endif /* _ELF64_PARSE_H */

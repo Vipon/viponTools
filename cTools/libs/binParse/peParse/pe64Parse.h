@@ -346,11 +346,15 @@ typedef enum {
 static_assert(sizeof(PE64_ERROR) == 8, "PE64_ERROR must be 64 bit");
 static_assert(((int64_t)PE64_INV_ARG) < 0, "ERRORS must be negative");
 
+EXPORT_FUNC
 PE64File *pe64Parse(const char *fn);
+EXPORT_FUNC
 void pe64Free(PE64File *pe);
 
+EXPORT_FUNC
 PE64_ERROR pe64Check(const PE64File *pe);
 
+EXPORT_FUNC
 uint64_t pe64AddrToFileOff(const PE64File *pe, uint64_t addr);
 
 /***
@@ -363,28 +367,46 @@ uint64_t pe64AddrToFileOff(const PE64File *pe, uint64_t addr);
  * IMAGE_FILE_MACHINE_I386      0x14c   Intel 386 or later processors
  * IMAGE_FILE_MACHINE_IA64      0x200   Intel Itanium processor family
  */
+EXPORT_FUNC
 uint64_t pe64GetMachineID(const PE64File *pe);
 
+EXPORT_FUNC
 PESection *pe64GetSectByAddr(const PE64File *pe, uint64_t addr);
+EXPORT_FUNC
 PESection *pe64GetSectByIndx(const PE64File *pe, uint64_t sectNum);
+EXPORT_FUNC
 PESection *pe64GetSectByName(const PE64File *pe, const char *name);
+EXPORT_FUNC
 PESection *pe64GetLastLoadableSect(const PE64File *pe);
 
+EXPORT_FUNC
 void *pe64ReadSect(const PE64File *pe, const PESection *sect);
 
+EXPORT_FUNC
 const char *pe64GetShortSectName(const PE64File *pe, const PESection *sect);
+EXPORT_FUNC
 const char *pe64GetLongSectName(const PE64File *pe, const PESection *sect);
+EXPORT_FUNC
 const char *pe64GetSectName(const PE64File *pe, const PESection *sect);
 
+EXPORT_FUNC
 uint64_t pe64GetAmountSect(const PE64File *pe);
+EXPORT_FUNC
 uint64_t pe64GetSectAddr(const PESection *sect);
+EXPORT_FUNC
 uint64_t pe64GetSectSize(const PESection *sect);
+EXPORT_FUNC
 uint64_t pe64GetSectFileoff(const PESection *sect);
+EXPORT_FUNC
 uint64_t pe64GetSectEndFileoff(const PESection *sect);
+EXPORT_FUNC
 uint64_t pe64GetSectVend(const PE64File *pe, const PESection *sect);
 
+EXPORT_FUNC
 PESymbol *pe64GetSSymTab(const PE64File *pe);
+EXPORT_FUNC
 PESymbol *pe64GetSSymSortTab(const PE64File *pe);
+EXPORT_FUNC
 PESymbol *pe64GetSymByName(const PE64File *pe, const char *name);
 
 /***
@@ -395,19 +417,30 @@ PESymbol *pe64GetSymByName(const PE64File *pe, const char *name);
  *  -1 - if (a->addr < b->addr)
  *  0 - if (a->addr == b->addr)
  */
+EXPORT_FUNC
 int pe64CmpSym(const void *a, const void *b);
 
+EXPORT_FUNC
 const char*pe64GetLongSymName(const PE64File *pe, const PESymbol *sym);
+EXPORT_FUNC
 const char*pe64GetShortSymName(const PE64File *pe, const PESymbol *sym);
+EXPORT_FUNC
 const char*pe64GetSymName(const PE64File *pe, const PESymbol *sym);
 
+EXPORT_FUNC
 uint64_t pe64GetAmountSSym(const PE64File *pe);
+EXPORT_FUNC
 uint64_t pe64GetSSymAddr(const PESymbol *sym);
+EXPORT_FUNC
 uint64_t pe64GetSSymSectIndx(const PESymbol *sym);
+EXPORT_FUNC
 uint64_t pe64GetAddrSymByName(const PE64File *pe, const char *name);
+EXPORT_FUNC
 uint64_t pe64GetSSymFileoff(const PE64File *pe, const PESymbol *sym);
+EXPORT_FUNC
 uint64_t pe64GetSSymSize(const PE64File *pe, const PESymbol *sym);
 
+EXPORT_FUNC
 uint64_t pe64GetAmountSeg(const PE64File *pe);
 
 #endif /* __PE_64_PARSE */

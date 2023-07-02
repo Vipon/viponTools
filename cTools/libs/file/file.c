@@ -179,3 +179,27 @@ void *readFromFile(FileD fd, size_t *off, size_t size)
 # error "*** ERROR: Unknown OS. ***"
 #endif
 
+int cmpFiles(const char *a, const char *b)
+{
+    FILE *fa = fopen(a, "r");
+    FILE *fb = fopen(b, "r");
+    if (fa == NULL || fb == NULL)
+        return -1;
+
+    int line = 1; // line number
+
+    char ca,cb;
+    do {
+        ca = (char) getc(fa);
+        cb = (char) getc(fb);
+
+        if (ca == '\n' && cb == '\n')
+            ++line;
+
+        if (ca != cb)
+            return line;
+    } while (ca != EOF && cb != EOF);
+
+    return 0;
+}
+

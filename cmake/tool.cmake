@@ -50,13 +50,8 @@ function(add_vipon_tool)
     comdef
   )
 
-  target_include_directories(${ARG_NAME} INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}
-  )
-
-  target_link_options(${ARG_NAME}
-    PUBLIC ${ARG_LINK_OPTIONS}
-  )
+  target_link_options(${ARG_NAME} PUBLIC ${ARG_LINK_OPTIONS})
+  target_include_directories(${ARG_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
   if(ARG_INSTALL)
     install(

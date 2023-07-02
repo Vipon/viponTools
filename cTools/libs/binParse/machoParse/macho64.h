@@ -29,6 +29,10 @@
 #ifndef __MACHO64_H
 #define __MACHO64_H
 
+#ifndef __LP64__
+# define __LP64__ 1
+#endif /* __LP64__ */
+
 #include "macho.h"
 
 /***

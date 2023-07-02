@@ -48,7 +48,13 @@ typedef struct {
     } fatMacho;
 } BinPrinter;
 
+#ifdef BIN_PRINTER_SHARED_LIB
 EXPORT_VAR
+#else /* BIN_PRINTER_SHARED_LIB */
+# ifndef STATIC_LIB
+IMPORT_VAR
+# endif /* STATIC_LIB*/
+#endif /* BIN_PRINTER_SHARED_LIB */
 extern BinPrinter binPrinter;
 
 EXPORT_FUNC

@@ -31,6 +31,7 @@ add_library(BINBAR SHARED
 add_vipon_test(
   NAME binDynModTest
   SOURCES binDynModTest.c
-  LINK_LIBS binDynMod macho64Parse BINFOO BINBAR file mem string
+  LINK_LIBS binDynMod binParse elf32Parse elf64Parse fatMacho64Parse
+            macho64Parse pe64Parse comdef file mem string BINBAR BINFOO
 )
 

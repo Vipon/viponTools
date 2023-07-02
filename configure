@@ -42,8 +42,8 @@ def parseArgs():
     parser = argparse.ArgumentParser(description = 'Configure viponTools project.')
     parser.add_argument('--release', action = 'store_true',
             help = 'release build instead of debug')
-    parser.add_argument('--dyn-libs', action = 'store_true',
-            help = 'build dynamic libs if possible')
+    parser.add_argument('--static', action = 'store_true',
+            help = 'build only static libs')
     parser.add_argument('--c-toolchain', metavar = 'PATH', nargs = '?',
             default = os.path.join(TOOLCHAIN_DIR, 'host-clang.cmake'),
             help = 'path to CMAKE_TOOLCHAIN_FILE')
@@ -129,7 +129,7 @@ def execCmake(args):
         com += ['-A x64', '-T ClangCL']
 
     com += [ '-DCMAKE_BUILD_TYPE={}'    .format('Release' if args.release else 'Debug')
-           , '-DVIPON_TOOLS_LIB_TYPE={}'.format('SHARED' if args.dyn_libs else 'STATIC')
+           , '-DVIPON_TOOLS_LIB_TYPE={}'.format('STATIC' if args.static else 'SHARED')
            , '-DCMAKE_TOOLCHAIN_FILE={}'.format(args.c_toolchain)
            , '-DCMAKE_INSTALL_PREFIX={}'.format(args.install_dir)
            , '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
