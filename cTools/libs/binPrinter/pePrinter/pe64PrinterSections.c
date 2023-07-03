@@ -59,12 +59,12 @@ static void pe64PrintSectMisc(const PE64File *pe, const PESection *sect)
 
     switch (pe->type) {
     case PE64_OBJ:
-        printf("%13s: %.8lx ", "PhysAddr", sect->Misc.PhysicalAddress);
+        printf("%13s: %.8x ", "PhysAddr", (uint32_t)sect->Misc.PhysicalAddress);
         break;
     case PE64_EXEC:
     case PE64_SHARED:
     default:
-        printf("%13s: %.8lx ", "VirtSize", sect->Misc.VirtualSize);
+        printf("%13s: %.8x ", "VirtSize", (uint32_t)sect->Misc.VirtualSize);
         break;
     }
 }
@@ -74,7 +74,7 @@ static void pe64PrintSectVirtAddr(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("%13s: %.8lx ", "VirtAddr", sect->VirtualAddress);
+    printf("%13s: %.8x ", "VirtAddr", (uint32_t)sect->VirtualAddress);
 }
 
 static void pe6464PrintSectSizeOfRawData(const PESection *sect)
@@ -82,7 +82,7 @@ static void pe6464PrintSectSizeOfRawData(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("%13s: %.8lx ", "raw data size", sect->SizeOfRawData);
+    printf("%13s: %.8x ", "raw data size", (uint32_t)sect->SizeOfRawData);
 }
 
 static void pe6464PrintPointerToRawData(const PESection *sect)
@@ -90,7 +90,7 @@ static void pe6464PrintPointerToRawData(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("%13s: %.8lx ", "raw data offs", sect->PointerToRawData);
+    printf("%13s: %.8x ", "raw data offs", (uint32_t)sect->PointerToRawData);
 }
 
 static void pe6464PrintPointerToRelocations(const PESection *sect)
@@ -98,7 +98,7 @@ static void pe6464PrintPointerToRelocations(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("%13s: %.8lx ", "reloc offs", sect->PointerToRelocations);
+    printf("%13s: %.8x ", "reloc offs", (uint32_t)sect->PointerToRelocations);
 }
 
 static void pe6464PrintPointerToLinenumbers(const PESection *sect)
@@ -106,7 +106,7 @@ static void pe6464PrintPointerToLinenumbers(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("%13s: %.8lx ", "line # offs",sect->PointerToLinenumbers);
+    printf("%13s: %.8x ", "line # offs", (uint32_t)sect->PointerToLinenumbers);
 }
 
 static void pe6464PrintNumberOfRelocations(const PESection *sect)
@@ -130,7 +130,7 @@ static void pe6464PrintCharacteristics(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("%13s: %.8lx ", "flags", sect->Characteristics);
+    printf("%13s: %.8x ", "flags", (uint32_t)sect->Characteristics);
 }
 
 void pe64PrintSection(const PE64File *pe, const PESection *sect)

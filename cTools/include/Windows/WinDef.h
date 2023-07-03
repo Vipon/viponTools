@@ -21,6 +21,8 @@
 #ifndef _WINDEF_
 #define _WINDEF_
 
+#include "os.h"
+
 #ifndef WINVER
 #define WINVER 0x0500
 #endif
@@ -252,7 +254,11 @@ typedef unsigned int    UINT,       *PUINT;
 typedef float           FLOAT,      *PFLOAT;
 typedef char                        *PSZ;
 typedef long                                   *LPLONG;
+#ifdef __WIN__
 typedef unsigned long   DWORD,      *PDWORD,   *LPDWORD;
+#else /* __WIN__ */
+typedef uint32_t        DWORD,      *PDWORD,   *LPDWORD;
+#endif /* __WIN__ */
 
 typedef DWORD RVA;
 

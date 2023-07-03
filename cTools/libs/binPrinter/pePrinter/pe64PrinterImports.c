@@ -48,7 +48,7 @@ static void pe64PrintImportTimeStamp(const PE64File *pe, const PEImport *import)
     if (pe == NULL || import == NULL)
         return;
 
-    printf("%ld", import->TimeDateStamp);
+    printf("%d", (int32_t)import->TimeDateStamp);
 }
 
 static void pe64PrintImportForwardIndex(const PE64File *pe, const PEImport *import)
@@ -56,7 +56,7 @@ static void pe64PrintImportForwardIndex(const PE64File *pe, const PEImport *impo
     if (pe == NULL || import == NULL)
         return;
 
-    printf("%ld", import->ForwarderChain);
+    printf("%d", (int32_t)import->ForwarderChain);
 }
 
 static void pe64PrintImporAddrTable(const PE64File *pe, const PEImport *import)
@@ -64,7 +64,7 @@ static void pe64PrintImporAddrTable(const PE64File *pe, const PEImport *import)
     if (pe == NULL || import == NULL)
         return;
 
-    printf("%lx", import->FirstThunk);
+    printf("%x", (uint32_t)import->FirstThunk);
 }
 
 static void pe64PrintImporNameTable(const PE64File *pe, const PEImport *import)
@@ -72,7 +72,7 @@ static void pe64PrintImporNameTable(const PE64File *pe, const PEImport *import)
     if (pe == NULL || import == NULL)
         return;
 
-    printf("%lx", import->OriginalFirstThunk);
+    printf("%x", (uint32_t)import->OriginalFirstThunk);
 }
 
 void pe64PrintINT(const PE64File *pe, ThunkData64 *INT)

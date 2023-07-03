@@ -43,7 +43,7 @@ static void pePrintDosNtHeaderOff(const DosHeader *dosHeader)
     if (dosHeader == NULL)
         return;
 
-    printf("%.8lx", dosHeader->e_lfanew);
+    printf("%.8x", (uint32_t)dosHeader->e_lfanew);
 }
 
 void pe64PrintDosHeader(const PE64File *pe)
@@ -194,7 +194,7 @@ static void pe64PrintSymTabPtr(const FileHeader *fileHeader)
     if (fileHeader == NULL)
         return;
 
-    printf("%.8lx", fileHeader->PointerToSymbolTable);
+    printf("%.8x", (uint32_t)fileHeader->PointerToSymbolTable);
 }
 
 static void pe64PrintSymNum(const FileHeader *fileHeader)
@@ -202,7 +202,7 @@ static void pe64PrintSymNum(const FileHeader *fileHeader)
     if (fileHeader == NULL)
         return;
 
-    printf("%.8lx", fileHeader->NumberOfSymbols);
+    printf("%.8x", (uint32_t)fileHeader->NumberOfSymbols);
 }
 
 static void pe64PrintOptHeaderSize(const FileHeader *fileHeader)
@@ -320,7 +320,7 @@ static void pe64PrintCodeSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfCode);
+    printf("%.8x", (uint32_t)optHeader->SizeOfCode);
 }
 
 static void pe64PrintInitializedDataSize(const OptHeader64 *optHeader)
@@ -328,7 +328,7 @@ static void pe64PrintInitializedDataSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfInitializedData);
+    printf("%.8x", (uint32_t)optHeader->SizeOfInitializedData);
 }
 
 static void pe64PrintUninitializedDataSize(const OptHeader64 *optHeader)
@@ -336,7 +336,7 @@ static void pe64PrintUninitializedDataSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfUninitializedData);
+    printf("%.8x", (uint32_t)optHeader->SizeOfUninitializedData);
 }
 
 static void pe64PrintEntryPoint(const OptHeader64 *optHeader)
@@ -344,7 +344,7 @@ static void pe64PrintEntryPoint(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->AddressOfEntryPoint);
+    printf("%.8x", (uint32_t)optHeader->AddressOfEntryPoint);
 }
 
 static void pe64PrintCodeBase(const OptHeader64 *optHeader)
@@ -352,7 +352,7 @@ static void pe64PrintCodeBase(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->BaseOfCode);
+    printf("%.8x", (uint32_t)optHeader->BaseOfCode);
 }
 
 static void pe64PrintImageBase(const OptHeader64 *optHeader)
@@ -368,7 +368,7 @@ static void pe64PrintSectionAlignment(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SectionAlignment);
+    printf("%.8x", (uint32_t)optHeader->SectionAlignment);
 }
 
 static void pe64PrintFileAlignment(const OptHeader64 *optHeader)
@@ -376,7 +376,7 @@ static void pe64PrintFileAlignment(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->FileAlignment);
+    printf("%.8x", (uint32_t)optHeader->FileAlignment);
 }
 
 static void pe64PrintOSVersion(const OptHeader64 *optHeader)
@@ -408,7 +408,7 @@ static void pe64PrintWin32VersionValue(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->Win32VersionValue);
+    printf("%.8x", (uint32_t)optHeader->Win32VersionValue);
 }
 
 static void pe64PrintImageSize(const OptHeader64 *optHeader)
@@ -416,7 +416,7 @@ static void pe64PrintImageSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfImage);
+    printf("%.8x", (uint32_t)optHeader->SizeOfImage);
 }
 
 static void pe64PrintHeadersSize(const OptHeader64 *optHeader)
@@ -424,7 +424,7 @@ static void pe64PrintHeadersSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfHeaders);
+    printf("%.8x", (uint32_t)optHeader->SizeOfHeaders);
 }
 
 static void pe64PrintCheckSum(const OptHeader64 *optHeader)
@@ -432,7 +432,7 @@ static void pe64PrintCheckSum(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->CheckSum);
+    printf("%.8x", (uint32_t)optHeader->CheckSum);
 }
 
 static void pe64PrintSubsystem(const OptHeader64 *optHeader)
@@ -560,7 +560,7 @@ static void pe64PrintLoaderFlags(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->LoaderFlags);
+    printf("%.8x", (uint32_t)optHeader->LoaderFlags);
 }
 
 static void pe64PrintNumOfRvaAndSizes(const OptHeader64 *optHeader)
@@ -568,7 +568,7 @@ static void pe64PrintNumOfRvaAndSizes(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->NumberOfRvaAndSizes);
+    printf("%.8x", (uint32_t)optHeader->NumberOfRvaAndSizes);
 }
 
 void pe64PrintDataDir(const DataDir *dataDir)
@@ -576,7 +576,7 @@ void pe64PrintDataDir(const DataDir *dataDir)
     if (dataDir == NULL)
         return;
 
-    printf("%.8lx %.8lx", dataDir->VirtualAddress, dataDir->Size);
+    printf("%.8x %.8x", (uint32_t)dataDir->VirtualAddress, (uint32_t)dataDir->Size);
 }
 
 void pe64PrintOptHeader(const PE64File *pe)

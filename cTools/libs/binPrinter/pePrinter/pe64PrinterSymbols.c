@@ -44,7 +44,7 @@ static void pe64PrintSymValue(const PESymbol *sym)
     if (sym == NULL)
         return;
 
-    printf("%.16lx ", sym->Value);
+    printf("%.16x ", (uint32_t)sym->Value);
 }
 
 static void pe64PrintSymSection(const PE64File *pe, const PESymbol *sym)
@@ -266,10 +266,10 @@ void pe64PrintAuxSymSect(const PE64File *pe, const PEAuxSymbol *auxSym)
     if (pe == NULL || auxSym == NULL)
         return;
 
-    printf("%8s: %.8lx", "Len", auxSym->Section.Length);
+    printf("%8s: %.8x", "Len",(uint32_t)auxSym->Section.Length);
     printf("%8s: %.4hx", "Relocs", auxSym->Section.NumberOfRelocations);
     printf("%8s: %.4hx", "Lines", auxSym->Section.NumberOfLinenumbers);
-    printf("%10s: %.8lx", "CheckSum", auxSym->Section.CheckSum);
+    printf("%10s: %.8x", "CheckSum", (uint32_t)auxSym->Section.CheckSum);
     printf("%10s: %.4hu", "AssocNum", auxSym->Section.Number);
     printf("%7s: %.2hhx", "Selec", auxSym->Section.Selection);
 }

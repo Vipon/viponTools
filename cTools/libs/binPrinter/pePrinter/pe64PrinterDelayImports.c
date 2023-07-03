@@ -65,7 +65,7 @@ static void pe64PrintDelayImportHmod(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaDLLName);
+    printf("%x", (uint32_t)delimp->rvaDLLName);
 }
 
 static void pe64PrintDelayImportIAT(const PEDelimp *delimp)
@@ -73,7 +73,7 @@ static void pe64PrintDelayImportIAT(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaIAT);
+    printf("%x", (uint32_t)delimp->rvaIAT);
 }
 
 static void pe64PrintDelayImportINT(const PEDelimp *delimp)
@@ -81,7 +81,7 @@ static void pe64PrintDelayImportINT(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaINT);
+    printf("%x", (uint32_t)delimp->rvaINT);
 }
 
 static void pe64PrintDelayImportBoundIAT(const PEDelimp *delimp)
@@ -89,7 +89,7 @@ static void pe64PrintDelayImportBoundIAT(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaBoundIAT);
+    printf("%x", (uint32_t)delimp->rvaBoundIAT);
 }
 
 static void pe64PrintDelayImportUnloadIAT(const PEDelimp *delimp)
@@ -97,7 +97,7 @@ static void pe64PrintDelayImportUnloadIAT(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaUnloadIAT);
+    printf("%x", (uint32_t)delimp->rvaUnloadIAT);
 }
 
 static void pe64PrintDelayImportTimeStamp(const PEDelimp *delimp)
