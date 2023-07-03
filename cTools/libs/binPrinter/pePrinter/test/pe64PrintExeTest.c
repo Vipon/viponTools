@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,40 @@
  * SOFTWARE.
  */
 
+#include <test.h>
+#include <file.h>
 #include "comdef.h"
-#include "delayLib.h" // for test delay import
+#ifdef __WIN__
+# include "delayLib.h" // for test delay import
+#endif /* __WIN__ */
 #include "pe64Parse.h"
 #include "pe64Printer.h"
 
+#ifdef __WIN__
 void dummy(void) __attribute__ ((section (".MY_SECTION123")));
 void dummy(void)
 {
 
 }
+#endif /* __WIN__ */
+
+#include <stdio.h>
+static const char TESTOUT[] = "pe64PrintExeTest.txt";
 
 int main(int argc, char *argv[])
 {
     UNUSED(argc);
+#ifdef __WIN__
     delayLib(); // for test delay import
-    PE64File *pe = pe64Parse(argv[0]);
+#endif /* __WIN__ */
+
+    PE64File *pe = pe64Parse(argv[1]);
+    if (pe == NULL) {
+        VT_ERROR("Cannot parse %s", argv[1]);
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *f = freopen(TESTOUT, "w", stdout);
 
     pe64PrintDosHeader(pe);
     pe64PrintNtHeader(pe);
@@ -47,6 +65,10 @@ int main(int argc, char *argv[])
     pe64PrintDelayImports(pe);
 
     pe64Free(pe);
+
+    fclose(f);
+    EXPECT_FILE_EQ(TESTOUT, argv[2]);
+
     return 0;
 }
 

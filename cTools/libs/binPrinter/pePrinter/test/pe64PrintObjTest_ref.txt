@@ -1,0 +1,91 @@
+File Header:
+             Machine: AMD64
+  Number of Sections: 08
+          Time stamp: Mon Jul  3 16:59:29 2023
+      SymTab Pointer: 00000ea3
+   Number of Symbols: 00000018
+  Size of Opt Header: 0000
+     Characteristics: 0000
+
+01 .text 
+     PhysAddr: 00000000      VirtAddr: 00000000 
+raw data offs: 00000154 raw data size: 0000002d 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 60500020 
+
+02 .data 
+     PhysAddr: 00000000      VirtAddr: 00000000 
+raw data offs: 00000181 raw data size: 00000000 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: c0300040 
+
+03 .bss 
+     PhysAddr: 00000000      VirtAddr: 00000000 
+raw data offs: 00000000 raw data size: 00000000 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: c0300080 
+
+04 .xdata 
+     PhysAddr: 00000000      VirtAddr: 00000000 
+raw data offs: 00000181 raw data size: 00000008 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 40300040 
+
+05 .debug$S 
+     PhysAddr: 00000000      VirtAddr: 00000000 
+raw data offs: 00000189 raw data size: 00000280 
+   reloc offs: 00000409   relocations: 0000000c 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 42300040 
+
+06 .debug$T 
+     PhysAddr: 00000000      VirtAddr: 00000000 
+raw data offs: 00000481 raw data size: 000009f8 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 42300040 
+
+07 .pdata 
+     PhysAddr: 00000000      VirtAddr: 00000000 
+raw data offs: 00000e79 raw data size: 0000000c 
+   reloc offs: 00000e85   relocations: 00000003 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 40300040 
+
+08 .llvm_addrsig 
+     PhysAddr: 00000000      VirtAddr: 00000000 
+raw data offs: 00000ea3 raw data size: 00000000 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 00100800 
+
+    Indx             Name            Value          Section            Type  Storage      Aux
+-------- ---------------- ---------------- ---------------- --------------- -------- --------
+00000000            .text 0000000000000000            .text DT_NON   T_NULL   C_STAT        1
+     Len: 0000002d  Relocs: 0000   Lines: 0000  CheckSum: 90a14ad6  AssocNum: 0001  Selec: 00
+00000002            .data 0000000000000000            .data DT_NON   T_NULL   C_STAT        1
+     Len: 00000000  Relocs: 0000   Lines: 0000  CheckSum: 00000000  AssocNum: 0002  Selec: 00
+00000004             .bss 0000000000000000             .bss DT_NON   T_NULL   C_STAT        1
+     Len: 00000000  Relocs: 0000   Lines: 0000  CheckSum: 00000000  AssocNum: 0003  Selec: 00
+00000006           .xdata 0000000000000000           .xdata DT_NON   T_NULL   C_STAT        1
+     Len: 00000008  Relocs: 0000   Lines: 0000  CheckSum: 1ab96b84  AssocNum: 0004  Selec: 00
+00000008         .debug$S 0000000000000000         .debug$S DT_NON   T_NULL   C_STAT        1
+     Len: 00000280  Relocs: 000c   Lines: 0000  CheckSum: 5fc89130  AssocNum: 0005  Selec: 00
+00000010         .debug$T 0000000000000000         .debug$T DT_NON   T_NULL   C_STAT        1
+     Len: 000009f8  Relocs: 0000   Lines: 0000  CheckSum: cb811cfb  AssocNum: 0006  Selec: 00
+00000012           .pdata 0000000000000000           .pdata DT_NON   T_NULL   C_STAT        1
+     Len: 0000000c  Relocs: 0003   Lines: 0000  CheckSum: 7a42ac7f  AssocNum: 0007  Selec: 00
+00000014    .llvm_addrsig 0000000000000000    .llvm_addrsig DT_NON   T_NULL   C_STAT        1
+     Len: 00000000  Relocs: 0000   Lines: 0000  CheckSum: 00000000  AssocNum: 0008  Selec: 00
+00000016         @feat.00 0000000000000000            N_ABS DT_NON   T_NULL   C_STAT        0
+00000017         shortNam 0000000000000000            .text DT_NON   T_NULL    C_EXT        0
+00000018            label 0000000000000000            .text DT_NON   T_NULL   C_STAT        0
+00000019     longNameTest 0000000000000010            .text DT_NON   T_NULL    C_EXT        0
+00000020  long_test_label 0000000000000010            .text DT_NON   T_NULL   C_STAT        0
+00000021             main 0000000000000020            .text DT_NON   T_NULL    C_EXT        0
+00000022            .file 0000000000000000          N_DEBUG DT_NON   T_NULL   C_FILE        1
+     testObjFile.c

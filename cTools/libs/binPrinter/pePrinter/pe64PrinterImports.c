@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@ static void pe64PrintImportTimeStamp(const PE64File *pe, const PEImport *import)
     if (pe == NULL || import == NULL)
         return;
 
-    printf("%ld", import->TimeDateStamp);
+    printf("%d", (int32_t)import->TimeDateStamp);
 }
 
 static void pe64PrintImportForwardIndex(const PE64File *pe, const PEImport *import)
@@ -56,7 +56,7 @@ static void pe64PrintImportForwardIndex(const PE64File *pe, const PEImport *impo
     if (pe == NULL || import == NULL)
         return;
 
-    printf("%ld", import->ForwarderChain);
+    printf("%d", (int32_t)import->ForwarderChain);
 }
 
 static void pe64PrintImporAddrTable(const PE64File *pe, const PEImport *import)
@@ -64,7 +64,7 @@ static void pe64PrintImporAddrTable(const PE64File *pe, const PEImport *import)
     if (pe == NULL || import == NULL)
         return;
 
-    printf("%lx", import->FirstThunk);
+    printf("%x", (uint32_t)import->FirstThunk);
 }
 
 static void pe64PrintImporNameTable(const PE64File *pe, const PEImport *import)
@@ -72,7 +72,7 @@ static void pe64PrintImporNameTable(const PE64File *pe, const PEImport *import)
     if (pe == NULL || import == NULL)
         return;
 
-    printf("%lx", import->OriginalFirstThunk);
+    printf("%x", (uint32_t)import->OriginalFirstThunk);
 }
 
 void pe64PrintINT(const PE64File *pe, ThunkData64 *INT)
@@ -85,12 +85,12 @@ void pe64PrintINT(const PE64File *pe, ThunkData64 *INT)
 
     if (IS_BIT_SET(AddressOfData, 63)) {
         // Import by number
-        printf("%.4"PRIx64, (uint64_t)CLR_BIT(AddressOfData, 63));
+        printf("%8s%.4"PRIx64, "", (uint64_t)CLR_BIT(AddressOfData, 63));
     } else {
         // Import by name
         uint64_t importByNameOff = pe64AddrToFileOff(pe, AddressOfData);
         ImportByName *importByName = readFromFile(fd, (size_t*)&importByNameOff, 256);
-        printf("%.4hx %s", importByName->Hint, importByName->Name);
+        printf("%8s%.4hx %s", "", importByName->Hint, importByName->Name);
         Free(importByName);
     }
 }
@@ -102,25 +102,21 @@ void pe64PrintImport(const PE64File *pe, const PEImport *import)
 
     pe64PrintImportName(pe, import);
     NEW_LINE;
-    TAB;
-    printf("addr table:\t\t");
+    printf("%13s: ", "addr table");
     pe64PrintImporAddrTable(pe, import);
     NEW_LINE;
-    TAB;
-    printf("name table:\t\t");
+    printf("%13s: ", "name table");
     pe64PrintImporNameTable(pe, import);
     NEW_LINE;
-    TAB;
-    printf("time stamp:\t\t");
+    printf("%13s: ", "time stamp");
     pe64PrintImportTimeStamp(pe, import);
     NEW_LINE;
-    TAB;
-    printf("forward index:\t");
+    printf("%13s: ", "forward index");
     pe64PrintImportForwardIndex(pe, import);
     NEW_LINE;
 
-    printf("\t\tIndx Name\n");
-    printf("\t\t---- --------\n");
+    printf("%8sIndx Name\n", "");
+    printf("%8s---- --------\n", "");
 
     if (import->TimeDateStamp == (DWORD)-1) {
         // Static bound
@@ -134,8 +130,8 @@ void pe64PrintImport(const PE64File *pe, const PEImport *import)
         uint64_t AddressOfData = INT->u1.AddressOfData;
 
         if (AddressOfData) {
-            TAB;
-            TAB;
+
+
             pe64PrintINT(pe, INT);
             NEW_LINE;
         } else {

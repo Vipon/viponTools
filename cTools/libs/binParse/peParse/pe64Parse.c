@@ -296,9 +296,11 @@ static PE64_ERROR pe64ParseMaybeObj(PE64File *pe)
         return PE64_INV_ARG;
 
     PE64File peCopy = *pe;
-    PE64_ERROR res = pe64ParseFileHeader(&peCopy);
-    if (res != PE64_OK)
-        return res;
+    PE64_ERROR err = pe64ParseFileHeader(&peCopy);
+    if (err != PE64_OK) {
+        Free(peCopy.fileHeader);
+        return err;
+    }
 
     switch (pe64GetMachineID(&peCopy)) {
     case IMAGE_FILE_MACHINE_UNKNOWN:
@@ -333,24 +335,32 @@ static PE64_ERROR pe64ParseMaybeObj(PE64File *pe)
     case IMAGE_FILE_MACHINE_CEE:
         break;
     default:
-        return PE64_INV_MACHINE_TYPE;
+        err = PE64_INV_MACHINE_TYPE;
+        goto eexit;
     }
 
     uint64_t off = sizeof (FileHeader);
     char *firstSectName = readFromFile(peCopy.fd, (size_t*)&off,
                                 sizeof(TEXT_SECT_NAME) + 1);
-    if (firstSectName == NULL)
-        return PE64_NO_MEM;
+    if (firstSectName == NULL) {
+        err = PE64_NO_MEM;
+        goto eexit;
+    }
 
     if (strcmp(firstSectName, TEXT_SECT_NAME)) {
         Free(firstSectName);
-        return PE64_NO_OBJ;
+        err = PE64_NO_OBJ;
+        goto eexit;
     }
 
     Free(firstSectName);
     pe->fileHeader = peCopy.fileHeader;
     pe->type = PE64_OBJ;
     return PE64_OK;
+
+eexit:
+    Free(peCopy.fileHeader);
+    return err;
 }
 
 PE64File *pe64Parse(const char *fn)
@@ -480,6 +490,8 @@ void pe64Free(PE64File *pe)
     pe->sortSymtab = (void*)-1;
     pe->symNum     = (uint64_t)-1;
     pe->strtab     = (void*)-1;
+
+    Free(pe);
 }
 
 uint64_t pe64AddrToFileOff(const PE64File *pe, uint64_t addr)

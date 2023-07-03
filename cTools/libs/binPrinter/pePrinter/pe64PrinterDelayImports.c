@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,7 @@ static void pe64PrintDelayImportHmod(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaDLLName);
+    printf("%x", (uint32_t)delimp->rvaDLLName);
 }
 
 static void pe64PrintDelayImportIAT(const PEDelimp *delimp)
@@ -73,7 +73,7 @@ static void pe64PrintDelayImportIAT(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaIAT);
+    printf("%x", (uint32_t)delimp->rvaIAT);
 }
 
 static void pe64PrintDelayImportINT(const PEDelimp *delimp)
@@ -81,7 +81,7 @@ static void pe64PrintDelayImportINT(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaINT);
+    printf("%x", (uint32_t)delimp->rvaINT);
 }
 
 static void pe64PrintDelayImportBoundIAT(const PEDelimp *delimp)
@@ -89,7 +89,7 @@ static void pe64PrintDelayImportBoundIAT(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaBoundIAT);
+    printf("%x", (uint32_t)delimp->rvaBoundIAT);
 }
 
 static void pe64PrintDelayImportUnloadIAT(const PEDelimp *delimp)
@@ -97,7 +97,7 @@ static void pe64PrintDelayImportUnloadIAT(const PEDelimp *delimp)
     if (delimp == NULL)
         return;
 
-    printf("%lx", delimp->rvaUnloadIAT);
+    printf("%x", (uint32_t)delimp->rvaUnloadIAT);
 }
 
 static void pe64PrintDelayImportTimeStamp(const PEDelimp *delimp)
@@ -119,34 +119,30 @@ void pe64PrintDelayImport(const PE64File *pe, const PEDelimp *delimp)
 
     pe64PrintDelayImportName(pe, delimp);
     NEW_LINE;
-    TAB;
-    printf("type:\t");
+    printf("%13s: ", "type");
     pe64PrintDelayImportAttr(delimp);
     NEW_LINE;
-    TAB;
-    printf("handle:\t");
+    printf("%13s: ", "handle");
     pe64PrintDelayImportHmod(delimp);
     NEW_LINE;
-    TAB;
-    printf("IAT:\t");
+    printf("%13s: ", "IAT");
     pe64PrintDelayImportIAT(delimp);
     NEW_LINE;
-    TAB;
-    printf("INT:\t");
+    printf("%13s: ", "INT");
     pe64PrintDelayImportINT(delimp);
     NEW_LINE;
-    TAB;
-    printf("BoundIAT:\t");
+    printf("%13s: ", "BoundIAT");
     pe64PrintDelayImportBoundIAT(delimp);
     NEW_LINE;
-    TAB;
-    printf("UnloadIAT:\t");
+    printf("%13s: ", "UnloadIAT");
     pe64PrintDelayImportUnloadIAT(delimp);
     NEW_LINE;
-    TAB;
-    printf("TimeStamp:\t");
+    printf("%13s: ", "TimeStamp");
     pe64PrintDelayImportTimeStamp(delimp);
     NEW_LINE;
+
+    printf("%8sIndx Name\n", "");
+    printf("%8s---- --------\n", "");
 
     FileD fd = pe->fd;
     uint64_t off = pe64AddrToFileOff(pe, delimp->rvaINT);
@@ -155,8 +151,6 @@ void pe64PrintDelayImport(const PE64File *pe, const PEDelimp *delimp)
         uint64_t AddressOfData = INT->u1.AddressOfData;
 
         if (AddressOfData) {
-            TAB;
-            TAB;
             pe64PrintINT(pe, INT);
             NEW_LINE;
         } else {

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ static void pePrintDosNtHeaderOff(const DosHeader *dosHeader)
     if (dosHeader == NULL)
         return;
 
-    printf("%.8lx", dosHeader->e_lfanew);
+    printf("%.8x", (uint32_t)dosHeader->e_lfanew);
 }
 
 void pe64PrintDosHeader(const PE64File *pe)
@@ -52,12 +52,10 @@ void pe64PrintDosHeader(const PE64File *pe)
         return;
 
     printf("DOS Header:\n");
-    TAB;
-    printf("Magic:\t\t\t");
+    printf("%20s: ", "Magic");
     pe64PrintDosMagic(pe->dosHeader);
     NEW_LINE
-    TAB;
-    printf("NT Header Offset:\t");
+    printf("%20s: ", "NT Header Offset");
     pePrintDosNtHeaderOff(pe->dosHeader);
     NEW_LINE;
 
@@ -188,7 +186,7 @@ static void pe64PrintTimeStamp(const FileHeader *fileHeader)
         return;
 
     time_t time = (time_t)fileHeader->TimeDateStamp;
-    printf("%s", asctime(localtime(&time)));
+    printf("%s", asctime(gmtime(&time)));
 }
 
 static void pe64PrintSymTabPtr(const FileHeader *fileHeader)
@@ -196,7 +194,7 @@ static void pe64PrintSymTabPtr(const FileHeader *fileHeader)
     if (fileHeader == NULL)
         return;
 
-    printf("%.8lx", fileHeader->PointerToSymbolTable);
+    printf("%.8x", (uint32_t)fileHeader->PointerToSymbolTable);
 }
 
 static void pe64PrintSymNum(const FileHeader *fileHeader)
@@ -204,7 +202,7 @@ static void pe64PrintSymNum(const FileHeader *fileHeader)
     if (fileHeader == NULL)
         return;
 
-    printf("%.8lx", fileHeader->NumberOfSymbols);
+    printf("%.8x", (uint32_t)fileHeader->NumberOfSymbols);
 }
 
 static void pe64PrintOptHeaderSize(const FileHeader *fileHeader)
@@ -224,10 +222,10 @@ static void pe64PrintCharacteristics(const FileHeader *fileHeader)
     printf("%.4hx\n", type);
 
     if (type) {
-        TAB;
-        TAB;
-        TAB;
-        TAB;
+        SPACEs(4);
+        SPACEs(4);
+        SPACEs(4);
+        SPACEs(4);
     }
     if (type & IMAGE_FILE_BYTES_REVERSED_HI)
         printf("REVERSED_HI ");
@@ -267,24 +265,24 @@ void pe64PrintFileHeader(const PE64File *pe)
         return;
 
     printf("File Header:\n");
-    printf("\tMachine:\t\t");
+    printf("%20s: ", "Machine");
     pe64PrintMachineId(pe->fileHeader);
     NEW_LINE;
-    printf("\tNumber of Sections:\t");
+    printf("%20s: ", "Number of Sections");
     pe64PrintSectNum(pe->fileHeader);
     NEW_LINE;
-    printf("\tTime stamp:\t\t");
+    printf("%20s: ", "Time stamp");
     pe64PrintTimeStamp(pe->fileHeader);
-    printf("\tSymTab Pointer:\t\t");
+    printf("%20s: ", "SymTab Pointer");
     pe64PrintSymTabPtr(pe->fileHeader);
     NEW_LINE;
-    printf("\tNumber of Symbols:\t");
+    printf("%20s: ", "Number of Symbols");
     pe64PrintSymNum(pe->fileHeader);
     NEW_LINE;
-    printf("\tSize of Opt Header:\t");
+    printf("%20s: ", "Size of Opt Header");
     pe64PrintOptHeaderSize(pe->fileHeader);
     NEW_LINE;
-    printf("\tCharacteristics:\t");
+    printf("%20s: ", "Characteristics");
     pe64PrintCharacteristics(pe->fileHeader);
     NEW_LINE;
 }
@@ -322,7 +320,7 @@ static void pe64PrintCodeSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfCode);
+    printf("%.8x", (uint32_t)optHeader->SizeOfCode);
 }
 
 static void pe64PrintInitializedDataSize(const OptHeader64 *optHeader)
@@ -330,7 +328,7 @@ static void pe64PrintInitializedDataSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfInitializedData);
+    printf("%.8x", (uint32_t)optHeader->SizeOfInitializedData);
 }
 
 static void pe64PrintUninitializedDataSize(const OptHeader64 *optHeader)
@@ -338,7 +336,7 @@ static void pe64PrintUninitializedDataSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfUninitializedData);
+    printf("%.8x", (uint32_t)optHeader->SizeOfUninitializedData);
 }
 
 static void pe64PrintEntryPoint(const OptHeader64 *optHeader)
@@ -346,7 +344,7 @@ static void pe64PrintEntryPoint(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->AddressOfEntryPoint);
+    printf("%.8x", (uint32_t)optHeader->AddressOfEntryPoint);
 }
 
 static void pe64PrintCodeBase(const OptHeader64 *optHeader)
@@ -354,7 +352,7 @@ static void pe64PrintCodeBase(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->BaseOfCode);
+    printf("%.8x", (uint32_t)optHeader->BaseOfCode);
 }
 
 static void pe64PrintImageBase(const OptHeader64 *optHeader)
@@ -370,7 +368,7 @@ static void pe64PrintSectionAlignment(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SectionAlignment);
+    printf("%.8x", (uint32_t)optHeader->SectionAlignment);
 }
 
 static void pe64PrintFileAlignment(const OptHeader64 *optHeader)
@@ -378,7 +376,7 @@ static void pe64PrintFileAlignment(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->FileAlignment);
+    printf("%.8x", (uint32_t)optHeader->FileAlignment);
 }
 
 static void pe64PrintOSVersion(const OptHeader64 *optHeader)
@@ -410,7 +408,7 @@ static void pe64PrintWin32VersionValue(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->Win32VersionValue);
+    printf("%.8x", (uint32_t)optHeader->Win32VersionValue);
 }
 
 static void pe64PrintImageSize(const OptHeader64 *optHeader)
@@ -418,7 +416,7 @@ static void pe64PrintImageSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfImage);
+    printf("%.8x", (uint32_t)optHeader->SizeOfImage);
 }
 
 static void pe64PrintHeadersSize(const OptHeader64 *optHeader)
@@ -426,7 +424,7 @@ static void pe64PrintHeadersSize(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->SizeOfHeaders);
+    printf("%.8x", (uint32_t)optHeader->SizeOfHeaders);
 }
 
 static void pe64PrintCheckSum(const OptHeader64 *optHeader)
@@ -434,7 +432,7 @@ static void pe64PrintCheckSum(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->CheckSum);
+    printf("%.8x", (uint32_t)optHeader->CheckSum);
 }
 
 static void pe64PrintSubsystem(const OptHeader64 *optHeader)
@@ -499,9 +497,7 @@ static void pe64PrintDllCharacteristics(const OptHeader64 *optHeader)
     printf("%.4hx\n", DllCharacteristics);
 
     if (DllCharacteristics) {
-        TAB;
-        TAB;
-        TAB;
+        SPACEs(22);
     }
     if (DllCharacteristics & IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA)
         printf("HIGH_ENTROPY_VA ");
@@ -564,7 +560,7 @@ static void pe64PrintLoaderFlags(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->LoaderFlags);
+    printf("%.8x", (uint32_t)optHeader->LoaderFlags);
 }
 
 static void pe64PrintNumOfRvaAndSizes(const OptHeader64 *optHeader)
@@ -572,7 +568,7 @@ static void pe64PrintNumOfRvaAndSizes(const OptHeader64 *optHeader)
     if (optHeader == NULL)
         return;
 
-    printf("%.8lx", optHeader->NumberOfRvaAndSizes);
+    printf("%.8x", (uint32_t)optHeader->NumberOfRvaAndSizes);
 }
 
 void pe64PrintDataDir(const DataDir *dataDir)
@@ -580,7 +576,7 @@ void pe64PrintDataDir(const DataDir *dataDir)
     if (dataDir == NULL)
         return;
 
-    printf("%.8lx %.8lx", dataDir->VirtualAddress, dataDir->Size);
+    printf("%.8x %.8x", (uint32_t)dataDir->VirtualAddress, (uint32_t)dataDir->Size);
 }
 
 void pe64PrintOptHeader(const PE64File *pe)
@@ -589,135 +585,135 @@ void pe64PrintOptHeader(const PE64File *pe)
         return;
 
     printf("Optional Header:\n");
-    printf("\tApplication Type:\t");
+    printf("%20s: ", "Application Type");
     pe64PrintOptHeaderMagic(pe->optHeader);
     NEW_LINE;
-    printf("\tLinker Version:\t\t");
+    printf("%20s: ", "Linker Version");
     pe64PrintLinkerVersion(pe->optHeader);
     NEW_LINE;
-    printf("\tCode Size:\t\t");
+    printf("%20s: ", "Code Size");
     pe64PrintCodeSize(pe->optHeader);
     NEW_LINE;
-    printf("\tInit Data Size:\t\t");
+    printf("%20s: ", "Init Data Size");
     pe64PrintInitializedDataSize(pe->optHeader);
     NEW_LINE;
-    printf("\tUninit Data Size:\t");
+    printf("%20s: ", "Uninit Data Size");
     pe64PrintUninitializedDataSize(pe->optHeader);
     NEW_LINE;
-    printf("\tEntry Point:\t\t");
+    printf("%20s: ", "Entry Point");
     pe64PrintEntryPoint(pe->optHeader);
     NEW_LINE;
-    printf("\tCode Base:\t\t");
+    printf("%20s: ", "Code Base");
     pe64PrintCodeBase(pe->optHeader);
     NEW_LINE;
-    printf("\tImage Base:\t\t");
+    printf("%20s: ", "Image Base");
     pe64PrintImageBase(pe->optHeader);
     NEW_LINE;
-    printf("\tSection Alignment:\t");
+    printf("%20s: ", "Section Alignment");
     pe64PrintSectionAlignment(pe->optHeader);
     NEW_LINE;
-    printf("\tFile Alignment:\t\t");
+    printf("%20s: ", "File Alignment");
     pe64PrintFileAlignment(pe->optHeader);
     NEW_LINE;
-    printf("\tOS Version:\t\t");
+    printf("%20s: ", "OS Version");
     pe64PrintOSVersion(pe->optHeader);
     NEW_LINE;
-    printf("\tImage Version:\t\t");
+    printf("%20s: ", "Image Version");
     pe64PrintImageVersion(pe->optHeader);
     NEW_LINE;
-    printf("\tSubsystem Version:\t");
+    printf("%20s: ", "Subsystem Version");
     pe64PrintSubsystemVersion(pe->optHeader);
     NEW_LINE;
-    printf("\tWin32 Version Val:\t");
+    printf("%20s: ", "Win32 Version Val");
     pe64PrintWin32VersionValue(pe->optHeader);
     NEW_LINE;
-    printf("\tImage Size:\t\t");
+    printf("%20s: ", "Image Size");
     pe64PrintImageSize(pe->optHeader);
     NEW_LINE;
-    printf("\tHeaders Size:\t\t");
+    printf("%20s: ", "Headers Size");
     pe64PrintHeadersSize(pe->optHeader);
     NEW_LINE;
-    printf("\tCheckSum:\t\t");
+    printf("%20s: ", "CheckSum");
     pe64PrintCheckSum(pe->optHeader);
     NEW_LINE;
-    printf("\tSubsystem:\t\t");
+    printf("%20s: ", "Subsystem");
     pe64PrintSubsystem(pe->optHeader);
     NEW_LINE;
-    printf("\tDllCharacteristics:\t");
+    printf("%20s: ", "DllCharacteristics");
     pe64PrintDllCharacteristics(pe->optHeader);
     NEW_LINE;
-    printf("\tStack Size Reserve:\t");
+    printf("%20s: ", "Stack Size Reserve");
     pe64PrintStackSizeReserve(pe->optHeader);
     NEW_LINE;
-    printf("\tStack Size Commit:\t");
+    printf("%20s: ", "Stack Size Commit");
     pe64PrintStackSizeCommit(pe->optHeader);
     NEW_LINE;
-    printf("\tHeap Size Reserve:\t");
+    printf("%20s: ", "Heap Size Reserve");
     pe64PrintHeapSizeReserve(pe->optHeader);
     NEW_LINE;
-    printf("\tHeap Size Commit:\t");
+    printf("%20s: ", "Heap Size Commit");
     pe64PrintHeapSizeCommit(pe->optHeader);
     NEW_LINE;
-    printf("\tLoader Flags:\t\t");
+    printf("%20s: ", "Loader Flags");
     pe64PrintLoaderFlags(pe->optHeader);
     NEW_LINE;
-    printf("\tNumberOfRvaAndSizes:\t");
+    printf("%20s: ", "NumberOfRvaAndSizes");
     pe64PrintNumOfRvaAndSizes(pe->optHeader);
     NEW_LINE;
 
-    printf("Data Directory:\tType\t\tAddr\t Size\n");
-    printf("\t\t--------------- -------- --------\n");
+    printf("%20s: %15s %8s %8s\n", "Data Directory", "Type", "Addr", "Size");
+    printf("%21s %s\n", "", "--------------- -------- --------");
     DWORD i = 0;
     DWORD NumberOfRvaAndSizes = pe->optHeader->NumberOfRvaAndSizes;
     for (i = 0; i < NumberOfRvaAndSizes; ++i) {
         switch (i) {
         case IMAGE_DIRECTORY_ENTRY_EXPORT:
-            printf("\t\tEXPORT:\t\t");
+            printf("%36s: ", "EXPORT");
             break;
         case IMAGE_DIRECTORY_ENTRY_IMPORT:
-            printf("\t\tIMPORT:\t\t");
+            printf("%36s: ", "IMPORT");
             break;
         case IMAGE_DIRECTORY_ENTRY_RESOURCE:
-            printf("\t\tRESOURCE:\t");
+            printf("%36s: ", "RESOURCE");
             break;
         case IMAGE_DIRECTORY_ENTRY_EXCEPTION:
-            printf("\t\tEXCEPTION:\t");
+            printf("%36s: ", "EXCEPTION");
             break;
         case IMAGE_DIRECTORY_ENTRY_SECURITY:
-            printf("\t\tSECURITY:\t");
+            printf("%36s: ", "SECURITY");
             break;
         case IMAGE_DIRECTORY_ENTRY_BASERELOC:
-            printf("\t\tBASERELOC:\t");
+            printf("%36s: ", "BASERELOC");
             break;
         case IMAGE_DIRECTORY_ENTRY_DEBUG:
-            printf("\t\tDEBUG:\t\t");
+            printf("%36s: ", "DEBUG");
             break;
         case IMAGE_DIRECTORY_ENTRY_ARCHITECTURE:
-            printf("\t\tARCHITECTURE:\t");
+            printf("%36s: ", "ARCHITECTURE");
             break;
         case IMAGE_DIRECTORY_ENTRY_GLOBALPTR:
-            printf("\t\tGLOBALPTR:\t");
+            printf("%36s: ", "GLOBALPTR");
             break;
         case IMAGE_DIRECTORY_ENTRY_TLS:
-            printf("\t\tTLS:\t\t");
+            printf("%36s: ", "TLS");
             break;
         case IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG:
-            printf("\t\tLOAD_CONFIG:\t");
+            printf("%36s: ", "LOAD_CONFIG");
             break;
         case IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT:
-            printf("\t\tBOUND_IMPORT:\t");
+            printf("%36s: ", "BOUND_IMPORT");
             break;
         case IMAGE_DIRECTORY_ENTRY_IAT:
-            printf("\t\tIAT:\t\t");
+            printf("%36s: ", "IAT");
             break;
         case IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT:
-            printf("\t\tDELAY_IMPORT:\t");
+            printf("%36s: ", "DELAY_IMPORT");
             break;
         case IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR:
-            printf("\t\tCOM_DESCRIPTOR:\t");
+            printf("%36s: ", "COM_DESCRIPTOR");
             break;
         default:
-            printf("\t\tRESERVED:\t");
+            printf("%36s: ", "RESERVED");
             break;
         }
         pe64PrintDataDir(pe->optHeader->DataDirectory + i);
@@ -731,7 +727,7 @@ void pe64PrintNtHeader(const PE64File *pe)
         return;
 
     printf("NT Header:\n");
-    printf("\tMagic:\t\t\t");
+    printf("%20s: ", "Magic");
     pe64PrintNTMagic(pe->ntHeader);
     NEW_LINE;
     pe64PrintFileHeader(pe);

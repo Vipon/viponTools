@@ -1,0 +1,266 @@
+DOS Header:
+               Magic: MZ
+    NT Header Offset: 00000078
+
+NT Header:
+               Magic: PE
+File Header:
+             Machine: AMD64
+  Number of Sections: 08
+          Time stamp: Mon Jul  3 15:09:09 2023
+      SymTab Pointer: 00000000
+   Number of Symbols: 00000000
+  Size of Opt Header: 00f0
+     Characteristics: 0022
+                LADDR EXE 
+Optional Header:
+    Application Type: 64-bit
+      Linker Version: 14.00
+           Code Size: 00003000
+      Init Data Size: 00002200
+    Uninit Data Size: 00000000
+         Entry Point: 00001560
+           Code Base: 00001000
+          Image Base: 0000000140000000
+   Section Alignment: 00001000
+      File Alignment: 00000200
+          OS Version: 06.00
+       Image Version: 00.00
+   Subsystem Version: 06.00
+   Win32 Version Val: 00000000
+          Image Size: 0000c000
+        Headers Size: 00000400
+            CheckSum: 00000000
+           Subsystem: 0003: WINDOWS_CUI
+  DllCharacteristics: 8160
+                      HIGH_ENTROPY_VA DYNAMIC_BASE NX_COMPAT TERMINAL_SERVER_AWARE 
+  Stack Size Reserve: 0000000000100000
+   Stack Size Commit: 0000000000001000
+   Heap Size Reserve: 0000000000100000
+    Heap Size Commit: 0000000000001000
+        Loader Flags: 00000000
+ NumberOfRvaAndSizes: 00000010
+      Data Directory:            Type     Addr     Size
+                      --------------- -------- --------
+                              EXPORT: 00000000 00000000
+                              IMPORT: 00004561 000000a0
+                            RESOURCE: 0000a000 000001a8
+                           EXCEPTION: 00007000 00000420
+                            SECURITY: 00000000 00000000
+                           BASERELOC: 0000b000 00000044
+                               DEBUG: 00004400 0000001c
+                        ARCHITECTURE: 00000000 00000000
+                           GLOBALPTR: 00000000 00000000
+                                 TLS: 00000000 00000000
+                         LOAD_CONFIG: 00004140 00000140
+                        BOUND_IMPORT: 00000000 00000000
+                                 IAT: 00004868 00000260
+                        DELAY_IMPORT: 000044f8 00000040
+                      COM_DESCRIPTOR: 00000000 00000000
+                            RESERVED: 00000000 00000000
+
+01 .text 
+     VirtSize: 00002ff5      VirtAddr: 00001000 
+raw data offs: 00000400 raw data size: 00003000 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 60000020 
+
+02 .rdata 
+     VirtSize: 000013f4      VirtAddr: 00004000 
+raw data offs: 00003400 raw data size: 00001400 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 40000040 
+
+03 .data 
+     VirtSize: 00000690      VirtAddr: 00006000 
+raw data offs: 00004800 raw data size: 00000200 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: c0000040 
+
+04 .pdata 
+     VirtSize: 00000420      VirtAddr: 00007000 
+raw data offs: 00004a00 raw data size: 00000600 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 40000040 
+
+05 .00cfg 
+     VirtSize: 00000038      VirtAddr: 00008000 
+raw data offs: 00005000 raw data size: 00000200 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 40000040 
+
+06 .MY_SECT 
+     VirtSize: 00000006      VirtAddr: 00009000 
+raw data offs: 00005200 raw data size: 00000200 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 60000020 
+
+07 .rsrc 
+     VirtSize: 000001a8      VirtAddr: 0000a000 
+raw data offs: 00005400 raw data size: 00000200 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 40000040 
+
+08 .reloc 
+     VirtSize: 00000044      VirtAddr: 0000b000 
+raw data offs: 00005600 raw data size: 00000200 
+   reloc offs: 00000000   relocations: 00000000 
+  line # offs: 00000000      line #'s: 00000000 
+        flags: 42000040 
+
+Imports Table:
+--------------------------------
+pe64Printer.dll
+   addr table: 4868
+   name table: 4608
+   time stamp: 0
+forward index: 0
+        Indx Name
+        ---- --------
+        0000 pe64PrintDelayImports
+        0000 pe64PrintDosHeader
+        0000 pe64PrintImports
+        0000 pe64PrintNtHeader
+        0000 pe64PrintSections
+        0000 pe64PrintSymbols
+
+
+pe64Parse.dll
+   addr table: 48a0
+   name table: 4640
+   time stamp: 0
+forward index: 0
+        Indx Name
+        ---- --------
+        0000 pe64Free
+        0000 pe64Parse
+
+
+file.dll
+   addr table: 48b8
+   name table: 4658
+   time stamp: 0
+forward index: 0
+        Indx Name
+        ---- --------
+        0000 cmpFiles
+
+
+KERNEL32.dll
+   addr table: 48c8
+   name table: 4668
+   time stamp: 0
+forward index: 0
+        Indx Name
+        ---- --------
+        01b4 FreeLibrary
+        0220 GetCurrentProcess
+        0221 GetCurrentProcessId
+        0225 GetCurrentThreadId
+        026a GetLastError
+        0281 GetModuleHandleW
+        02b8 GetProcAddress
+        02da GetStartupInfoW
+        02ed GetSystemInfo
+        02f3 GetSystemTimeAsFileTime
+        036f InitializeSListHead
+        0385 IsDebuggerPresent
+        038c IsProcessorFeaturePresent
+        03c9 LoadLibraryExA
+        0452 QueryPerformanceCounter
+        0468 RaiseException
+        04d5 RtlCaptureContext
+        04dc RtlLookupFunctionEntry
+        04e3 RtlVirtualUnwind
+        057f SetUnhandledExceptionFilter
+        059e TerminateProcess
+        05c0 UnhandledExceptionFilter
+        05df VirtualProtect
+        05e1 VirtualQuery
+
+
+VCRUNTIME140D.dll
+   addr table: 4990
+   name table: 4730
+   time stamp: 0
+forward index: 0
+        Indx Name
+        ---- --------
+        0008 __C_specific_handler
+        001b __current_exception
+        001c __current_exception_context
+        0025 __std_type_info_destroy_list
+
+
+ucrtbased.dll
+   addr table: 49b8
+   name table: 4758
+   time stamp: 0
+forward index: 0
+        Indx Name
+        ---- --------
+        0035 __acrt_iob_func
+        0049 __p___argc
+        004a __p___argv
+        004d __p__commode
+        005b __setusermatherr
+        005c __stdio_common_vfprintf
+        009f _c_exit
+        00a4 _cexit
+        00b5 _configthreadlocale
+        00b6 _configure_narrow_argv
+        00c1 _crt_at_quick_exit
+        00c2 _crt_atexit
+        00e5 _execute_onexit_table
+        00ea _exit
+        013d _get_initial_narrow_environment
+        0171 _initialize_narrow_environment
+        0172 _initialize_onexit_table
+        0174 _initterm
+        0175 _initterm_e
+        02b5 _register_onexit_function
+        02b6 _register_thread_local_exe_atexit_callback
+        02c2 _seh_filter_dll
+        02c3 _seh_filter_exe
+        02c6 _set_app_type
+        02cb _set_fmode
+        02ce _set_new_mode
+        0450 exit
+        045a fclose
+        047e fputc
+        0485 freopen
+        054b terminate
+
+
+string.dll
+   addr table: 4ab8
+   name table: 4858
+   time stamp: 0
+forward index: 0
+        Indx Name
+        ---- --------
+        0000 memcpy
+
+
+Delay Imports Table:
+--------------------------------
+delayLib.dll
+         type: New
+       handle: 4554
+          IAT: 6040
+          INT: 4538
+     BoundIAT: 0
+    UnloadIAT: 0
+    TimeStamp: 0
+        Indx Name
+        ---- --------
+        0000 delayLib
+
+

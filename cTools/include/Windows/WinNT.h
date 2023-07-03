@@ -168,6 +168,12 @@ typedef BYTE  FCHAR;
 typedef WORD  FSHORT;
 typedef DWORD FLONG;
 
+// C standard headers
+#include <assert.h>
+
+static_assert(sizeof(WORD) == 2, "WORD 2 bytes");
+static_assert(sizeof(DWORD) == 4, "WORD 4 bytes");
+
 /*
  * File formats definitions
  */
