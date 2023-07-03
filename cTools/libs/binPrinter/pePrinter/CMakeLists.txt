@@ -41,7 +41,5 @@ add_vipon_library(
   INSTALL ON
 )
 
-if (WIN32)
-  add_subdirectory(test)
-endif (WIN32)
+add_subdirectory(test)
 

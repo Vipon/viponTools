@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,9 +41,9 @@ void pe64PrintSectName(const PE64File *pe, const PESection *sect)
         break;
     case PE64_OBJ:
         if (sect->Name[0] == '/')
-            printf("%16s ", pe64GetLongSectName(pe, sect));
+            printf("%s ", pe64GetLongSectName(pe, sect));
         else
-            printf("%16.*s ", IMAGE_SIZEOF_SHORT_NAME, sect->Name);
+            printf("%.*s ", IMAGE_SIZEOF_SHORT_NAME, sect->Name);
 
         break;
     default:
@@ -59,12 +59,12 @@ static void pe64PrintSectMisc(const PE64File *pe, const PESection *sect)
 
     switch (pe->type) {
     case PE64_OBJ:
-        printf("PhysAddr:\t%.8lx ", sect->Misc.PhysicalAddress);
+        printf("%13s: %.8lx ", "PhysAddr", sect->Misc.PhysicalAddress);
         break;
     case PE64_EXEC:
     case PE64_SHARED:
     default:
-        printf("VirtSize:\t%.8lx ", sect->Misc.VirtualSize);
+        printf("%13s: %.8lx ", "VirtSize", sect->Misc.VirtualSize);
         break;
     }
 }
@@ -74,7 +74,7 @@ static void pe64PrintSectVirtAddr(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("VirtAddr:\t\t%.8lx ", sect->VirtualAddress);
+    printf("%13s: %.8lx ", "VirtAddr", sect->VirtualAddress);
 }
 
 static void pe6464PrintSectSizeOfRawData(const PESection *sect)
@@ -82,7 +82,7 @@ static void pe6464PrintSectSizeOfRawData(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("raw data size:\t\t%.8lx ", sect->SizeOfRawData);
+    printf("%13s: %.8lx ", "raw data size", sect->SizeOfRawData);
 }
 
 static void pe6464PrintPointerToRawData(const PESection *sect)
@@ -90,7 +90,7 @@ static void pe6464PrintPointerToRawData(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("raw data offs:\t%.8lx ", sect->PointerToRawData);
+    printf("%13s: %.8lx ", "raw data offs", sect->PointerToRawData);
 }
 
 static void pe6464PrintPointerToRelocations(const PESection *sect)
@@ -98,7 +98,7 @@ static void pe6464PrintPointerToRelocations(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("reloc offs:\t%.8lx ", sect->PointerToRelocations);
+    printf("%13s: %.8lx ", "reloc offs", sect->PointerToRelocations);
 }
 
 static void pe6464PrintPointerToLinenumbers(const PESection *sect)
@@ -106,7 +106,7 @@ static void pe6464PrintPointerToLinenumbers(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("line # offs:\t%.8lx ", sect->PointerToLinenumbers);
+    printf("%13s: %.8lx ", "line # offs",sect->PointerToLinenumbers);
 }
 
 static void pe6464PrintNumberOfRelocations(const PESection *sect)
@@ -114,7 +114,7 @@ static void pe6464PrintNumberOfRelocations(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("relocations:\t\t%.8hx ", sect->NumberOfRelocations);
+    printf("%13s: %.8hx ", "relocations", sect->NumberOfRelocations);
 }
 
 static void pe6464PrintNumberOfLinenumbers(const PESection *sect)
@@ -122,7 +122,7 @@ static void pe6464PrintNumberOfLinenumbers(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("line #'s:\t\t%.8hx ", sect->NumberOfLinenumbers);
+    printf("%13s: %.8hx ", "line #'s", sect->NumberOfLinenumbers);
 }
 
 static void pe6464PrintCharacteristics(const PESection *sect)
@@ -130,7 +130,7 @@ static void pe6464PrintCharacteristics(const PESection *sect)
     if (sect == NULL)
         return;
 
-    printf("flags: %.8lx ", sect->Characteristics);
+    printf("%13s: %.8lx ", "flags", sect->Characteristics);
 }
 
 void pe64PrintSection(const PE64File *pe, const PESection *sect)

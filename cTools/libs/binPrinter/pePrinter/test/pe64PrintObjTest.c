@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,8 @@
 #include "pe64Parse.h"
 #include "pe64Printer.h"
 
+static const char TESTOUT[] = "pe64PrintObjTest.txt";
+
 int main(int argc, char *argv[])
 {
     if (argc < 2) {
@@ -36,11 +38,18 @@ int main(int argc, char *argv[])
     PE64File *pe = pe64Parse(argv[1]);
     EXPECT_VAL_NOT_EQ(pe, NULL, "Cannot parse pe64 file");
     EXPECT_VAL_NOT_EQ(pe->symtab, NULL, "Cannot parse pe64 symbol table");
+
+    FILE *f = freopen(TESTOUT, "w", stdout);
+
     pe64PrintFileHeader(pe);
     pe64PrintSections(pe);
     pe64PrintSymbols(pe);
 
     pe64Free(pe);
+
+    fclose(f);
+    EXPECT_FILE_EQ(TESTOUT, argv[2]);
+
     return 0;
 }
 

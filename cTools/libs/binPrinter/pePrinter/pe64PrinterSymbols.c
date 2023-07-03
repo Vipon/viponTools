@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,7 @@ static void pe64PrintSymSection(const PE64File *pe, const PESymbol *sym)
         printf("%16s ", "N_DEBUG");
         break;
     default:
-        pe64PrintSectName(pe, sect);
+        printf("%16s ", pe64GetSectName(pe, sect));
         break;
     }
 }
@@ -77,16 +77,16 @@ static void pe64PrintSymType(const PESymbol *sym)
 
     switch (sym->Type >> 8) {
     case IMAGE_SYM_DTYPE_NULL:
-        printf("%7s:", "DT_NON");
+        printf("%s ", "DT_NON");
         break;
     case IMAGE_SYM_DTYPE_POINTER:
-        printf("%7s:", "DT_PTR");
+        printf("%s ", "DT_PTR");
         break;
     case IMAGE_SYM_DTYPE_FUNCTION:
-        printf("%7s:", "DT_FCN");
+        printf("%s ", "DT_FCN");
         break;
     case IMAGE_SYM_DTYPE_ARRAY:
-        printf("%7s:", "DT_ARY");
+        printf("%s ", "DT_ARY");
         break;
     default:
         break;
@@ -266,12 +266,12 @@ void pe64PrintAuxSymSect(const PE64File *pe, const PEAuxSymbol *auxSym)
     if (pe == NULL || auxSym == NULL)
         return;
 
-    printf("\t Len: %.8lx", auxSym->Section.Length);
-    printf("\t Relocs: %.4hx", auxSym->Section.NumberOfRelocations);
-    printf("\t Lines: %.4hx", auxSym->Section.NumberOfLinenumbers);
-    printf("\t CheckSum: %.8lx", auxSym->Section.CheckSum);
-    printf("\t AssocNum: %.4hu", auxSym->Section.Number);
-    printf("\t Selec: %.2hhx", auxSym->Section.Selection);
+    printf("%8s: %.8lx", "Len", auxSym->Section.Length);
+    printf("%8s: %.4hx", "Relocs", auxSym->Section.NumberOfRelocations);
+    printf("%8s: %.4hx", "Lines", auxSym->Section.NumberOfLinenumbers);
+    printf("%10s: %.8lx", "CheckSum", auxSym->Section.CheckSum);
+    printf("%10s: %.4hu", "AssocNum", auxSym->Section.Number);
+    printf("%7s: %.2hhx", "Selec", auxSym->Section.Selection);
 }
 
 void pe64PrintAuxSymFile(const PE64File *pe, const PEAuxSymbol *auxSym)
@@ -279,7 +279,7 @@ void pe64PrintAuxSymFile(const PE64File *pe, const PEAuxSymbol *auxSym)
     if (pe == NULL || auxSym == NULL)
         return;
 
-    printf("\t %s", auxSym->File.Name);
+    printf("%5s%s", "", auxSym->File.Name);
 }
 
 void pe64PrintAuxSymbol(const PE64File *pe, const PESymbol *sym, const PEAuxSymbol *auxSym)
@@ -310,14 +310,14 @@ void pe64PrintSymbols(const PE64File *pe)
     printf("%16s ", "Name");
     printf("%16s ", "Value");
     printf("%16s ", "Section");
-    printf("%16s ", "Type");
+    printf("%15s ", "Type");
     printf("%8s ", "Storage");
     printf("%8s\n", "Aux");
     printf("-------- ");
     printf("---------------- ");
     printf("---------------- ");
     printf("---------------- ");
-    printf("---------------- ");
+    printf("--------------- ");
     printf("-------- ");
     printf("--------\n");
 

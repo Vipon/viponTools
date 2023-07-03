@@ -68,6 +68,11 @@ extern int VERBOSE;
             putchar(' '); \
         )
 
+    #define SPACEs(num)              \
+        DEF_GUARD(                   \
+            printf("%*s", num, " "); \
+        )
+
     #define TAB            \
         DEF_GUARD(         \
             putchar('\t'); \

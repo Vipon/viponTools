@@ -20,13 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+set(PE64_PRINTE_EXE_TEST_LINK_LIBS pe64Parse pe64Printer delayLib file mem string comdef)
 # Need for testing print of delay load libs
-if (MSVC)
-  set(TEST_LINK_FLAGS /DELAYLOAD:delayLib.dll)
-else ()
-  set(TEST_LINK_FLAGS -Wl,-delayload:delayLib.dll)
-endif ()
+if (WIN32)
+  # Delay load doesn't work without delayimp.lib
+  list(APPEND PE64_PRINTE_EXE_TEST_LINK_LIBS delayimp.lib)
+  if (MSVC)
+    set(TEST_LINK_FLAGS /DELAYLOAD:delayLib.dll)
+  else ()
+    set(TEST_LINK_FLAGS -Wl,-delayload:delayLib.dll)
+  endif ()
+endif (WIN32)
 
+# Actually delayLib isn't needed to build, because we have an ref exe file.
+# Save it for future.
 add_vipon_library(
   NAME delayLib
   TYPE SHARED
@@ -36,9 +43,10 @@ add_vipon_library(
 add_vipon_test(
   NAME pe64PrintExeTest
   SOURCES pe64PrintExeTest.c
-  # Delay load doesn't work without delayimp.lib
-  LINK_LIBS pe64Parse pe64Printer delayLib file mem string comdef delayimp.lib
+  LINK_LIBS ${PE64_PRINTE_EXE_TEST_LINK_LIBS}
   LINK_FLAGS ${TEST_LINK_FLAGS}
+  CMD_LINE pe64PrintExeTest_ref.exe pe64PrintExeTest_ref.txt
+  TEST_FILES pe64PrintExeTest_ref.exe pe64PrintExeTest_ref.txt
 )
 
 add_custom_target(testObjFile
@@ -56,7 +64,8 @@ add_vipon_test(
   NAME pe64PrintObjTest
   SOURCES pe64PrintObjTest.c
   LINK_LIBS pe64Parse pe64Printer file mem string comdef
-  CMD_LINE "${TEST_FILE}"
-  DEPENDS testObjFile
+  CMD_LINE "${TEST_FILE}" pe64PrintObjTest_ref.txt
+  #DEPENDS testObjFile
+  TEST_FILES pe64PrintObjTest_ref.txt testObjFile.o
 )
 
