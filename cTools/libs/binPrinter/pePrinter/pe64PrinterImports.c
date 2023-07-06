@@ -130,8 +130,6 @@ void pe64PrintImport(const PE64File *pe, const PEImport *import)
         uint64_t AddressOfData = INT->u1.AddressOfData;
 
         if (AddressOfData) {
-
-
             pe64PrintINT(pe, INT);
             NEW_LINE;
         } else {

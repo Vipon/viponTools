@@ -12,9 +12,7 @@ git clone -c core.symlinks=true https://github.com/Vipon/viponTools
 ## Setup environment
 ### Windows
 Scripts bellow will automatically download and install at least:
-* python3, ninja, vscode, cmake, ccache, visual studio
 ```
-cd batch
 setup.bat
 ```
 

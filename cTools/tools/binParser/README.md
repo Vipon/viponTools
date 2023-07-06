@@ -7,20 +7,25 @@ The followed table shows support platforms and binary formats. macho files forma
 |       | MacOsX | Win | Linux |
 |-------|:------:|:---:|:-----:|
 |macho64|   X    |  X  |   X   |
-|elf64  |   X    |  X  |   X   |
+|elf64  |   -    |  -  |   -   |
 |PE64   |   X    |  X  |   X   |
 
 ## Command Line Arguments
-| Short Arg | Long Arg      | Description |
-|----------:|:--------------|:------------|
-|        -h |   --header    | print all headers |
-|        -s |   --symbols   | print all symbols |
-|        -S |  --sections   | print all section |
-|           |  --segments   | print all segments |
-|           | --func-starts | macho: print info about function starts |
-|        -l |    --lcom     | macho: print load commands |
-|           | --fat-header  | macho: print fat header information if it's |
-|        -m |    --mcpu     | set up cpu type for parser, used for fat binaries |
+| Short Arg | Long Arg        | Description |
+|----------:|:----------------|:------------|
+|        -h |     --header    | print all headers |
+|        -s |    --symbols    | print all symbols |
+|        -S |    --sections   | print all section |
+|           |    --segments   | print all segments |
+|           |  --func-starts  | macho: print info about function starts |
+|        -l |     --lcom      | macho: print load commands |
+|           |   --fat-header  | macho: print fat header information if it's |
+|        -m |     --mcpu      | set up cpu type for parser, used for fat binaries |
+|           |  --dos-header   | pe: print dos header |
+|        -d | --delay-imports | pe: print delay imports |
+|        -e |    --exports    | pe: print exports |
+|           |  --file-header  | pe: print file header |
+|           |  --opt-header   | pe: print opt header |
 
 ## Examples
 ### Print aarch64 symbols of fat macho64

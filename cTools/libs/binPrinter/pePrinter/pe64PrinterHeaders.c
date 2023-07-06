@@ -731,7 +731,8 @@ void pe64PrintNtHeader(const PE64File *pe)
     pe64PrintNTMagic(pe->ntHeader);
     NEW_LINE;
     pe64PrintFileHeader(pe);
-    pe64PrintOptHeader(pe);
+    if (pe->type != PE64_OBJ)
+        pe64PrintOptHeader(pe);
 
     NEW_LINE;
 }

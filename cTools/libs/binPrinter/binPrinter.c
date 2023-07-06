@@ -24,6 +24,7 @@
 
 #include "binParse.h"
 #include "binPrinter.h"
+#include "pe64Printer.h"
 #include "macho64Printer.h"
 #include "fatMacho64Printer.h"
 
@@ -35,12 +36,20 @@ BinPrinter binPrinter = {};
     binPrinter.printSections = (BinPrintSections)&(type ## PrintSections); \
     binPrinter.printSegments = (BinPrintSegments)&(type ## PrintSegments);
 
-#define INIT_MACHO_PRINT_FUN(type) \
+#define INIT_MACHO_PRINT_FUNC(type) \
     binPrinter.macho.printFuncStarts = (BinPrintFuncStarts)&(type ## PrintFuncStarts); \
     binPrinter.macho.printLComs = (BinPrintLComs)&(type ## PrintLComs);
 
-#define INIT_FAT_MACHO_PRINT_FUN(type) \
+#define INIT_FAT_MACHO_PRINT_FUNC(type) \
     binPrinter.fatMacho.printFatHeader = (BinPrintFatHeader)&(type ## PrintHeader);
+
+#define INIT_PE_PRINT_FUNC(type) \
+    binPrinter.pe.printDosHeader = (BinPrintDosHeader)&(type ## PrintDosHeader); \
+    binPrinter.pe.printFileHeader = (BinPrintFileHeader)&(type ## PrintFileHeader); \
+    binPrinter.pe.printOptHeader = (BinPrintOptHeader)&(type ## PrintOptHeader); \
+    binPrinter.pe.printImports = (BinPrintImports)&(type ## PrintImports); \
+    binPrinter.pe.printDelayImports = (BinPrintOptHeader)&(type ## PrintDelayImports); \
+    binPrinter.pe.printExports = (BinPrintExports)&(type ## PrintExports);
 
 int initBinPrinter(const char *fn)
 {
@@ -51,19 +60,20 @@ int initBinPrinter(const char *fn)
     switch(binParser.type) {
     case MACHO64:
         INIT_BIN_PRINTER(macho64);
-        INIT_MACHO_PRINT_FUN(macho64);
+        INIT_MACHO_PRINT_FUNC(macho64);
         break;
     case FATMACHO64:
         INIT_BIN_PRINTER(fatMacho64);
-        INIT_MACHO_PRINT_FUN(fatMacho64);
-        INIT_FAT_MACHO_PRINT_FUN(fatMacho64);
+        INIT_MACHO_PRINT_FUNC(fatMacho64);
+        INIT_FAT_MACHO_PRINT_FUNC(fatMacho64);
+        break;
+    case PE64:
+        INIT_BIN_PRINTER(pe64);
+        INIT_PE_PRINT_FUNC(pe64);
         break;
     /*
     case ELF64:
         INIT_BIN_PRINTER(elf64);
-        break;
-    case PE64:
-        INIT_BIN_PRINTER(pe64);
         break;
     case ELF32:
         INIT_BIN_PRINTER(elf32);
