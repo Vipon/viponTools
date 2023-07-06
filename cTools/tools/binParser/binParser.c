@@ -46,6 +46,12 @@ typedef enum {
     FAT_HEADER,
     FUNC_STARTS,
     LCOMS,
+    DOS_HEADER,
+    FILE_HEADER,
+    OPT_HEADER,
+    IMPORTS,
+    DELAY_IMPORTS,
+    EXPORTS,
     NUM_FLAGS
 } BinParserOpt;
 
@@ -98,6 +104,48 @@ void printLComs(const char *arg)
 {
     UNUSED(arg);
     flags[LCOMS] = true;
+}
+
+static
+void printDosHeader(const char *arg)
+{
+    UNUSED(arg);
+    flags[DOS_HEADER] = true;
+}
+
+static
+void printFileHeader(const char *arg)
+{
+    UNUSED(arg);
+    flags[FILE_HEADER] = true;
+}
+
+static
+void printOptHeader(const char *arg)
+{
+    UNUSED(arg);
+    flags[OPT_HEADER] = true;
+}
+
+static
+void printImports(const char *arg)
+{
+    UNUSED(arg);
+    flags[IMPORTS] = true;
+}
+
+static
+void printDelayImports(const char *arg)
+{
+    UNUSED(arg);
+    flags[DELAY_IMPORTS] = true;
+}
+
+static
+void printExports(const char *arg)
+{
+    UNUSED(arg);
+    flags[EXPORTS] = true;
 }
 
 static
@@ -180,6 +228,36 @@ int main(int argc, char *argv[])
                    , .flags = OPTION_ARG_OPTIONAL
                    , .doc = "set up cpu type for parser"
     );
+    ADD_ARG(printDosHeader, .name = "dos-header"
+                          , .key = 153
+                          , .flags = OPTION_ARG_OPTIONAL
+                          , .doc = "pe: print dos header"
+    );
+    ADD_ARG(printFileHeader, .name = "file-header"
+                           , .key = 154
+                           , .flags = OPTION_ARG_OPTIONAL
+                           , .doc = "pe: print file header"
+    );
+    ADD_ARG(printOptHeader, .name = "opt-header"
+                          , .key = 155
+                          , .flags = OPTION_ARG_OPTIONAL
+                          , .doc = "pe: print opt header"
+    );
+    ADD_ARG(printImports, .name = "imports"
+                          , .key = 'i'
+                          , .flags = OPTION_ARG_OPTIONAL
+                          , .doc = "pe: print imports"
+    );
+    ADD_ARG(printDelayImports, .name = "delay-imports"
+                             , .key = 'd'
+                             , .flags = OPTION_ARG_OPTIONAL
+                             , .doc = "pe: print delay imports"
+    );
+    ADD_ARG(printExports, .name = "exports"
+                        , .key = 'e'
+                        , .flags = OPTION_ARG_OPTIONAL
+                        , .doc = "pe: print exports"
+    );
 
     ARG_PARSE(argc, argv);
     setupBinPrinterArch(binParserArch);
@@ -203,6 +281,24 @@ int main(int argc, char *argv[])
     }
     if (flags[LCOMS]) {
         binPrinter.macho.printLComs(binParser.bin);
+    }
+    if (flags[DOS_HEADER]) {
+        binPrinter.pe.printDosHeader(binParser.bin);
+    }
+    if (flags[FILE_HEADER]) {
+        binPrinter.pe.printFileHeader(binParser.bin);
+    }
+    if (flags[OPT_HEADER]) {
+        binPrinter.pe.printOptHeader(binParser.bin);
+    }
+    if (flags[IMPORTS]) {
+        binPrinter.pe.printImports(binParser.bin);
+    }
+    if (flags[DELAY_IMPORTS]) {
+        binPrinter.pe.printDelayImports(binParser.bin);
+    }
+    if (flags[EXPORTS]) {
+        binPrinter.pe.printExports(binParser.bin);
     }
 
     finiBinPrinter();

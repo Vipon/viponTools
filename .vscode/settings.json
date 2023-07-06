@@ -104,7 +104,8 @@
         "fatmacho64dynmod.h": "c",
         "binparse.h": "c",
         "elf32dynmod.h": "c",
-        "arch.h": "c"
+        "arch.h": "c",
+        "pe64parse.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

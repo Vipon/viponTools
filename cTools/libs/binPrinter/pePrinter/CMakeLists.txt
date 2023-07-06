@@ -26,6 +26,7 @@ set(PE64_PRINTER_SOURSES
   pe64PrinterSymbols.c
   pe64PrinterImports.c
   pe64PrinterDelayImports.c
+  pe64PrinterExports.c
 )
 
 set(PE64_PRINTER_HEADERS

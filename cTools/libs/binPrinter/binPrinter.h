@@ -33,6 +33,12 @@ typedef void (*BinPrintSegments)(const BinFilePtr bin);
 typedef void (*BinPrintFuncStarts)(const BinFilePtr bin);
 typedef void (*BinPrintLComs)(const BinFilePtr bin);
 typedef void (*BinPrintFatHeader)(const BinFilePtr bin);
+typedef void (*BinPrintDosHeader)(const BinFilePtr bin);
+typedef void (*BinPrintFileHeader)(const BinFilePtr bin);
+typedef void (*BinPrintOptHeader)(const BinFilePtr bin);
+typedef void (*BinPrintImports)(const BinFilePtr bin);
+typedef void (*BinPrintDelayImports)(const BinFilePtr bin);
+typedef void (*BinPrintExports)(const BinFilePtr bin);
 
 typedef struct {
     BinPrintHeader printHeader;
@@ -46,6 +52,14 @@ typedef struct {
     struct {
         BinPrintFatHeader printFatHeader;
     } fatMacho;
+    struct {
+        BinPrintDosHeader printDosHeader;
+        BinPrintFileHeader printFileHeader;
+        BinPrintOptHeader printOptHeader;
+        BinPrintImports printImports;
+        BinPrintDelayImports printDelayImports;
+        BinPrintExports printExports;
+    } pe;
 } BinPrinter;
 
 #ifdef BIN_PRINTER_SHARED_LIB
