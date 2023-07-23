@@ -562,3 +562,35 @@ Symbol table:
      sect: 0x00 NO_SECT
      desc: 0x100 (@rpath/libmacho64Printer.dylib)
     value: 0x0
+Code Signature:
+Super Blob:
+    magic: 0xfade0cc0
+   length: 416
+    count: 1
+         Blob[0]: (type: 0x00000000, offset: 20)
+            magic: 0xfade0c02
+           length: 396
+          version: 2.4.0
+            flags: 0x20002
+       hashOffset: 108
+      identOffset: 88 (macho64PrintExeTest)
+    nSpecialSlots: 0
+       nCodeSlots: 9
+        codeLimit: 0x84e0
+         hashSize: 32
+         hashType: SHA256
+         platform: 0
+         pageSize: 4096
+           spare2: 0
+      execSegBase: 0x0
+     execSegLimit: 0x4000
+     execSegFlags: 0x1
+         HashSlot[0]: 180a4094c6e05e878e7918122bf2d3d2cc8078d20f0f4e242898fe5d22afc3b4
+         HashSlot[1]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
+         HashSlot[2]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
+         HashSlot[3]: 9aaf5f354ac850971a5559bc0fc622c27af6dea7e26776b9ddce39c65173ab93
+         HashSlot[4]: 5de953ae7ee78e3a13ad8ddb8c0b7ca03c253e1a65cfa786af8d3ba8dbde967d
+         HashSlot[5]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
+         HashSlot[6]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
+         HashSlot[7]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
+         HashSlot[8]: d5b092c0cb51e19d123e40e034f8642bef9b1104bfcb2743373d2a9d6c38f21a

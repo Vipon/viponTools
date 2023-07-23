@@ -19,6 +19,7 @@ The followed table shows support platforms and binary formats. macho files forma
 |           |    --segments   | print all segments |
 |           |  --func-starts  | macho: print info about function starts |
 |        -l |     --lcom      | macho: print load commands |
+|           |   --code-sign   | macho: print code sign |
 |           |   --fat-header  | macho: print fat header information if it's |
 |        -m |     --mcpu      | set up cpu type for parser, used for fat binaries |
 |           |  --dos-header   | pe: print dos header |

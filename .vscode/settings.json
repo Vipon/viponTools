@@ -105,7 +105,10 @@
         "binparse.h": "c",
         "elf32dynmod.h": "c",
         "arch.h": "c",
-        "pe64parse.h": "c"
+        "pe64parse.h": "c",
+        "pkcs7.h": "c",
+        "__split_buffer": "c",
+        "stack": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

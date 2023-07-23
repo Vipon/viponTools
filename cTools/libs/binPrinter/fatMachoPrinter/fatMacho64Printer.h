@@ -50,6 +50,8 @@ void fatMacho64PrintFuncStarts(const FatMacho64File *ff);
 EXPORT_FUNC
 void fatMacho64PrintLComs(const FatMacho64File *ff);
 
+EXPORT_FUNC
+void fatMacho64PrintCodeSign(const FatMacho64File *ff);
 
 #endif /* __FAT_MACHO_64_PRINTER_H */
 
