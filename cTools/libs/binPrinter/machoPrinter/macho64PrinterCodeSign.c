@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "mem.h"
 #include "endian.h"
 #include "macho64Printer.h"
 
@@ -220,5 +221,7 @@ void macho64PrintCodeSign(const Macho64File *mf)
             break;
         }
     }
+
+    Free(sb);
 }
 
