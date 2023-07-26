@@ -93,6 +93,8 @@ void macho64PrintFuncStarts(const Macho64File *mf);
 EXPORT_FUNC
 void macho64PrintLComs(const Macho64File *mf);
 
+EXPORT_FUNC
+void macho64PrintCodeSign(const Macho64File *mf);
 
 #endif /* __MACHO_64_PRINTER_H */
 

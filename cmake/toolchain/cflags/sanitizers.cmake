@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valerii
+# Copyright (c) 2021-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,14 +26,19 @@ set(SANITIZERS_FLAGS)
 
 # Need to specify libs for link, because cmake checking with linking.
 if (WIN32)
-    set(CMAKE_REQUIRED_LIBRARIES "-lclang_rt.asan-x86_64")
-    if (CMAKE_BUILD_TYPE STREQUAL "Release")
-        # Sanitizers doesn't work with debug informations
-        append_cflags(SANITIZERS_FLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined)
-    endif ()
-else ()
-    set(CMAKE_REQUIRED_LIBRARIES "-lasan -lubsan")
+  set(CMAKE_REQUIRED_LIBRARIES "-lclang_rt.asan-x86_64")
+  if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    # Sanitizers doesn't work with debug informations
     append_cflags(SANITIZERS_FLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined)
+  endif ()
+elseif (APPLE)
+  set(CMAKE_REQUIRED_LINK_OPTIONS "-fsanitize=address")
+  append_cflags(SANITIZERS_FLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined)
+  unset(CMAKE_REQUIRED_LINK_OPTIONS)
+  string(APPEND _LINKER_FLAGS " ${SANITIZERS_FLAGS}")
+else ()
+  set(CMAKE_REQUIRED_LIBRARIES "-lasan -lubsan")
+  append_cflags(SANITIZERS_FLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined)
 endif ()
 
 unset(CMAKE_REQUIRED_LIBRARIES)

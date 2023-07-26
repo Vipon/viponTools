@@ -27,15 +27,30 @@ set(MACHO64_PRINTER_SOURCES
   macho64PrinterSegments.c
   macho64PrinterFuncStarts.c
   macho64PrinterLoadCommands.c
+  macho64PrinterCodeSign.c
 )
+
+set(MACHO64_PRINTER_HEADERS
+  macho64Printer.h
+)
+
+set(MACHO64_PRINTER_LINK_LIBS
+  file
+  LEB128
+  macho64Parse
+)
+
+if (OPENSLL)
+  list(APPEND MACHO64_PRINTER_LINK_LIBS ssl crypto)
+endif (OPENSLL)
 
 add_vipon_library(
   NAME macho64Printer
   TYPE ${VIPON_TOOLS_LIB_TYPE}
-  HEADERS macho64Printer.h
+  HEADERS "${MACHO64_PRINTER_HEADERS}"
   SOURCES "${MACHO64_PRINTER_SOURCES}"
   INSTALL ON
-  LINK_LIBS file LEB128 macho64Parse
+  LINK_LIBS ${MACHO64_PRINTER_LINK_LIBS}
 )
 
 add_subdirectory(test)

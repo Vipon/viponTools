@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valerii
+# Copyright (c) 2021-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -59,4 +59,9 @@ set(CMAKE_C_FLAGS_RELEASE ${C_FLAGS_RELEASE})
 set(CMAKE_CXX_FLAGS ${CXX_FLAGS})
 set(CMAKE_CXX_FLAGS_DEBUG ${CXX_FLAGS_DEBUG})
 set(CMAKE_CXX_FLAGS_RELEASE ${CXX_FLAGS_RELEASE})
+
+if (NOT "${_LINKER_FLAGS}" STREQUAL "")
+  string(REPLACE " " ";" LINKER_FLAGS "${_LINKER_FLAGS}")
+  add_link_options(${LINKER_FLAGS})
+endif ()
 

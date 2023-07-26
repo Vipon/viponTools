@@ -27,6 +27,10 @@
 
 #include <stdint.h>
 
+#define __swap16(n) ((uint16_t) (         \
+    (((uint16_t)(n) & 0xFF) << 8)      |  \
+    (((uint16_t)(n) & 0xFF00) >> 8)))
+
 #define __swap32(n) ((uint32_t) (         \
     (((uint32_t)(n) & 0xFF) << 24)      | \
     (((uint32_t)(n) & 0xFF00) << 8)     | \
@@ -44,18 +48,22 @@
     ((uint64_t)(n) & 0xff00000000000000ULL) >> 56))
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+# define __htobe16(n) __swap16(n)
 # define __htobe32(n) __swap32(n)
 # define __htobe64(n) __swap64(n)
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+# define __htobe16(n) (n)
 # define __htobe32(n) (n)
 # define __htobe64(n) (n)
 #else
 # error unsupported endianness
 #endif
 
+#define htobe16(n) __htobe16(n)
 #define htobe32(n) __htobe32(n)
 #define htobe64(n) __htobe64(n)
 
+#define be16toh(n) __htobe16(n)
 #define be32toh(n) __htobe32(n)
 #define be64toh(n) __htobe64(n)
 

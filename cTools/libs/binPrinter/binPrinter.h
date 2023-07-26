@@ -32,6 +32,7 @@ typedef void (*BinPrintSections)(const BinFilePtr bin);
 typedef void (*BinPrintSegments)(const BinFilePtr bin);
 typedef void (*BinPrintFuncStarts)(const BinFilePtr bin);
 typedef void (*BinPrintLComs)(const BinFilePtr bin);
+typedef void (*BinPrintCodeSign)(const BinFilePtr bin);
 typedef void (*BinPrintFatHeader)(const BinFilePtr bin);
 typedef void (*BinPrintDosHeader)(const BinFilePtr bin);
 typedef void (*BinPrintFileHeader)(const BinFilePtr bin);
@@ -48,6 +49,7 @@ typedef struct {
     struct {
         BinPrintFuncStarts printFuncStarts;
         BinPrintLComs printLComs;
+        BinPrintCodeSign printCodeSign;
     } macho;
     struct {
         BinPrintFatHeader printFatHeader;

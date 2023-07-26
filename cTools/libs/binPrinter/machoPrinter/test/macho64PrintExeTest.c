@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
     macho64PrintSections(mf);
     macho64PrintFuncStarts(mf);
     macho64PrintSymbols(mf);
+    macho64PrintCodeSign(mf);
 
     macho64Free(mf);
 

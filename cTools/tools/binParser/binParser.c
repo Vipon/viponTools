@@ -36,7 +36,7 @@ static Arch binParserArch = ARCH;
 static const char doc[] =
     "Binary parser. Support binare format: mach-o (64 bit), elf (32,64 bit), pe (64 bit)";
 static const char argsDoc[] = "BIN_FILE";
-static const char progVersion[] = "0.2.0";
+static const char progVersion[] = "0.3.0";
 
 typedef enum {
     HEADER = 0,
@@ -46,6 +46,7 @@ typedef enum {
     FAT_HEADER,
     FUNC_STARTS,
     LCOMS,
+    CODE_SIGN,
     DOS_HEADER,
     FILE_HEADER,
     OPT_HEADER,
@@ -104,6 +105,13 @@ void printLComs(const char *arg)
 {
     UNUSED(arg);
     flags[LCOMS] = true;
+}
+
+static
+void printCodeSign(const char *arg)
+{
+    UNUSED(arg);
+    flags[CODE_SIGN] = true;
 }
 
 static
@@ -222,6 +230,11 @@ int main(int argc, char *argv[])
                       , .flags = OPTION_ARG_OPTIONAL
                       , .doc = "macho: print load commands"
     );
+    ADD_ARG(printCodeSign, .name = "code-sign"
+                         , .key = 156
+                         , .flags = OPTION_ARG_OPTIONAL
+                         , .doc = "macho: print code sign"
+    );
     ADD_ARG(setArch, .name = "mcpu"
                    , .key = 'm'
                    , .arg = "CPU_TYPE"
@@ -281,6 +294,9 @@ int main(int argc, char *argv[])
     }
     if (flags[LCOMS]) {
         binPrinter.macho.printLComs(binParser.bin);
+    }
+    if (flags[CODE_SIGN]) {
+        binPrinter.macho.printCodeSign(binParser.bin);
     }
     if (flags[DOS_HEADER]) {
         binPrinter.pe.printDosHeader(binParser.bin);

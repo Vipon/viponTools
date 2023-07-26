@@ -43,7 +43,7 @@ static uint8_t init = 0;
 x86_64_disasm  disasm;
 
 
-ERR_DISASM_WRAP init_x86_64_disassembler()
+ERR_DISASM_WRAP init_x86_64_disassembler(void)
 {
     LOG("start init_x86_64_disassembler\n");
     if (init) {
@@ -70,7 +70,7 @@ ERR_DISASM_WRAP init_x86_64_disassembler()
 }
 
 
-void stop_x86_64_disassembler()
+void stop_x86_64_disassembler(void)
 {
     LOG("start stop_x86_64_disassembler\n");
     if (init) {

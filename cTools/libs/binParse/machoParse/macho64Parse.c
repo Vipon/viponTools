@@ -407,6 +407,22 @@ MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
     return MACHO64_OK;
 }
 
+static
+MACHO64_ERROR macho64ParseCodeSign(Macho64File *mf)
+{
+    if (mf == NULL || mf->header == NULL || mf->lcom == NULL)
+        return MACHO64_INV_ARG;
+
+    FOREACH_LOAD_COMMAND(mf,
+        if (lcom->cmd == LC_CODE_SIGNATURE) {
+            mf->sign = (MachoLinkEditData*)lcom;
+            return MACHO64_OK;
+        }
+    );
+
+    return MACHO64_OK;
+}
+
 MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off)
 {
     if (mf == NULL)
@@ -470,6 +486,8 @@ MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off)
 
     macho64ParseFuncStarts(mf);
     macho64ParseDylibCom(mf);
+    macho64ParseCodeSign(mf);
+
     return MACHO64_OK;
 }
 
