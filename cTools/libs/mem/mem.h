@@ -41,7 +41,7 @@ EXPORT_FUNC
 void *Realloc(void *ptr, size_t size);
 
 EXPORT_FUNC
-void print_mem(uint8_t* mem, size_t size);
+void printMem(const uint8_t* mem, size_t size);
 
 /**
  * \brief Returns system page size

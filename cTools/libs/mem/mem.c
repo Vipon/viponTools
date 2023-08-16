@@ -52,14 +52,12 @@ void *Realloc(void *ptr, size_t size)
     return realloc(ptr, size);
 }
 
-void print_mem(uint8_t* mem, size_t size)
+void printMem(const uint8_t* mem, size_t size)
 {
     size_t i = 0;
     for (i = 0; i < size; ++i) {
-        printf("%x ", mem[i]);
+        printf("%.2x ", mem[i]);
     }
-
-    putchar('\n');
 }
 
 // OS standard headers

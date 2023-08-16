@@ -22,40 +22,27 @@
  * SOFTWARE.
  */
 
-#include "test.h"
-#include "file.h"
+#ifndef __ELF_64_PRINTER_H
+#define __ELF_64_PRINTER_H
+
 #include "comdef.h"
 #include "elf64Parse.h"
-#include "elf64Printer.h"
 
-#include <stdio.h>
+EXPORT_FUNC
+void elf64PrintHeader(const Elf64File *elf);
 
-static const char TESTOUT[] = "elf64PrintExeTest.txt";
+typedef struct {
+    uint32_t    flag;
+    const char  *str;
+} Elf64Flag;
 
-int main(int argc, char *argv[])
-{
-    UNUSED(argc);
-    Elf64File *ef = elf64Parse(argv[1]);
-    if (ef == NULL) {
-        VT_ERROR("Cannot parse %s", argv[1]);
-        exit(EXIT_FAILURE);
-    }
+typedef Elf64Flag Elf64SectFlag;
+extern const Elf64SectFlag ELF64_SECT_FLAGS[];
 
-    FILE *f = freopen(TESTOUT, "w", stdout);
+EXPORT_FUNC
+void elf64PrintSection(const Elf64File *elf, const Elf64Shdr *sect);
+EXPORT_FUNC
+void elf64PrintSections(const Elf64File *elf);
 
-    elf64PrintHeader(ef);
-    elf64PrintSections(ef);
-    /*
-    elf64PrintSegments(ef);
-    elf64PrintSymbols(ef);
-    */
-
-    elf64Free(ef);
-
-    fclose(f);
-
-    EXPECT_FILE_EQ(TESTOUT, argv[2]);
-
-    return 0;
-}
+#endif /* __ELF_64_PRINTER_H */
 

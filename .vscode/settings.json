@@ -108,7 +108,13 @@
         "pe64parse.h": "c",
         "pkcs7.h": "c",
         "__split_buffer": "c",
-        "stack": "c"
+        "stack": "c",
+        "__config": "c",
+        "__string": "c",
+        "__undef_macros": "c",
+        "complex": "c",
+        "elf.h": "c",
+        "elf64.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 
