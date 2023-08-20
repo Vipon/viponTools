@@ -20,18 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(pePrinter)
-add_subdirectory(elfPrinter)
-add_subdirectory(machoPrinter)
-add_subdirectory(fatMachoPrinter)
-
-add_vipon_library(
-  NAME binPrinter
-  TYPE ${VIPON_TOOLS_LIB_TYPE}
-  HEADERS binPrinter.h
-  SOURCES binPrinter.c
-  DEFINES BIN_PRINTER_SHARED_LIB
-  LINK_LIBS binParse macho64Printer fatMacho64Printer pe64Printer elf64Printer
-  INSTALL ON
+add_vipon_test(
+  NAME elf64PrintExeTest
+  SOURCES elf64PrintExeTest.c
+  LINK_LIBS elf64Printer elf64Parse file string LEB128 comdef mem
+  CMD_LINE elf64PrintExeTest_ref elf64PrintExeTest_ref.txt
+  TEST_FILES elf64PrintExeTest_ref elf64PrintExeTest_ref.txt
 )
 

@@ -134,7 +134,7 @@ size_t getFileSize(FileD fd);
  *  Need to free memory.
  */
 EXPORT_FUNC
-void *readFromFile(FileD fd, size_t *off, size_t size);
+void *readFromFile(FileD fd, const size_t *off, size_t size);
 
 /***
  * Output:

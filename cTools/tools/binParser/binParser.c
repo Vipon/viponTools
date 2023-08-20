@@ -34,9 +34,9 @@
 static Arch binParserArch = ARCH;
 
 static const char doc[] =
-    "Binary parser. Support binare format: mach-o (64 bit), elf (32,64 bit), pe (64 bit)";
+    "Binary parser. Support binare format: mach-o/fat (64 bit), elf (64 bit), pe (64 bit)";
 static const char argsDoc[] = "BIN_FILE";
-static const char progVersion[] = "0.3.0";
+static const char progVersion[] = "0.4.0";
 
 typedef enum {
     HEADER = 0,
@@ -53,6 +53,9 @@ typedef enum {
     IMPORTS,
     DELAY_IMPORTS,
     EXPORTS,
+    RELOCATIONS,
+    DYNAMIC,
+    VERSION_INFO,
     NUM_FLAGS
 } BinParserOpt;
 
@@ -157,6 +160,27 @@ void printExports(const char *arg)
 }
 
 static
+void printRelocations(const char *arg)
+{
+    UNUSED(arg);
+    flags[RELOCATIONS] = true;
+}
+
+static
+void printDynamicSection(const char *arg)
+{
+    UNUSED(arg);
+    flags[DYNAMIC] = true;
+}
+
+static
+void printVersionInfo(const char *arg)
+{
+    UNUSED(arg);
+    flags[VERSION_INFO] = true;
+}
+
+static
 Arch getArchByName(const char* arch)
 {
     if (strcmp(arch, "x86") == 0)
@@ -231,7 +255,7 @@ int main(int argc, char *argv[])
                       , .doc = "macho: print load commands"
     );
     ADD_ARG(printCodeSign, .name = "code-sign"
-                         , .key = 156
+                         , .key = 153
                          , .flags = OPTION_ARG_OPTIONAL
                          , .doc = "macho: print code sign"
     );
@@ -242,17 +266,17 @@ int main(int argc, char *argv[])
                    , .doc = "set up cpu type for parser"
     );
     ADD_ARG(printDosHeader, .name = "dos-header"
-                          , .key = 153
+                          , .key = 154
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "pe: print dos header"
     );
     ADD_ARG(printFileHeader, .name = "file-header"
-                           , .key = 154
+                           , .key = 155
                            , .flags = OPTION_ARG_OPTIONAL
                            , .doc = "pe: print file header"
     );
     ADD_ARG(printOptHeader, .name = "opt-header"
-                          , .key = 155
+                          , .key = 156
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "pe: print opt header"
     );
@@ -270,6 +294,22 @@ int main(int argc, char *argv[])
                         , .key = 'e'
                         , .flags = OPTION_ARG_OPTIONAL
                         , .doc = "pe: print exports"
+    );
+    ADD_ARG(printRelocations, .name = "relocs"
+                            , .key = 'r'
+                            , .flags = OPTION_ARG_OPTIONAL
+                            , .doc = "elf: print relocations"
+    );
+    ADD_ARG(printDynamicSection, .name = "dynamic"
+                               , .key = 157
+                               , .flags = OPTION_ARG_OPTIONAL
+                               , .doc = "elf: print .dynamic section"
+    );
+    ADD_ARG(printVersionInfo, .name = "version-info"
+                            , .key = 158
+                            , .flags = OPTION_ARG_OPTIONAL
+                            , .doc = "elf: print symbols version info from sections:"
+                                     ".gnu.version, .gnu.version_r"
     );
 
     ARG_PARSE(argc, argv);
@@ -315,6 +355,15 @@ int main(int argc, char *argv[])
     }
     if (flags[EXPORTS]) {
         binPrinter.pe.printExports(binParser.bin);
+    }
+    if (flags[RELOCATIONS]) {
+        binPrinter.elf.printRelocations(binParser.bin);
+    }
+    if (flags[DYNAMIC]) {
+        binPrinter.elf.printDynamicSection(binParser.bin);
+    }
+    if (flags[VERSION_INFO]) {
+        binPrinter.elf.printVersionInfo(binParser.bin);
     }
 
     finiBinPrinter();

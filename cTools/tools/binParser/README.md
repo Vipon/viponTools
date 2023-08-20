@@ -4,11 +4,12 @@ Crossplatform binary parser. Doesn't matter OS you prefer to use or binary type 
 ## Support binary formats and OS
 The followed table shows support platforms and binary formats. macho files format also includes fat binaries.
 
-|       | MacOsX | Win | Linux |
-|-------|:------:|:---:|:-----:|
-|macho64|   X    |  X  |   X   |
-|elf64  |   -    |  -  |   -   |
-|PE64   |   X    |  X  |   X   |
+|          | MacOsX | Win | Linux |
+|----------|:------:|:---:|:-----:|
+|macho64   |   X    |  X  |   X   |
+|fatMacho64|   X    |  X  |   X   |
+|elf64     |   X    |  X  |   X   |
+|PE64      |   X    |  X  |   X   |
 
 ## Command Line Arguments
 | Short Arg | Long Arg        | Description |
@@ -27,6 +28,9 @@ The followed table shows support platforms and binary formats. macho files forma
 |        -e |    --exports    | pe: print exports |
 |           |  --file-header  | pe: print file header |
 |           |  --opt-header   | pe: print opt header |
+|           |    --dynamic    | elf: print .dynamic section |
+|        -r |    --relocs     | elf: print relocations |
+|           |  --version-info | elf: print symbols version info from sections:.gnu.version, .gnu.version_r |
 
 ## Examples
 ### Print aarch64 symbols of fat macho64

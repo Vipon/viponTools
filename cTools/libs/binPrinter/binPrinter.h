@@ -40,6 +40,9 @@ typedef void (*BinPrintOptHeader)(const BinFilePtr bin);
 typedef void (*BinPrintImports)(const BinFilePtr bin);
 typedef void (*BinPrintDelayImports)(const BinFilePtr bin);
 typedef void (*BinPrintExports)(const BinFilePtr bin);
+typedef void (*BinPrintRelocations)(const BinFilePtr bin);
+typedef void (*BinPrintDynamicSection)(const BinFilePtr bin);
+typedef void (*BinPrintVersionInfo)(const BinFilePtr bin);
 
 typedef struct {
     BinPrintHeader printHeader;
@@ -62,6 +65,11 @@ typedef struct {
         BinPrintDelayImports printDelayImports;
         BinPrintExports printExports;
     } pe;
+    struct {
+        BinPrintRelocations printRelocations;
+        BinPrintDynamicSection printDynamicSection;
+        BinPrintVersionInfo printVersionInfo;
+    } elf;
 } BinPrinter;
 
 #ifdef BIN_PRINTER_SHARED_LIB

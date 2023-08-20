@@ -25,6 +25,7 @@
 #include "binParse.h"
 #include "binPrinter.h"
 #include "pe64Printer.h"
+#include "elf64Printer.h"
 #include "macho64Printer.h"
 #include "fatMacho64Printer.h"
 
@@ -52,6 +53,11 @@ BinPrinter binPrinter = {};
     binPrinter.pe.printDelayImports = (BinPrintOptHeader)&(type ## PrintDelayImports); \
     binPrinter.pe.printExports = (BinPrintExports)&(type ## PrintExports);
 
+#define INIT_ELF_PRINT_FUNC(type) \
+    binPrinter.elf.printRelocations = (BinPrintRelocations)&(type ## PrintRelocations); \
+    binPrinter.elf.printDynamicSection = (BinPrintDynamicSection)&(type ## PrintDynamicSection); \
+    binPrinter.elf.printVersionInfo = (BinPrintVersionInfo)&(type ## PrintVersionInfo);
+
 int initBinPrinter(const char *fn)
 {
     if (initBinParser(fn)) {
@@ -72,10 +78,11 @@ int initBinPrinter(const char *fn)
         INIT_BIN_PRINTER(pe64);
         INIT_PE_PRINT_FUNC(pe64);
         break;
-    /*
     case ELF64:
         INIT_BIN_PRINTER(elf64);
+        INIT_ELF_PRINT_FUNC(elf64);
         break;
+    /*
     case ELF32:
         INIT_BIN_PRINTER(elf32);
         break;

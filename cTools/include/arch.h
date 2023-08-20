@@ -38,7 +38,7 @@ typedef enum {
     ARM,
     // arm 64-bit
     ARM64,
-    AARCH64 = ARM64
+    AARCH64 = ARM64,
 } Arch;
 
 #if defined(__GNUC__) || defined(__clang__)
