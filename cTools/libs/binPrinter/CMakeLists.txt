@@ -31,7 +31,7 @@ add_vipon_library(
   HEADERS binPrinter.h
   SOURCES binPrinter.c
   DEFINES BIN_PRINTER_SHARED_LIB
-  LINK_LIBS binParse macho64Printer fatMacho64Printer pe64Printer
+  LINK_LIBS binParse macho64Printer fatMacho64Printer pe64Printer elf64Printer
   INSTALL ON
 )
 

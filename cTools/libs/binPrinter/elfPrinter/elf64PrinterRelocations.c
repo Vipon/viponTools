@@ -220,6 +220,9 @@ void elf64PrintRelaPlt(const Elf64File *elf)
         return;
 
     uint64_t relpltAmount = relplt->sh_size / sizeof(Elf64Rel);
+    if (relpltAmount == 0)
+        return;
+
     printf("Relocation section '"RELAPLT"' at offset 0x%"PRIx64" contains %"PRIu64" entry:\n",
         relplt->sh_offset, relpltAmount);
     printf("  Offset%10sInfo%11sType%11sSym. Value%4sSym. Name + Addend\n", "", "", "", "");
@@ -238,6 +241,9 @@ void elf64PrintRelaDyn(const Elf64File *elf)
         return;
 
     uint64_t reldynAmount = reldyn->sh_size / sizeof(Elf64Rel);
+    if (reldynAmount == 0)
+        return;
+
     printf("Relocation section '"RELADYN"' at offset 0x%"PRIx64" contains %"PRIu64" entries:\n",
         reldyn->sh_offset, reldynAmount);
     printf("  Offset%10sInfo%11sType%11sSym. Value%4sSym. Name + Addend\n", "", "", "", "");
@@ -247,5 +253,11 @@ void elf64PrintRelaDyn(const Elf64File *elf)
         elf64PrintRela(elf, elf->reladyn + i);
 
     NEW_LINE;
+}
+
+void elf64PrintRelocations(const Elf64File *elf)
+{
+    elf64PrintRelaDyn(elf);
+    elf64PrintRelaPlt(elf);
 }
 

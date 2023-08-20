@@ -103,6 +103,8 @@ void elf64PrintSymbolsVersionR(const Elf64File *elf)
     uint64_t i = 0;
     while (elf->dynamic[i++].d_tag != DT_VERNEEDNUM);
     uint64_t num = elf->dynamic[--i].d_un.d_val;
+    if (num == 0)
+        return;
 
     Elf64Shdr *verneedSect = elf64GetSectByType(elf, SHT_GNU_verneed);
     if (verneedSect == NULL)
@@ -146,5 +148,11 @@ void elf64PrintSymbolsVersionR(const Elf64File *elf)
     NEW_LINE;
 
     Free(verneed);
+}
+
+void elf64PrintVersionInfo(const Elf64File *elf)
+{
+    elf64PrintSymbolsVersion(elf);
+    elf64PrintSymbolsVersionR(elf);
 }
 

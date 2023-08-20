@@ -73,11 +73,15 @@ EXPORT_FUNC
 void elf64PrintRelaPlt(const Elf64File *elf);
 EXPORT_FUNC
 void elf64PrintRelaDyn(const Elf64File *elf);
+EXPORT_FUNC
+void elf64PrintRelocations(const Elf64File *elf);
 
 EXPORT_FUNC
 void elf64PrintSymbolsVersion(const Elf64File *elf);
 EXPORT_FUNC
 void elf64PrintSymbolsVersionR(const Elf64File *elf);
+EXPORT_FUNC
+void elf64PrintVersionInfo(const Elf64File *elf);
 
 EXPORT_FUNC
 void elf64PrintSymbol(const Elf64File *elf, const Elf64Sym *sym);
