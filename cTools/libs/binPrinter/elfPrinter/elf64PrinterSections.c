@@ -165,7 +165,7 @@ void elf64PrintSectionFlags(const Elf64Shdr *sect)
 {
     uint8_t bufP = 0;
     const size_t flagsNum = sizeof(ELF64_SECT_FLAGS) / sizeof(Elf64SectFlag);
-    char buf[flagsNum + 1] = "";
+    char buf[sizeof(ELF64_SECT_FLAGS) / sizeof(Elf64SectFlag) + 1] = "";
 
     uint8_t i = 0;
     for (i = 0; i < flagsNum; ++i)
