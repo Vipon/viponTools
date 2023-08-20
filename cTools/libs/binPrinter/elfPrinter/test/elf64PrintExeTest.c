@@ -45,10 +45,13 @@ int main(int argc, char *argv[])
 
     elf64PrintHeader(ef);
     elf64PrintSections(ef);
-    /*
     elf64PrintSegments(ef);
+    elf64PrintDynamicSection(ef);
+    elf64PrintRelaDyn(ef);
+    elf64PrintRelaPlt(ef);
     elf64PrintSymbols(ef);
-    */
+    elf64PrintSymbolsVersion(ef);
+    elf64PrintSymbolsVersionR(ef);
 
     elf64Free(ef);
 

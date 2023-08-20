@@ -33,6 +33,29 @@
 /* c standard headers */
 #include <inttypes.h>
 
+static ELF64_ERROR elf64ParseArch(Elf64File *elf64)
+{
+    switch (elf64->header->e_machine) {
+    case EM_386:
+        elf64->arch = X86;
+        break;
+    case EM_ARM:
+        elf64->arch = ARM;
+        break;
+    case EM_X86_64:
+        elf64->arch = X86_64;
+        break;
+    case EM_AARCH64:
+        elf64->arch = AARCH64;
+        break;
+    default:
+        elf64->arch = UNKNOWN_ARCH;
+        break;
+    }
+
+    return ELF64_OK;
+}
+
 /***
  * Before:
  *  If you need a file position, you should to save it.
@@ -66,6 +89,7 @@ static ELF64_ERROR elf64ParseHeader(Elf64File *elf64)
        && eIdent[EI_CLASS] == ELFCLASS64) {
         elf64->header = header;
         elf64->type = header->e_type;
+        elf64ParseArch(elf64);
         return ELF64_OK;
     } else {
         Free(header);
@@ -468,6 +492,33 @@ static ELF64_ERROR elf64ParseRelaDyn(Elf64File *elf64)
     return ELF64_OK;
 }
 
+static ELF64_ERROR elf64ParseDynamic(Elf64File *elf64)
+{
+    Elf64Shdr *dyn = elf64GetSectByType(elf64, SHT_DYNAMIC);
+    if (dyn == NULL)
+        return ELF64_NO_DYNAMIC;
+
+    elf64->dynamic = elf64ReadSect(elf64, dyn);
+    if (elf64->dynamic == NULL)
+        return ELF64_NO_DYNAMIC;
+
+    int64_t i = -1;
+    while (elf64->dynamic[++i].d_tag != DT_STRTAB);
+    uint64_t vaddr = elf64->dynamic[i].d_un.d_val;
+    i = -1;
+    while (elf64->dynamic[++i].d_tag != DT_STRSZ);
+    size_t size = elf64->dynamic[i].d_un.d_val;
+
+    Elf64Shdr *sect = elf64GetSectByAddr(elf64, vaddr);
+    if (sect == NULL)
+        return ELF64_NO_DYNAMIC;
+
+    size_t off = sect->sh_offset + vaddr - sect->sh_addr;
+    elf64->dtStrTab = readFromFile(elf64->fd, &off, size);
+    if (elf64->dtStrTab == NULL)
+        return ELF64_NO_DT_STRTAB;
+    return ELF64_OK;
+}
 
 Elf64File *elf64Parse(const char *fn)
 {
@@ -571,6 +622,8 @@ Elf64File *elf64Parse(const char *fn)
             WARNING("There is no " RELADYN " table");
     }
 
+    elf64ParseDynamic(elf64);
+
     return elf64;
 
 eexit_1:
@@ -667,6 +720,11 @@ void elf64Free(Elf64File *elf64)
         LOG("free dynSymNameTab");
         Free(elf64->dynSymNameTab);
         elf64->dynSymNameTab = NULL;
+    }
+
+    if (elf64->dynamic != NULL) {
+        Free(elf64->dynamic);
+        elf64->dynamic = NULL;
     }
 
     LOG("end elf64Free");
@@ -767,60 +825,6 @@ ELF64_ERROR elf64Check(const Elf64File *elf64)
 }
 
 
-ELF64_ERROR elf64PrintSymbol(const Elf64File *elf64, const Elf64Sym *sym)
-{
-    if (elf64Check(elf64) || sym == NULL)
-        return ELF64_INV_ARG;
-
-    /*
-     *typedef struct {
-     *       Elf64_Word      st_name;
-     *       unsigned char   st_info;
-     *       unsigned char   st_other;
-     *       Elf64_Half      st_shndx;
-     *       Elf64_Addr      st_value;
-     *       Elf64_Xword     st_size;
-     *   } Elf64_Sym;
-     */
-    printf("\tname:\t%s\n", elf64GetSymName(elf64, sym));
-    printf("\t\tinfo:\t0x%"PRIx32"\n", sym->st_info);
-    printf("\t\tother\t0x%"PRIx32"\n", sym->st_other);
-    printf("\t\tshndx\t%"PRIu32"\n", sym->st_shndx);
-    printf("\t\tvalue\t0x%"PRIx64"\n", sym->st_value);
-    printf("\t\tsize\t0x%"PRIx64"\n", sym->st_size);
-
-    return ELF64_OK;
-}
-
-
-ELF64_ERROR elf64PrintSymbols(const Elf64File *elf64)
-{
-    if (elf64Check(elf64))
-        return ELF64_INV_ARG;
-
-    uint64_t i = 0;
-    uint64_t ssymNum = elf64GetAmountSSym(elf64);
-    Elf64Sym *ssym = elf64GetSSymTab(elf64);
-
-    printf("static symbols:\n");
-    for (i = 0; i < ssymNum; ++i)
-        elf64PrintSymbol(elf64, &ssym[i]);
-
-    if (elf64->dynsym) {
-        Elf64Sym *dsym = elf64->dynsym;
-        Elf64Shdr *dynsymTab = elf64GetSectByType(elf64, SHT_DYNSYM);
-        uint64_t shSize = dynsymTab->sh_size;
-        uint64_t dsymNum = shSize/sizeof(Elf64Sym);
-
-        printf("dynamic symbols:\n");
-        for (i = 0; i < dsymNum; ++i)
-            elf64PrintSymbol(elf64, &dsym[i]);
-    }
-
-    return ELF64_OK;
-}
-
-
 Elf64Sym *elf64GetSymByName(const Elf64File *elf64, const char *name)
 {
     if (elf64Check(elf64) || name == NULL) {
@@ -865,6 +869,12 @@ char *elf64GetSymName(const Elf64File *elf64, const Elf64Sym *sym)
 }
 
 
+char *elf64GetDSymName(const Elf64File *elf64, const Elf64Sym *sym)
+{
+    return (char*)((uint64_t)elf64->dynSymNameTab + sym->st_name);
+}
+
+
 int elf64CmpSym(const void *a, const void *b)
 {
     int64_t distance = (int64_t)(((const Elf64Sym*)a)->st_value - ((const Elf64Sym*)b)->st_value);
@@ -898,6 +908,15 @@ Elf64Sym *elf64GetSSymSortTab(const Elf64File *elf64)
     return elf64->sortSymtab;
 }
 
+Elf64Sym *elf64GetDSymTab(const Elf64File *elf)
+{
+    if (elf == NULL || elf->dynsym == NULL) {
+        LOG_ERROR("Invalid arguments");
+        return NULL;
+    }
+
+    return elf->dynsym;
+}
 
 uint64_t elf64GetAmountSSym(const Elf64File *elf64)
 {
@@ -909,6 +928,15 @@ uint64_t elf64GetAmountSSym(const Elf64File *elf64)
     return elf64->symnum;
 }
 
+uint64_t elf64GetAmountDSym(const Elf64File *elf)
+{
+    if (elf == NULL) {
+        LOG_ERROR("Invalid arguments");
+        return ELF64_INV_ARG;
+    }
+
+    return elf->dynsymnum;
+}
 
 uint64_t elf64GetSSymAddr(const Elf64Sym *sym)
 {
@@ -1045,6 +1073,19 @@ Elf64Shdr *elf64GetSectByName(const Elf64File *elf64, const char* name)
     return NULL;
 }
 
+Elf64Shdr *elf64GetSectByAddr(const Elf64File *elf64, uint64_t addr)
+{
+    uint64_t i = 0;
+    uint64_t shnum = elf64->header->e_shnum;
+    for (i = 0; i < shnum; ++i) {
+        uint64_t start = elf64->sections[i].sh_addr;
+        uint64_t end = start + elf64->sections[i].sh_size;
+        if (addr >= start && addr < end)
+            return (Elf64Shdr*)(elf64->sections + i);
+    }
+
+    return NULL;
+}
 
 Elf64Shdr *elf64GetLastLoadableSect(const Elf64File *elf64)
 {
@@ -1274,6 +1315,54 @@ void *elf64GetRelocDataAddr(const Elf64File *elf64, const char *func)
         if (ELF64_R_SYM(elf64->relaplt[i].r_info) == symbolIndex)
             return (void*) elf64->relaplt[i].r_offset;
 
+    return NULL;
+}
+
+uint16_t elf64GetSymVersionByIndx(const Elf64File *elf, uint64_t indx)
+{
+    if (elf == NULL)
+        return 0;
+
+    Elf64Shdr *verSect = elf64GetSectByType(elf, SHT_GNU_versym);
+    if (verSect == NULL)
+        return 0;
+
+    uint16_t *ver = elf64ReadSect(elf, verSect);
+    if (ver == NULL)
+        return 0;
+
+    uint16_t res = ver[indx];
+    Free(ver);
+    return res;
+}
+
+const char *elf64GetVerNameBySymVersion(const Elf64File *elf, uint16_t ver)
+{
+    uint64_t i = 0;
+    while (elf->dynamic[i++].d_tag != DT_VERNEEDNUM);
+    uint64_t num = elf->dynamic[--i].d_un.d_val;
+
+    Elf64Shdr *verneedSect = elf64GetSectByType(elf, SHT_GNU_verneed);
+    if (verneedSect == NULL)
+        return NULL;
+
+    Elf64Verneed *verneed = elf64ReadSect(elf, verneedSect);
+    if (verneed == NULL)
+        return NULL;
+
+    Elf64Verneed *p = verneed;
+    for (i = 0; i < num; ++i) {
+        Elf64Vernaux *aux = (Elf64Vernaux*)((size_t)p + p->vn_aux);
+        uint64_t j = 0;
+        for (j = 0; j < p->vn_cnt; ++j) {
+            if (aux->vna_other == ver)
+                return elf->dynSymNameTab + aux->vna_name;
+            aux = (Elf64Vernaux*)((size_t)aux + aux->vna_next);
+        }
+        p = (Elf64Verneed*)((size_t)p + p->vn_next);
+    }
+
+    Free(verneed);
     return NULL;
 }
 

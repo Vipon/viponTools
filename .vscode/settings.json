@@ -114,7 +114,8 @@
         "__undef_macros": "c",
         "complex": "c",
         "elf.h": "c",
-        "elf64.h": "c"
+        "elf64.h": "c",
+        "elf64printer.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

@@ -22,9 +22,12 @@
 
 set(ELF64_PRINTER_SOURCES
   elf64PrinterHeader.c
-  #elf64PrinterSymbols.c
+  elf64PrinterSymbols.c
   elf64PrinterSections.c
-  #elf64PrinterSegments.c
+  elf64PrinterSegments.c
+  elf64PrinterDynamicSection.c
+  elf64PrinterRelocations.c
+  elf64PrinterSymbolsVersion.c
 )
 
 set(ELF64_PRINTER_HEADERS

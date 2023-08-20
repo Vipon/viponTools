@@ -44,5 +44,47 @@ void elf64PrintSection(const Elf64File *elf, const Elf64Shdr *sect);
 EXPORT_FUNC
 void elf64PrintSections(const Elf64File *elf);
 
+typedef Elf64Flag Elf64DynamicTag;
+extern const Elf64DynamicTag ELF64_DYNAMIC_TAGS[];
+
+EXPORT_FUNC
+void elf64PrintDynamicSection(const Elf64File *elf);
+
+typedef Elf64Flag Elf64SegType;
+extern const Elf64SegType ELF64_SEG_TYPES[];
+typedef Elf64Flag Elf64SegFlag;
+extern const Elf64SegFlag ELF64_SEG_FLAGS[];
+
+EXPORT_FUNC
+void elf64PrintSegment(const Elf64File *elf, const Elf64Phdr *seg);
+EXPORT_FUNC
+void elf64PrintSegments(const Elf64File *elf);
+
+typedef Elf64Flag Elf64RelType;
+extern const Elf64RelType ELF64_X86_REL_TYPES[];
+extern const Elf64RelType ELF64_X86_64_REL_TYPES[];
+extern const Elf64RelType ELF64_ARM_REL_TYPES[];
+extern const Elf64RelType ELF64_AARCH64_REL_TYPES[];
+extern const Elf64RelType *ELF64_RELA_TYPES[];
+
+EXPORT_FUNC
+void elf64PrintRela(const Elf64File *elf, const Elf64Rel *rel);
+EXPORT_FUNC
+void elf64PrintRelaPlt(const Elf64File *elf);
+EXPORT_FUNC
+void elf64PrintRelaDyn(const Elf64File *elf);
+
+EXPORT_FUNC
+void elf64PrintSymbolsVersion(const Elf64File *elf);
+EXPORT_FUNC
+void elf64PrintSymbolsVersionR(const Elf64File *elf);
+
+EXPORT_FUNC
+void elf64PrintSymbol(const Elf64File *elf, const Elf64Sym *sym);
+EXPORT_FUNC
+void elf64PrintDSymbol(const Elf64File *elf, const Elf64Sym *sym, uint64_t indx);
+EXPORT_FUNC
+void elf64PrintSymbols(const Elf64File *elf);
+
 #endif /* __ELF_64_PRINTER_H */
 

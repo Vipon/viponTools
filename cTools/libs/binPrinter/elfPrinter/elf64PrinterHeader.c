@@ -148,7 +148,7 @@ void elf64PrintHeaderOSABI(const Elf64Ehdr *h)
 }
 
 static
-void elf64PrintHeadeABIVersion(const Elf64Ehdr *h)
+void elf64PrintHeaderABIVersion(const Elf64Ehdr *h)
 {
     printf("%d", h->e_ident[EI_ABIVERSION]);
 }
@@ -181,7 +181,7 @@ char *elf64GetFileTypeStr(uint16_t type)
 }
 
 static
-void elf64PrintHeadeFileType(const Elf64Ehdr *h)
+void elf64PrintHeaderFileType(const Elf64Ehdr *h)
 {
     printf("%s", elf64GetFileTypeStr(h->e_type));
 }
@@ -384,7 +384,7 @@ char *elf64GetMachineTypeStr(uint16_t type)
 }
 
 static
-void elf64PrintHeadeMachineType(const Elf64Ehdr *h)
+void elf64PrintHeaderMachineType(const Elf64Ehdr *h)
 {
     printf("%s", elf64GetMachineTypeStr(h->e_machine));
 }
@@ -414,15 +414,15 @@ void elf64PrintHeader(const Elf64File *ef)
     NEW_LINE;
 
     printf("  %s:%23s", "ABI Version", "");
-    elf64PrintHeadeABIVersion(h);
+    elf64PrintHeaderABIVersion(h);
     NEW_LINE;
 
     printf("  %s:%30s", "Type", "");
-    elf64PrintHeadeFileType(h);
+    elf64PrintHeaderFileType(h);
     NEW_LINE;
 
     printf("  %s:%27s", "Machine", "");
-    elf64PrintHeadeMachineType(h);
+    elf64PrintHeaderMachineType(h);
     NEW_LINE;
 
     printf("  %s:%27s0x%"PRIx32, "Version", "", h->e_version);

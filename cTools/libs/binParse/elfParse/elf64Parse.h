@@ -112,8 +112,15 @@ typedef Elf64_Sym   Elf64Sym;
  *   x64, there are only relocations of type RELA
  */
 typedef Elf64_Rela  Elf64Rel;
+
+typedef Elf64_Dyn Elf64Dyn;
+
+typedef Elf64_Verneed Elf64Verneed;
+typedef Elf64_Vernaux Elf64Vernaux;
+
 /***
- * #define ELF64_R_SYM(info) ((info)>>32)
+ * This section holds RELA type relocation information for all sections of a
+ * shared library except the PLT.
  */
 #define RELADYN     ".rela.dyn"
 /***
@@ -141,11 +148,6 @@ typedef Elf64_Rela  Elf64Rel;
  *              associated with symbol table entries.
  */
 #define DYNSTR      ".dynstr"
-
-/***
- * Symbol table entry type
- *  ELF64_ST_TYPE(info)
- */
 
 /***
  * STT_FUNC The symbol is associated with a function or other executable code.
@@ -179,6 +181,7 @@ typedef struct {
     char        *fn;
     FileD       fd;
     uint32_t    type;
+    Arch        arch;
     Elf64Ehdr   *header;
     Elf64Shdr   *sections;
     Elf64Phdr   *segments;
@@ -189,9 +192,12 @@ typedef struct {
     Elf64Sym    *sortSymtab;
     Elf64Rel    *relaplt;
     Elf64Rel    *reladyn;
+    Elf64Dyn    *dynamic;
     char        *sectNameTab;
     char        *symNameTab;
     char        *dynSymNameTab;
+    char        *dtStrTab;
+
 } Elf64File;
 
 #ifdef __WIN__
@@ -199,7 +205,9 @@ typedef enum : uint64_t {
 #else
 typedef enum {
 #endif /* __WIN__ */
-    ELF64_NO_RELOCATION = (uint64_t)-16,
+    ELF64_NO_DT_STRTAB = (uint64_t)-18,
+    ELF64_NO_DYNAMIC,
+    ELF64_NO_RELOCATION,
     ELF64_NO_SECTION,
     ELF64_NO_SYMBOL,
     ELF64_NO_RELADYN,
@@ -263,23 +271,6 @@ ELF64_ERROR elf64Check(const Elf64File *elf64);
 
 
 /***
- * Description:
- *  Function prints all symbols in @elf64 with information.
- * Input:
- *  @elf64 - point to target Elf64File.
- * Output:
- *  Success:
- *      0.
- *  Fail:
- *      -1.
- */
-EXPORT_FUNC
-ELF64_ERROR elf64PrintSymbol(const Elf64File *elf64, const Elf64Sym *sym);
-EXPORT_FUNC
-ELF64_ERROR elf64PrintSymbols(const Elf64File *elf64);
-
-
-/***
  * Before:
  *  If you need a file position, you should to save it.
  * Description:
@@ -312,7 +303,8 @@ Elf64Sym *elf64GetSymByName(const Elf64File *elf64, const char *name);
  */
 EXPORT_FUNC
 char *elf64GetSymName(const Elf64File *elf64, const Elf64Sym *sym);
-
+EXPORT_FUNC
+char *elf64GetDSymName(const Elf64File *elf64, const Elf64Sym *sym);
 
 /***
  * Description:
@@ -338,7 +330,8 @@ EXPORT_FUNC
 Elf64Sym *elf64GetSSymTab(const Elf64File *elf64);
 EXPORT_FUNC
 Elf64Sym *elf64GetSSymSortTab(const Elf64File *elf64);
-
+EXPORT_FUNC
+Elf64Sym *elf64GetDSymTab(const Elf64File *elf64);
 
 /***
  * Description:
@@ -353,7 +346,8 @@ Elf64Sym *elf64GetSSymSortTab(const Elf64File *elf64);
  */
 EXPORT_FUNC
 uint64_t elf64GetAmountSSym(const Elf64File *elf64);
-
+EXPORT_FUNC
+uint64_t elf64GetAmountDSym(const Elf64File *elf64);
 
 /***
  * Description:
@@ -478,6 +472,8 @@ Elf64Shdr *elf64GetSectByType(const Elf64File *elf64, const Elf64Word sh_type);
 EXPORT_FUNC
 Elf64Shdr *elf64GetSectByName(const Elf64File *elf64, const char* name);
 EXPORT_FUNC
+Elf64Shdr *elf64GetSectByAddr(const Elf64File *elf64, uint64_t addr);
+EXPORT_FUNC
 Elf64Shdr *elf64GetLastLoadableSect(const Elf64File *elf64);
 
 
@@ -600,6 +596,12 @@ uint64_t elf64GetRelocForAddr(const Elf64File *elf64, const Elf64Shdr *sect, uin
  */
 EXPORT_FUNC
 void *elf64GetRelocDataAddr(const Elf64File *elf64, const char *func);
+
+EXPORT_FUNC
+uint16_t elf64GetSymVersionByIndx(const Elf64File *elf64, uint64_t indx);
+
+EXPORT_FUNC
+const char *elf64GetVerNameBySymVersion(const Elf64File *elf, uint16_t ver);
 
 #endif /* _ELF64_PARSE_H */
 

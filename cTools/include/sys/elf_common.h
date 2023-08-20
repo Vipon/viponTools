@@ -616,6 +616,10 @@ typedef struct {
 #define DT_PREINIT_ARRAYSZ 33   /* Size in bytes of the array of
                    pre-initialization functions. */
 #define DT_MAXPOSTAGS   34  /* number of positive tags */
+#define DT_RELRSZ   35      /* Total size of RELR relative relocations */
+#define DT_RELR     36      /* Address of RELR relative relocations */
+#define DT_RELRENT  37      /* Size of one RELR relative relocaction */
+#define DT_NUM      38      /* Number used */
 #define DT_LOOS     0x6000000d  /* First OS-specific */
 #define DT_SUNW_AUXILIARY   0x6000000d  /* symbol auxiliary name */
 #define DT_SUNW_RTLDINF     0x6000000e  /* ld.so.1 info (private) */
@@ -877,6 +881,7 @@ typedef struct {
 
 #define VER_FLG_BASE    0x01
 #define VER_FLG_WEAK    0x02
+#define VER_FLG_INFO    0x04
 
 #define VER_NEED_CURRENT    1
 #define VER_NEED_WEAK   (1u << 15)

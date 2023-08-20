@@ -49,7 +49,7 @@ size_t getFileSize(int fd)
     return (size_t)st.st_size;
 }
 
-void *readFromFile(int fd, size_t *off, size_t size)
+void *readFromFile(int fd, const size_t *off, size_t size)
 {
     if (fd < 0) {
         STDERROR_PRINT_DEBUG("Invalid arguments.");
@@ -140,7 +140,7 @@ size_t getFileSize(FileD fd)
     return GetFileSize(fd, NULL);
 }
 
-void *readFromFile(FileD fd, size_t *off, size_t size)
+void *readFromFile(FileD fd, const size_t *off, size_t size)
 {
     if (fd == NULL) {
         STDERROR_PRINT_DEBUG("Invalid arguments.");

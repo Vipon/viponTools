@@ -209,6 +209,6 @@ void elf64PrintSections(const Elf64File *elf)
            "  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),\n"
            "  L (link order), O (extra OS processing required), G (group), T (TLS),\n"
            "  C (compressed), x (unknown), o (OS specific), E (exclude),\n"
-           "  l (large), p (processor specific)");
+           "  l (large), p (processor specific)\n\n");
 }
 

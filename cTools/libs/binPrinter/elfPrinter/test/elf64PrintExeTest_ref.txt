@@ -88,8 +88,6 @@ Key to Flags:
   C (compressed), x (unknown), o (OS specific), E (exclude),
   l (large), p (processor specific)
 
-There are no section groups in this file.
-
 Program Headers:
   Type           Offset             VirtAddr           PhysAddr
                  FileSiz            MemSiz              Flags  Align
@@ -166,8 +164,6 @@ Relocation section '.rela.dyn' at offset 0x3f0 contains 2 entries:
 Relocation section '.rela.plt' at offset 0x420 contains 1 entry:
   Offset          Info           Type           Sym. Value    Sym. Name + Addend
 000000404018  000100000007 R_X86_64_JUMP_SLO 0000000000000000 printf@GLIBC_2.2.5 + 0
-
-The decoding of unwind sections for machine type Advanced Micro Devices X86-64 is not currently supported.
 
 Symbol table '.dynsym' contains 4 entries:
    Num:    Value          Size Type    Bind   Vis      Ndx Name
@@ -251,12 +247,3 @@ Version needs section '.gnu.version_r' contains 1 entry:
   000000: Version: 1  File: libc.so.6  Cnt: 1
   0x0010:   Name: GLIBC_2.2.5  Flags: none  Version: 2
 
-Displaying notes found in: .note.gnu.build-id
-  Owner                Data size 	Description
-  GNU                  0x00000014	NT_GNU_BUILD_ID (unique build ID bitstring)
-    Build ID: d61e2f3b2fa69fa671a7788a23d6029b115e1331
-
-Displaying notes found in: .note.ABI-tag
-  Owner                Data size 	Description
-  GNU                  0x00000010	NT_GNU_ABI_TAG (ABI version tag)
-    OS: Linux, ABI: 3.2.0
