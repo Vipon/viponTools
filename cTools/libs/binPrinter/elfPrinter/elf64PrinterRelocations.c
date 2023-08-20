@@ -178,6 +178,7 @@ char *elf64GetRelTypeStr(Arch arch, uint64_t type)
                 if (ELF64_RELA_TYPES[arch][i].flag == type)
                     return ELF64_RELA_TYPES[arch][i].str;
         }
+        FALLTHROUGH;
     default:
         return "UNKNOWN";
     }
