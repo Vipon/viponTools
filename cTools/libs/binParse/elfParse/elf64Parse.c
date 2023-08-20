@@ -727,6 +727,11 @@ void elf64Free(Elf64File *elf64)
         elf64->dynamic = NULL;
     }
 
+    if (elf64->dtStrTab != NULL) {
+        Free(elf64->dtStrTab);
+        elf64->dtStrTab = NULL;
+    }
+
     LOG("end elf64Free");
     Free(elf64);
 }
@@ -1355,8 +1360,11 @@ const char *elf64GetVerNameBySymVersion(const Elf64File *elf, uint16_t ver)
         Elf64Vernaux *aux = (Elf64Vernaux*)((size_t)p + p->vn_aux);
         uint64_t j = 0;
         for (j = 0; j < p->vn_cnt; ++j) {
-            if (aux->vna_other == ver)
-                return elf->dynSymNameTab + aux->vna_name;
+            if (aux->vna_other == ver) {
+                size_t off = aux->vna_name;
+                Free(verneed);
+                return elf->dynSymNameTab + off;
+            }
             aux = (Elf64Vernaux*)((size_t)aux + aux->vna_next);
         }
         p = (Elf64Verneed*)((size_t)p + p->vn_next);

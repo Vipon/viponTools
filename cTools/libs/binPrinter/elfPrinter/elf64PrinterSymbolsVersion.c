@@ -51,6 +51,8 @@ void elf64PrintSymbolsVersion(const Elf64File *elf)
 
     NEW_LINE;
     NEW_LINE;
+
+    Free(ver);
 }
 
 static
