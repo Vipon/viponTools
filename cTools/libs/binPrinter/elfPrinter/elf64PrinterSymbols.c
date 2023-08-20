@@ -88,7 +88,6 @@ void elf64PrintSymIndx(const Elf64Sym *sym)
     case SHN_UNDEF:
         printf("UND");
         break;
-        break;
     case SHN_LOPROC:
         printf("LOPROC");
         break;
