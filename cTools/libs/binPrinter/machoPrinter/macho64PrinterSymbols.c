@@ -130,7 +130,8 @@ void macho64PrintSymbol(const Macho64File *mf, const Macho64Sym *ms)
     }
 
     printf("%9s: 0x%"PRIx16, "desc", ms->n_desc);
-    if (  !IS_MACHO_SYM_DEBUG(*ms)
+    if (  !IS_MACHO64_FILE_OBJ(mf)
+       && !IS_MACHO_SYM_DEBUG(*ms)
        && (IS_MACHO64_DSYM_LAZY(*ms) || IS_MACHO64_DSYM_NON_LAZY(*ms))) {
         uint32_t dylibNum = GET_LIBRARY_ORDINAL(ms->n_desc) - 1;
         printf(" (%s)", macho64GetDylibName(mf->dylibCom[dylibNum]));
@@ -148,5 +149,7 @@ void macho64PrintSymbols(const Macho64File *mf)
         printf("%"PRIu32".\n", i);
         macho64PrintSymbol(mf, mf->symtab + i);
     }
+
+    NEW_LINE;
 }
 

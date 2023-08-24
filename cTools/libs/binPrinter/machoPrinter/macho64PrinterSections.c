@@ -132,7 +132,7 @@ void macho64PrintSectionsInSegment(const Macho64Seg *seg)
 
 void macho64PrintSections(const Macho64File *mf)
 {
-    uint32_t sectNum = 1;
+    uint32_t sectNum = 1; // Section numbering begins at 1
     FOREACH_LOAD_COMMAND(mf,
         if (lcom->cmd == LC_SEGMENT_64) {
             Macho64Seg *seg = (Macho64Seg*)lcom;
@@ -146,5 +146,7 @@ void macho64PrintSections(const Macho64File *mf)
             }
         }
     )
+
+    NEW_LINE;
 }
 

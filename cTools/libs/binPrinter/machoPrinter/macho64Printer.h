@@ -96,5 +96,13 @@ void macho64PrintLComs(const Macho64File *mf);
 EXPORT_FUNC
 void macho64PrintCodeSign(const Macho64File *mf);
 
+typedef Macho64Flag Macho64RelType;
+extern const Macho64RelType MACHO64_ARM_REL_TYPE[];
+extern const Macho64RelType MACHO64_ARM64_REL_TYPE[];
+extern const Macho64RelType MACHO64_X86_64_REL_TYPE[];
+
+EXPORT_FUNC
+void macho64PrintRelocations(const Macho64File *mf);
+
 #endif /* __MACHO_64_PRINTER_H */
 

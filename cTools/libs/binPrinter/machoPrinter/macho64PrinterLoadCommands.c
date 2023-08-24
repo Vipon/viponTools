@@ -736,5 +736,7 @@ void macho64PrintLComs(const Macho64File *mf)
         uint32_t cmdNum = lcom->cmd & (~LC_REQ_DYLD);
         MACHO64_LOAD_COMMAND[cmdNum].print(mf, lcom);
     );
+
+    NEW_LINE;
 }
 

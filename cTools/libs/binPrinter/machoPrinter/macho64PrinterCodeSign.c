@@ -155,8 +155,11 @@ void macho64PrintCodeDirectory(const CS_CodeDirectory* cd)
 
 void macho64PrintCodeSign(const Macho64File *mf)
 {
-    if (mf->sign == NULL)
+    printf("Code Signature:\n");
+    if (mf->sign == NULL) {
+        NEW_LINE;
         return;
+    }
 
     /***
      * Code signing is an essential part of build process. It is required for
@@ -174,7 +177,6 @@ void macho64PrintCodeSign(const Macho64File *mf)
     // everything in the structure are in big endian
     CS_SuperBlob *sb = (CS_SuperBlob*)readFromFile(fd, &foff, fsize);
 
-    printf("Code Signature:\n");
     printf("Super Blob:\n");
     // should be CSMAGIC_EMBEDDED_SIGNATURE = 0xfade0cc0
     printf("%9s: 0x%x\n", "magic", be32toh(sb->magic));
@@ -221,6 +223,8 @@ void macho64PrintCodeSign(const Macho64File *mf)
             break;
         }
     }
+
+    NEW_LINE;
 
     Free(sb);
 }

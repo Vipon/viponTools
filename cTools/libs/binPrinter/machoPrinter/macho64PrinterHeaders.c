@@ -387,5 +387,7 @@ void macho64PrintHeader(const Macho64File *mf)
     printf("%10s: 0x%.8x ("      , "flags"     , h->flags);
     macho64PrintHeaderFlagsStr(h);
     printf(")\n");
+
+    NEW_LINE;
 }
 
