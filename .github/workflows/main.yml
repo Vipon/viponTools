@@ -158,9 +158,15 @@ jobs:
   windows-ninja-debug-static:
     runs-on: windows-2022
     steps:
+      - run: echo "C:\bin\" >> $GITHUB_PATH
+      - run: echo "C:\bin\ccache\" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
       - run: .\setup.bat
+      - run: dir C:\bin\
+      - run: dir C:\bin\ccache\
+      - run: echo %PATH%
+      - run: echo $Env:PATH
       - name: Configure MSVC Debug
         run: python .\configure --ninja --static
       - name: Ninja Build Test Install
@@ -171,6 +177,7 @@ jobs:
   windows-msvc-debug-static:
     runs-on: windows-2022
     steps:
+      - run: echo "C:\bin\ccache\" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
       - run: .\setup.bat
@@ -188,6 +195,7 @@ jobs:
   windows-msvc-release-shared:
     runs-on: windows-2022
     steps:
+      - run: echo "C:\bin\ccache\" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
       - run: .\setup.bat
