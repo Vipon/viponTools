@@ -1,3 +1,4 @@
+#include "mem.h"
 #include "macho64Printer.h"
 
 #include <inttypes.h>
@@ -170,6 +171,8 @@ void macho64PrintRelocations(const Macho64File *mf)
                     } else {
                         macho64PrintRelocInfo(mf, relInfo + k);
                     }
+
+                Free(relInfo);
             }
         }
     )
