@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
     ADD_ARG(printRelocations, .name = "relocs"
                             , .key = 'r'
                             , .flags = OPTION_ARG_OPTIONAL
-                            , .doc = "elf: print relocations"
+                            , .doc = "elf/macho: print relocations"
     );
     ADD_ARG(printDynamicSection, .name = "dynamic"
                                , .key = 157
@@ -357,7 +357,11 @@ int main(int argc, char *argv[])
         binPrinter.pe.printExports(binParser.bin);
     }
     if (flags[RELOCATIONS]) {
-        binPrinter.elf.printRelocations(binParser.bin);
+        if (binPrinter.elf.printRelocations) {
+            binPrinter.elf.printRelocations(binParser.bin);
+        } else if (binPrinter.macho.printRelocations) {
+            binPrinter.macho.printRelocations(binParser.bin);
+        }
     }
     if (flags[DYNAMIC]) {
         binPrinter.elf.printDynamicSection(binParser.bin);

@@ -53,6 +53,7 @@ typedef struct {
         BinPrintFuncStarts printFuncStarts;
         BinPrintLComs printLComs;
         BinPrintCodeSign printCodeSign;
+        BinPrintRelocations printRelocations;
     } macho;
     struct {
         BinPrintFatHeader printFatHeader;
