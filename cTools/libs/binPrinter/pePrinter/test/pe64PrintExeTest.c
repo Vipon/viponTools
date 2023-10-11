@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
     pe64PrintSymbols(pe);
     pe64PrintImports(pe);
     pe64PrintDelayImports(pe);
+    pe64PrintRelocations(pe);
 
     pe64Free(pe);
 

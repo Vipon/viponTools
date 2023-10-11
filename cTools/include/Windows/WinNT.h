@@ -147,7 +147,7 @@ typedef const UCSCHAR   *PCUCSSTR,  *PCUUCSSTR;
 typedef char            CCHAR;
 typedef DWORD           LCID,       *PLCID;
 typedef WORD            LANGID;
-typedef DWORD		EXECUTION_STATE;
+typedef DWORD       EXECUTION_STATE;
 #ifndef _HRESULT_DEFINED
 #define _HRESULT_DEFINED
 typedef LONG            HRESULT;
@@ -308,71 +308,71 @@ typedef struct _IMAGE_VXD_HEADER {
 /* These defines describe the meanings of the bits in the Characteristics
    field */
 
-#define IMAGE_FILE_RELOCS_STRIPPED	0x0001 /* No relocation info */
-#define IMAGE_FILE_EXECUTABLE_IMAGE	0x0002
+#define IMAGE_FILE_RELOCS_STRIPPED  0x0001 /* No relocation info */
+#define IMAGE_FILE_EXECUTABLE_IMAGE 0x0002
 #define IMAGE_FILE_LINE_NUMS_STRIPPED   0x0004
 #define IMAGE_FILE_LOCAL_SYMS_STRIPPED  0x0008
-#define IMAGE_FILE_AGGRESIVE_WS_TRIM	0x0010
-#define IMAGE_FILE_LARGE_ADDRESS_AWARE	0x0020
-#define IMAGE_FILE_16BIT_MACHINE	0x0040
-#define IMAGE_FILE_BYTES_REVERSED_LO	0x0080
-#define IMAGE_FILE_32BIT_MACHINE	0x0100
-#define IMAGE_FILE_DEBUG_STRIPPED	0x0200
-#define IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP	0x0400
-#define IMAGE_FILE_NET_RUN_FROM_SWAP	0x0800
-#define IMAGE_FILE_SYSTEM		0x1000
-#define IMAGE_FILE_DLL			0x2000
-#define IMAGE_FILE_UP_SYSTEM_ONLY	0x4000
-#define IMAGE_FILE_BYTES_REVERSED_HI	0x8000
+#define IMAGE_FILE_AGGRESIVE_WS_TRIM    0x0010
+#define IMAGE_FILE_LARGE_ADDRESS_AWARE  0x0020
+#define IMAGE_FILE_16BIT_MACHINE    0x0040
+#define IMAGE_FILE_BYTES_REVERSED_LO    0x0080
+#define IMAGE_FILE_32BIT_MACHINE    0x0100
+#define IMAGE_FILE_DEBUG_STRIPPED   0x0200
+#define IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP  0x0400
+#define IMAGE_FILE_NET_RUN_FROM_SWAP    0x0800
+#define IMAGE_FILE_SYSTEM       0x1000
+#define IMAGE_FILE_DLL          0x2000
+#define IMAGE_FILE_UP_SYSTEM_ONLY   0x4000
+#define IMAGE_FILE_BYTES_REVERSED_HI    0x8000
 
 /* These are the settings of the Machine field. */
-#define	IMAGE_FILE_MACHINE_UNKNOWN	0
-#define	IMAGE_FILE_MACHINE_TARGET_HOST  0x0001
-#define	IMAGE_FILE_MACHINE_I860		0x014d
-#define	IMAGE_FILE_MACHINE_I386		0x014c
-#define	IMAGE_FILE_MACHINE_R3000	0x0162
-#define	IMAGE_FILE_MACHINE_R4000	0x0166
-#define	IMAGE_FILE_MACHINE_R10000	0x0168
-#define	IMAGE_FILE_MACHINE_WCEMIPSV2	0x0169
-#define	IMAGE_FILE_MACHINE_ALPHA	0x0184
-#define	IMAGE_FILE_MACHINE_SH3		0x01a2
-#define	IMAGE_FILE_MACHINE_SH3DSP	0x01a3
-#define	IMAGE_FILE_MACHINE_SH3E		0x01a4
-#define	IMAGE_FILE_MACHINE_SH4		0x01a6
-#define	IMAGE_FILE_MACHINE_SH5		0x01a8
-#define	IMAGE_FILE_MACHINE_ARM		0x01c0
-#define	IMAGE_FILE_MACHINE_THUMB	0x01c2
-#define	IMAGE_FILE_MACHINE_ARMNT	0x01c4
-#define	IMAGE_FILE_MACHINE_ARM64	0xaa64
-#define	IMAGE_FILE_MACHINE_AM33		0x01d3
-#define	IMAGE_FILE_MACHINE_POWERPC	0x01f0
-#define	IMAGE_FILE_MACHINE_POWERPCFP	0x01f1
-#define	IMAGE_FILE_MACHINE_IA64		0x0200
-#define	IMAGE_FILE_MACHINE_MIPS16	0x0266
-#define	IMAGE_FILE_MACHINE_ALPHA64	0x0284
-#define	IMAGE_FILE_MACHINE_MIPSFPU	0x0366
-#define	IMAGE_FILE_MACHINE_MIPSFPU16	0x0466
-#define	IMAGE_FILE_MACHINE_AXP64	IMAGE_FILE_MACHINE_ALPHA64
-#define	IMAGE_FILE_MACHINE_TRICORE	0x0520
-#define	IMAGE_FILE_MACHINE_CEF		0x0cef
-#define	IMAGE_FILE_MACHINE_EBC		0x0ebc
-#define	IMAGE_FILE_MACHINE_AMD64	0x8664
-#define	IMAGE_FILE_MACHINE_M32R		0x9041
-#define	IMAGE_FILE_MACHINE_CEE		0xc0ee
+#define IMAGE_FILE_MACHINE_UNKNOWN  0
+#define IMAGE_FILE_MACHINE_TARGET_HOST  0x0001
+#define IMAGE_FILE_MACHINE_I860     0x014d
+#define IMAGE_FILE_MACHINE_I386     0x014c
+#define IMAGE_FILE_MACHINE_R3000    0x0162
+#define IMAGE_FILE_MACHINE_R4000    0x0166
+#define IMAGE_FILE_MACHINE_R10000   0x0168
+#define IMAGE_FILE_MACHINE_WCEMIPSV2    0x0169
+#define IMAGE_FILE_MACHINE_ALPHA    0x0184
+#define IMAGE_FILE_MACHINE_SH3      0x01a2
+#define IMAGE_FILE_MACHINE_SH3DSP   0x01a3
+#define IMAGE_FILE_MACHINE_SH3E     0x01a4
+#define IMAGE_FILE_MACHINE_SH4      0x01a6
+#define IMAGE_FILE_MACHINE_SH5      0x01a8
+#define IMAGE_FILE_MACHINE_ARM      0x01c0
+#define IMAGE_FILE_MACHINE_THUMB    0x01c2
+#define IMAGE_FILE_MACHINE_ARMNT    0x01c4
+#define IMAGE_FILE_MACHINE_ARM64    0xaa64
+#define IMAGE_FILE_MACHINE_AM33     0x01d3
+#define IMAGE_FILE_MACHINE_POWERPC  0x01f0
+#define IMAGE_FILE_MACHINE_POWERPCFP    0x01f1
+#define IMAGE_FILE_MACHINE_IA64     0x0200
+#define IMAGE_FILE_MACHINE_MIPS16   0x0266
+#define IMAGE_FILE_MACHINE_ALPHA64  0x0284
+#define IMAGE_FILE_MACHINE_MIPSFPU  0x0366
+#define IMAGE_FILE_MACHINE_MIPSFPU16    0x0466
+#define IMAGE_FILE_MACHINE_AXP64    IMAGE_FILE_MACHINE_ALPHA64
+#define IMAGE_FILE_MACHINE_TRICORE  0x0520
+#define IMAGE_FILE_MACHINE_CEF      0x0cef
+#define IMAGE_FILE_MACHINE_EBC      0x0ebc
+#define IMAGE_FILE_MACHINE_AMD64    0x8664
+#define IMAGE_FILE_MACHINE_M32R     0x9041
+#define IMAGE_FILE_MACHINE_CEE      0xc0ee
 
-#define	IMAGE_SIZEOF_FILE_HEADER		20
-#define IMAGE_SIZEOF_ROM_OPTIONAL_HEADER	56
-#define IMAGE_SIZEOF_STD_OPTIONAL_HEADER	28
-#define IMAGE_SIZEOF_NT_OPTIONAL32_HEADER 	224
-#define IMAGE_SIZEOF_NT_OPTIONAL64_HEADER 	240
-#define IMAGE_SIZEOF_SHORT_NAME 		8
-#define IMAGE_SIZEOF_SECTION_HEADER 		40
-#define IMAGE_SIZEOF_SYMBOL 			18
-#define IMAGE_SIZEOF_AUX_SYMBOL 		18
-#define IMAGE_SIZEOF_RELOCATION 		10
-#define IMAGE_SIZEOF_BASE_RELOCATION 		8
-#define IMAGE_SIZEOF_LINENUMBER 		6
-#define IMAGE_SIZEOF_ARCHIVE_MEMBER_HDR 	60
+#define IMAGE_SIZEOF_FILE_HEADER        20
+#define IMAGE_SIZEOF_ROM_OPTIONAL_HEADER    56
+#define IMAGE_SIZEOF_STD_OPTIONAL_HEADER    28
+#define IMAGE_SIZEOF_NT_OPTIONAL32_HEADER   224
+#define IMAGE_SIZEOF_NT_OPTIONAL64_HEADER   240
+#define IMAGE_SIZEOF_SHORT_NAME         8
+#define IMAGE_SIZEOF_SECTION_HEADER         40
+#define IMAGE_SIZEOF_SYMBOL             18
+#define IMAGE_SIZEOF_AUX_SYMBOL         18
+#define IMAGE_SIZEOF_RELOCATION         10
+#define IMAGE_SIZEOF_BASE_RELOCATION        8
+#define IMAGE_SIZEOF_LINENUMBER         6
+#define IMAGE_SIZEOF_ARCHIVE_MEMBER_HDR     60
 
 /* Possible Magic values */
 #define IMAGE_NT_OPTIONAL_HDR32_MAGIC      0x10b
@@ -388,53 +388,53 @@ typedef struct _IMAGE_VXD_HEADER {
 #endif
 
 /* These are indexes into the DataDirectory array */
-#define IMAGE_FILE_EXPORT_DIRECTORY		0
-#define IMAGE_FILE_IMPORT_DIRECTORY		1
-#define IMAGE_FILE_RESOURCE_DIRECTORY		2
-#define IMAGE_FILE_EXCEPTION_DIRECTORY		3
-#define IMAGE_FILE_SECURITY_DIRECTORY		4
-#define IMAGE_FILE_BASE_RELOCATION_TABLE	5
-#define IMAGE_FILE_DEBUG_DIRECTORY		6
-#define IMAGE_FILE_DESCRIPTION_STRING		7
-#define IMAGE_FILE_MACHINE_VALUE		8  /* Mips */
-#define IMAGE_FILE_THREAD_LOCAL_STORAGE		9
-#define IMAGE_FILE_CALLBACK_DIRECTORY		10
+#define IMAGE_FILE_EXPORT_DIRECTORY     0
+#define IMAGE_FILE_IMPORT_DIRECTORY     1
+#define IMAGE_FILE_RESOURCE_DIRECTORY       2
+#define IMAGE_FILE_EXCEPTION_DIRECTORY      3
+#define IMAGE_FILE_SECURITY_DIRECTORY       4
+#define IMAGE_FILE_BASE_RELOCATION_TABLE    5
+#define IMAGE_FILE_DEBUG_DIRECTORY      6
+#define IMAGE_FILE_DESCRIPTION_STRING       7
+#define IMAGE_FILE_MACHINE_VALUE        8  /* Mips */
+#define IMAGE_FILE_THREAD_LOCAL_STORAGE     9
+#define IMAGE_FILE_CALLBACK_DIRECTORY       10
 
 /* Directory Entries, indices into the DataDirectory array */
 
-#define	IMAGE_DIRECTORY_ENTRY_EXPORT		0
-#define	IMAGE_DIRECTORY_ENTRY_IMPORT		1
-#define	IMAGE_DIRECTORY_ENTRY_RESOURCE		2
-#define	IMAGE_DIRECTORY_ENTRY_EXCEPTION		3
-#define	IMAGE_DIRECTORY_ENTRY_SECURITY		4
-#define	IMAGE_DIRECTORY_ENTRY_BASERELOC		5
-#define	IMAGE_DIRECTORY_ENTRY_DEBUG		6
-#define	IMAGE_DIRECTORY_ENTRY_COPYRIGHT		7
+#define IMAGE_DIRECTORY_ENTRY_EXPORT        0
+#define IMAGE_DIRECTORY_ENTRY_IMPORT        1
+#define IMAGE_DIRECTORY_ENTRY_RESOURCE      2
+#define IMAGE_DIRECTORY_ENTRY_EXCEPTION     3
+#define IMAGE_DIRECTORY_ENTRY_SECURITY      4
+#define IMAGE_DIRECTORY_ENTRY_BASERELOC     5
+#define IMAGE_DIRECTORY_ENTRY_DEBUG     6
+#define IMAGE_DIRECTORY_ENTRY_COPYRIGHT     7
 #define IMAGE_DIRECTORY_ENTRY_ARCHITECTURE  7
-#define	IMAGE_DIRECTORY_ENTRY_GLOBALPTR		8   /* (MIPS GP) */
-#define	IMAGE_DIRECTORY_ENTRY_TLS		9
-#define	IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG	10
-#define	IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT	11
-#define	IMAGE_DIRECTORY_ENTRY_IAT		12  /* Import Address Table */
-#define	IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT	13
-#define	IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR	14
+#define IMAGE_DIRECTORY_ENTRY_GLOBALPTR     8   /* (MIPS GP) */
+#define IMAGE_DIRECTORY_ENTRY_TLS       9
+#define IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG   10
+#define IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT  11
+#define IMAGE_DIRECTORY_ENTRY_IAT       12  /* Import Address Table */
+#define IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT  13
+#define IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR    14
 
 /* Subsystem Values */
 
-#define	IMAGE_SUBSYSTEM_UNKNOWN			0
-#define	IMAGE_SUBSYSTEM_NATIVE			1
-#define	IMAGE_SUBSYSTEM_WINDOWS_GUI		2	/* Windows GUI subsystem */
-#define	IMAGE_SUBSYSTEM_WINDOWS_CUI		3	/* Windows character subsystem */
-#define	IMAGE_SUBSYSTEM_OS2_CUI			5
-#define	IMAGE_SUBSYSTEM_POSIX_CUI		7
-#define	IMAGE_SUBSYSTEM_NATIVE_WINDOWS		8	/* native Win9x driver */
-#define	IMAGE_SUBSYSTEM_WINDOWS_CE_GUI		9	/* Windows CE subsystem */
-#define	IMAGE_SUBSYSTEM_EFI_APPLICATION		10
-#define	IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER	11
-#define	IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER	12
-#define	IMAGE_SUBSYSTEM_EFI_ROM			13
-#define	IMAGE_SUBSYSTEM_XBOX			14
-#define	IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION	16
+#define IMAGE_SUBSYSTEM_UNKNOWN         0
+#define IMAGE_SUBSYSTEM_NATIVE          1
+#define IMAGE_SUBSYSTEM_WINDOWS_GUI     2   /* Windows GUI subsystem */
+#define IMAGE_SUBSYSTEM_WINDOWS_CUI     3   /* Windows character subsystem */
+#define IMAGE_SUBSYSTEM_OS2_CUI         5
+#define IMAGE_SUBSYSTEM_POSIX_CUI       7
+#define IMAGE_SUBSYSTEM_NATIVE_WINDOWS      8   /* native Win9x driver */
+#define IMAGE_SUBSYSTEM_WINDOWS_CE_GUI      9   /* Windows CE subsystem */
+#define IMAGE_SUBSYSTEM_EFI_APPLICATION     10
+#define IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER 11
+#define IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER  12
+#define IMAGE_SUBSYSTEM_EFI_ROM         13
+#define IMAGE_SUBSYSTEM_XBOX            14
+#define IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION    16
 
 /* DLL Characteristics */
 #define IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA       0x0020
@@ -509,36 +509,36 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
 
   /* Standard fields */
 
-  WORD  Magic; /* 0x10b or 0x107 */	/* 0x00 */
+  WORD  Magic; /* 0x10b or 0x107 */ /* 0x00 */
   BYTE  MajorLinkerVersion;
   BYTE  MinorLinkerVersion;
   DWORD SizeOfCode;
   DWORD SizeOfInitializedData;
   DWORD SizeOfUninitializedData;
-  DWORD AddressOfEntryPoint;		/* 0x10 */
+  DWORD AddressOfEntryPoint;        /* 0x10 */
   DWORD BaseOfCode;
   DWORD BaseOfData;
 
   /* NT additional fields */
 
   DWORD ImageBase;
-  DWORD SectionAlignment;		/* 0x20 */
+  DWORD SectionAlignment;       /* 0x20 */
   DWORD FileAlignment;
   WORD  MajorOperatingSystemVersion;
   WORD  MinorOperatingSystemVersion;
   WORD  MajorImageVersion;
   WORD  MinorImageVersion;
-  WORD  MajorSubsystemVersion;		/* 0x30 */
+  WORD  MajorSubsystemVersion;      /* 0x30 */
   WORD  MinorSubsystemVersion;
   DWORD Win32VersionValue;
   DWORD SizeOfImage;
   DWORD SizeOfHeaders;
-  DWORD CheckSum;			/* 0x40 */
+  DWORD CheckSum;           /* 0x40 */
   WORD  Subsystem;
   WORD  DllCharacteristics;
   DWORD SizeOfStackReserve;
   DWORD SizeOfStackCommit;
-  DWORD SizeOfHeapReserve;		/* 0x50 */
+  DWORD SizeOfHeapReserve;      /* 0x50 */
   DWORD SizeOfHeapCommit;
   DWORD LoaderFlags;
   DWORD NumberOfRvaAndSizes;
@@ -547,9 +547,9 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
 } IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;
 
 typedef struct _IMAGE_NT_HEADERS {
-  DWORD Signature; /* "PE"\0\0 */	/* 0x00 */
-  IMAGE_FILE_HEADER FileHeader;		/* 0x04 */
-  IMAGE_OPTIONAL_HEADER32 OptionalHeader;	/* 0x18 */
+  DWORD Signature; /* "PE"\0\0 */   /* 0x00 */
+  IMAGE_FILE_HEADER FileHeader;     /* 0x04 */
+  IMAGE_OPTIONAL_HEADER32 OptionalHeader;   /* 0x18 */
 } IMAGE_NT_HEADERS32, *PIMAGE_NT_HEADERS32;
 
 #ifdef _WIN64
@@ -582,67 +582,67 @@ typedef struct _IMAGE_SECTION_HEADER {
   DWORD Characteristics;
 } IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;
 
-#define	IMAGE_SIZEOF_SECTION_HEADER 40
+#define IMAGE_SIZEOF_SECTION_HEADER 40
 
 #define IMAGE_FIRST_SECTION(ntheader) \
   ((PIMAGE_SECTION_HEADER)(ULONG_PTR)((const BYTE *)&((const IMAGE_NT_HEADERS *)(ntheader))->OptionalHeader + \
                            ((const IMAGE_NT_HEADERS *)(ntheader))->FileHeader.SizeOfOptionalHeader))
 
 /* These defines are for the Characteristics bitfield. */
-/* #define IMAGE_SCN_TYPE_REG			0x00000000 - Reserved */
-/* #define IMAGE_SCN_TYPE_DSECT			0x00000001 - Reserved */
-/* #define IMAGE_SCN_TYPE_NOLOAD		0x00000002 - Reserved */
-/* #define IMAGE_SCN_TYPE_GROUP			0x00000004 - Reserved */
-#define IMAGE_SCN_TYPE_NO_PAD			0x00000008 /* Reserved */
-/* #define IMAGE_SCN_TYPE_COPY			0x00000010 - Reserved */
+/* #define IMAGE_SCN_TYPE_REG           0x00000000 - Reserved */
+/* #define IMAGE_SCN_TYPE_DSECT         0x00000001 - Reserved */
+/* #define IMAGE_SCN_TYPE_NOLOAD        0x00000002 - Reserved */
+/* #define IMAGE_SCN_TYPE_GROUP         0x00000004 - Reserved */
+#define IMAGE_SCN_TYPE_NO_PAD           0x00000008 /* Reserved */
+/* #define IMAGE_SCN_TYPE_COPY          0x00000010 - Reserved */
 
-#define IMAGE_SCN_CNT_CODE			0x00000020
-#define IMAGE_SCN_CNT_INITIALIZED_DATA		0x00000040
-#define IMAGE_SCN_CNT_UNINITIALIZED_DATA	0x00000080
+#define IMAGE_SCN_CNT_CODE          0x00000020
+#define IMAGE_SCN_CNT_INITIALIZED_DATA      0x00000040
+#define IMAGE_SCN_CNT_UNINITIALIZED_DATA    0x00000080
 
-#define	IMAGE_SCN_LNK_OTHER			0x00000100
-#define	IMAGE_SCN_LNK_INFO			0x00000200
-/* #define	IMAGE_SCN_TYPE_OVER		0x00000400 - Reserved */
-#define	IMAGE_SCN_LNK_REMOVE			0x00000800
-#define	IMAGE_SCN_LNK_COMDAT			0x00001000
+#define IMAGE_SCN_LNK_OTHER         0x00000100
+#define IMAGE_SCN_LNK_INFO          0x00000200
+/* #define  IMAGE_SCN_TYPE_OVER     0x00000400 - Reserved */
+#define IMAGE_SCN_LNK_REMOVE            0x00000800
+#define IMAGE_SCN_LNK_COMDAT            0x00001000
 
-/* 						0x00002000 - Reserved */
-/* #define IMAGE_SCN_MEM_PROTECTED 		0x00004000 - Obsolete */
-#define	IMAGE_SCN_MEM_FARDATA			0x00008000
+/*                      0x00002000 - Reserved */
+/* #define IMAGE_SCN_MEM_PROTECTED      0x00004000 - Obsolete */
+#define IMAGE_SCN_MEM_FARDATA           0x00008000
 
-/* #define IMAGE_SCN_MEM_SYSHEAP		0x00010000 - Obsolete */
-#define	IMAGE_SCN_MEM_PURGEABLE			0x00020000
-#define	IMAGE_SCN_MEM_16BIT			0x00020000
-#define	IMAGE_SCN_MEM_LOCKED			0x00040000
-#define	IMAGE_SCN_MEM_PRELOAD			0x00080000
+/* #define IMAGE_SCN_MEM_SYSHEAP        0x00010000 - Obsolete */
+#define IMAGE_SCN_MEM_PURGEABLE         0x00020000
+#define IMAGE_SCN_MEM_16BIT         0x00020000
+#define IMAGE_SCN_MEM_LOCKED            0x00040000
+#define IMAGE_SCN_MEM_PRELOAD           0x00080000
 
-#define	IMAGE_SCN_ALIGN_1BYTES			0x00100000
-#define	IMAGE_SCN_ALIGN_2BYTES			0x00200000
-#define	IMAGE_SCN_ALIGN_4BYTES			0x00300000
-#define	IMAGE_SCN_ALIGN_8BYTES			0x00400000
-#define	IMAGE_SCN_ALIGN_16BYTES			0x00500000  /* Default */
-#define	IMAGE_SCN_ALIGN_32BYTES			0x00600000
-#define	IMAGE_SCN_ALIGN_64BYTES			0x00700000
-#define	IMAGE_SCN_ALIGN_128BYTES		0x00800000
-#define	IMAGE_SCN_ALIGN_256BYTES		0x00900000
-#define	IMAGE_SCN_ALIGN_512BYTES		0x00A00000
-#define	IMAGE_SCN_ALIGN_1024BYTES		0x00B00000
-#define	IMAGE_SCN_ALIGN_2048BYTES		0x00C00000
-#define	IMAGE_SCN_ALIGN_4096BYTES		0x00D00000
-#define	IMAGE_SCN_ALIGN_8192BYTES		0x00E00000
-/* 						0x00F00000 - Unused */
-#define	IMAGE_SCN_ALIGN_MASK			0x00F00000
+#define IMAGE_SCN_ALIGN_1BYTES          0x00100000
+#define IMAGE_SCN_ALIGN_2BYTES          0x00200000
+#define IMAGE_SCN_ALIGN_4BYTES          0x00300000
+#define IMAGE_SCN_ALIGN_8BYTES          0x00400000
+#define IMAGE_SCN_ALIGN_16BYTES         0x00500000  /* Default */
+#define IMAGE_SCN_ALIGN_32BYTES         0x00600000
+#define IMAGE_SCN_ALIGN_64BYTES         0x00700000
+#define IMAGE_SCN_ALIGN_128BYTES        0x00800000
+#define IMAGE_SCN_ALIGN_256BYTES        0x00900000
+#define IMAGE_SCN_ALIGN_512BYTES        0x00A00000
+#define IMAGE_SCN_ALIGN_1024BYTES       0x00B00000
+#define IMAGE_SCN_ALIGN_2048BYTES       0x00C00000
+#define IMAGE_SCN_ALIGN_4096BYTES       0x00D00000
+#define IMAGE_SCN_ALIGN_8192BYTES       0x00E00000
+/*                      0x00F00000 - Unused */
+#define IMAGE_SCN_ALIGN_MASK            0x00F00000
 
-#define IMAGE_SCN_LNK_NRELOC_OVFL		0x01000000
+#define IMAGE_SCN_LNK_NRELOC_OVFL       0x01000000
 
 
-#define IMAGE_SCN_MEM_DISCARDABLE		0x02000000
-#define IMAGE_SCN_MEM_NOT_CACHED		0x04000000
-#define IMAGE_SCN_MEM_NOT_PAGED			0x08000000
-#define IMAGE_SCN_MEM_SHARED			0x10000000
-#define IMAGE_SCN_MEM_EXECUTE			0x20000000
-#define IMAGE_SCN_MEM_READ			0x40000000
-#define IMAGE_SCN_MEM_WRITE			0x80000000
+#define IMAGE_SCN_MEM_DISCARDABLE       0x02000000
+#define IMAGE_SCN_MEM_NOT_CACHED        0x04000000
+#define IMAGE_SCN_MEM_NOT_PAGED         0x08000000
+#define IMAGE_SCN_MEM_SHARED            0x10000000
+#define IMAGE_SCN_MEM_EXECUTE           0x20000000
+#define IMAGE_SCN_MEM_READ          0x40000000
+#define IMAGE_SCN_MEM_WRITE         0x80000000
 
 #pragma pack(push, 2)
 
@@ -819,64 +819,64 @@ typedef IMAGE_AUX_SYMBOL *PIMAGE_AUX_SYMBOL;
 /* Export module directory */
 
 typedef struct _IMAGE_EXPORT_DIRECTORY {
-	DWORD	Characteristics;
-	DWORD	TimeDateStamp;
-	WORD	MajorVersion;
-	WORD	MinorVersion;
-	DWORD	Name;
-	DWORD	Base;
-	DWORD	NumberOfFunctions;
-	DWORD	NumberOfNames;
-	DWORD	AddressOfFunctions;
-	DWORD	AddressOfNames;
-	DWORD	AddressOfNameOrdinals;
+    DWORD   Characteristics;
+    DWORD   TimeDateStamp;
+    WORD    MajorVersion;
+    WORD    MinorVersion;
+    DWORD   Name;
+    DWORD   Base;
+    DWORD   NumberOfFunctions;
+    DWORD   NumberOfNames;
+    DWORD   AddressOfFunctions;
+    DWORD   AddressOfNames;
+    DWORD   AddressOfNameOrdinals;
 } IMAGE_EXPORT_DIRECTORY,*PIMAGE_EXPORT_DIRECTORY;
 
 /* Import name entry */
 typedef struct _IMAGE_IMPORT_BY_NAME {
-	WORD	Hint;
-	BYTE	Name[1];
+    WORD    Hint;
+    BYTE    Name[1];
 } IMAGE_IMPORT_BY_NAME,*PIMAGE_IMPORT_BY_NAME;
 
 #pragma pack(push, 8)
 /* Import thunk */
 typedef struct _IMAGE_THUNK_DATA64 {
-	union {
-		ULONGLONG ForwarderString;
-		ULONGLONG Function;
-		ULONGLONG Ordinal;
-		ULONGLONG AddressOfData;
-	} u1;
+    union {
+        ULONGLONG ForwarderString;
+        ULONGLONG Function;
+        ULONGLONG Ordinal;
+        ULONGLONG AddressOfData;
+    } u1;
 } IMAGE_THUNK_DATA64,*PIMAGE_THUNK_DATA64;
 #pragma pack(pop)
 
 typedef struct _IMAGE_THUNK_DATA32 {
-	union {
-		DWORD ForwarderString;
-		DWORD Function;
-		DWORD Ordinal;
-		DWORD AddressOfData;
-	} u1;
+    union {
+        DWORD ForwarderString;
+        DWORD Function;
+        DWORD Ordinal;
+        DWORD AddressOfData;
+    } u1;
 } IMAGE_THUNK_DATA32,*PIMAGE_THUNK_DATA32;
 
 /* Import module directory */
 
 typedef struct _IMAGE_IMPORT_DESCRIPTOR {
-	union {
-		DWORD	Characteristics; /* 0 for terminating null import descriptor  */
-		DWORD	OriginalFirstThunk;	/* RVA to original unbound IAT */
-	};
-	DWORD	TimeDateStamp;	/* 0 if not bound,
-				 * -1 if bound, and real date\time stamp
-				 *    in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT
-				 * (new BIND)
-				 * otherwise date/time stamp of DLL bound to
-				 * (Old BIND)
-				 */
-	DWORD	ForwarderChain;	/* -1 if no forwarders */
-	DWORD	Name;
-	/* RVA to IAT (if bound this IAT has actual addresses) */
-	DWORD	FirstThunk;
+    union {
+        DWORD   Characteristics; /* 0 for terminating null import descriptor  */
+        DWORD   OriginalFirstThunk; /* RVA to original unbound IAT */
+    };
+    DWORD   TimeDateStamp;  /* 0 if not bound,
+                 * -1 if bound, and real date\time stamp
+                 *    in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT
+                 * (new BIND)
+                 * otherwise date/time stamp of DLL bound to
+                 * (Old BIND)
+                 */
+    DWORD   ForwarderChain; /* -1 if no forwarders */
+    DWORD   Name;
+    /* RVA to IAT (if bound this IAT has actual addresses) */
+    DWORD   FirstThunk;
 } IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;
 
 #define IMAGE_ORDINAL_FLAG64             (((ULONGLONG)0x80000000 << 32) | 0x00000000)
@@ -917,9 +917,9 @@ typedef struct _IMAGE_BOUND_FORWARDER_REF
 
 typedef struct _IMAGE_BASE_RELOCATION
 {
-	DWORD	VirtualAddress;
-	DWORD	SizeOfBlock;
-	/* WORD	TypeOffset[1]; */
+    DWORD   VirtualAddress;
+    DWORD   SizeOfBlock;
+    /* WORD TypeOffset[1]; */
 } IMAGE_BASE_RELOCATION,*PIMAGE_BASE_RELOCATION;
 
 #pragma pack(push, 2)
@@ -929,7 +929,7 @@ typedef struct _IMAGE_RELOCATION
     union {
         DWORD   VirtualAddress;
         DWORD   RelocCount;
-    } DUMMYUNIONNAME;
+    };
     DWORD   SymbolTableIndex;
     WORD    Type;
 } IMAGE_RELOCATION, *PIMAGE_RELOCATION;
@@ -961,79 +961,79 @@ typedef struct _IMAGE_DELAYLOAD_DESCRIPTOR
 typedef const IMAGE_DELAYLOAD_DESCRIPTOR *PCIMAGE_DELAYLOAD_DESCRIPTOR;
 
 /* generic relocation types */
-#define IMAGE_REL_BASED_ABSOLUTE 		0
-#define IMAGE_REL_BASED_HIGH			1
-#define IMAGE_REL_BASED_LOW			2
-#define IMAGE_REL_BASED_HIGHLOW			3
-#define IMAGE_REL_BASED_HIGHADJ			4
-#define IMAGE_REL_BASED_MIPS_JMPADDR		5
-#define IMAGE_REL_BASED_ARM_MOV32A		5 /* yes, 5 too */
-#define IMAGE_REL_BASED_ARM_MOV32		5 /* yes, 5 too */
-#define IMAGE_REL_BASED_SECTION			6
-#define	IMAGE_REL_BASED_REL			7
-#define	IMAGE_REL_BASED_ARM_MOV32T		7 /* yes, 7 too */
-#define IMAGE_REL_BASED_THUMB_MOV32		7 /* yes, 7 too */
-#define IMAGE_REL_BASED_MIPS_JMPADDR16		9
-#define IMAGE_REL_BASED_IA64_IMM64		9 /* yes, 9 too */
-#define IMAGE_REL_BASED_DIR64			10
-#define IMAGE_REL_BASED_HIGH3ADJ		11
+#define IMAGE_REL_BASED_ABSOLUTE        0
+#define IMAGE_REL_BASED_HIGH            1
+#define IMAGE_REL_BASED_LOW             2
+#define IMAGE_REL_BASED_HIGHLOW         3
+#define IMAGE_REL_BASED_HIGHADJ         4
+#define IMAGE_REL_BASED_MIPS_JMPADDR    5
+#define IMAGE_REL_BASED_ARM_MOV32A      5 /* yes, 5 too */
+#define IMAGE_REL_BASED_ARM_MOV32       5 /* yes, 5 too */
+#define IMAGE_REL_BASED_SECTION         6
+#define IMAGE_REL_BASED_REL             7
+#define IMAGE_REL_BASED_ARM_MOV32T      7 /* yes, 7 too */
+#define IMAGE_REL_BASED_THUMB_MOV32     7 /* yes, 7 too */
+#define IMAGE_REL_BASED_MIPS_JMPADDR16  9
+#define IMAGE_REL_BASED_IA64_IMM64      9 /* yes, 9 too */
+#define IMAGE_REL_BASED_DIR64           10
+#define IMAGE_REL_BASED_HIGH3ADJ        11
 
 /* I386 relocation types */
-#define	IMAGE_REL_I386_ABSOLUTE			0
-#define	IMAGE_REL_I386_DIR16			1
-#define	IMAGE_REL_I386_REL16			2
-#define	IMAGE_REL_I386_DIR32			6
-#define	IMAGE_REL_I386_DIR32NB			7
-#define	IMAGE_REL_I386_SEG12			9
-#define	IMAGE_REL_I386_SECTION			10
-#define	IMAGE_REL_I386_SECREL			11
-#define	IMAGE_REL_I386_TOKEN			12
-#define	IMAGE_REL_I386_SECREL7			13
-#define	IMAGE_REL_I386_REL32			20
+#define IMAGE_REL_I386_ABSOLUTE         0
+#define IMAGE_REL_I386_DIR16            1
+#define IMAGE_REL_I386_REL16            2
+#define IMAGE_REL_I386_DIR32            6
+#define IMAGE_REL_I386_DIR32NB          7
+#define IMAGE_REL_I386_SEG12            9
+#define IMAGE_REL_I386_SECTION          10
+#define IMAGE_REL_I386_SECREL           11
+#define IMAGE_REL_I386_TOKEN            12
+#define IMAGE_REL_I386_SECREL7          13
+#define IMAGE_REL_I386_REL32            20
 
 /* MIPS relocation types */
-#define IMAGE_REL_MIPS_ABSOLUTE		0x0000
-#define IMAGE_REL_MIPS_REFHALF		0x0001
-#define IMAGE_REL_MIPS_REFWORD		0x0002
-#define IMAGE_REL_MIPS_JMPADDR		0x0003
-#define IMAGE_REL_MIPS_REFHI		0x0004
-#define IMAGE_REL_MIPS_REFLO		0x0005
-#define IMAGE_REL_MIPS_GPREL		0x0006
-#define IMAGE_REL_MIPS_LITERAL		0x0007
-#define IMAGE_REL_MIPS_SECTION		0x000A
-#define IMAGE_REL_MIPS_SECREL		0x000B
-#define IMAGE_REL_MIPS_SECRELLO		0x000C
-#define IMAGE_REL_MIPS_SECRELHI		0x000D
-#define IMAGE_REL_MIPS_TOKEN		0x000E
-#define IMAGE_REL_MIPS_JMPADDR16	0x0010
-#define IMAGE_REL_MIPS_REFWORDNB	0x0022
-#define IMAGE_REL_MIPS_PAIR		0x0025
+#define IMAGE_REL_MIPS_ABSOLUTE     0x0000
+#define IMAGE_REL_MIPS_REFHALF      0x0001
+#define IMAGE_REL_MIPS_REFWORD      0x0002
+#define IMAGE_REL_MIPS_JMPADDR      0x0003
+#define IMAGE_REL_MIPS_REFHI        0x0004
+#define IMAGE_REL_MIPS_REFLO        0x0005
+#define IMAGE_REL_MIPS_GPREL        0x0006
+#define IMAGE_REL_MIPS_LITERAL      0x0007
+#define IMAGE_REL_MIPS_SECTION      0x000A
+#define IMAGE_REL_MIPS_SECREL       0x000B
+#define IMAGE_REL_MIPS_SECRELLO     0x000C
+#define IMAGE_REL_MIPS_SECRELHI     0x000D
+#define IMAGE_REL_MIPS_TOKEN        0x000E
+#define IMAGE_REL_MIPS_JMPADDR16    0x0010
+#define IMAGE_REL_MIPS_REFWORDNB    0x0022
+#define IMAGE_REL_MIPS_PAIR     0x0025
 
 /* ALPHA relocation types */
-#define IMAGE_REL_ALPHA_ABSOLUTE	0x0000
-#define IMAGE_REL_ALPHA_REFLONG		0x0001
-#define IMAGE_REL_ALPHA_REFQUAD		0x0002
-#define IMAGE_REL_ALPHA_GPREL		0x0003
-#define IMAGE_REL_ALPHA_LITERAL		0x0004
-#define IMAGE_REL_ALPHA_LITUSE		0x0005
-#define IMAGE_REL_ALPHA_GPDISP		0x0006
-#define IMAGE_REL_ALPHA_BRADDR		0x0007
-#define IMAGE_REL_ALPHA_HINT		0x0008
-#define IMAGE_REL_ALPHA_INLINE_REFLONG	0x0009
-#define IMAGE_REL_ALPHA_REFHI		0x000A
-#define IMAGE_REL_ALPHA_REFLO		0x000B
-#define IMAGE_REL_ALPHA_PAIR		0x000C
-#define IMAGE_REL_ALPHA_MATCH		0x000D
-#define IMAGE_REL_ALPHA_SECTION		0x000E
-#define IMAGE_REL_ALPHA_SECREL		0x000F
-#define IMAGE_REL_ALPHA_REFLONGNB	0x0010
-#define IMAGE_REL_ALPHA_SECRELLO	0x0011
-#define IMAGE_REL_ALPHA_SECRELHI	0x0012
-#define IMAGE_REL_ALPHA_REFQ3		0x0013
-#define IMAGE_REL_ALPHA_REFQ2		0x0014
-#define IMAGE_REL_ALPHA_REFQ1		0x0015
-#define IMAGE_REL_ALPHA_GPRELLO		0x0016
-#define IMAGE_REL_ALPHA_GPRELHI		0x0017
+#define IMAGE_REL_ALPHA_ABSOLUTE    0x0000
+#define IMAGE_REL_ALPHA_REFLONG     0x0001
+#define IMAGE_REL_ALPHA_REFQUAD     0x0002
+#define IMAGE_REL_ALPHA_GPREL       0x0003
+#define IMAGE_REL_ALPHA_LITERAL     0x0004
+#define IMAGE_REL_ALPHA_LITUSE      0x0005
+#define IMAGE_REL_ALPHA_GPDISP      0x0006
+#define IMAGE_REL_ALPHA_BRADDR      0x0007
+#define IMAGE_REL_ALPHA_HINT        0x0008
+#define IMAGE_REL_ALPHA_INLINE_REFLONG  0x0009
+#define IMAGE_REL_ALPHA_REFHI       0x000A
+#define IMAGE_REL_ALPHA_REFLO       0x000B
+#define IMAGE_REL_ALPHA_PAIR        0x000C
+#define IMAGE_REL_ALPHA_MATCH       0x000D
+#define IMAGE_REL_ALPHA_SECTION     0x000E
+#define IMAGE_REL_ALPHA_SECREL      0x000F
+#define IMAGE_REL_ALPHA_REFLONGNB   0x0010
+#define IMAGE_REL_ALPHA_SECRELLO    0x0011
+#define IMAGE_REL_ALPHA_SECRELHI    0x0012
+#define IMAGE_REL_ALPHA_REFQ3       0x0013
+#define IMAGE_REL_ALPHA_REFQ2       0x0014
+#define IMAGE_REL_ALPHA_REFQ1       0x0015
+#define IMAGE_REL_ALPHA_GPRELLO     0x0016
+#define IMAGE_REL_ALPHA_GPRELHI     0x0017
 
 /* PowerPC relocation types */
 #define IMAGE_REL_PPC_ABSOLUTE          0x0000
@@ -1057,7 +1057,7 @@ typedef const IMAGE_DELAYLOAD_DESCRIPTOR *PCIMAGE_DELAYLOAD_DESCRIPTOR;
 #define IMAGE_REL_PPC_PAIR              0x0012
 #define IMAGE_REL_PPC_SECRELLO          0x0013
 #define IMAGE_REL_PPC_SECRELHI          0x0014
-#define IMAGE_REL_PPC_GPREL		0x0015
+#define IMAGE_REL_PPC_GPREL     0x0015
 #define IMAGE_REL_PPC_TOKEN             0x0016
 #define IMAGE_REL_PPC_TYPEMASK          0x00FF
 /* modifier bits */
@@ -1088,23 +1088,23 @@ typedef const IMAGE_DELAYLOAD_DESCRIPTOR *PCIMAGE_DELAYLOAD_DESCRIPTOR;
 #define IMAGE_REL_SH3_TOKEN             0x0012
 
 /* ARM relocation types */
-#define IMAGE_REL_ARM_ABSOLUTE		0x0000
-#define IMAGE_REL_ARM_ADDR		0x0001
-#define IMAGE_REL_ARM_ADDR32NB		0x0002
-#define IMAGE_REL_ARM_BRANCH24		0x0003
-#define IMAGE_REL_ARM_BRANCH11		0x0004
-#define IMAGE_REL_ARM_TOKEN		0x0005
-#define IMAGE_REL_ARM_GPREL12		0x0006
-#define IMAGE_REL_ARM_GPREL7		0x0007
-#define IMAGE_REL_ARM_BLX24		0x0008
-#define IMAGE_REL_ARM_BLX11		0x0009
-#define IMAGE_REL_ARM_SECTION		0x000E
-#define IMAGE_REL_ARM_SECREL		0x000F
-#define IMAGE_REL_ARM_MOV32A		0x0010
-#define IMAGE_REL_ARM_MOV32T		0x0011
-#define IMAGE_REL_ARM_BRANCH20T	0x0012
-#define IMAGE_REL_ARM_BRANCH24T	0x0014
-#define IMAGE_REL_ARM_BLX23T		0x0015
+#define IMAGE_REL_ARM_ABSOLUTE      0x0000
+#define IMAGE_REL_ARM_ADDR32      0x0001
+#define IMAGE_REL_ARM_ADDR32NB      0x0002
+#define IMAGE_REL_ARM_BRANCH24      0x0003
+#define IMAGE_REL_ARM_BRANCH11      0x0004
+#define IMAGE_REL_ARM_TOKEN     0x0005
+#define IMAGE_REL_ARM_GPREL12       0x0006
+#define IMAGE_REL_ARM_GPREL7        0x0007
+#define IMAGE_REL_ARM_BLX24     0x0008
+#define IMAGE_REL_ARM_BLX11     0x0009
+#define IMAGE_REL_ARM_SECTION       0x000E
+#define IMAGE_REL_ARM_SECREL        0x000F
+#define IMAGE_REL_ARM_MOV32A        0x0010
+#define IMAGE_REL_ARM_MOV32T        0x0011
+#define IMAGE_REL_ARM_BRANCH20T 0x0012
+#define IMAGE_REL_ARM_BRANCH24T 0x0014
+#define IMAGE_REL_ARM_BLX23T        0x0015
 
 /* ARM64 relocation types */
 #define IMAGE_REL_ARM64_ABSOLUTE        0x0000
@@ -1125,36 +1125,36 @@ typedef const IMAGE_DELAYLOAD_DESCRIPTOR *PCIMAGE_DELAYLOAD_DESCRIPTOR;
 #define IMAGE_REL_ARM64_BRANCH19        0x000F
 
 /* IA64 relocation types */
-#define IMAGE_REL_IA64_ABSOLUTE		0x0000
-#define IMAGE_REL_IA64_IMM14		0x0001
-#define IMAGE_REL_IA64_IMM22		0x0002
-#define IMAGE_REL_IA64_IMM64		0x0003
-#define IMAGE_REL_IA64_DIR		0x0004
-#define IMAGE_REL_IA64_DIR64		0x0005
-#define IMAGE_REL_IA64_PCREL21B		0x0006
-#define IMAGE_REL_IA64_PCREL21M		0x0007
-#define IMAGE_REL_IA64_PCREL21F		0x0008
-#define IMAGE_REL_IA64_GPREL22		0x0009
-#define IMAGE_REL_IA64_LTOFF22		0x000A
-#define IMAGE_REL_IA64_SECTION		0x000B
-#define IMAGE_REL_IA64_SECREL22		0x000C
-#define IMAGE_REL_IA64_SECREL64I	0x000D
-#define IMAGE_REL_IA64_SECREL		0x000E
-#define IMAGE_REL_IA64_LTOFF64		0x000F
-#define IMAGE_REL_IA64_DIR32NB		0x0010
-#define IMAGE_REL_IA64_SREL14		0x0011
-#define IMAGE_REL_IA64_SREL22		0x0012
-#define IMAGE_REL_IA64_SREL32		0x0013
-#define IMAGE_REL_IA64_UREL32		0x0014
-#define IMAGE_REL_IA64_PCREL60X	0x0015
-#define IMAGE_REL_IA64_PCREL60B	0x0016
-#define IMAGE_REL_IA64_PCREL60F	0x0017
-#define IMAGE_REL_IA64_PCREL60I	0x0018
-#define IMAGE_REL_IA64_PCREL60M	0x0019
-#define IMAGE_REL_IA64_IMMGPREL64	0x001A
-#define IMAGE_REL_IA64_TOKEN		0x001B
-#define IMAGE_REL_IA64_GPREL32		0x001C
-#define IMAGE_REL_IA64_ADDEND		0x001F
+#define IMAGE_REL_IA64_ABSOLUTE     0x0000
+#define IMAGE_REL_IA64_IMM14        0x0001
+#define IMAGE_REL_IA64_IMM22        0x0002
+#define IMAGE_REL_IA64_IMM64        0x0003
+#define IMAGE_REL_IA64_DIR          0x0004
+#define IMAGE_REL_IA64_DIR64        0x0005
+#define IMAGE_REL_IA64_PCREL21B     0x0006
+#define IMAGE_REL_IA64_PCREL21M     0x0007
+#define IMAGE_REL_IA64_PCREL21F     0x0008
+#define IMAGE_REL_IA64_GPREL22      0x0009
+#define IMAGE_REL_IA64_LTOFF22      0x000A
+#define IMAGE_REL_IA64_SECTION      0x000B
+#define IMAGE_REL_IA64_SECREL22     0x000C
+#define IMAGE_REL_IA64_SECREL64I    0x000D
+#define IMAGE_REL_IA64_SECREL       0x000E
+#define IMAGE_REL_IA64_LTOFF64      0x000F
+#define IMAGE_REL_IA64_DIR32NB      0x0010
+#define IMAGE_REL_IA64_SREL14       0x0011
+#define IMAGE_REL_IA64_SREL22       0x0012
+#define IMAGE_REL_IA64_SREL32       0x0013
+#define IMAGE_REL_IA64_UREL32       0x0014
+#define IMAGE_REL_IA64_PCREL60X 0x0015
+#define IMAGE_REL_IA64_PCREL60B 0x0016
+#define IMAGE_REL_IA64_PCREL60F 0x0017
+#define IMAGE_REL_IA64_PCREL60I 0x0018
+#define IMAGE_REL_IA64_PCREL60M 0x0019
+#define IMAGE_REL_IA64_IMMGPREL64   0x001A
+#define IMAGE_REL_IA64_TOKEN        0x001B
+#define IMAGE_REL_IA64_GPREL32      0x001C
+#define IMAGE_REL_IA64_ADDEND       0x001F
 
 /* AMD64 relocation types */
 #define IMAGE_REL_AMD64_ABSOLUTE        0x0000
@@ -1247,57 +1247,57 @@ typedef struct _ANON_OBJECT_HEADER
  * Resource directory stuff
  */
 typedef struct _IMAGE_RESOURCE_DIRECTORY {
-	DWORD	Characteristics;
-	DWORD	TimeDateStamp;
-	WORD	MajorVersion;
-	WORD	MinorVersion;
-	WORD	NumberOfNamedEntries;
-	WORD	NumberOfIdEntries;
-	/*  IMAGE_RESOURCE_DIRECTORY_ENTRY DirectoryEntries[]; */
+    DWORD   Characteristics;
+    DWORD   TimeDateStamp;
+    WORD    MajorVersion;
+    WORD    MinorVersion;
+    WORD    NumberOfNamedEntries;
+    WORD    NumberOfIdEntries;
+    /*  IMAGE_RESOURCE_DIRECTORY_ENTRY DirectoryEntries[]; */
 } IMAGE_RESOURCE_DIRECTORY,*PIMAGE_RESOURCE_DIRECTORY;
 
-#define	IMAGE_RESOURCE_NAME_IS_STRING		0x80000000
-#define	IMAGE_RESOURCE_DATA_IS_DIRECTORY	0x80000000
+#define IMAGE_RESOURCE_NAME_IS_STRING       0x80000000
+#define IMAGE_RESOURCE_DATA_IS_DIRECTORY    0x80000000
 
 typedef struct _IMAGE_RESOURCE_DIRECTORY_ENTRY {
-	union {
-		struct {
-			unsigned NameOffset:31;
-			unsigned NameIsString:1;
-		} DUMMYSTRUCTNAME;
-		DWORD   Name;
-		WORD    Id;
-	} DUMMYUNIONNAME;
-	union {
-		DWORD   OffsetToData;
-		struct {
-			unsigned OffsetToDirectory:31;
-			unsigned DataIsDirectory:1;
-		} DUMMYSTRUCTNAME2;
-	} DUMMYUNIONNAME2;
+    union {
+        struct {
+            unsigned NameOffset:31;
+            unsigned NameIsString:1;
+        } DUMMYSTRUCTNAME;
+        DWORD   Name;
+        WORD    Id;
+    } DUMMYUNIONNAME;
+    union {
+        DWORD   OffsetToData;
+        struct {
+            unsigned OffsetToDirectory:31;
+            unsigned DataIsDirectory:1;
+        } DUMMYSTRUCTNAME2;
+    } DUMMYUNIONNAME2;
 } IMAGE_RESOURCE_DIRECTORY_ENTRY,*PIMAGE_RESOURCE_DIRECTORY_ENTRY;
 
 
 typedef struct _IMAGE_RESOURCE_DIRECTORY_STRING {
-	WORD	Length;
-	CHAR	NameString[ 1 ];
+    WORD    Length;
+    CHAR    NameString[ 1 ];
 } IMAGE_RESOURCE_DIRECTORY_STRING,*PIMAGE_RESOURCE_DIRECTORY_STRING;
 
 typedef struct _IMAGE_RESOURCE_DIR_STRING_U {
-	WORD	Length;
-	WCHAR	NameString[ 1 ];
+    WORD    Length;
+    WCHAR   NameString[ 1 ];
 } IMAGE_RESOURCE_DIR_STRING_U,*PIMAGE_RESOURCE_DIR_STRING_U;
 
 typedef struct _IMAGE_RESOURCE_DATA_ENTRY {
-	DWORD	OffsetToData;
-	DWORD	Size;
-	DWORD	CodePage;
-	DWORD	Reserved;
+    DWORD   OffsetToData;
+    DWORD   Size;
+    DWORD   CodePage;
+    DWORD   Reserved;
 } IMAGE_RESOURCE_DATA_ENTRY,*PIMAGE_RESOURCE_DATA_ENTRY;
 
 
 typedef VOID (CALLBACK *PIMAGE_TLS_CALLBACK)(
-	LPVOID DllHandle,DWORD Reason,LPVOID Reserved
+    LPVOID DllHandle,DWORD Reason,LPVOID Reserved
 );
 
 typedef struct _IMAGE_TLS_DIRECTORY64 {
@@ -1513,40 +1513,40 @@ typedef struct _IMAGE_DEBUG_MISC {
 /* This is the structure that appears at the very start of a .DBG file. */
 
 typedef struct _IMAGE_SEPARATE_DEBUG_HEADER {
-	WORD	Signature;
-	WORD	Flags;
-	WORD	Machine;
-	WORD	Characteristics;
-	DWORD	TimeDateStamp;
-	DWORD	CheckSum;
-	DWORD	ImageBase;
-	DWORD	SizeOfImage;
-	DWORD	NumberOfSections;
-	DWORD	ExportedNamesSize;
-	DWORD	DebugDirectorySize;
-	DWORD	SectionAlignment;
-	DWORD	Reserved[ 2 ];
+    WORD    Signature;
+    WORD    Flags;
+    WORD    Machine;
+    WORD    Characteristics;
+    DWORD   TimeDateStamp;
+    DWORD   CheckSum;
+    DWORD   ImageBase;
+    DWORD   SizeOfImage;
+    DWORD   NumberOfSections;
+    DWORD   ExportedNamesSize;
+    DWORD   DebugDirectorySize;
+    DWORD   SectionAlignment;
+    DWORD   Reserved[ 2 ];
 } IMAGE_SEPARATE_DEBUG_HEADER,*PIMAGE_SEPARATE_DEBUG_HEADER;
 
 #define IMAGE_SEPARATE_DEBUG_SIGNATURE 0x4944
 
 
 typedef struct tagMESSAGE_RESOURCE_ENTRY {
-	WORD	Length;
-	WORD	Flags;
-	BYTE	Text[1];
+    WORD    Length;
+    WORD    Flags;
+    BYTE    Text[1];
 } MESSAGE_RESOURCE_ENTRY,*PMESSAGE_RESOURCE_ENTRY;
-#define	MESSAGE_RESOURCE_UNICODE	0x0001
+#define MESSAGE_RESOURCE_UNICODE    0x0001
 
 typedef struct tagMESSAGE_RESOURCE_BLOCK {
-	DWORD	LowId;
-	DWORD	HighId;
-	DWORD	OffsetToEntries;
+    DWORD   LowId;
+    DWORD   HighId;
+    DWORD   OffsetToEntries;
 } MESSAGE_RESOURCE_BLOCK,*PMESSAGE_RESOURCE_BLOCK;
 
 typedef struct tagMESSAGE_RESOURCE_DATA {
-	DWORD			NumberOfBlocks;
-	MESSAGE_RESOURCE_BLOCK	Blocks[ 1 ];
+    DWORD           NumberOfBlocks;
+    MESSAGE_RESOURCE_BLOCK  Blocks[ 1 ];
 } MESSAGE_RESOURCE_DATA,*PMESSAGE_RESOURCE_DATA;
 
 #endif  /* _WINNT_ */

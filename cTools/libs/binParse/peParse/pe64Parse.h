@@ -27,6 +27,7 @@
 
 // ViponTools headers
 #include "file.h"
+#include "arch.h"
 
 // Windows standard headres
 #include <Windows.h>
@@ -272,6 +273,9 @@ typedef IMAGE_SYMBOL PESymbol;
  */
 typedef IMAGE_AUX_SYMBOL PEAuxSymbol;
 
+typedef IMAGE_RELOCATION COFFReloc;
+typedef IMAGE_BASE_RELOCATION PEBaseReloc;
+
 #define TEXT_SECT_NAME ".text"
 
 #define IS_PE64_FILE_EXEC(pe) \
@@ -298,6 +302,7 @@ typedef enum {
 typedef struct {
     FileD          fd;
     char           *fn;
+    Arch           arch;
     PE64_FILE_TYPE type;
     DosHeader      *dosHeader;  // Legacy stub
     NTHeader64     *ntHeader;   // Contain File and Opt header

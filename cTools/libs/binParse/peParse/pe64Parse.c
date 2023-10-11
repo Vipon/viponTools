@@ -113,6 +113,54 @@ static PE64_ERROR pe64ParseNTHeader(PE64File *pe)
     }
 }
 
+static
+void pe64ParseArch(PE64File *pe)
+{
+    switch (pe64GetMachineID(pe)) {
+    case IMAGE_FILE_MACHINE_AMD64:
+        pe->arch = X86_64;
+        break;
+    case IMAGE_FILE_MACHINE_ARM:
+        pe->arch = ARM;
+        break;
+    case IMAGE_FILE_MACHINE_ARM64:
+        pe->arch = AARCH64;
+        break;
+    case IMAGE_FILE_MACHINE_I386:
+        pe->arch = X86;
+        break;
+    case IMAGE_FILE_MACHINE_ARMNT:
+    case IMAGE_FILE_MACHINE_UNKNOWN:
+    case IMAGE_FILE_MACHINE_IA64:
+    case IMAGE_FILE_MACHINE_R3000:
+    case IMAGE_FILE_MACHINE_R4000:
+    case IMAGE_FILE_MACHINE_R10000:
+    case IMAGE_FILE_MACHINE_WCEMIPSV2:
+    case IMAGE_FILE_MACHINE_ALPHA:
+    case IMAGE_FILE_MACHINE_SH3:
+    case IMAGE_FILE_MACHINE_SH3DSP:
+    case IMAGE_FILE_MACHINE_SH3E:
+    case IMAGE_FILE_MACHINE_SH4:
+    case IMAGE_FILE_MACHINE_SH5:
+    case IMAGE_FILE_MACHINE_THUMB:
+    case IMAGE_FILE_MACHINE_AM33:
+    case IMAGE_FILE_MACHINE_POWERPC:
+    case IMAGE_FILE_MACHINE_POWERPCFP:
+    case IMAGE_FILE_MACHINE_MIPS16:
+    case IMAGE_FILE_MACHINE_ALPHA64:
+    case IMAGE_FILE_MACHINE_MIPSFPU:
+    case IMAGE_FILE_MACHINE_MIPSFPU16:
+    case IMAGE_FILE_MACHINE_TRICORE:
+    case IMAGE_FILE_MACHINE_CEF:
+    case IMAGE_FILE_MACHINE_EBC:
+    case IMAGE_FILE_MACHINE_M32R:
+    case IMAGE_FILE_MACHINE_CEE:
+    default:
+        pe->arch = UNKNOWN_ARCH;
+        break;
+    }
+}
+
 static PE64_ERROR pe64ParseSections(PE64File *pe)
 {
     if (pe == NULL || pe->fileHeader == NULL)
@@ -402,6 +450,8 @@ PE64File *pe64Parse(const char *fn)
             goto eexit_1;
         }
     }
+
+    pe64ParseArch(pe);
 
     if (pe64ParseSections(pe)) {
         LOG_ERROR("Cannot parse sections");

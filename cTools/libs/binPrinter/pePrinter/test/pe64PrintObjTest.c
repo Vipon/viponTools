@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     pe64PrintFileHeader(pe);
     pe64PrintSections(pe);
     pe64PrintSymbols(pe);
+    pe64PrintRelocations(pe);
 
     pe64Free(pe);
 

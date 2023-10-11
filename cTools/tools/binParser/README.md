@@ -18,6 +18,7 @@ The followed table shows support platforms and binary formats. macho files forma
 |        -s |    --symbols    | print all symbols |
 |        -S |    --sections   | print all section |
 |           |    --segments   | print all segments |
+|        -r |    --relocs     | print relocations |
 |           |  --func-starts  | macho: print info about function starts |
 |        -l |     --lcom      | macho: print load commands |
 |           |   --code-sign   | macho: print code sign |
@@ -29,7 +30,6 @@ The followed table shows support platforms and binary formats. macho files forma
 |           |  --file-header  | pe: print file header |
 |           |  --opt-header   | pe: print opt header |
 |           |    --dynamic    | elf: print .dynamic section |
-|        -r |    --relocs     | elf: print relocations |
 |           |  --version-info | elf: print symbols version info from sections:.gnu.version, .gnu.version_r |
 
 ## Examples

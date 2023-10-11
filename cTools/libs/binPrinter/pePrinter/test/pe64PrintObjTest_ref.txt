@@ -89,3 +89,27 @@ raw data offs: 00000ea3 raw data size: 00000000
 00000021             main 0000000000000020            .text DT_NON   T_NULL    C_EXT        0
 00000022            .file 0000000000000000          N_DEBUG DT_NON   T_NULL   C_FILE        1
      testObjFile.c
+
+Relocations #5
+ Offset   Type             Applied To        Sym Indx Sym Name
+ -------- ---------------- ----------------- -------- --------
+ 00000070 SECREL           0000000000000000        17 shortNam
+ 00000074 SECTION          0000000000000000        17 shortNam
+ 000000ac SECREL           0000000000000000        17 shortNam
+ 000000b0 SECTION          0000000000000000        17 shortNam
+ 000000fc SECREL           0000000000000000        19 longNameTest
+ 00000100 SECTION          0000000000000000        19 longNameTest
+ 0000013c SECREL           0000000000000000        19 longNameTest
+ 00000140 SECTION          0000000000000000        19 longNameTest
+ 0000018c SECREL           0000000000000000        21 main    
+ 00000190 SECTION          0000000000000000        21 main    
+ 000001c4 SECREL           0000000000000000        21 main    
+ 000001c8 SECTION          0000000000000000        21 main    
+
+Relocations #7
+ Offset   Type             Applied To        Sym Indx Sym Name
+ -------- ---------------- ----------------- -------- --------
+ 00000000 ADDR32NB         0000000000000000         0 .text   
+ 00000004 ADDR32NB         0000000000000000         0 .text   
+ 00000008 ADDR32NB         0000000000000000         6 .xdata  
+
