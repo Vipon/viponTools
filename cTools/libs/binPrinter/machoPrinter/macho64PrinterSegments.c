@@ -91,5 +91,7 @@ void macho64PrintSegments(const Macho64File *mf)
             macho64PrintSegment(seg);
         }
     )
+
+    NEW_LINE;
 }
 

@@ -336,5 +336,7 @@ void pe64PrintSymbols(const PE64File *pe)
 
         i += sym->NumberOfAuxSymbols;
     }
+
+    NEW_LINE;
 }
 

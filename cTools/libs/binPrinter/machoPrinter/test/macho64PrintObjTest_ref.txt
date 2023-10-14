@@ -1,0 +1,274 @@
+macho64 header:
+     magic: 0xfeedfacf
+   cputype: 0x0100000c (ARM64)
+cpusubtype: 0x00000000 (ARM64_ALL)
+  filetype: 0x00000001 (OBJECT)
+     ncmds: 0x00000004
+sizeofcmds: 0x00000208
+     flags: 0x00002000 (SUBSECTIONS_VIA_SYMBOLS)
+
+Load Command: 0
+      cmd: LC_SEGMENT_64
+  cmdsize: 392
+  segname: 
+   vmaddr: 0x0
+   vmsize: 0x70
+  fileoff: 552
+ filesize: 112
+  maxprot: xwr
+ initprot: xwr
+   nsects: 4
+    flags: 0x0
+Section:
+  sectname: __text
+   segname: __TEXT
+      addr: 0x0
+      size: 0x3c
+    offset: 552
+     align: 4
+    reloff: 664
+    nreloc: 4
+     flags: 0x80000400 REG | ATTR_PURE_INSTR | ATTR_SOME_INSTR
+ reserved1: 0
+ reserved2: 0
+Section:
+  sectname: __my_sect
+   segname: __TEXT
+      addr: 0x3c
+      size: 0x4
+    offset: 612
+     align: 1
+    reloff: 696
+    nreloc: 2
+     flags: 0x80000400 REG | ATTR_PURE_INSTR | ATTR_SOME_INSTR
+ reserved1: 0
+ reserved2: 0
+Section:
+  sectname: __cstring
+   segname: __TEXT
+      addr: 0x40
+      size: 0xd
+    offset: 616
+     align: 1
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000002 CSTRING
+ reserved1: 0
+ reserved2: 0
+Section:
+  sectname: __compact_unwind__LD
+   segname: __LD
+      addr: 0x50
+      size: 0x20
+    offset: 632
+     align: 8
+    reloff: 712
+    nreloc: 1
+     flags: 0x02000000 REG | ATTR_DEBUG
+ reserved1: 0
+ reserved2: 0
+Load Command: 1
+      cmd: LC_BUILD_VERSION
+  cmdsize: 24
+ platform: MACOS
+    minos: 13.0.0
+      sdk: 13.1.0
+   ntools: 0
+Load Command: 2
+      cmd: LC_SYMTAB
+  cmdsize: 24
+   symoff: 720
+    nsyms: 7
+   stroff: 832
+  strsize: 48
+Load Command: 3
+           cmd: LC_DYSYMTAB
+       cmdsize: 80
+     ilocalsym: 0
+     nlocalsym: 5
+    iextdefsym: 5
+    nextdefsym: 1
+     iundefsym: 6
+     nundefsym: 1
+        tocoff: 0
+          ntoc: 0
+     modtaboff: 0
+       nmodtab: 0
+  extrefsymoff: 0
+   nextrefsyms: 0
+indirectsymoff: 0
+ nindirectsyms: 0
+     extreloff: 0
+       nextrel: 0
+     locreloff: 0
+       nlocrel: 0
+
+Segment 0:
+  segname: 
+   vmaddr: 0x0
+   vmsize: 0x70
+  fileoff: 552
+ filesize: 112
+  maxprot: xwr
+ initprot: xwr
+   nsects: 4
+    flags: 0x0
+Section:
+  sectname: __text
+   segname: __TEXT
+      addr: 0x0
+      size: 0x3c
+    offset: 552
+     align: 4
+    reloff: 664
+    nreloc: 4
+     flags: 0x80000400 REG | ATTR_PURE_INSTR | ATTR_SOME_INSTR
+ reserved1: 0
+ reserved2: 0
+Section:
+  sectname: __my_sect
+   segname: __TEXT
+      addr: 0x3c
+      size: 0x4
+    offset: 612
+     align: 1
+    reloff: 696
+    nreloc: 2
+     flags: 0x80000400 REG | ATTR_PURE_INSTR | ATTR_SOME_INSTR
+ reserved1: 0
+ reserved2: 0
+Section:
+  sectname: __cstring
+   segname: __TEXT
+      addr: 0x40
+      size: 0xd
+    offset: 616
+     align: 1
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000002 CSTRING
+ reserved1: 0
+ reserved2: 0
+Section:
+  sectname: __compact_unwind__LD
+   segname: __LD
+      addr: 0x50
+      size: 0x20
+    offset: 632
+     align: 8
+    reloff: 712
+    nreloc: 1
+     flags: 0x02000000 REG | ATTR_DEBUG
+ reserved1: 0
+ reserved2: 0
+
+Section 1:
+  sectname: __text
+   segname: __TEXT
+      addr: 0x0
+      size: 0x3c
+    offset: 552
+     align: 4
+    reloff: 664
+    nreloc: 4
+     flags: 0x80000400 REG | ATTR_PURE_INSTR | ATTR_SOME_INSTR
+ reserved1: 0
+ reserved2: 0
+Section 2:
+  sectname: __my_sect
+   segname: __TEXT
+      addr: 0x3c
+      size: 0x4
+    offset: 612
+     align: 1
+    reloff: 696
+    nreloc: 2
+     flags: 0x80000400 REG | ATTR_PURE_INSTR | ATTR_SOME_INSTR
+ reserved1: 0
+ reserved2: 0
+Section 3:
+  sectname: __cstring
+   segname: __TEXT
+      addr: 0x40
+      size: 0xd
+    offset: 616
+     align: 1
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000002 CSTRING
+ reserved1: 0
+ reserved2: 0
+Section 4:
+  sectname: __compact_unwind__LD
+   segname: __LD
+      addr: 0x50
+      size: 0x20
+    offset: 632
+     align: 8
+    reloff: 712
+    nreloc: 1
+     flags: 0x02000000 REG | ATTR_DEBUG
+ reserved1: 0
+ reserved2: 0
+
+Function starts:
+
+Symbol table:
+0.
+     name: ltmp0
+     type: 0x0e N_SECT
+     sect: 0x01 __TEXT,__text
+     desc: 0x0
+    value: 0x0
+1.
+     name: ltmp1
+     type: 0x0e N_SECT
+     sect: 0x02 __TEXT,__my_sect
+     desc: 0x0
+    value: 0x3c
+2.
+     name: l_.str
+     type: 0x0e N_SECT
+     sect: 0x03 __TEXT,__cstring
+     desc: 0x0
+    value: 0x40
+3.
+     name: ltmp2
+     type: 0x0e N_SECT
+     sect: 0x03 __TEXT,__cstring
+     desc: 0x0
+    value: 0x40
+4.
+     name: ltmp3
+     type: 0x0e N_SECT
+     sect: 0x04 __LD,__compact_unwind__LD
+     desc: 0x0
+    value: 0x50
+5.
+     name: _main
+     type: 0x0f N_SECT | N_EXT
+     sect: 0x01 __TEXT,__text
+     desc: 0x0
+    value: 0x0
+6.
+     name: _printf
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0x0
+    value: 0x0
+
+Relocation information (__TEXT,__text) 4 entries
+address  pcrel length  extern scattered type           symbolnum/value
+00000028 True  4 bytes True   False     BRANCH26       _printf
+00000024 False 4 bytes True   False     PAGEOFF12      l_.str
+00000020 True  4 bytes True   False     PAGE21         l_.str
+00000018 True  4 bytes True   False     BRANCH26       ltmp1
+Relocation information (__TEXT,__my_sect) 2 entries
+address  pcrel length  extern scattered type           symbolnum/value
+00000000 False 4 bytes False  False     ADDEND         addend = 28
+00000000 True  4 bytes True   False     BRANCH26       _main
+Relocation information (__LD,__compact_unwind__LD) 1 entries
+address  pcrel length  extern scattered type           symbolnum/value
+00000000 False 8 bytes False  False     UNSIGNED       1 (__TEXT,__text)
+Code Signature:
+

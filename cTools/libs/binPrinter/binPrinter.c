@@ -35,7 +35,8 @@ BinPrinter binPrinter = {};
     binPrinter.printHeader = (BinPrintHeader)&(type ## PrintHeader); \
     binPrinter.printSymbols = (BinPrintSymbols)&(type ## PrintSymbols); \
     binPrinter.printSections = (BinPrintSections)&(type ## PrintSections); \
-    binPrinter.printSegments = (BinPrintSegments)&(type ## PrintSegments);
+    binPrinter.printSegments = (BinPrintSegments)&(type ## PrintSegments); \
+    binPrinter.printRelocations = (BinPrintRelocations)&(type ## PrintRelocations);
 
 #define INIT_MACHO_PRINT_FUNC(type) \
     binPrinter.macho.printFuncStarts = (BinPrintFuncStarts)&(type ## PrintFuncStarts); \
@@ -54,7 +55,6 @@ BinPrinter binPrinter = {};
     binPrinter.pe.printExports = (BinPrintExports)&(type ## PrintExports);
 
 #define INIT_ELF_PRINT_FUNC(type) \
-    binPrinter.elf.printRelocations = (BinPrintRelocations)&(type ## PrintRelocations); \
     binPrinter.elf.printDynamicSection = (BinPrintDynamicSection)&(type ## PrintDynamicSection); \
     binPrinter.elf.printVersionInfo = (BinPrintVersionInfo)&(type ## PrintVersionInfo);
 

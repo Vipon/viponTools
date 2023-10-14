@@ -98,6 +98,9 @@ void pe64PrintSymbol(const PE64File *pe, const PESymbol *sym);
 EXPORT_FUNC
 void pe64PrintSymbols(const PE64File *pe);
 
+EXPORT_FUNC
+void pe64PrintRelocations(const PE64File *pe);
+
 
 #endif /* __PE64_PRINTER_H */
 

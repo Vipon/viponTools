@@ -49,6 +49,7 @@ typedef struct {
     BinPrintSymbols printSymbols;
     BinPrintSections printSections;
     BinPrintSegments printSegments;
+    BinPrintRelocations printRelocations;
     struct {
         BinPrintFuncStarts printFuncStarts;
         BinPrintLComs printLComs;
@@ -66,7 +67,6 @@ typedef struct {
         BinPrintExports printExports;
     } pe;
     struct {
-        BinPrintRelocations printRelocations;
         BinPrintDynamicSection printDynamicSection;
         BinPrintVersionInfo printVersionInfo;
     } elf;

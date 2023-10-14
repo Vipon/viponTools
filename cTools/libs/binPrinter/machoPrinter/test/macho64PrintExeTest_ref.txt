@@ -6,6 +6,7 @@ cpusubtype: 0x00000000 (ARM64_ALL)
      ncmds: 0x0000001d
 sizeofcmds: 0x00000768
      flags: 0x00200085 (PIE | TWOLEVEL | DYLDLINK | NOUNDEFS)
+
 Load Command: 0
       cmd: LC_SEGMENT_64
   cmdsize: 72
@@ -266,6 +267,7 @@ Load Command: 28
   cmdsize: 16
   dataoff: 34016
  datasize: 416
+
 Segment 0:
   segname: __PAGEZERO
    vmaddr: 0x0
@@ -366,6 +368,7 @@ Segment 3:
  initprot: r
    nsects: 0
     flags: 0x0
+
 Section 1:
   sectname: __text
    segname: __TEXT
@@ -426,6 +429,7 @@ Section 5:
      flags: 0x00000006 NON_LAZY_SYM
  reserved1: 9 (index into indirect symbol table)
  reserved2: 0
+
 Function starts:
             offset              vaddr func
 0x0000000000003eb4 0x0000000100003eb4 _main
@@ -435,6 +439,7 @@ Function starts:
 0x0000000000000000 0x0000000100003eb4 _main
 0x0000000000000000 0x0000000100003eb4 _main
 0x0000000000000000 0x0000000100003eb4 _main
+
 Symbol table:
 0.
      name: 
@@ -562,6 +567,7 @@ Symbol table:
      sect: 0x00 NO_SECT
      desc: 0x100 (@rpath/libmacho64Printer.dylib)
     value: 0x0
+
 Code Signature:
 Super Blob:
     magic: 0xfade0cc0
@@ -594,3 +600,4 @@ Super Blob:
          HashSlot[6]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
          HashSlot[7]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
          HashSlot[8]: d5b092c0cb51e19d123e40e034f8642bef9b1104bfcb2743373d2a9d6c38f21a
+

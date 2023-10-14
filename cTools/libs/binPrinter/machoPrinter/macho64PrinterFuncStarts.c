@@ -39,6 +39,11 @@ void macho64PrintFuncStarts(const Macho64File *mf)
      *  Offsets are writeen in ULEB128 format.
      */
     printf("Function starts:\n");
+    if (mf->funcStarts == NULL) {
+        NEW_LINE;
+        return;
+    }
+
     FileD fd = mf->fd;
     size_t foff = mf->hOff + mf->funcStarts->dataoff;
     size_t fsize = mf->funcStarts->datasize;
@@ -56,6 +61,8 @@ void macho64PrintFuncStarts(const Macho64File *mf)
         const char *sname = macho64GetSymName(mf, sym);
         printf("0x%.16"PRIx64" 0x%.16"PRIx64" %s\n", off, baseAddr, sname);
     }
+
+    NEW_LINE;
 
     Free(fs);
 }

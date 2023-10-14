@@ -114,6 +114,7 @@ typedef struct dysymtab_command DysymtabCommand;
  *  };
  */
 typedef struct relocation_info MachoRelocInfo;
+typedef struct scattered_relocation_info MachoScatRelocInfo;
 
 /***
  * The linkedit_data_command contains the offsets and sizes of a blob

@@ -25,6 +25,13 @@ include(${CMAKE_CURRENT_LIST_DIR}/cflags.cmake)
 set(WARNING_FLAGS)
 append_cflags(WARNING_FLAGS -Werror -Wall -Wextra -Wcast-qual -Wnewline-eof -Wparentheses -Wsign-conversion -fdiagnostics-color=always)
 
+# only C warning flags
+set(WARNING_CFLAGS)
+append_cflags(WARNING_CFLAGS -Wmissing-prototypes -Wstrict-prototypes)
+
+# only CXX warning flags
+set(WARNING_CXXFLAGS)
+
 if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
   # clang doesn't support these flags (this causes too many warnings)
   append_cflags(WARNING_FLAGS -Wduplicated-branches -Wduplicated-cond)
@@ -51,7 +58,9 @@ if (MSVC)
     -Wno-old-style-cast
     -Wno-float-equal
     -Wno-c++98-compat-pedantic
+    -Wno-unsafe-buffer-usage
   )
+
   if (MSVC_VERSION GREATER_EQUAL "1930") # VS17
     append_cflags(WARNING_FLAGS
       -Wno-reserved-identifier
@@ -66,15 +75,6 @@ if (WIN32)
     -Wno-ignored-attributes
   )
 endif (WIN32)
-
-set(WARNING_CXXFLAGS "${WARNING_FLAGS}")
-
-# only C warning flags
-set(WARNING_CFLAGS)
-append_cflags(WARNING_CFLAGS -Wmissing-prototypes -Wstrict-prototypes)
-
-# only CXX warning flags
-set(WARNING_CXXFLAGS)
 
 string(APPEND C_FLAGS   " ${WARNING_FLAGS}")
 string(APPEND C_FLAGS   " ${WARNING_CFLAGS}")

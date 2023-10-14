@@ -28,3 +28,11 @@ add_vipon_test(
   TEST_FILES macho64PrintExeTest_ref macho64PrintExeTest_ref.txt
 )
 
+add_vipon_test(
+  NAME macho64PrintObjTest
+  SOURCES macho64PrintObjTest.c
+  LINK_LIBS macho64Printer macho64Parse file string LEB128 comdef mem
+  CMD_LINE macho64PrintObjTest_ref macho64PrintObjTest_ref.txt
+  TEST_FILES macho64PrintObjTest_ref macho64PrintObjTest_ref.txt
+)
+

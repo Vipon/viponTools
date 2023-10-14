@@ -2,14 +2,14 @@
  * Copyright (c) 1999 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
- * 
+ *
  * This file contains Original Code and/or Modifications of Original Code
  * as defined in and that are subject to the Apple Public Source License
  * Version 2.0 (the 'License'). You may not use this file except in
  * compliance with the License. Please obtain a copy of the License at
  * http://www.opensource.apple.com/apsl/ and read it before using this
  * file.
- * 
+ *
  * The Original Code and all software distributed under the License are
  * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -17,7 +17,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
  * Please see the License for the specific language governing rights and
  * limitations under the License.
- * 
+ *
  * @APPLE_LICENSE_HEADER_END@
  */
 /*	$NetBSD: exec.h,v 1.6 1994/10/27 04:16:05 cgd Exp $	*/
@@ -53,6 +53,10 @@
 #define _MACHO_RELOC_H_
 #include <stdint.h>
 
+#include "arm/reloc.h"
+#include "arm64/reloc.h"
+#include "x86_64/reloc.h"
+
 /*
  * Format of a relocation entry of a Mach-O file.  Modified from the 4.3BSD
  * format.  The modifications from the original format were changing the value
@@ -80,7 +84,7 @@ struct relocation_info {
  * also an offset but from the start of the "section" for which the relocation
  * entry is for.  See comments in <mach-o/loader.h> about the r_address feild
  * in images for used with the dynamic linker.
- * 
+ *
  * In 4.3BSD a.out objects if r_extern is zero then r_symbolnum is an ordinal
  * for the segment the symbol being relocated is in.  These ordinals are the
  * symbol types N_TEXT, N_DATA, N_BSS or N_ABS.  In Mach-O object files these
@@ -144,7 +148,7 @@ struct relocation_info {
  * mask can be applied can check the same bit each time (r_scattered).
  */
 #endif /* defined(__BIG_ENDIAN__) || defined(__LITTLE_ENDIAN__) */
-#define R_SCATTERED 0x80000000	/* mask to be applied to the r_address field 
+#define R_SCATTERED 0x80000000	/* mask to be applied to the r_address field
 				   of a relocation_info structure to tell that
 				   is is really a scattered_relocation_info
 				   stucture */

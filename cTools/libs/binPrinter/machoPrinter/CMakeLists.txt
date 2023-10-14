@@ -28,6 +28,7 @@ set(MACHO64_PRINTER_SOURCES
   macho64PrinterFuncStarts.c
   macho64PrinterLoadCommands.c
   macho64PrinterCodeSign.c
+  macho64PrinterRelocations.c
 )
 
 set(MACHO64_PRINTER_HEADERS

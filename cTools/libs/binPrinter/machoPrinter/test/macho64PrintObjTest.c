@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,52 +22,40 @@
  * SOFTWARE.
  */
 
-#include <test.h>
-#include <file.h>
+#include "test.h"
+#include "file.h"
 #include "comdef.h"
-#ifdef __WIN__
-# include "delayLib.h" // for test delay import
-#endif /* __WIN__ */
-#include "pe64Parse.h"
-#include "pe64Printer.h"
-
-#ifdef __WIN__
-void dummy(void) __attribute__ ((section (".MY_SECTION123")));
-void dummy(void)
-{
-
-}
-#endif /* __WIN__ */
+#include "macho64Parse.h"
+#include "macho64Printer.h"
 
 #include <stdio.h>
-static const char TESTOUT[] = "pe64PrintExeTest.txt";
+
+static const char TESTOUT[] = "macho64PrintObjTest.txt";
 
 int main(int argc, char *argv[])
 {
     UNUSED(argc);
-#ifdef __WIN__
-    delayLib(); // for test delay import
-#endif /* __WIN__ */
-
-    PE64File *pe = pe64Parse(argv[1]);
-    if (pe == NULL) {
+    Macho64File *mf = macho64Parse(argv[1]);
+    if (mf == NULL) {
         VT_ERROR("Cannot parse %s", argv[1]);
         exit(EXIT_FAILURE);
     }
 
     FILE *f = freopen(TESTOUT, "w", stdout);
 
-    pe64PrintDosHeader(pe);
-    pe64PrintNtHeader(pe);
-    pe64PrintSections(pe);
-    pe64PrintSymbols(pe);
-    pe64PrintImports(pe);
-    pe64PrintDelayImports(pe);
-    pe64PrintRelocations(pe);
+    macho64PrintHeader(mf);
+    macho64PrintLComs(mf);
+    macho64PrintSegments(mf);
+    macho64PrintSections(mf);
+    macho64PrintFuncStarts(mf);
+    macho64PrintSymbols(mf);
+    macho64PrintRelocations(mf);
+    macho64PrintCodeSign(mf);
 
-    pe64Free(pe);
+    macho64Free(mf);
 
     fclose(f);
+
     EXPECT_FILE_EQ(TESTOUT, argv[2]);
 
     return 0;

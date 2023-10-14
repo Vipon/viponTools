@@ -36,7 +36,7 @@ static Arch binParserArch = ARCH;
 static const char doc[] =
     "Binary parser. Support binare format: mach-o/fat (64 bit), elf (64 bit), pe (64 bit)";
 static const char argsDoc[] = "BIN_FILE";
-static const char progVersion[] = "0.4.0";
+static const char progVersion[] = "0.5.0";
 
 typedef enum {
     HEADER = 0,
@@ -239,6 +239,11 @@ int main(int argc, char *argv[])
                         , .flags = OPTION_ARG_OPTIONAL
                         , .doc = "print all symbols"
     );
+    ADD_ARG(printRelocations, .name = "relocs"
+                            , .key = 'r'
+                            , .flags = OPTION_ARG_OPTIONAL
+                            , .doc = "print relocations"
+    );
     ADD_ARG(printFatHeader, .name = "fat-header"
                           , .key = 151
                           , .flags = OPTION_ARG_OPTIONAL
@@ -294,11 +299,6 @@ int main(int argc, char *argv[])
                         , .key = 'e'
                         , .flags = OPTION_ARG_OPTIONAL
                         , .doc = "pe: print exports"
-    );
-    ADD_ARG(printRelocations, .name = "relocs"
-                            , .key = 'r'
-                            , .flags = OPTION_ARG_OPTIONAL
-                            , .doc = "elf: print relocations"
     );
     ADD_ARG(printDynamicSection, .name = "dynamic"
                                , .key = 157
@@ -357,7 +357,7 @@ int main(int argc, char *argv[])
         binPrinter.pe.printExports(binParser.bin);
     }
     if (flags[RELOCATIONS]) {
-        binPrinter.elf.printRelocations(binParser.bin);
+        binPrinter.printRelocations(binParser.bin);
     }
     if (flags[DYNAMIC]) {
         binPrinter.elf.printDynamicSection(binParser.bin);

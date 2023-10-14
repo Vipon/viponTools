@@ -3,18 +3,18 @@ jobs:
   macos-latest-default-debug:
     runs-on: macos-latest
     steps:
-      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          shell: bash
+          path: ${HOME}/.local/bin
+          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
+          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
       - run: ./setup.sh
       - name: Configure Debug Xcode
         run: ./configure
-      - name: Set Env
-        uses: ./.github/actions/set_env
-        with:
-          shell: bash
-          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
-          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
       - name: Xcode Built Test Install
         uses: ./.github/actions/xcode_build_test_install
         with:
@@ -23,18 +23,18 @@ jobs:
   macos-latest-gmake-debug:
     runs-on: macos-latest
     steps:
-      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          shell: bash
+          path: ${HOME}/.local/bin
+          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
+          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
       - run: ./setup.sh
       - name: Configure Debug Gmake
         run: ./configure --gmake --output gmake
-      - name: Set Env
-        uses: ./.github/actions/set_env
-        with:
-          shell: bash
-          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
-          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
       - name: Gmake Built Test Install
         uses: ./.github/actions/gmake_build_test_install
         with:
@@ -43,18 +43,18 @@ jobs:
   macos-latest-ninja-debug:
     runs-on: macos-latest
     steps:
-      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          shell: bash
+          path: ${HOME}/.local/bin
+          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
+          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
       - run: ./setup.sh
       - name: Configure Debug Ninja
         run: ./configure --ninja --output ninja
-      - name: Set Env
-        uses: ./.github/actions/set_env
-        with:
-          shell: bash
-          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
-          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
       - name: Ninja Build Test Install
         uses: ./.github/actions/ninja_build_test_install
         with:
@@ -63,18 +63,18 @@ jobs:
   macos-latest-gmake-release:
     runs-on: macos-latest
     steps:
-      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          shell: bash
+          path: ${HOME}/.local/bin
+          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
+          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
       - run: ./setup.sh
       - name: Configure Gmake Release
         run: ./configure --gmake --release --output gmake_release
-      - name: Set Env
-        uses: ./.github/actions/set_env
-        with:
-          shell: bash
-          cpath: ${HOME}/.local/include:/usr/local/opt/argp-standalone/include:${CPATH}
-          library_path: ${HOME}/.local/lib:/usr/local/opt/argp-standalone/lib/:${LIBRARY_PATH}
       - name: Gmake Built Test Install
         uses: ./.github/actions/gmake_build_test_install
         with:
@@ -90,18 +90,18 @@ jobs:
   ubuntu-2004-gmake-debug:
     runs-on: ubuntu-20.04
     steps:
-      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          shell: bash
+          path: ${HOME}/.local/bin
+          cpath: ${HOME}/.local/include:${CPATH}
+          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
       - run: ./setup.sh
       - name: Configure Debug Gmake
         run: ./configure --gmake --output gmake
-      - name: Set Env
-        uses: ./.github/actions/set_env
-        with:
-          shell: bash
-          cpath: ${HOME}/.local/include:${CPATH}
-          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
       - name: Gmake Built Test Install
         uses: ./.github/actions/gmake_build_test_install
         with:
@@ -110,19 +110,19 @@ jobs:
   ubuntu-2004-ninja-debug:
     runs-on: ubuntu-20.04
     steps:
-      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          shell: bash
+          path: ${HOME}/.local/bin
+          cpath: ${HOME}/.local/include:${CPATH}
+          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
       - run: ./setup.sh
       - run: chmod 0744 "${HOME}/.local/bin/ninja"
       - name: Configure Debug Ninja
         run: ./configure --ninja --output ninja
-      - name: Set Env
-        uses: ./.github/actions/set_env
-        with:
-          shell: bash
-          cpath: ${HOME}/.local/include:${CPATH}
-          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
       - name: Ninja Build Test Install
         uses: ./.github/actions/ninja_build_test_install
         with:
@@ -131,18 +131,18 @@ jobs:
   ubuntu-2004-gmake-release:
     runs-on: ubuntu-20.04
     steps:
-      - run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          shell: bash
+          path: ${HOME}/.local/bin
+          cpath: ${HOME}/.local/include:${CPATH}
+          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
       - run: ./setup.sh
       - name: Configure Gmake Release
         run: ./configure --gmake --release --output gmake_release
-      - name: Set Env
-        uses: ./.github/actions/set_env
-        with:
-          shell: bash
-          cpath: ${HOME}/.local/include:${CPATH}
-          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
       - name: Gmake Build Test Install
         uses: ./.github/actions/gmake_build_test_install
         with:
@@ -160,6 +160,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          path: C:\bin\;C:\bin\ccache\
       - run: .\setup.bat
       - name: Configure MSVC Debug
         run: python .\configure --ninja --static
@@ -173,6 +177,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          path: C:\bin\ccache\
       - run: .\setup.bat
       - name: Configure MSVC Debug
         run: python .\configure --vs --static
@@ -190,6 +198,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          path: C:\bin\ccache\
       - run: .\setup.bat
       - name: Configure MSVC Release
         run: python .\configure --vs --release
