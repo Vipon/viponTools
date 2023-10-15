@@ -34,7 +34,5 @@ if (NOT APPLE)
 add_subdirectory(perfAnalysis)
 endif (NOT APPLE)
 add_subdirectory(test)
-if (NOT WIN32)
-  add_subdirectory(x86_64)
-endif (NOT WIN32)
+add_subdirectory(x86_64)
 

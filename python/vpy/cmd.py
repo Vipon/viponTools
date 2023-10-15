@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2022 Konychev Valera
+# Copyright (c) 2022-2023 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,13 +28,19 @@ from typing import List
 ##  Execute command
 #   @brief Execute command in shell
 #   @param com list of command arguments
+#   @param env dict of pairs {'env_var': 'value'}
 #   @param verbose print extra information, like executing command
 #   @param canFail should exceptions raise after fail or not
-def execCmd(com: List[str], verbose=True, canFail=True, captureOut=False):
+def execCmd( com: List[str]
+           , env=None
+           , verbose=True
+           , canFail=True
+           , captureOut=False
+           ):
     if verbose:
         print(' '.join(com), flush=True)
 
-    res = subprocess.run(com, check=canFail, capture_output=captureOut)
+    res = subprocess.run(com, env=env, check=canFail, capture_output=captureOut)
 
     if verbose:
         if res.stdout is not None:

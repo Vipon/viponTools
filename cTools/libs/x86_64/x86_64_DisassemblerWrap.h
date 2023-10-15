@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,11 +49,13 @@
     #error "*** ERROR: Unknown disassembler. ***"
 #endif /* CAPSTONE_DISASSEMBLER */
 
-#ifdef __STDC__
-    #if __STDC__ == 1
+#ifndef __STDC__
+# define __STDC__ 0
+#endif /* __STDC__ */
+
+#if (__STDC__ == 1) || (__STDC_HOSTED__ == 1)
         #include <stdio.h>
         #include <stdint.h>
-    #endif /* __STDC__ == 1 */
 #else
     #error "*** ERROR: Need standard C library or equivalent. ***"
 #endif /* __STDC__ */
@@ -116,8 +118,7 @@ int get_instr(x86_64_instr *insn, const uint8_t *addr, uint64_t ip);
 const char *get_disasmwrap_error_string(ERR_DISASM_WRAP err);
 
 
-#ifdef __STDC__
-    #if __STDC__ == 1
+#if (__STDC__ == 1) || (__STDC_HOSTED__ == 1)
 /*
  * Description:
  *  Function inits global structure disasm.
@@ -125,7 +126,7 @@ const char *get_disasmwrap_error_string(ERR_DISASM_WRAP err);
  *  @insn - pointer to descriptor of instruction should be printed.
  */
 void print_x86_instr(FILE *f, const x86_64_instr *insn);
-
+#endif /* (__STDC__ == 1) || (__STDC_HOSTED__ == 1) */
 
 /*
  * Description:
@@ -136,9 +137,6 @@ void print_x86_instr(FILE *f, const x86_64_instr *insn);
  *  @com - pointer to array of chars.
  */
 void get_instr_mnemonic(char *com, const x86_64_instr *insn);
-    #endif /* __STDC__ == 1 */
-#endif /* __STDC__ */
-
 
 /*
  * Description:

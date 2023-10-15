@@ -37,7 +37,7 @@ from vpy.cmd import execCmd
 from vpy.installArgs import parseInstallArgs
 import vpy.installArgs as vpy
 
-vpy.INSTALL_VERSION = '3.0.5'
+vpy.INSTALL_VERSION = '5.0'
 
 CAPSTONE_SRC_URL = None
 CAPSTONE_SRC_ROOT = None
@@ -78,21 +78,27 @@ def buildAndInstallCapstone():
           , f'-DCMAKE_INSTALL_PREFIX={vpy.INSTALL_PREFIX}'
           , '..'
           ]
+    env = dict(os.environ)
+    env['CFLAGS'] = '-fpic'
+    execCmd(cmd, env)
+
+    if isWin():
+        cmd = [ 'cmake', '--build', '.', '--config', 'Release']
+    else:
+        cmd = [ 'make', '-j' ]
     execCmd(cmd)
 
-    cmd = [ 'make', '-j' ]
-    execCmd(cmd)
-
-    cmd = [ 'make', 'install' ]
+    if isWin():
+        cmd = [ 'cmake', '--install', '.', '--config', 'Release']
+    else:
+        cmd = [ 'make', 'install' ]
     execCmd(cmd)
 
     os.chdir(cwd)
 
 def main():
-    if isWin():
-        return
-
     args = parseArgs()
+
     if not args.default:
         downloadSrcCapstone()
         extractSrcCapstone()

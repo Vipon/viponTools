@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,23 +24,16 @@
 
 #include "bits.h"
 #include "comdef.h"
+#include "string.h"
 #include "x86_64.h"
 #include "x86_64_DisassemblerWrap.h"
 
 #include <capstone/capstone.h>
 
-#ifdef __STDC__
-    #if __STDC__ == 1
-        #include <string.h>
-    #else
-        #error "*** ERROR: Need standard C library or equivalent. ***"
-    #endif /* __STDC__ == 1 */
-#endif /* __STDC__ */
-
 typedef csh x86_64_disasm;
 
 static uint8_t init = 0;
-x86_64_disasm  disasm;
+static x86_64_disasm  disasm;
 
 
 ERR_DISASM_WRAP init_x86_64_disassembler(void)
@@ -147,8 +140,7 @@ const char *get_disasmwrap_error_string(ERR_DISASM_WRAP err)
 }
 
 
-#ifdef __STDC__
-    #if __STDC__ == 1
+#if (__STDC__ == 1) || (__STDC_HOSTED__ == 1)
 void print_x86_instr(FILE *f, const x86_64_instr *insn)
 {
     LOG("start print_x86_instr\n");
@@ -208,7 +200,7 @@ void print_x86_instr(FILE *f, const x86_64_instr *insn)
 
         case X86_OP_REG:
             fprintf(f, "X86_OP_REG\n");
-            fprintf(f, "\t\treg:\n\t\t\t%s\n", cs_reg_name(disasm, x86_op[i].reg));
+            fprintf(f, "\t\treg:\n\t\t\t%s\n", cs_reg_name(disasm, (unsigned)x86_op[i].reg));
             break;
 
         case X86_OP_IMM:
@@ -219,20 +211,20 @@ void print_x86_instr(FILE *f, const x86_64_instr *insn)
         case X86_OP_MEM:
             fprintf(f, "X86_OP_MEM\n");
             if (x86_op[i].mem.base != X86_REG_INVALID)
-                fprintf(f, "\t\tbase:\n\t\t\t%s\n", cs_reg_name(disasm, x86_op[i].mem.base));
+                fprintf(f, "\t\tbase:\n\t\t\t%s\n", cs_reg_name(disasm, (unsigned)x86_op[i].mem.base));
             if (x86_op[i].mem.index != X86_REG_INVALID) {
-                fprintf(f, "\t\tindex:\n\t\t\t%s\n", cs_reg_name(disasm, x86_op[i].mem.index));
+                fprintf(f, "\t\tindex:\n\t\t\t%s\n", cs_reg_name(disasm, (unsigned)x86_op[i].mem.index));
                 fprintf(f, "\t\tscale:\n\t\t\t%d\n", x86_op[i].mem.scale);
             }
 
             fprintf(f, "\t\tdisp:\n\t\t\t%"PRIx64"\n", x86_op[i].mem.disp);
             break;
-
+/*
         case X86_OP_FP:
             fprintf(f, "X86_OP_FP\n");
             fprintf(f, "\t\tfp_val:\n\t\t\t%lf\n", x86_op[i].fp);
             break;
-
+*/
         default:
             break;
         }
@@ -241,8 +233,7 @@ void print_x86_instr(FILE *f, const x86_64_instr *insn)
 
     LOG("end print_x86_instr\n");
 }
-    #endif /* __STDC__ == 1 */
-#endif /* __STDC__ */
+#endif /* __STDC__ == 1 */
 
 
 void get_instr_mnemonic(char *com, const x86_64_instr *insn)
@@ -410,7 +401,7 @@ uint8_t get_modrm_size(const x86_64_instr *insn)
                 uint8_t reg_op_count = 0;
                 for (i = 0; i < x86->op_count; ++i) {
                     if (x86->operands[i].type == X86_OP_MEM
-                        || x86->operands[i].type == X86_OP_FP) {
+                        /*|| x86->operands[i].type == X86_OP_FP*/) {
                         modrm_size = 1;
                         break;
                     }
@@ -584,7 +575,7 @@ uint32_t get_vex_prefix(const x86_64_instr *insn)
 uint8_t get_rex_prefix(const x86_64_instr *insn)
 {
     LOG("start get_rex_prefix\n");
-    uint32_t rex_prefix = 0;
+    uint8_t rex_prefix = 0;
     cs_x86 *x86 = &(insn->detail->x86);
 
     if (get_rex_prefix_size(insn))
@@ -656,13 +647,13 @@ int32_t get_disp(const x86_64_instr *insn)
             /* Capstone bugs: Disasm in these cases make insn->disp = 0. */
             /* call/jmp rel8/32 */
             if (get_modrm_size(insn))
-                disp = x86->disp;
+                disp = (int32_t)x86->disp;
             else
                 disp = (int32_t)((uint64_t)get_imm(insn) - insn->address - insn->size);
             break;
 
         default:
-            disp = x86->disp;
+            disp = (int32_t)x86->disp;
             break;
         }
 

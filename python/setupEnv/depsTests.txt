@@ -3,11 +3,15 @@ tools:
     - cmake
     - ninja
     - capstone:
-        ver: 3.0.5
+        ver: "5.0"
         deps: cmake
+        dir:
+            win: ./../../external
     - keystone:
         ver: 0.9.2
         deps: cmake
+        dir:
+            win: ./../../external
 
 libs:
     argp:
