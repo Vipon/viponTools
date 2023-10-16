@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valerii
+# Copyright (c) 2021-2023 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -58,13 +58,22 @@ if (MSVC)
     -Wno-old-style-cast
     -Wno-float-equal
     -Wno-c++98-compat-pedantic
-    -Wno-unsafe-buffer-usage
+
   )
 
+  message(STATUS "msvc_version: ${MSVC_VERSION}")
   if (MSVC_VERSION GREATER_EQUAL "1930") # VS17
     append_cflags(WARNING_FLAGS
       -Wno-reserved-identifier
       -Wno-cast-function-type
+      -Wno-documentation
+      -Wno-microsoft-enum-value
+      -Wno-duplicate-enum
+    )
+  endif ()
+  if (MSVC_VERSION GREATER_EQUAL "1934") # VS17.7.2
+    append_cflags(WARNING_FLAGS
+      -Wno-unsafe-buffer-usage
     )
   endif ()
 endif (MSVC)

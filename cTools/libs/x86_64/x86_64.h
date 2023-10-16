@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -343,7 +343,8 @@ extern const uint8_t NOP_7_BYTES[];
 #define SIZE_NOP_7_BYTES    7
 extern const uint8_t NOP_8_BYTES[];
 #define SIZE_NOP_8_BYTES    8
-
+extern const uint8_t NOP_9_BYTES[];
+#define SIZE_NOP_9_BYTES    9
 
 /*
  * Description:

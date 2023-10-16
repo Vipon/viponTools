@@ -37,7 +37,7 @@ from vpy.cmd import execCmd
 from vpy.installArgs import parseInstallArgs
 import vpy.installArgs as vpy
 
-vpy.INSTALL_VERSION = '3.0.5'
+vpy.INSTALL_VERSION = '0.9.2'
 
 KEYSTONE_SRC_URL = None
 KEYSTONE_SRC_ROOT = None
@@ -45,7 +45,7 @@ KEYSTONE_BUILD_DIR = None
 KEYSTONE_SRC_ARCHIVE = None
 
 def parseArgs():
-    args = parseInstallArgs('Install capstone.')
+    args = parseInstallArgs('Install keystone.')
 
     global KEYSTONE_SRC_URL
     KEYSTONE_SRC_URL = f'https://github.com/keystone-engine/keystone/archive/refs/tags/{vpy.INSTALL_VERSION}.zip'
@@ -80,25 +80,29 @@ def buildAndInstallKeystone():
           ]
     execCmd(cmd)
 
-    cmd = [ 'make', '-j' ]
+    if isWin():
+        cmd = [ 'cmake', '--build', '.', '--config', 'Release']
+    else:
+        cmd = [ 'make', '-j' ]
     execCmd(cmd)
 
-    cmd = [ 'make', 'install' ]
+    if isWin():
+        cmd = [ 'cmake', '--install', '.', '--config', 'Release']
+    else:
+        cmd = [ 'make', 'install' ]
     execCmd(cmd)
 
     os.chdir(cwd)
 
 def main():
-    if isWin():
-        return
-
     args = parseArgs()
+
     if not args.default:
         downloadSrcKeystone()
         extractSrcKeystone()
         buildAndInstallKeystone()
     else:
-        installPkg('capstone')
+        installPkg('keystone')
 
 if __name__ == '__main__':
     main()
