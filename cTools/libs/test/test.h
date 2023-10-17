@@ -49,9 +49,10 @@
             exit(EXIT_FAILURE);                 \
         }
 
-    #define EXPECT_INT_EQ(val, res)   EXPECT_VAL_EQ(val, res, "%d")
-    #define EXPECT_SIZET_EQ(val, res) EXPECT_VAL_EQ(val, res, "%zu")
-    #define EXPECT_BOOL_EQ(val, res) EXPECT_VAL_EQ(val, res, "%d")
+    #define EXPECT_BYTE_EQ(val, res)    EXPECT_VAL_EQ(val, res, "%.2x")
+    #define EXPECT_INT_EQ(val, res)     EXPECT_VAL_EQ(val, res, "%d")
+    #define EXPECT_SIZET_EQ(val, res)   EXPECT_VAL_EQ(val, res, "%zu")
+    #define EXPECT_BOOL_EQ(val, res)    EXPECT_VAL_EQ(val, res, "%d")
 
     #define EXPECT_STR_EQ(str0, str1)                        \
         if (strcmp(str0, str1)) {                            \

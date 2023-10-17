@@ -74,7 +74,9 @@ def buildAndInstallKeystone():
     os.chdir(KEYSTONE_BUILD_DIR)
     cmd = [ 'cmake'
           , '-DCMAKE_BUILD_TYPE=Release'
+          , '-DBUILD_SHARED_LIBS=OFF'
           , '-DKEYSTONE_X86_ATT_DISABLE=ON'
+          , '-DLLVM_TARGETS_TO_BUILD=AArch64;X86'
           , f'-DCMAKE_INSTALL_PREFIX={vpy.INSTALL_PREFIX}'
           , '..'
           ]
