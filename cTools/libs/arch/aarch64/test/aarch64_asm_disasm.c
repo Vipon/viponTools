@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+// test assembler and disassemler
+
 #include "mem.h"
 #include "test.h"
 #include "aarch64_asm_wrap.h"

@@ -37,10 +37,10 @@
             exit(EXIT_FAILURE);                \
         }
 
-    #define EXPECT_VAL_EQ(val, res, format)                                            \
-        if (val != res) {                                                              \
-            VT_ERROR(STRINGIZE(val) "- expect: " format " result: " format, res, val); \
-            exit(EXIT_FAILURE);                                                        \
+    #define EXPECT_VAL_EQ(val, res, format)                             \
+        if (val != res) {                                               \
+            VT_ERROR("expect: " format " result: " format, val, res);   \
+            exit(EXIT_FAILURE);                                         \
         }
 
     #define EXPECT_VAL_NOT_EQ(val, res, format) \

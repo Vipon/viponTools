@@ -118,7 +118,8 @@
         "elf64printer.h": "c",
         "aarch64disasmwrap.h": "c",
         "aarch64_disasm_wrap.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "aarch64_asm_wrap.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

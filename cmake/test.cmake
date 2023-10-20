@@ -27,6 +27,7 @@ include_guard()
 #   NAME - test name
 #   SOURCES - list of source files
 #   LINK_LIBRARIES - list of link libraries
+#   DEFINES - extra defines for compiler
 #   CMD_LINE - args for test
 #   DEPENDS - targets should be built before test building
 #   TEST_FILES - files for test case
@@ -38,7 +39,7 @@ function(add_vipon_test)
     # one_value_options
     "NAME"
     # multi_value_options
-    "SOURCES;LINK_LIBS;CMD_LINE;DEPENDS;LINK_FLAGS;TEST_FILES"
+    "SOURCES;LINK_LIBS;DEFINES;CMD_LINE;DEPENDS;LINK_FLAGS;TEST_FILES"
     ${ARGN}
   )
 
@@ -52,6 +53,7 @@ function(add_vipon_test)
 
   target_link_options(${ARG_NAME} BEFORE PUBLIC ${ARG_LINK_FLAGS})
   target_link_libraries(${ARG_NAME} vTest ${ARG_LINK_LIBS})
+  target_compile_definitions(${ARG_NAME} PRIVATE ${ARG_DEFINES})
 
   add_test(
     NAME ${ARG_NAME}

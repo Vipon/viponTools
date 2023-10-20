@@ -32,23 +32,79 @@
 
 typedef enum {
     AARCH64_INSTR_TYPE_RESERVED = 0,
+    // SME
     AARCH64_INSTR_TYPE_SME,         // Scalable Matrix Extension
+    // SVE
     AARCH64_INSTR_TYPE_SVE,         // Scalable Vector Extension
+    // Immediate
     AARCH64_INSTR_TYPE_IMM_PC_REL,  // PC relative Immediate
     AARCH64_INSTR_TYPE_IMM,         // Immediate
+    // Control, System
+    AARCH64_INSTR_TYPE_CBR,         // Conditional Branch (Immediate)
+    AARCH64_INSTR_TYPE_MBR,         // Miscellaneous Branch (Immediate)
+    AARCH64_INSTR_TYPE_UBR_REG,     // Unconditional Branch (Register)
+    AARCH64_INSTR_TYPE_UBR_IMM,     // Unconditional Branch (Immediate)
+    AARCH64_INSTR_TYPE_CMP_BR,      // Compare and Branch (Immediate)
+    AARCH64_INSTR_TYPE_TEST_BR,     // Test and Branch (Immediate)
     AARCH64_INSTR_TYPE_CONTROL,     // Branch, Exceptions, System instruction
+    // Load Store
+    AARCH64_INSTR_TYPE_LOAD_REG_L,  // Load Register (Literal)
     AARCH64_INSTR_TYPE_LOAD_STORE,
+    // Register
     AARCH64_INSTR_TYPE_REGISTER,
+    // Floating-Point SIMD
     AARCH64_INSTR_TYPE_F_SIMD,      // Floating-point and SIMD
     AARCH64_INSTR_TYPE_UNKNOWN,
     AARCH64_INSTR_TYPE_NUM = AARCH64_INSTR_TYPE_UNKNOWN
 } Aarch64_instr_type;
+
+typedef enum {
+    AARCH64_INSTR_OP_RESERVED = 0,
+    AARCH64_INSTR_OP_ADR,
+    AARCH64_INSTR_OP_ADRP,
+    AARCH64_INSTR_OP_BEQ,
+    AARCH64_INSTR_OP_BNE,
+    AARCH64_INSTR_OP_BCS,
+    AARCH64_INSTR_OP_BCC,
+    AARCH64_INSTR_OP_BMI,
+    AARCH64_INSTR_OP_BPL,
+    AARCH64_INSTR_OP_BVS,
+    AARCH64_INSTR_OP_BVC,
+    AARCH64_INSTR_OP_BHI,
+    AARCH64_INSTR_OP_BLS,
+    AARCH64_INSTR_OP_BGE,
+    AARCH64_INSTR_OP_BLT,
+    AARCH64_INSTR_OP_BGT,
+    AARCH64_INSTR_OP_BLE,
+    AARCH64_INSTR_OP_B,
+    AARCH64_INSTR_OP_BL,
+    AARCH64_INSTR_OP_CBZ32,
+    AARCH64_INSTR_OP_CBNZ32,
+    AARCH64_INSTR_OP_CBZ64,
+    AARCH64_INSTR_OP_CBNZ64,
+    AARCH64_INSTR_OP_TBZ32,
+    AARCH64_INSTR_OP_TBNZ32,
+    AARCH64_INSTR_OP_TBZ64,
+    AARCH64_INSTR_OP_TBNZ64,
+    AARCH64_INSTR_OP_LDR32,
+    AARCH64_INSTR_OP_LDR64,
+    AARCH64_INSTR_OP_LDRF32,
+    AARCH64_INSTR_OP_LDRF64,
+    AARCH64_INSTR_OP_LDRF128,
+    AARCH64_INSTR_OP_LDRSW,
+    AARCH64_INSTR_OP_PRFM,
+    AARCH64_INSTR_OP_UNKNOWN,
+    AARCH64_INSTR_OP_NUM = AARCH64_INSTR_OP_UNKNOWN
+} Aarch64_instr_op;
 
 EXPORT_FUNC
 Aarch64_instr_type aarch64_get_instr_type(uint32_t instr);
 
 EXPORT_FUNC
 bool aarch64_is_instr_pc_rel(uint32_t instr);
+
+EXPORT_FUNC
+Aarch64_instr_op aarch64_get_instr_op(uint32_t instr);
 
 #endif /* __AARCH64_H */
 

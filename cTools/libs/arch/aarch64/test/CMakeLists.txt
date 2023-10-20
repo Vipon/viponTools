@@ -20,12 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set(AARCH64_ASM_DISASM_TEST aarch64_asm_disasm)
 add_vipon_test(
-  NAME ${AARCH64_ASM_DISASM_TEST}
+  NAME aarch64_asm_disasm
   SOURCES aarch64_asm_disasm.c
   LINK_LIBS aarch64_asm_wrap aarch64_disasm_wrap mem
+  DEFINES -DKEYSTONE_ASM -DCAPSTONE_DISASM
 )
 
-target_compile_definitions(${AARCH64_ASM_DISASM_TEST} PRIVATE -DKEYSTONE_ASM -DCAPSTONE_DISASM)
+add_vipon_test(
+  NAME aarch64_pc_rel
+  SOURCES aarch64_pc_rel.c
+  LINK_LIBS aarch64_asm_wrap aarch64_disasm_wrap aarch64 mem
+  DEFINES -DKEYSTONE_ASM -DCAPSTONE_DISASM
+)
 
