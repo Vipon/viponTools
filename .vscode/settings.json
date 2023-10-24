@@ -119,7 +119,11 @@
         "aarch64disasmwrap.h": "c",
         "aarch64_disasm_wrap.h": "c",
         "stdlib.h": "c",
-        "aarch64_asm_wrap.h": "c"
+        "aarch64_asm_wrap.h": "c",
+        "aarch64_code_move.h": "c",
+        "mman.h": "c",
+        "foo.h": "c",
+        "bar.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

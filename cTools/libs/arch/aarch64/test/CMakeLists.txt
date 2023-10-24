@@ -30,7 +30,13 @@ add_vipon_test(
 add_vipon_test(
   NAME aarch64_pc_rel
   SOURCES aarch64_pc_rel.c
-  LINK_LIBS aarch64_asm_wrap aarch64_disasm_wrap aarch64 mem
-  DEFINES -DKEYSTONE_ASM -DCAPSTONE_DISASM
+  LINK_LIBS aarch64_asm_wrap aarch64 mem
+  DEFINES -DKEYSTONE_ASM
+)
+
+add_vipon_test(
+  NAME aarch64_code_move_test
+  SOURCES aarch64_code_move.c
+  LINK_LIBS aarch64_code_move binParse
 )
 

@@ -26,7 +26,6 @@
 #include "test.h"
 #include "aarch64.h"
 #include "aarch64_asm_wrap.h"
-#include "aarch64_disasm_wrap.h"
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -127,12 +126,10 @@ int main(int argc, const char *argv[])
     UNUSED(argv);
 
     aarch64_init_asm();
-    aarch64_init_disasm();
 
     test_detect_pc_rel();
 
     aarch64_fini_asm();
-    aarch64_fini_disasm();
     return 0;
 }
 

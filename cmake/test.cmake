@@ -39,7 +39,7 @@ function(add_vipon_test)
     # one_value_options
     "NAME"
     # multi_value_options
-    "SOURCES;LINK_LIBS;DEFINES;CMD_LINE;DEPENDS;LINK_FLAGS;TEST_FILES"
+    "SOURCES;LINK_LIBS;DEFINES;CMD_LINE;DEPENDS;LINK_FLAGS;TEST_FILES;COMP_OPT"
     ${ARGN}
   )
 
@@ -54,6 +54,7 @@ function(add_vipon_test)
   target_link_options(${ARG_NAME} BEFORE PUBLIC ${ARG_LINK_FLAGS})
   target_link_libraries(${ARG_NAME} vTest ${ARG_LINK_LIBS})
   target_compile_definitions(${ARG_NAME} PRIVATE ${ARG_DEFINES})
+  target_compile_options(${ARG_NAME} PRIVATE ${ARG_COMP_OPT})
 
   add_test(
     NAME ${ARG_NAME}

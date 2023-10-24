@@ -63,21 +63,19 @@ void printMem(const uint8_t* mem, size_t size)
 // OS standard headers
 #if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
 # include <unistd.h>
-# include <sys/mman.h>
 
 long getPageSize(void)
 {
     return sysconf(_SC_PAGESIZE);
 }
 
-int Mprotect(void *addr, size_t len, int prot)
+int vt_mprotect(void *addr, size_t len, int prot)
 {
     return mprotect(addr, len, prot);
 }
 
 #elif defined(__WIN__)
 # include <malloc.h>
-# include <Windows.h>
 
 long getPageSize(void)
 {
@@ -85,6 +83,15 @@ long getPageSize(void)
     GetSystemInfo(&si);
 
     return (long)si.dwPageSize;
+}
+
+int vt_mprotect(void *addr, size_t len, int prot)
+{
+    DWORD oldProtect = 0;
+    if (VirtualProtect(addr, len, (DWORD)prot, &oldProtect))
+        return 0;
+    else
+        return -1;
 }
 
 #else

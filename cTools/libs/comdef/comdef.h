@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2023 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 #ifdef COMDEF_SHARED_LIB
 EXPORT_VAR
 #else /* COMDEF_SHARED_LIB */
-# if !defined(STATIC_LIB)
+# ifndef STATIC_LIB
 IMPORT_VAR
 # endif /* STATIC_LIB*/
 #endif /* COMDEF_SHARED_LIB */
@@ -121,7 +121,12 @@ extern int VERBOSE;
     #define STDERROR_PRINT(...)                                         \
         DEF_GUARD(                                                      \
             fprintf(stderr, __VA_ARGS__);                               \
-            fprintf(stderr, "\n\t%s line %d\n", __FILE__, __LINE__);    \
+        )
+    #define STDERROR_LOG(...)                                           \
+        DEF_GUARD(                                                      \
+            if (VERBOSE) {                                              \
+                fprintf(stderr, __VA_ARGS__);                           \
+            }                                                           \
         )
 
 #else // __cplusplus
@@ -206,7 +211,7 @@ extern int VERBOSE;
         }
     #define STDERROR_PRINT_DEBUG(...)   \
         {                               \
-            STDERR_PRINT(__VA_ARGS__)   \
+            STDERROR_PRINT(__VA_ARGS__) \
         }
     #define EXEC_CODE_DEBUG(code)   \
         {                           \

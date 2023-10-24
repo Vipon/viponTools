@@ -31,6 +31,22 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#if defined(__UNIX__) || defined(__LINUX__) || defined(__MAC_OS_X__)
+# include <sys/mman.h>
+
+# define VT_PROT_READ      PROT_READ
+# define VT_PROT_WRITE     PROT_WRITE
+# define VT_PROT_EXEC      PROT_EXEC
+#elif defined(__WIN__)
+# include <Windows.h>
+
+# define VT_PROT_READ      PAGE_READONLY
+# define VT_PROT_WRITE     PAGE_READWRITE
+# define VT_PROT_EXEC      PAGE_EXECUTE
+#else
+# error "*** ERROR: Unknown OS. ***"
+#endif
+
 EXPORT_FUNC
 void Free(void *ptr);
 EXPORT_FUNC
@@ -92,7 +108,7 @@ uint8_t *directCopyBytes(const uint8_t *source, uint8_t *dest, size_t num);
  *         Fail: error code.
  */
 EXPORT_FUNC
-int Mprotect(void *addr, size_t len, int prot);
+int vt_mprotect(void *addr, size_t len, int prot);
 
 EXPORT_FUNC
 const char *getMProtStr(int prot);

@@ -63,6 +63,10 @@ typedef enum {
 #  define AARCH64_DEFINED 1
 #  define NATIVE_SIZE 8
 #  define ARCH AARCH64
+# else
+#  define ARM64_DEFINED 0
+#  define ARMV8_DEFINED 0
+#  define AARCH64_DEFINED 0
 # endif /* __aarch64__ */
 
 # if defined(__arm__)

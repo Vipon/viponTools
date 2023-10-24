@@ -122,5 +122,11 @@ bool aarch64_is_instr_pc_rel(uint32_t instr);
 EXPORT_FUNC
 Aarch64_instr_op aarch64_get_instr_op(uint32_t instr);
 
+EXPORT_FUNC
+uint8_t aarch64_put_bl(uint32_t *dst, uint64_t pc, uint64_t target_addr);
+
+EXPORT_FUNC
+uint8_t aarch64_put_bl_stub(uint32_t *dst, uint64_t target_addr);
+
 #endif /* __AARCH64_H */
 

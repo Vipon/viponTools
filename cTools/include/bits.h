@@ -129,5 +129,8 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
 #define CLR_BIT(val, bitNum) \
     (val & (~((uint64_t)1 << bitNum)))
 
+#define SIGN_EXTEND(val, bit_num) \
+    ((((int64_t)(val)) << (63 - (bit_num))) >> (63 - (bit_num)))
+
 #endif /* _BITS_H */
 

@@ -67,14 +67,25 @@ AARCH64_ASM_WRAP_ERROR aarch64_init_asm(void);
 
 /***
  * @brief Function finalizes global structure asm.
- *        Always success
+ *        Always success.
  */
 EXPORT_FUNC
 void aarch64_fini_asm(void);
 
+/***
+ * @brief Function takes aarch64 assembler code from @p code and turns it into
+ *        aarch64 binary code like the first instructions has PC = @p pc.
+ * @param[in] code Pointer to place with assembler code.
+ * @param[in] pc Initial program counter of first instruction.
+ * @param[out] encoding Place, where will save pointer to the assembled code.
+ *                      Don't need to allocate memory before, but need to free
+ *                      after.
+ * @param[out] size Size in bytes of assembled code.
+ * @param[out] count Number of assembled instructions.
+ */
 EXPORT_FUNC
 AARCH64_ASM_WRAP_ERROR aarch64_do_asm( const char* code
-                                     , uint64_t addr
+                                     , uint64_t pc
                                      , uint8_t **encoding
                                      , size_t *size
                                      , size_t *count

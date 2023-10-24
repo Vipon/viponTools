@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "mem.h"
 #include "aarch64.h"
 
 typedef struct {
@@ -154,5 +155,34 @@ Aarch64_instr_op aarch64_get_instr_op(uint32_t instr)
     }
 
     return AARCH64_INSTR_OP_UNKNOWN;
+}
+
+uint8_t aarch64_put_bl(uint32_t *dst, uint64_t pc, uint64_t target_addr)
+{
+    int64_t imm26 = ((int64_t)(target_addr - pc) >> 2) & 0x3FFFFFF;
+    uint32_t instr = 0x94000000 | ((uint32_t)imm26);
+    *dst = instr;
+    return 4;
+}
+
+uint8_t aarch64_put_bl_stub(uint32_t *dst, uint64_t target_addr)
+{
+    // push x19             | str x19, [sp,#-16]!      | 0xf81f0ff3
+    // mov x19, target_addr | b 0xc                    | 0x14000002
+    //                      | .quad 0xdeadbeefdeadbeef | 0xdeadbeefdeadbeef
+    //                      | ldr x19, -0x8            | 0x58ffffd3
+    // call x19             | blr x19                  | 0xd63f0260
+    // pop x19              | ldr x19, [sp], #16       | 0xf84107f3
+    uint8_t bl_stub[] = {
+        0xf3, 0x0f, 0x1f, 0xf8, 0x03, 0x00, 0x00, 0x14,
+        0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde,
+        0xd3, 0xff, 0xff, 0x58, 0x60, 0x02, 0x3f, 0xd6,
+        0xf3, 0x07, 0x41, 0xf8,
+    };
+
+    *(uint64_t*)(bl_stub + 8) = target_addr;
+    memcpy(dst, bl_stub, sizeof(bl_stub));
+
+    return sizeof(bl_stub);
 }
 
