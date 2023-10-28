@@ -122,11 +122,84 @@ bool aarch64_is_instr_pc_rel(uint32_t instr);
 EXPORT_FUNC
 Aarch64_instr_op aarch64_get_instr_op(uint32_t instr);
 
+#define SIZE_BL_STUB 52
 EXPORT_FUNC
 uint8_t aarch64_put_bl(uint32_t *dst, uint64_t pc, uint64_t target_addr);
-
 EXPORT_FUNC
-uint8_t aarch64_put_bl_stub(uint32_t *dst, uint64_t target_addr);
+uint8_t aarch64_put_bl_stub(uint32_t *dst, uint64_t target_addr, uint64_t x19_addr);
 
+#define SIZE_ADR_STUB 16
+EXPORT_FUNC
+uint8_t aarch64_put_adr( uint32_t *dst
+                       , uint64_t pc
+                       , uint64_t target_addr
+                       , uint8_t reg_num
+                       );
+EXPORT_FUNC
+uint8_t aarch64_put_adr_stub( uint32_t *dst
+                            , uint64_t target_addr
+                            , uint8_t reg_num
+                            );
+
+#define SIZE_LDR_STUB 20
+EXPORT_FUNC
+uint8_t aarch64_put_ldr( uint32_t *dst
+                       , uint64_t pc
+                       , uint64_t target_addr
+                       , uint8_t reg_num
+                       , bool x64
+                       );
+EXPORT_FUNC
+uint8_t aarch64_put_ldr_stub( uint32_t *dst
+                            , uint64_t target_addr
+                            , uint8_t reg_num
+                            , bool x64
+                            );
+EXPORT_FUNC
+uint8_t aarch64_put_ldr32( uint32_t *dst
+                         , uint64_t pc
+                         , uint64_t target_addr
+                         , uint8_t reg_num
+                         );
+EXPORT_FUNC
+uint8_t aarch64_put_ldr32_stub( uint32_t *dst
+                              , uint64_t target_addr
+                              , uint8_t reg_num
+                              );
+EXPORT_FUNC
+uint8_t aarch64_put_ldr64( uint32_t *dst
+                         , uint64_t pc
+                         , uint64_t target_addr
+                         , uint8_t reg_num
+                         );
+EXPORT_FUNC
+uint8_t aarch64_put_ldr64_stub( uint32_t *dst
+                              , uint64_t target_addr
+                              , uint8_t reg_num
+                              );
+
+#define SIZE_B_STUB 64
+EXPORT_FUNC
+uint8_t aarch64_put_b( uint32_t *dst
+                     , uint64_t pc
+                     , uint64_t target_addr);
+EXPORT_FUNC
+uint8_t aarch64_put_b_stub( uint32_t *dst
+                          , uint64_t target_addr
+                          , uint64_t x30_addr
+                          );
+
+#define SIZE_ADRP_STUB 16
+EXPORT_FUNC
+uint8_t aarch64_put_adrp( uint32_t *dst
+                        , uint64_t pc
+                        , uint64_t target_page_addr
+                        , uint8_t reg_num
+                        );
+EXPORT_FUNC
+uint8_t aarch64_put_adrp_stub( uint32_t *dst
+                             , uint64_t target_page_addr
+                             , uint8_t reg_num
+                             );
 #endif /* __AARCH64_H */
 

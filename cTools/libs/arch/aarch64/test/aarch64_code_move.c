@@ -31,42 +31,80 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <sys/mman.h>
 
 #if AARCH64_DEFINED == 1
-extern int call_func0(void);
-int call_func0(void)
+extern
+void call_func0(void *arg);
+void call_func0(void *arg)
 {
-    return putchar('a');
+    UNUSED(arg);
+    putchar('a');
+    putchar('\n');
 }
 
-extern void call_func1(void);
-void call_func1(void)
+extern
+void call_func1(void *arg);
+void call_func1(void *arg)
 {
+    UNUSED(arg);
     printf("Hello call_function\n");
 }
 
-static
-void test_move_and_exec(void *func, const char *fn)
+extern
+void call_func2(uint32_t *n);
+void call_func2(uint32_t *n)
 {
-    uint8_t *buff = Calloc(128, 1);
+    uint32_t i = 0;
+    for (i = 0; i < *n; ++i) {
+        printf("call_func2\n");
+    }
+}
 
+static volatile
+uint32_t temp = 0;
+extern
+void call_func3(uint32_t *n);
+void call_func3(uint32_t *n)
+{
+    temp = *n;
+    printf("temp %"PRIx32" n_addr %p\n", temp, n);
+}
+
+extern
+void test_move_and_exec(void *func, const char *fn, void *arg);// __attribute__((section("__TEXT,__my_sect")));
+
+
+void test_move_and_exec(void *func, const char *fn, void *arg)
+{
     BinSymPtr sym = binParser.getSymByName(binParser.bin, fn);
     uint64_t func_size = binParser.getSSymSize(binParser.bin, sym);
+    uint64_t buff_size = (uint64_t)aarch64_estimate_space( (const uint8_t*)func
+                                               , (uint64_t)func
+                                               , (uint64_t)-1
+                                               , func_size
+                                               );
+    uint8_t *buff = Calloc(buff_size, 1);
+    if (buff == NULL)
+        return;
 
     aarch64_code_move( (const uint8_t*)func
                      , buff
                      , (uint64_t)func
                      , (uint64_t)buff
                      , func_size
-                     , 128
+                     , buff_size
                      );
+
+    //printMem(buff, buff_size);
+    //NEW_LINE;
 
     void *addr = (void*)alignToPageSize((size_t)buff);
     if (vt_mprotect(addr, 4096, VT_PROT_READ | VT_PROT_EXEC)) {
         PERROR("Cannot change memory protection");
     }
 
-    ((void (*)(void))buff)();
+    ((void (*)(void*))buff)(arg);
 
     if (vt_mprotect(addr, 4096, VT_PROT_READ | VT_PROT_WRITE)) {
         PERROR("Cannot change memory protection");
@@ -85,8 +123,11 @@ int main(int argc, const char *argv[])
     initBinParser(argv[0]);
 
 #if AARCH64_DEFINED == 1
-    test_move_and_exec(call_func0, SYM_PREFIX"call_func0");
-    test_move_and_exec(call_func1, SYM_PREFIX"call_func1");
+    test_move_and_exec(call_func0, SYM_PREFIX"call_func0", NULL);
+    test_move_and_exec(call_func1, SYM_PREFIX"call_func1", NULL);
+    uint32_t arg32 = 2;
+    //test_move_and_exec(call_func2, SYM_PREFIX"call_func2", &arg32);
+    test_move_and_exec(call_func3, SYM_PREFIX"call_func3", &arg32);
 #endif /* AARCH64_DEFINED == 1 */
 
     finiBinParser();

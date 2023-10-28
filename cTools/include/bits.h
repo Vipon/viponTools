@@ -101,7 +101,9 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
 #define IS_SIGN_DIFF_16(a16, b16) \
     (((uint16_t)a16 ^ (uint16_t)b16) & 0x8000)
 
-
+/***
+ * @brief Rounds 32 bits value to a closest power of 2
+*/
 #define ROUND_UP_2(v) \
     ({                \
         --v;          \
@@ -113,24 +115,47 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
         ++v;          \
     })
 
-
 #define S32_TO_U64(s32) \
-    ((uint64_t)((int64_t)s32))
+    ((uint64_t)((int64_t)(s32)))
 
+/***
+ * @brief align up to closest less aligned value.
+*/
 #define ALIGN_DOWN(val, align) \
-    (val & ~(align-1))
+    ((val) & ~((align) - 1))
 
+/***
+ * @brief align up to closest higher aligned value.
+*/
 #define ALIGN_UP(val, align) \
-    ((val & (align-1)) ? ALIGN_DOWN(val, align) + align : val)
+    (((val) & ((align) - 1)) ? ALIGN_DOWN(val, align) + align : val)
 
-#define IS_BIT_SET(val, bitNum) \
-    (val & ((uint64_t)1 << bitNum))
+/***
+ * @brief Check if bit set.
+ * @param val Value should be checked.
+ * @param bit_num Positin of bit should be checked.
+ *                Count starts with 0.
+*/
+#define IS_BIT_SET(val, bit_num) \
+    ((val) & ((uint64_t)1 << (bit_num)))
 
-#define CLR_BIT(val, bitNum) \
-    (val & (~((uint64_t)1 << bitNum)))
+/***
+ * @brief Macro clears bit.
+ * @param val Value should be changed.
+ * @param bit_num Positin of bit should be cleaned.
+ *                Count starts with 0.
+*/
+#define CLR_BIT(val, bit_num) \
+    ((val) & (~((uint64_t)1 << (bit_num))))
 
+/***
+ * @brief Macro extends value to 64 bits sign.
+ * @param val Value should be extended.
+ * @param bit_num Positin of bit from which value should be extended.
+ *                Count starts with 0.
+*/
 #define SIGN_EXTEND(val, bit_num) \
-    ((((int64_t)(val)) << (63 - (bit_num))) >> (63 - (bit_num)))
+    ((int64_t)(((uint64_t)(val)) << (63 - (bit_num))) >> (63 - (bit_num)))
 
 #endif /* _BITS_H */
 

@@ -70,5 +70,22 @@ CODE_MOVE_ERROR aarch64_code_move( const uint8_t *src
                                  , uint64_t dst_size
                                  );
 
+/***
+ * @brief Function takes aarch64 binary code from @p src, analyzes it with
+ *        initial PC = @p old_pc. After return how many bytes will be needed to
+ *        place new code.
+ * @param[in] src Pointer to a code needed to be moved.
+ * @param[in] old_pc source program counter.
+ * @param[in] new_pc destination pragram counter. If equal (-1), function will
+ *                   will return maximum estimation.
+ * @param[in] src_size Size of source binary code in bytes.
+ */
+EXPORT_FUNC
+CODE_MOVE_ERROR aarch64_estimate_space( const uint8_t *src
+                                      , uint64_t old_pc
+                                      , uint64_t new_pc
+                                      , uint64_t src_size
+                                      );
+
 #endif /* __AARCH64_CODE_MOVE_H */
 
