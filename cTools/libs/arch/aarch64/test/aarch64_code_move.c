@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
-#include <sys/mman.h>
 
 #if AARCH64_DEFINED == 1
 extern

@@ -63,10 +63,8 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
         uint8_t reg_num = instr & 0x1F;
         int64_t imm21 = (((instr >> 5) << 2) | ((instr >> 29) & 0x3))
                       & 0x1fffff;
-        STDERROR_PRINT("imm21 %"PRIx64"\n", imm21);
         imm21 = SIGN_EXTEND(imm21, 20);
         uint64_t target_addr = old_pc + (uint64_t)imm21;
-        STDERROR_PRINT("target_addr %"PRIx64"\n", target_addr);
         int64_t new_imm21 = (target_addr - new_pc) & 0x1fffff;
         new_imm21 = SIGN_EXTEND(new_imm21, 20);
         uint64_t new_target_addr = new_pc + (uint64_t)(new_imm21);
@@ -187,6 +185,7 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
     case AARCH64_INSTR_OP_LDR32:
         STDERROR_PRINT("LDR32\n");
         x64 = false;
+        FALLTHROUGH;
     case AARCH64_INSTR_OP_LDR64:
     {
         STDERROR_PRINT("LDR64\n");
@@ -205,10 +204,19 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
         } else {
             STDERROR_PRINT("LDR_STUB\n");
             // We cannot fit offset into 19 bits. Need to place ldr_stub.
-            new_instr_size = aarch64_put_ldr_stub((uint32_t*)dst
-                                                    , target_addr
-                                                    , reg_num
-                                                    , x64);
+            if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
+                STDERROR_PRINT("33 bits\n");
+                new_instr_size = aarch64_put_ldr_stub_rel33((uint32_t*)dst
+                                                           , new_pc
+                                                           , target_addr
+                                                           , reg_num
+                                                           , x64);
+            } else {
+                new_instr_size = aarch64_put_ldr_stub_abs((uint32_t*)dst
+                                                         , target_addr
+                                                         , reg_num
+                                                         , x64);
+            }
         }
         break;
     }
@@ -423,14 +431,23 @@ CODE_MOVE_ERROR aarch64_estimate_space( const uint8_t *src
         case AARCH64_INSTR_OP_LDR32:
         case AARCH64_INSTR_OP_LDR64:
         {
+            if (max_estimate) {
+                new_instr_size = SIZE_LDR_STUB_ABS;
+                break;
+            }
+
             int64_t imm19 = SIGN_EXTEND(instr & 0x7ffff, 18);
             uint64_t target_addr = old_pc + (uint64_t)(imm19 << 2);
             int64_t new_imm19 = (target_addr - new_pc) & 0x7ffff;
             new_imm19 = SIGN_EXTEND(new_imm19, 18);
             uint64_t new_target_addr = new_pc + (uint64_t)(new_imm19);
-            if (max_estimate || target_addr != new_target_addr) {
+            if (target_addr != new_target_addr) {
                 // We cannot fit offset into 19 bits. Need to place ldr_stub.
-                new_instr_size = SIZE_LDR_STUB;
+                if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
+                    new_instr_size = SIZE_LDR_STUB_REL33;
+                } else {
+                    new_instr_size = SIZE_LDR_STUB_ABS;
+                }
             }
             break;
         }

@@ -170,9 +170,9 @@ uint8_t aarch64_put_adr( uint32_t *dst
     reg_num &= 0x1f;
     int64_t imm21 = SIGN_EXTEND(target_addr - pc, 20);
     uint32_t instr = 0x10000000
-                   | ((imm21 & 0x3) << 29)
-                   | (((imm21 >> 2) & 0x7ffff) << 5)
-                   | reg_num;
+                   | (uint32_t)((imm21 & 0x3) << 29)
+                   | (uint32_t)(((imm21 >> 2) & 0x7ffff) << 5)
+                   | (uint32_t)(reg_num);
     *dst = instr;
     return 4;
 }
@@ -242,9 +242,9 @@ uint8_t aarch64_put_adrp( uint32_t *dst
     pc &= (uint64_t)(~0xFFF);
     int64_t imm21 = SIGN_EXTEND((target_page_addr - pc) >> 12, 20);
     uint32_t instr = 0x90000000
-                   | ((imm21 & 0x3) << 29)
-                   | (((imm21 >> 2) & 0x7ffff) << 5)
-                   | reg_num;
+                   | (uint32_t)((imm21 & 0x3) << 29)
+                   | (uint32_t)(((imm21 >> 2) & 0x7ffff) << 5)
+                   | (uint32_t)(reg_num);
 
     *dst = instr;
     return 4;
@@ -357,46 +357,77 @@ uint8_t aarch64_put_ldr( uint32_t *dst
     reg_num &= 0x1f;
     int64_t imm19 = SIGN_EXTEND((int64_t)(target_addr - pc) >> 2, 18);
     if (x64)
-        *dst = (0x58000000) | ((imm19 & 0x7ffff) << 5) | reg_num;
+        *dst = (0x58000000)
+             | (uint32_t)((imm19 & 0x7ffff) << 5)
+             | (uint32_t)(reg_num);
     else
-        *dst = (0x18000000) | ((imm19 & 0x7ffff) << 5) | reg_num;
+        *dst = (0x18000000)
+             | (uint32_t)((imm19 & 0x7ffff) << 5)
+             | (uint32_t)(reg_num);
     return 4;
 }
 
-uint8_t aarch64_put_ldr_stub( uint32_t *dst
-                            , uint64_t target_addr
-                            , uint8_t reg_num
-                            , bool x64
-                            )
+uint8_t aarch64_put_ldr_stub_rel33( uint32_t *dst
+                                  , uint64_t pc
+                                  , uint64_t target_addr
+                                  , uint8_t reg_num
+                                  , bool x64
+                                  )
 {
     reg_num &= 0x1f;
 
-    // ldr x[reg_num], -0x8        |
-    // b 0xc                       | 0x14000003
-    // .quad 0xdeadbeefdeadbeef    | 0xdeadbeefdeadbeef
-    // lrx x[reg_num], [x[reg_num]]
-    uint8_t ldr_stub[] = {
-        0x40, 0x00, 0x00, 0x58, // ldr x[reg_num], 0x8
-        0x03, 0x00, 0x00, 0x14, // b 0xc
-        0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde,
+    uint8_t ldr_stub_rel33[] = {
+        0x00, 0x00, 0x00, 0x90, // adrp x[reg_num], 0x0
+        0x00, 0x00, 0x00, 0x91, // add x[reg_num], x[reg_num], #0x0
         0x00, 0x00, 0x40, 0xf9, // ldr x[reg_num], [x[reg_num]]
     };
 
-    *(uint32_t*)ldr_stub = (uint32_t)(0x58000040 | reg_num);
-    *(uint64_t*)(ldr_stub + 8) = target_addr;
+    aarch64_put_adr_stub_rel33((uint32_t*)ldr_stub_rel33, pc, target_addr, reg_num);
     if (x64) {
-        *((uint32_t*)ldr_stub + 4) = (uint32_t)0xf9400000
-                                   | (uint32_t)(reg_num << 5)
-                                   | reg_num;
+        *((uint32_t*)ldr_stub_rel33 + 2) = (uint32_t)0xf9400000
+                                         | (uint32_t)(reg_num << 5)
+                                         | reg_num;
     } else {
-        *((uint32_t*)ldr_stub + 4) = (uint32_t)0xb9400000
-                                   | (uint32_t)(reg_num << 5)
-                                   | reg_num;
+        *((uint32_t*)ldr_stub_rel33 + 2) = (uint32_t)0xb9400000
+                                         | (uint32_t)(reg_num << 5)
+                                         | reg_num;
     }
 
-    memcpy(dst, ldr_stub, sizeof(ldr_stub));
+    memcpy(dst, ldr_stub_rel33, sizeof(ldr_stub_rel33));
 
-    return sizeof(ldr_stub);
+    return sizeof(ldr_stub_rel33);
+}
+
+uint8_t aarch64_put_ldr_stub_abs( uint32_t *dst
+                                , uint64_t target_addr
+                                , uint8_t reg_num
+                                , bool x64
+                                )
+{
+    reg_num &= 0x1f;
+
+    uint8_t ldr_stub_abs[] = {
+        0x00, 0x00, 0x80, 0xd2, // movz x[reg_num], #0
+        0x00, 0x00, 0xa0, 0xf2, // movk x[reg_num], #0x0, lsl #16
+        0x00, 0x00, 0xc0, 0xf2, // movk x[reg_num], #0x0, lsl #32
+        0x00, 0x00, 0xe0, 0xf2, // movk x[reg_num], #0x0, lsl #48
+        0x00, 0x00, 0x40, 0xf9, // ldr x[reg_num], [x[reg_num]]
+    };
+
+    aarch64_put_adr_stub_abs((uint32_t*)ldr_stub_abs, target_addr, reg_num);
+    if (x64) {
+        *((uint32_t*)ldr_stub_abs + 4) = (uint32_t)0xf9400000
+                                       | (uint32_t)(reg_num << 5)
+                                       | reg_num;
+    } else {
+        *((uint32_t*)ldr_stub_abs + 4) = (uint32_t)0xb9400000
+                                       | (uint32_t)(reg_num << 5)
+                                       | reg_num;
+    }
+
+    memcpy(dst, ldr_stub_abs, sizeof(ldr_stub_abs));
+
+    return sizeof(ldr_stub_abs);
 }
 
 uint8_t aarch64_put_ldr32( uint32_t *dst
@@ -408,12 +439,12 @@ uint8_t aarch64_put_ldr32( uint32_t *dst
     return aarch64_put_ldr(dst, pc, target_addr, reg_num, false);
 }
 
-uint8_t aarch64_put_ldr32_stub( uint32_t *dst
-                              , uint64_t target_addr
-                              , uint8_t reg_num
-                              )
+uint8_t aarch64_put_ldr32_stub_abs( uint32_t *dst
+                                  , uint64_t target_addr
+                                  , uint8_t reg_num
+                                  )
 {
-    return aarch64_put_ldr_stub(dst, target_addr, reg_num, false);
+    return aarch64_put_ldr_stub_abs(dst, target_addr, reg_num, false);
 }
 
 uint8_t aarch64_put_ldr64( uint32_t *dst
@@ -425,11 +456,11 @@ uint8_t aarch64_put_ldr64( uint32_t *dst
     return aarch64_put_ldr(dst, pc, target_addr, reg_num, true);
 }
 
-uint8_t aarch64_put_ldr64_stub( uint32_t *dst
-                              , uint64_t target_addr
-                              , uint8_t reg_num
-                              )
+uint8_t aarch64_put_ldr64_stub_abs( uint32_t *dst
+                                  , uint64_t target_addr
+                                  , uint8_t reg_num
+                                  )
 {
-    return aarch64_put_ldr_stub(dst, target_addr, reg_num, true);
+    return aarch64_put_ldr_stub_abs(dst, target_addr, reg_num, true);
 }
 
