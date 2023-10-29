@@ -75,13 +75,24 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
             new_instr_size = aarch64_put_adr( (uint32_t*)dst
                                             , new_pc
                                             , target_addr
-                                            , reg_num);
+                                            , reg_num
+                                            );
         } else {
             STDERROR_PRINT("STUB\n");
             // We cannot fit offset into 21 bits. Need to place adr_stub.
-            new_instr_size = aarch64_put_adr_stub( (uint32_t*)dst
-                                                 , target_addr
-                                                 , reg_num);
+            if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
+                STDERROR_PRINT("ADR 33 bits enough\n");
+                new_instr_size = aarch64_put_adr_stub_rel33( (uint32_t*)dst
+                                                           , new_pc
+                                                           , target_addr
+                                                           , reg_num
+                                                           );
+            } else {
+                new_instr_size = aarch64_put_adr_stub_abs( (uint32_t*)dst
+                                                         , target_addr
+                                                         , reg_num
+                                                         );
+            }
         }
 
         break;
@@ -107,12 +118,19 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
         //STDERROR_PRINT("new_target_addr %"PRIx64"\n", new_target_addr);
         if (target_addr == new_target_addr) {
             // We can fit offset into 21 bits. +- 4GB
-            new_instr_size = aarch64_put_adrp((uint32_t*)dst, new_pc, target_addr, reg_num);
+            new_instr_size = aarch64_put_adrp( (uint32_t*)dst
+                                             , new_pc
+                                             , target_addr
+                                             , reg_num
+                                             );
             //new_instr_size = aarch64_put_adrp_stub((uint32_t*)dst, target_addr, reg_num);
         } else {
             STDERROR_PRINT("PUT STUB\n");
             // We cannot fit offset into 21 bits. Need to place adr_stub.
-            new_instr_size = aarch64_put_adrp_stub((uint32_t*)dst, target_addr, reg_num);
+            new_instr_size = aarch64_put_adrp_stub( (uint32_t*)dst
+                                                  , target_addr
+                                                  , reg_num
+                                                  );
         }
 
         break;
@@ -137,7 +155,8 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
             // We cannot fit offset into 26 bits. Need to place b_stub.
             new_instr_size = aarch64_put_b_stub( (uint32_t*)dst
                                                , target_addr
-                                               , (uint64_t)(&x30_temp));
+                                               , (uint64_t)(&x30_temp)
+                                               );
         }
         break;
     }
@@ -151,19 +170,22 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
         uint64_t new_target_addr = new_pc + ((uint64_t)(new_imm26) << 2);
         if (target_addr == new_target_addr) {
             // We can fit offset into 26 bits.
-            new_instr_size = aarch64_put_bl((uint32_t*)dst, new_pc, target_addr);
+            new_instr_size = aarch64_put_bl( (uint32_t*)dst
+                                           , new_pc
+                                           , target_addr
+                                           );
         } else {
             // We cannot fit offset into 26 bits. Need to place bl_stub.
             if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
                 STDERROR_PRINT("BL 33 bits enough\n");
-                new_instr_size = aarch64_put_bl_stub33( (uint32_t*)dst
-                                                , new_pc
-                                                , target_addr
-                                                );
+                new_instr_size = aarch64_put_bl_stub_rel33( (uint32_t*)dst
+                                                          , new_pc
+                                                          , target_addr
+                                                          );
             } else {
                 new_instr_size = aarch64_put_bl_stub_abs( (uint32_t*)dst
-                                                , target_addr
-                                                );
+                                                        , target_addr
+                                                        );
             }
         }
 
@@ -319,15 +341,24 @@ CODE_MOVE_ERROR aarch64_estimate_space( const uint8_t *src
         switch (aarch64_get_instr_op(instr)) {
         case AARCH64_INSTR_OP_ADR:
         {
+            if (max_estimate) {
+                new_instr_size = SIZE_ADR_STUB_ABS;
+                break;
+            }
+
             int64_t imm21 = (((instr >> 5) << 2) | (instr >> 29)) & 0x1fffff;
             imm21 = SIGN_EXTEND(imm21, 20);
             uint64_t target_addr = old_pc + (uint64_t)imm21;
             int64_t new_imm21 = (target_addr - new_pc) & 0x1fffff;
             new_imm21 = SIGN_EXTEND(new_imm21, 20);
             uint64_t new_target_addr = new_pc + (uint64_t)(new_imm21);
-            if (max_estimate || target_addr != new_target_addr) {
+            if (target_addr != new_target_addr) {
                 // We cannot fit offset into 21 bits. Need to place adr_stub.
-                new_instr_size = SIZE_ADR_STUB;
+                if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
+                    new_instr_size = SIZE_ADR_STUB_REL33;
+                } else {
+                    new_instr_size = SIZE_ADR_STUB_ABS;
+                }
             }
 
             break;
@@ -379,7 +410,7 @@ CODE_MOVE_ERROR aarch64_estimate_space( const uint8_t *src
             if (target_addr != new_target_addr) {
                 // We cannot fit offset into 26 bits. Need to place bl_stub.
                 if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
-                    new_instr_size = SIZE_BL_STUB33;
+                    new_instr_size = SIZE_BL_STUB_REL33;
                 } else {
                     new_instr_size = SIZE_BL_STUB_ABS;
                 }
