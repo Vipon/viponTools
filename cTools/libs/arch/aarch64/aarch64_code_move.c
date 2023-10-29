@@ -98,12 +98,12 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
                       & 0x1fffff;
         imm21 = SIGN_EXTEND(imm21, 20);
         //STDERROR_PRINT("imm21 %"PRIx64"\n", imm21);
-        uint64_t target_addr = old_page_pc + (uint64_t)(imm21 << 12);
+        uint64_t target_addr = old_page_pc + ((uint64_t)imm21 << 12);
         //STDERROR_PRINT("target_addr %"PRIx64"\n", target_addr);
         int64_t new_imm21 = ((target_addr - new_page_pc) >> 12) & 0x1fffff;
         new_imm21 = SIGN_EXTEND(new_imm21, 20);
         //STDERROR_PRINT("new_imm21 %"PRIx64"\n", new_imm21);
-        uint64_t new_target_addr = new_page_pc + (uint64_t)(new_imm21 << 12);
+        uint64_t new_target_addr = new_page_pc + ((uint64_t)new_imm21 << 12);
         //STDERROR_PRINT("new_target_addr %"PRIx64"\n", new_target_addr);
         if (target_addr == new_target_addr) {
             // We can fit offset into 21 bits. +- 4GB
@@ -154,11 +154,17 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
             new_instr_size = aarch64_put_bl((uint32_t*)dst, new_pc, target_addr);
         } else {
             // We cannot fit offset into 26 bits. Need to place bl_stub.
-            static uint64_t x19_temp = 0;
-            new_instr_size = aarch64_put_bl_stub( (uint32_t*)dst
+            if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
+                STDERROR_PRINT("BL 33 bits enough\n");
+                new_instr_size = aarch64_put_bl_stub33( (uint32_t*)dst
+                                                , new_pc
                                                 , target_addr
-                                                , (uint64_t)&x19_temp
                                                 );
+            } else {
+                new_instr_size = aarch64_put_bl_stub_abs( (uint32_t*)dst
+                                                , target_addr
+                                                );
+            }
         }
 
         break;
@@ -171,10 +177,10 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
         STDERROR_PRINT("LDR64\n");
         uint8_t reg_num = instr & 0x1F;
         int64_t imm19 = SIGN_EXTEND((instr >> 5) & 0x7ffff, 18);
-        uint64_t target_addr = old_pc + (uint64_t)(imm19 << 2);
+        uint64_t target_addr = old_pc + ((uint64_t)imm19 << 2);
         int64_t new_imm19 = ((target_addr - new_pc) >> 2) & 0x7ffff;
         new_imm19 = SIGN_EXTEND(new_imm19, 18);
-        uint64_t new_target_addr = new_pc + (uint64_t)(new_imm19 << 2);
+        uint64_t new_target_addr = new_pc + ((uint64_t)new_imm19 << 2);
         if (target_addr == new_target_addr) {
             // We can fit offset into 19 bits.
             new_instr_size = aarch64_put_ldr((uint32_t*)dst
@@ -311,20 +317,6 @@ CODE_MOVE_ERROR aarch64_estimate_space( const uint8_t *src
 
         uint64_t new_instr_size = 4;
         switch (aarch64_get_instr_op(instr)) {
-        case AARCH64_INSTR_OP_BL:
-        {
-            int64_t imm26 = SIGN_EXTEND(instr & 0x3ffffff, 25);
-            uint64_t target_addr = old_pc + ((uint64_t)imm26 << 2);
-            int64_t new_imm26 = (int64_t)(target_addr - new_pc) & 0x3ffffff;
-            new_imm26 = SIGN_EXTEND(new_imm26 >> 2, 25);
-            uint64_t new_target_addr = new_pc + ((uint64_t)(new_imm26) << 2);
-            if (max_estimate || target_addr != new_target_addr) {
-                // We cannot fit offset into 26 bits. Need to place bl_stub.
-                new_instr_size = SIZE_BL_STUB;
-            }
-
-            break;
-        }
         case AARCH64_INSTR_OP_ADR:
         {
             int64_t imm21 = (((instr >> 5) << 2) | (instr >> 29)) & 0x1fffff;
@@ -336,6 +328,61 @@ CODE_MOVE_ERROR aarch64_estimate_space( const uint8_t *src
             if (max_estimate || target_addr != new_target_addr) {
                 // We cannot fit offset into 21 bits. Need to place adr_stub.
                 new_instr_size = SIZE_ADR_STUB;
+            }
+
+            break;
+        }
+        case AARCH64_INSTR_OP_ADRP:
+        {
+            uint64_t old_page_pc = old_pc & (uint64_t)(~0xFFF);
+            uint64_t new_page_pc = new_pc & (uint64_t)(~0xFFF);
+            int64_t imm21 = (((instr >> 5) << 2) | ((instr >> 29) & 0x3))
+                        & 0x1fffff;
+            imm21 = SIGN_EXTEND(imm21, 20);
+            uint64_t target_addr = old_page_pc + ((uint64_t)imm21 << 12);
+            int64_t new_imm21 = ((target_addr - new_page_pc) >> 12) & 0x1fffff;
+            new_imm21 = SIGN_EXTEND(new_imm21, 20);
+            uint64_t new_target_addr = new_page_pc + ((uint64_t)new_imm21 << 12);
+
+            if (max_estimate ||target_addr != new_target_addr) {
+                // We cannot fit offset into 21 bits. Need to place adr_stub.
+                new_instr_size = SIZE_ADRP_STUB;
+            }
+
+            break;
+        }
+        case AARCH64_INSTR_OP_B:
+        {
+            int64_t imm26 = SIGN_EXTEND(instr & 0x3ffffff, 25);
+            uint64_t target_addr = old_pc + ((uint64_t)imm26 << 2);
+            int64_t new_imm26 = ((target_addr - new_pc) >> 2) & 0x3ffffff;
+            new_imm26 = SIGN_EXTEND(new_imm26, 25);
+            uint64_t new_target_addr = new_pc + ((uint64_t)new_imm26 << 2);
+            if (max_estimate || target_addr != new_target_addr) {
+                // We cannot fit offset into 26 bits. Need to place b_stub.
+                new_instr_size = SIZE_B_STUB;
+            }
+            break;
+        }
+        case AARCH64_INSTR_OP_BL:
+        {
+            if (max_estimate) {
+                new_instr_size = SIZE_BL_STUB_ABS;
+                break;
+            }
+
+            int64_t imm26 = SIGN_EXTEND(instr & 0x3ffffff, 25);
+            uint64_t target_addr = old_pc + ((uint64_t)imm26 << 2);
+            int64_t new_imm26 = (int64_t)(target_addr - new_pc) & 0x3ffffff;
+            new_imm26 = SIGN_EXTEND(new_imm26 >> 2, 25);
+            uint64_t new_target_addr = new_pc + ((uint64_t)(new_imm26) << 2);
+            if (target_addr != new_target_addr) {
+                // We cannot fit offset into 26 bits. Need to place bl_stub.
+                if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
+                    new_instr_size = SIZE_BL_STUB33;
+                } else {
+                    new_instr_size = SIZE_BL_STUB_ABS;
+                }
             }
 
             break;
@@ -352,38 +399,6 @@ CODE_MOVE_ERROR aarch64_estimate_space( const uint8_t *src
                 // We cannot fit offset into 19 bits. Need to place ldr_stub.
                 new_instr_size = SIZE_LDR_STUB;
             }
-            break;
-        }
-        case AARCH64_INSTR_OP_B:
-        {
-            int64_t imm26 = SIGN_EXTEND(instr & 0x3ffffff, 25);
-            uint64_t target_addr = old_pc + (uint64_t)(imm26 << 2);
-            int64_t new_imm26 = ((target_addr - new_pc) >> 2) & 0x3ffffff;
-            new_imm26 = SIGN_EXTEND(new_imm26, 25);
-            uint64_t new_target_addr = new_pc + (uint64_t)(new_imm26 << 2);
-            if (max_estimate || target_addr != new_target_addr) {
-                // We cannot fit offset into 26 bits. Need to place b_stub.
-                new_instr_size = SIZE_B_STUB;
-            }
-            break;
-        }
-        case AARCH64_INSTR_OP_ADRP:
-        {
-            uint64_t old_page_pc = old_pc & (uint64_t)(~0xFFF);
-            uint64_t new_page_pc = new_pc & (uint64_t)(~0xFFF);
-            int64_t imm21 = (((instr >> 5) << 2) | ((instr >> 29) & 0x3))
-                        & 0x1fffff;
-            imm21 = SIGN_EXTEND(imm21, 20);
-            uint64_t target_addr = old_page_pc + (uint64_t)(imm21 << 12);
-            int64_t new_imm21 = ((target_addr - new_page_pc) >> 12) & 0x1fffff;
-            new_imm21 = SIGN_EXTEND(new_imm21, 20);
-            uint64_t new_target_addr = new_page_pc + (uint64_t)(new_imm21 << 12);
-
-            if (max_estimate ||target_addr != new_target_addr) {
-                // We cannot fit offset into 21 bits. Need to place adr_stub.
-                new_instr_size = SIZE_ADRP_STUB;
-            }
-
             break;
         }
         case AARCH64_INSTR_OP_BEQ:

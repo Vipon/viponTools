@@ -122,11 +122,17 @@ bool aarch64_is_instr_pc_rel(uint32_t instr);
 EXPORT_FUNC
 Aarch64_instr_op aarch64_get_instr_op(uint32_t instr);
 
-#define SIZE_BL_STUB 52
+#define SIZE_BL_STUB_ABS 20
+#define SIZE_BL_STUB33 12
 EXPORT_FUNC
 uint8_t aarch64_put_bl(uint32_t *dst, uint64_t pc, uint64_t target_addr);
 EXPORT_FUNC
-uint8_t aarch64_put_bl_stub(uint32_t *dst, uint64_t target_addr, uint64_t x19_addr);
+uint8_t aarch64_put_bl_stub33( uint32_t *dst
+                             , uint64_t pc
+                             , uint64_t target_addr
+                             );
+EXPORT_FUNC
+uint8_t aarch64_put_bl_stub_abs(uint32_t *dst, uint64_t target_addr);
 
 #define SIZE_ADR_STUB 16
 EXPORT_FUNC

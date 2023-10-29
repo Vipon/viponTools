@@ -84,6 +84,7 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
                                                , (uint64_t)-1
                                                , func_size
                                                );
+
     uint8_t *buff = Calloc(buff_size, 1);
     if (buff == NULL)
         return;
@@ -96,20 +97,21 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
                      , buff_size
                      );
 
-    //printMem(buff, buff_size);
-    //NEW_LINE;
-
     void *addr = (void*)alignToPageSize((size_t)buff);
     if (vt_mprotect(addr, 4096, VT_PROT_READ | VT_PROT_EXEC)) {
         PERROR("Cannot change memory protection");
     }
 
+    UNUSED(arg);
     ((void (*)(void*))buff)(arg);
 
     if (vt_mprotect(addr, 4096, VT_PROT_READ | VT_PROT_WRITE)) {
         PERROR("Cannot change memory protection");
     }
     Free(buff);
+
+    //asm("msr NZCV, x1\n");
+    //asm("mrs x0, NZCV");
 }
 
 #endif /* AARCH64_DEFINED == 1 */

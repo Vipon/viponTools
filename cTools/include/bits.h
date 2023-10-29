@@ -69,9 +69,15 @@ inline void print_bytes(FILE *f, const uint8_t *array, size_t num)
  *  Macros checks: could 64-bits signed value be represent in 32-bits value.
  */
 #define IS_32_BITS_ENOUGH_64(val64) \
-    (((((int64_t)val64) >> 33) == 0) || \
-        ((~(((int64_t)val64) >> 33)) == 0))
+    (((((int64_t)(val64)) >> 31) == 0) || \
+        ((~(((int64_t)(val64)) >> 31)) == 0))
 
+/***
+ * @brief Could 64-bits signed value fit in n-bits.
+ */
+#define IS_N_BITS_ENOUGH_64(val64, n) \
+    (((((int64_t)(val64)) >> (n-1)) == 0) || \
+        ((~(((int64_t)(val64)) >> (n-1))) == 0))
 
 /*
  * Description:
