@@ -60,7 +60,7 @@ static_assert(((int64_t)AARCH64_DISASM_WRAP_UNKNOWN) < 0, "ERRORS must be negati
  * @brief Function inits global structure disasm.
  * @return
  *  Success:
- *      AARCH64_DISASM_WRAP_OK
+ *      AARCH64_DISASM_WRAP_OK.
  *  Fail:
  *      Other AARCH64_DISASM_WRAP_*. To understanding sence of error call function
  *      arrch64_get_disasm_error_str().
@@ -70,7 +70,7 @@ AARCH64_DISASM_WRAP_ERROR aarch64_init_disasm(void);
 
 /***
  * @brief Function finalizes global structure disasm.
- *        Always success
+ *        Always success.
  */
 EXPORT_FUNC
 void aarch64_fini_disasm(void);
@@ -80,25 +80,26 @@ void aarch64_fini_disasm(void);
  * @brief Function allocates instruction descriptor.
  * @return
  *  Success:
- *      Pointer to allocated instruction descriptor
+ *      Pointer to allocated instruction descriptor.
  *  Fail:
- *      NULL
+ *      NULL.
  */
 EXPORT_FUNC
 Aarch64_instr *aarch64_alloc_instr(void);
 
 /***
  * @brief Function frees instruction descriptor.
- * @param[in] instr Pointer to the buffer where placed pointer to instruction descriptor
+ * @param[in] instr Pointer to the buffer where placed pointer to instruction
+ *                  descriptor.
  */
 EXPORT_FUNC
 void aarch64_free_instr(Aarch64_instr **instr);
 
 /***
- * @brief Disassemble 1 instruction
- * @param[out] instr pointer to allocated instruction descriptor
- * @param[in] code pointer to code should be disassembled
- * @param[in] pc program counter of instruction
+ * @brief Disassemble 1 instruction.
+ * @param[out] instr pointer to allocated instruction descriptor.
+ * @param[in] code pointer to code should be disassembled.
+ * @param[in] pc program counter of instruction.
 */
 EXPORT_FUNC
 AARCH64_DISASM_WRAP_ERROR aarch64_do_disasm( Aarch64_instr *instr
@@ -107,10 +108,10 @@ AARCH64_DISASM_WRAP_ERROR aarch64_do_disasm( Aarch64_instr *instr
                                            );
 
 /***
- * @brief Put mnemonic of instruction in the @p mnemonic array of chars. Size of
- *  array should equal MAX_MNEMONIC_SIZE
- * @param[in] insn pointer to instruction descriptor
- * @param[out] mnemonic pointer mnemonic should be placed
+ * @brief Put mnemonic of instruction in the @p mnemonic array of chars. Size
+ *        of array should equal MAX_MNEMONIC_SIZE.
+ * @param[in] insn pointer to instruction descriptor.
+ * @param[out] mnemonic pointer mnemonic should be placed.
  */
 EXPORT_FUNC
 void aarch64_get_instr_mnemonic(const Aarch64_instr *instr, char *mnemonic);

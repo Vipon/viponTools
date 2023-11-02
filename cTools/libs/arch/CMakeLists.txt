@@ -20,5 +20,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+set(CODE_MOVE_LIB_SOURCES
+  code_move.c
+)
+
+set(CODE_MOVE_LIB_HEADERS
+  code_move.h
+)
+
+add_vipon_library(
+  NAME code_move
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
+  HEADERS ${CODE_MOVE_LIB_HEADERS}
+  SOURCES ${CODE_MOVE_LIB_SOURCES}
+  INSTALL ON
+)
+
 add_subdirectory(aarch64)
 

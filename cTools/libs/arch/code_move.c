@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valera
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,26 @@
  * SOFTWARE.
  */
 
-#include "comdef.h"
+#include "code_move.h"
 
-int VERBOSE = 0;
+const char *get_code_move_err_str(CODE_MOVE_ERROR err)
+{
+    switch(err) {
+    case CODE_MOVE_ERROR_OK:
+        return "Ok.";
+    case CODE_MOVE_ERROR_BAD_ARG:
+        return "Bad arguments.";
+    case CODE_MOVE_ERROR_NO_MEM:
+        return "There is no enougth memory.";
+    case CODE_MOVE_ERROR_DISASM_INIT_ERROR:
+        return "Problem with initialization of disassembler.";
+    case CODE_MOVE_ERROR_BAD_DST:
+        return "Size of desctination buffer less then needed.";
+    case CODE_MOVE_ERROR_UNKNOWN_INSTR:
+        return "Disassembler cannot process an invalid instruction.";
+    case CODE_MOVE_ERROR_UNKNOWN:
+    default:
+        return "Unknown error.";
+    }
+}
 

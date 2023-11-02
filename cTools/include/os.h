@@ -35,18 +35,21 @@
 # ifndef __LINUX__
 #  define __LINUX__
 # endif
+# define SYM_PREFIX
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
 # ifndef __MAC_OS_X__
 #  define __MAC_OS_X__
 # endif
+# define SYM_PREFIX "_"
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
 # ifndef __WIN__
 #  define __WIN__
 # endif
+# define SYM_PREFIX
 #endif
 
 #ifdef __WIN__

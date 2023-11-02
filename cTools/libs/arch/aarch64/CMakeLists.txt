@@ -33,6 +33,24 @@ add_vipon_library(
   TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS ${AARCH64_LIB_HEADERS}
   SOURCES ${AARCH64_LIB_SOURCES}
+  LINK_LIBS string
+  INSTALL ON
+)
+
+set(AARCH64_CODE_MOVE_LIB_SOURCES
+  aarch64_code_move.c
+)
+
+set(AARCH64_CODE_MOVE_LIB_HEADERS
+  aarch64_code_move.h
+)
+
+add_vipon_library(
+  NAME aarch64_code_move
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
+  HEADERS ${AARCH64_CODE_MOVE_LIB_HEADERS}
+  SOURCES ${AARCH64_CODE_MOVE_LIB_SOURCES}
+  LINK_LIBS aarch64 code_move mem
   INSTALL ON
 )
 

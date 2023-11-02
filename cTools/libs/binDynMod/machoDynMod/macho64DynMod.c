@@ -84,7 +84,10 @@ void *macho64Hook(const Macho64File *mf, const char *func, const void *hand)
     size_t mprotect_size = importSect->addr + seed - mprotect_real_vaddr + importSect->size;
 
     rel_addr = (uint64_t*)(real_vaddr[i]);
-    if (Mprotect((void*)mprotect_real_vaddr, mprotect_size, PROT_WRITE | PROT_READ)) {
+    if (vt_mprotect( (void*)mprotect_real_vaddr
+                   , mprotect_size
+                   , VT_PROT_WRITE | VT_PROT_READ))
+    {
         LOG_ERROR("Cannot change memory protection");
         return NULL;
     }

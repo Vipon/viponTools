@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valera
+ * Copyright (c) 2023 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,35 @@
  * SOFTWARE.
  */
 
-#include "comdef.h"
+#ifndef __CODE_MOVE_H
+#define __CODE_MOVE_H
 
-int VERBOSE = 0;
+#include "comdef.h"
+#include <stdint.h>
+
+/* You could get description of code using the function get_strerr_code_move. */
+#ifdef __WIN__
+typedef enum : uint64_t {
+#else
+typedef enum {
+#endif /* __WIN__ */
+    CODE_MOVE_ERROR_OK = 0,
+    CODE_MOVE_ERROR_BAD_ARG = (int64_t)0xFFFFFFFFFFFFFFF0,
+    CODE_MOVE_ERROR_NO_MEM,
+    CODE_MOVE_ERROR_BAD_DST,
+    CODE_MOVE_ERROR_DISASM_INIT_ERROR,
+    CODE_MOVE_ERROR_UNKNOWN_INSTR,
+    CODE_MOVE_ERROR_UNKNOWN = (int64_t)0xFFFFFFFFFFFFFFFF
+} CODE_MOVE_ERROR;
+
+/***
+ * @brief Function takes @p err and returns string that describe error.
+ *        Always success.
+ * @param[in] err Error number.
+ * @return Pointer to a sring with description.
+ */
+EXPORT_FUNC
+const char *get_code_move_err_str(CODE_MOVE_ERROR err);
+
+#endif /* __CODE_MOVE_H */
 

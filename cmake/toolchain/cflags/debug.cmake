@@ -20,6 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-append_cflags(C_FLAGS_DEBUG -Og -ggdb3)
-append_cxxflags(CXX_FLAGS_DEBUG -Og -ggdb3)
+append_cflags(C_FLAGS_DEBUG -Og -ggdb3 -DDEBUG)
+append_cxxflags(CXX_FLAGS_DEBUG -Og -ggdb3 -DDEBUG)
 

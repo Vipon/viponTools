@@ -48,13 +48,13 @@ void aarch64_fini_asm(void)
 }
 
 AARCH64_ASM_WRAP_ERROR aarch64_do_asm( const char* code
-                                     , uint64_t addr
+                                     , uint64_t pc
                                      , uint8_t **encoding
                                      , size_t *size
                                      , size_t *count
                                      )
 {
-    if (ks_asm(aarch64_asm, code, addr, encoding, size, count) != KS_ERR_OK) {
+    if (ks_asm(aarch64_asm, code, pc, encoding, size, count) != KS_ERR_OK) {
         return AARCH64_ASM_WRAP_INVALID_INSTR;
     }
 
