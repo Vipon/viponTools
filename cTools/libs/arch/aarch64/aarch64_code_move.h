@@ -27,6 +27,7 @@
 
 #include "comdef.h"
 #include "code_move.h"
+#include "sorted_vector.h"
 
 #include <stdint.h>
 
@@ -40,6 +41,8 @@
  * @param[in] new_pc destination pragram counter.
  * @param[in] dst_size Size of destination buffer in bytes. If needs more
  *                     place, function will return CODE_MOVE_ERROR_BAD_DST.
+ * @param[in] rel Pointer to relocation information of instruction. If Non-NULL
+ *                  relocation will be saved with pointer.
  */
 EXPORT_FUNC
 CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
@@ -47,6 +50,7 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
                                   , uint64_t old_pc
                                   , uint64_t new_pc
                                   , uint64_t dst_size
+                                  , Sorted_vector *rel
                                   );
 
 /***
@@ -68,6 +72,7 @@ CODE_MOVE_ERROR aarch64_code_move( const uint8_t *src
                                  , uint64_t new_pc
                                  , uint64_t src_size
                                  , uint64_t dst_size
+                                 , Sorted_vector *rel
                                  );
 
 /***

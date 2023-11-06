@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2021 Konychev Valerii
+# Copyright (c) 2020-2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,12 @@
 set(CONTAINERS_HEADERS
   containers.h
   vector.h
+  sorted_vector.h
 )
 
 set(CONTAINERS_SRCS
   vector.c
+  sorted_vector.c
 )
 
 add_vipon_library(

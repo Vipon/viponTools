@@ -54,10 +54,8 @@ extern
 void call_func2(uint32_t *n);
 void call_func2(uint32_t *n)
 {
-    uint32_t i = 0;
-    for (i = 0; i < *n; ++i) {
-        printf("call_func2\n");
-    }
+    printf("n %u\n", *n);
+    printf("n_addr %p\n", n);
 }
 
 static volatile
@@ -71,11 +69,21 @@ void call_func3(uint32_t *n)
 }
 
 extern
-void test_move_and_exec(void *func, const char *fn, void *arg);// __attribute__((section("__TEXT,__my_sect")));
+void call_func4(uint32_t *n);
+void call_func4(uint32_t *n)
+{
+    uint32_t i = 0;
+    for (i = 0; i < *n; ++i) {
+        printf("call_func2\n");
+    }
+}
 
+extern
+void test_move_and_exec(void *func, const char *fn, void *arg);// __attribute__((section("__TEXT,__my_sect")));
 
 void test_move_and_exec(void *func, const char *fn, void *arg)
 {
+    STDERROR_PRINT("arg %p\n", arg);
     BinSymPtr sym = binParser.getSymByName(binParser.bin, fn);
     uint64_t func_size = binParser.getSSymSize(binParser.bin, sym);
     uint64_t buff_size = (uint64_t)aarch64_estimate_space( (const uint8_t*)func
@@ -88,12 +96,16 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
     if (buff == NULL)
         return;
 
+    Sorted_vector sv;
+    sorted_vector_init(&sv, 1, sizeof(bt_reloc), cmp_bt_reloc);
+
     aarch64_code_move( (const uint8_t*)func
                      , buff
                      , (uint64_t)func
                      , (uint64_t)buff
                      , func_size
                      , buff_size
+                     , NULL
                      );
 
     void *addr = (void*)alignToPageSize((size_t)buff);
@@ -108,6 +120,7 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
         PERROR("Cannot change memory protection");
     }
     Free(buff);
+    sorted_vector_fini(&sv);
 
     //asm("msr NZCV, x1\n");
     //asm("mrs x0, NZCV");
@@ -127,8 +140,9 @@ int main(int argc, const char *argv[])
     test_move_and_exec(call_func0, SYM_PREFIX"call_func0", NULL);
     test_move_and_exec(call_func1, SYM_PREFIX"call_func1", NULL);
     uint32_t arg32 = 2;
-    //test_move_and_exec(call_func2, SYM_PREFIX"call_func2", &arg32);
+    test_move_and_exec(call_func2, SYM_PREFIX"call_func2", &arg32);
     test_move_and_exec(call_func3, SYM_PREFIX"call_func3", &arg32);
+    //test_move_and_exec(call_func4, SYM_PREFIX"call_func4", &arg32);
 #endif /* AARCH64_DEFINED == 1 */
 
     finiBinParser();

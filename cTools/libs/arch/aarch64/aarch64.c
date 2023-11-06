@@ -571,3 +571,31 @@ uint8_t aarch64_put_add_reg64_imm( uint32_t *dst
     return 4;
 }
 
+uint8_t aarch64_put_b_cond( uint32_t *dst
+                          , uint64_t pc
+                          , uint64_t target_addr
+                          , uint8_t cond
+                          )
+{
+    int64_t imm19 = SIGN_EXTEND((int64_t)(target_addr - pc) >> 2, 18);
+    *dst = (uint32_t)0x54000000
+         | (uint32_t)(imm19 & 0x5FFFF) << 5
+         | (uint32_t)(cond & 0xF);
+
+    return 4;
+}
+
+uint8_t aarch64_put_bc_cond( uint32_t *dst
+                           , uint64_t pc
+                           , uint64_t target_addr
+                           , uint8_t cond
+                           )
+{
+    int64_t imm19 = SIGN_EXTEND((int64_t)(target_addr - pc) >> 2, 18);
+    *dst = (uint32_t)0x54000010
+         | (uint32_t)(imm19 & 0x5FFFF) << 5
+         | (uint32_t)(cond & 0xF);
+
+    return 4;
+}
+

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,18 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
                                   , uint64_t old_pc
                                   , uint64_t new_pc
                                   , uint64_t dst_size
+                                  , Sorted_vector *rel
                                   )
 {
     if (src == NULL || dst == NULL || dst_size == (uint64_t)(-1)) {
         return CODE_MOVE_ERROR_BAD_ARG;
     }
+
+    bt_reloc r = {
+        .old_pc = old_pc,
+        .new_pc = new_pc,
+        .size = 4,
+    };
 
     //STDERROR_PRINT("old_pc %"PRIx64"\n", old_pc);
     uint32_t instr = *(const uint32_t*)src;
@@ -65,11 +72,13 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
                       & 0x1fffff;
         imm21 = SIGN_EXTEND(imm21, 20);
         uint64_t target_addr = old_pc + (uint64_t)imm21;
+        r.old_target = target_addr;
         int64_t new_imm21 = (target_addr - new_pc) & 0x1fffff;
         new_imm21 = SIGN_EXTEND(new_imm21, 20);
         uint64_t new_target_addr = new_pc + (uint64_t)(new_imm21);
         if (target_addr == new_target_addr) {
             // We can fit offset into 21 bits.
+            r.type = RELOC_AARCH64_ADR;
             new_instr_size = aarch64_put_adr( (uint32_t*)dst
                                             , new_pc
                                             , target_addr
@@ -80,12 +89,21 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
             // We cannot fit offset into 21 bits. Need to place adr_stub.
             if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
                 STDERROR_PRINT("ADR 33 bits enough\n");
+                r.type = RELOC_AARCH64_ADR_REL33;
                 new_instr_size = aarch64_put_adr_stub_rel33( (uint32_t*)dst
                                                            , new_pc
                                                            , target_addr
                                                            , reg_num
                                                            );
+            } else if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 48)) {
+                STDERROR_PRINT("ADR 48 bits enough\n");
+                r.type = RELOC_AARCH64_ADR_ABS48;
+                new_instr_size = aarch64_put_adr_stub_abs48( (uint32_t*)dst
+                                                           , target_addr
+                                                           , reg_num
+                                                           );
             } else {
+                r.type = RELOC_AARCH64_ADR_ABS;
                 new_instr_size = aarch64_put_adr_stub_abs( (uint32_t*)dst
                                                          , target_addr
                                                          , reg_num
@@ -105,18 +123,28 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
                       & 0x1fffff;
         imm21 = SIGN_EXTEND(imm21, 20);
         uint64_t target_addr = old_page_pc + ((uint64_t)imm21 << 12);
+        r.old_target = target_addr;
         int64_t new_imm21 = ((target_addr - new_page_pc) >> 12) & 0x1fffff;
         new_imm21 = SIGN_EXTEND(new_imm21, 20);
         uint64_t new_target_addr = new_page_pc + ((uint64_t)new_imm21 << 12);
         if (target_addr == new_target_addr) {
             // We can fit offset into 21 bits. +- 4GB
+            r.type = RELOC_AARCH64_ADRP;
             new_instr_size = aarch64_put_adrp( (uint32_t*)dst
                                              , new_pc
                                              , target_addr
                                              , reg_num
                                              );
+        } else if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 48)) {
+            STDERROR_PRINT("ADRP 48 bits enough\n");
+            r.type = RELOC_AARCH64_ADRP_ABS48;
+            new_instr_size = aarch64_put_adrp_stub_abs48( (uint32_t*)dst
+                                                        , target_addr
+                                                        , reg_num
+                                                        );
         } else {
             STDERROR_PRINT("PUT STUB\n");
+            r.type = RELOC_AARCH64_ADRP_ABS;
             // We cannot fit offset into 21 bits. Need to place adr_stub.
             new_instr_size = aarch64_put_adrp_stub_abs( (uint32_t*)dst
                                                       , target_addr
@@ -130,12 +158,14 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
     {
         int64_t imm26 = SIGN_EXTEND(instr & 0x3ffffff, 25);
         uint64_t target_addr = old_pc + ((uint64_t)imm26 << 2);
+        r.old_target = target_addr;
         int64_t new_imm26 = ((target_addr - new_pc) >> 2) & 0x3ffffff;
         new_imm26 = SIGN_EXTEND(new_imm26, 25);
         uint64_t new_target_addr = new_pc + ((uint64_t)new_imm26 << 2);
         if (target_addr == new_target_addr) {
             STDERROR_PRINT("B\n");
             // We can fit offset into 26 bits.
+            r.type = RELOC_AARCH64_B;
             new_instr_size = aarch64_put_b( (uint32_t*)dst
                                           , new_pc
                                           , target_addr
@@ -144,6 +174,7 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
             STDERROR_PRINT("B_STUB\n");
             static uint64_t x30_temp = 0;
             // We cannot fit offset into 26 bits. Need to place b_stub.
+            r.type = RELOC_AARCH64_B_ABS;
             new_instr_size = aarch64_put_b_stub_abs( (uint32_t*)dst
                                                    , target_addr
                                                    , (uint64_t)(&x30_temp)
@@ -156,28 +187,35 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
         STDERROR_PRINT("BL\n");
         int64_t imm26 = SIGN_EXTEND(instr & 0x3ffffff, 25);
         uint64_t target_addr = old_pc + ((uint64_t)imm26 << 2);
+        r.old_target = target_addr;
         int64_t new_imm26 = (int64_t)(target_addr - new_pc) & 0x3ffffff;
         new_imm26 = SIGN_EXTEND(new_imm26 >> 2, 25);
         uint64_t new_target_addr = new_pc + ((uint64_t)(new_imm26) << 2);
         if (target_addr == new_target_addr) {
             // We can fit offset into 26 bits.
+            r.type = RELOC_AARCH64_BL;
             new_instr_size = aarch64_put_bl( (uint32_t*)dst
                                            , new_pc
                                            , target_addr
                                            );
-        } else {
-            // We cannot fit offset into 26 bits. Need to place bl_stub.
-            if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
-                STDERROR_PRINT("BL 33 bits enough\n");
-                new_instr_size = aarch64_put_bl_stub_rel33( (uint32_t*)dst
-                                                          , new_pc
-                                                          , target_addr
-                                                          );
-            } else {
-                new_instr_size = aarch64_put_bl_stub_abs( (uint32_t*)dst
+        } else if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
+            STDERROR_PRINT("BL 33 bits enough\n");
+            r.type = RELOC_AARCH64_BL_REL33;
+            new_instr_size = aarch64_put_bl_stub_rel33( (uint32_t*)dst
+                                                        , new_pc
                                                         , target_addr
                                                         );
-            }
+        } else if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 48)) {
+            STDERROR_PRINT("BL 48 bits enough\n");
+            r.type = RELOC_AARCH64_BL_ABS48;
+            new_instr_size = aarch64_put_bl_stub_abs48( (uint32_t*)dst
+                                                      , target_addr
+                                                      );
+        } else {
+            r.type = RELOC_AARCH64_BL_ABS;
+            new_instr_size = aarch64_put_bl_stub_abs( (uint32_t*)dst
+                                                    , target_addr
+                                                    );
         }
 
         break;
@@ -192,32 +230,42 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
         uint8_t reg_num = instr & 0x1F;
         int64_t imm19 = SIGN_EXTEND((instr >> 5) & 0x7ffff, 18);
         uint64_t target_addr = old_pc + ((uint64_t)imm19 << 2);
+        r.old_target = target_addr;
         int64_t new_imm19 = ((target_addr - new_pc) >> 2) & 0x7ffff;
         new_imm19 = SIGN_EXTEND(new_imm19, 18);
         uint64_t new_target_addr = new_pc + ((uint64_t)new_imm19 << 2);
         if (target_addr == new_target_addr) {
             // We can fit offset into 19 bits.
+            r.type = RELOC_AARCH64_LDR;
             new_instr_size = aarch64_put_ldr((uint32_t*)dst
                                             , new_pc
                                             , target_addr
                                             , reg_num, x64);
-        } else {
-            STDERROR_PRINT("LDR_STUB\n");
+        } else if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
             // We cannot fit offset into 19 bits. Need to place ldr_stub.
-            if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 33)) {
-                STDERROR_PRINT("33 bits\n");
-                new_instr_size = aarch64_put_ldr_stub_rel33((uint32_t*)dst
-                                                           , new_pc
-                                                           , target_addr
-                                                           , reg_num
-                                                           , x64);
-            } else {
-                new_instr_size = aarch64_put_ldr_stub_abs((uint32_t*)dst
-                                                         , target_addr
-                                                         , reg_num
-                                                         , x64);
-            }
+            STDERROR_PRINT("33 bits\n");
+            r.type = RELOC_AARCH64_LDR_REL33;
+            new_instr_size = aarch64_put_ldr_stub_rel33((uint32_t*)dst
+                                                        , new_pc
+                                                        , target_addr
+                                                        , reg_num
+                                                        , x64);
+        } else if (IS_N_BITS_ENOUGH_64(target_addr - new_pc, 48)) {
+            // We cannot fit offset into 19 bits. Need to place ldr_stub.
+            STDERROR_PRINT("48 bits\n");
+            r.type = RELOC_AARCH64_LDR_ABS48;
+            new_instr_size = aarch64_put_ldr_stub_abs48((uint32_t*)dst
+                                                       , target_addr
+                                                       , reg_num
+                                                       , x64);
+        } else {
+            r.type = RELOC_AARCH64_LDR_ABS;
+            new_instr_size = aarch64_put_ldr_stub_abs((uint32_t*)dst
+                                                        , target_addr
+                                                        , reg_num
+                                                        , x64);
         }
+
         break;
     }
     case AARCH64_INSTR_OP_BEQ:
@@ -267,8 +315,14 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
     default:
         //STDERROR_PRINT("dst %p\n", dst);
         *(uint32_t*)dst = new_instr;
+        //STDERROR_PRINT("%x\n", new_instr);
+        r.old_target = 0;
+        r.type = RELOC_GP;
         break;
     }
+
+    if (rel)
+        sorted_vector_insert(rel, &r);
 
     return (CODE_MOVE_ERROR)new_instr_size;
 }
@@ -279,6 +333,7 @@ CODE_MOVE_ERROR aarch64_code_move( const uint8_t *src
                                  , uint64_t new_pc
                                  , uint64_t src_size
                                  , uint64_t dst_size
+                                 , Sorted_vector *rel
                                  )
 {
     if (src == NULL                || dst == NULL ||
@@ -297,7 +352,9 @@ CODE_MOVE_ERROR aarch64_code_move( const uint8_t *src
                                                                 , old_pc
                                                                 , new_pc
                                                                 , dst_size
+                                                                , rel
                                                                 );
+        //print_bytes(stderr, dst, new_instr_size);
 
         src += 4;
         dst += new_instr_size;

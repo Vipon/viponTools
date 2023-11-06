@@ -24,6 +24,19 @@
 
 #include "code_move.h"
 
+int
+cmp_bt_reloc(const void *a, const void *b)
+{
+    bt_reloc a_rel = *(const bt_reloc*)a;
+    bt_reloc b_rel = *(const bt_reloc*)b;
+    if (a_rel.old_pc < b_rel.old_pc)
+        return -1;
+    if (a_rel.old_pc > b_rel.old_pc)
+        return 1;
+
+    return 0;
+}
+
 const char *get_code_move_err_str(CODE_MOVE_ERROR err)
 {
     switch(err) {
