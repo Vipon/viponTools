@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-#ifndef __SORTED_VECTOR_H
-#define __SORTED_VECTOR_H
+#ifndef __VT_SORTED_VECTOR_H
+#define __VT_SORTED_VECTOR_H
 
 #include "comdef.h"
-#include "vector.h"
+#include "vt_vector.h"
 
 typedef struct {
-    Vector v;
+    vt_vector_t v;
     int (*cmp)(const void *, const void *);
-} Sorted_vector;
+} vt_sorted_vector_t;
 
 /**
  * \brief Initiates sorted vector.
@@ -46,22 +46,22 @@ typedef struct {
  * \return 0 if success. -1 if fail.
  */
 static inline int
-sorted_vector_init(Sorted_vector *sv, size_t capacity, size_t elem_size,
+vt_sorted_vector_init(vt_sorted_vector_t *sv, size_t capacity, size_t elem_size,
     int (*cmp)(const void *, const void *))
 {
     sv->cmp = cmp;
-    return vector_init((Vector*)sv, capacity, elem_size);
+    return vt_vector_init((vt_vector_t*)sv, capacity, elem_size);
 }
 
 /**
- * \brief Function finalizes sorted vector sotred at the pointer \param src.
+ * \brief Function finalizes sorted vector.
  *
  * \param[in] sv Point to sorted vector needed to be finalized.
  */
 static inline void
-sorted_vector_fini(Sorted_vector *sv)
+vt_sorted_vector_fini(vt_sorted_vector_t *sv)
 {
-    vector_fini((Vector*)sv);
+    vt_vector_fini((vt_vector_t*)sv);
 }
 
 /**
@@ -73,13 +73,13 @@ sorted_vector_fini(Sorted_vector *sv)
  * \return 0 if success. -1 if fail.
  */
 static inline int
-sorted_vector_resize(Sorted_vector *sv, size_t capacity)
+vt_sorted_vector_resize(vt_sorted_vector_t *sv, size_t capacity)
 {
-    return vector_resize((Vector*)sv, capacity);
+    return vt_vector_resize((vt_vector_t*)sv, capacity);
 }
 
 EXPORT_FUNC void *
-sorted_vector_find_elem(const Sorted_vector *sv, const void* elem);
+vt_sorted_vector_find_elem(const vt_sorted_vector_t *sv, const void* elem);
 
 /**
  * \brief Insert new element in the sorted vector.
@@ -90,7 +90,7 @@ sorted_vector_find_elem(const Sorted_vector *sv, const void* elem);
  * \return 0 if success. -1 if fail.
  */
 EXPORT_FUNC int
-sorted_vector_insert(Sorted_vector *sv, const void* elem);
+vt_sorted_vector_insert(vt_sorted_vector_t *sv, const void* elem);
 
-#endif /* __SORTED_VECTOR_H */
+#endif /* __VT_SORTED_VECTOR_H */
 

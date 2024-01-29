@@ -32,19 +32,19 @@
     #include <stdlib.h>
 
     #define EXPECT_FUNC_EQ(func, res)          \
-        if (func != res) {                     \
+        if ((func) != (res)) {                 \
             VT_ERROR(STRINGIZE(func) " fail"); \
             exit(EXIT_FAILURE);                \
         }
 
-    #define EXPECT_VAL_EQ(val, res, format)                             \
-        if (val != res) {                                               \
-            VT_ERROR("expect: " format " result: " format, val, res);   \
-            exit(EXIT_FAILURE);                                         \
+    #define EXPECT_VAL_EQ(val, res, format)                              \
+        if ((val) != (res)) {                                            \
+            VT_ERROR("expect: " format " result: " format, (val), (res));\
+            exit(EXIT_FAILURE);                                          \
         }
 
     #define EXPECT_VAL_NOT_EQ(val, res, format) \
-        if (val == res) {                       \
+        if ((val) == (res)) {                   \
             VT_ERROR(format);                   \
             exit(EXIT_FAILURE);                 \
         }
@@ -53,6 +53,7 @@
     #define EXPECT_INT_EQ(val, res)     EXPECT_VAL_EQ(val, res, "%d")
     #define EXPECT_SIZET_EQ(val, res)   EXPECT_VAL_EQ(val, res, "%zu")
     #define EXPECT_BOOL_EQ(val, res)    EXPECT_VAL_EQ(val, res, "%d")
+    #define EXPECT_POINTER_EQ(val, res) EXPECT_VAL_EQ(val, res, "%p")
 
     #define EXPECT_STR_EQ(str0, str1)                        \
         if (strcmp(str0, str1)) {                            \

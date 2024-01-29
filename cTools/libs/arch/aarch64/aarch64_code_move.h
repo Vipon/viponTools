@@ -27,7 +27,7 @@
 
 #include "comdef.h"
 #include "code_move.h"
-#include "sorted_vector.h"
+#include "vt_sorted_vector.h"
 
 #include <stdint.h>
 
@@ -50,7 +50,7 @@ CODE_MOVE_ERROR aarch64_instr_move( const uint8_t *src
                                   , uint64_t old_pc
                                   , uint64_t new_pc
                                   , uint64_t dst_size
-                                  , Sorted_vector *rel
+                                  , vt_sorted_vector_t *rel
                                   );
 
 /***
@@ -72,7 +72,7 @@ CODE_MOVE_ERROR aarch64_code_move( const uint8_t *src
                                  , uint64_t new_pc
                                  , uint64_t src_size
                                  , uint64_t dst_size
-                                 , Sorted_vector *rel
+                                 , vt_sorted_vector_t *rel
                                  );
 
 /***

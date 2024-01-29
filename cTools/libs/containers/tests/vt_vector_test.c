@@ -24,38 +24,38 @@
 
 #include "test.h"
 #include "comdef.h"
-#include "vector.h"
+#include "vt_vector.h"
 
 #include <stddef.h>
 
 static int
-vector_init_test(void)
+vt_vector_init_test(void)
 {
-    Vector v;
+    vt_vector_t v;
 
     const size_t capacity = 100;
     const size_t elem_size = sizeof(int);
-    if (vector_init(&v, capacity, elem_size)) {
+    if (vt_vector_init(&v, capacity, elem_size)) {
         return -1;
     }
     EXPECT_SIZET_EQ(v.capacity, capacity);
     EXPECT_SIZET_EQ(v.elem_size, elem_size);
     EXPECT_SIZET_EQ(v.end, (size_t)0);
 
-    vector_fini(&v);
+    vt_vector_fini(&v);
     return 0;
 }
 
 static int
-vector_push_back_test(void)
+vt_vector_push_back_test(void)
 {
-    Vector v;
+    vt_vector_t v;
     const size_t capacity = 100;
-    vector_init(&v, capacity, sizeof(size_t));
+    vt_vector_init(&v, capacity, sizeof(size_t));
 
     size_t i = 0;
     for (i = 0; i < capacity; ++i) {
-        vector_push_back(&v, &i);
+        vt_vector_push_back(&v, &i);
     }
 
     size_t *data = (size_t*)(void*)v.data;
@@ -63,72 +63,72 @@ vector_push_back_test(void)
         EXPECT_SIZET_EQ(data[i], i);
     }
 
-    vector_fini(&v);
+    vt_vector_fini(&v);
     return 0;
 }
 
 static int
-vector_pop_back_test(void)
+vt_vector_pop_back_test(void)
 {
-    Vector v;
+    vt_vector_t v;
     int i = 0;
     const int capacity = 100;
 
-    vector_init(&v, 1, sizeof(int));
+    vt_vector_init(&v, 1, sizeof(int));
 
     for (i = 0; i < capacity; ++i) {
-        vector_push_back(&v, &i);
+        vt_vector_push_back(&v, &i);
     }
 
     --i;
     for (; i >= 0  ; --i) {
-        EXPECT_INT_EQ(*(int*) vector_pop_back(&v), i);
+        EXPECT_INT_EQ(*(int*) vt_vector_pop_back(&v), i);
     }
 
-    vector_fini(&v);
+    vt_vector_fini(&v);
     return 0;
 }
 
 static void
-vector_add_elem(void *p, int a)
+vt_vector_add_elem(void *p, int a)
 {
     *(int *)p += a;
 }
 
 static int
-vector_for_each_test(void)
+vt_vector_for_each_test(void)
 {
-    Vector v;
+    vt_vector_t v;
     int i = 0;
     const int capacity = 100;
 
-    vector_init(&v, 1, sizeof(int));
+    vt_vector_init(&v, 1, sizeof(int));
 
     for (i = 0; i < capacity; ++i) {
-        vector_push_back(&v, &i);
+        vt_vector_push_back(&v, &i);
     }
 
     int *v_iter = NULL;
-    vector_for_each(&v, v_iter,
-        vector_add_elem(v_iter, 2);
+    vt_vector_for_each(&v, v_iter,
+        vt_vector_add_elem(v_iter, 2);
     )
 
     --i;
     for (; i >= 0  ; --i) {
-        EXPECT_INT_EQ(*(int*) vector_pop_back(&v), i + 2);
+        EXPECT_INT_EQ(*(int*) vt_vector_pop_back(&v), i + 2);
     }
 
-    vector_fini(&v);
+    vt_vector_fini(&v);
     return 0;
 }
 
 int
 main(void)
 {
-    EXPECT_FUNC_EQ(vector_init_test(), 0);
-    EXPECT_FUNC_EQ(vector_push_back_test(), 0);
-    EXPECT_FUNC_EQ(vector_pop_back_test(), 0);
-    EXPECT_FUNC_EQ(vector_for_each_test(), 0);
+    EXPECT_FUNC_EQ(vt_vector_init_test(), 0);
+    EXPECT_FUNC_EQ(vt_vector_push_back_test(), 0);
+    EXPECT_FUNC_EQ(vt_vector_pop_back_test(), 0);
+    EXPECT_FUNC_EQ(vt_vector_for_each_test(), 0);
     return 0;
 }
 

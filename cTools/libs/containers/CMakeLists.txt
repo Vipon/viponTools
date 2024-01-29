@@ -21,18 +21,21 @@
 # SOFTWARE.
 
 set(CONTAINERS_HEADERS
-  containers.h
-  vector.h
-  sorted_vector.h
+  vt_containers.h
+  vt_list.h
+  vt_stack.h
+  vt_vector.h
+  vt_sorted_vector.h
 )
 
 set(CONTAINERS_SRCS
-  vector.c
-  sorted_vector.c
+  vt_list.c
+  vt_vector.c
+  vt_sorted_vector.c
 )
 
 add_vipon_library(
-  NAME containers
+  NAME vt_containers
   TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS ${CONTAINERS_HEADERS}
   SOURCES ${CONTAINERS_SRCS}

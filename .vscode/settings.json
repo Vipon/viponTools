@@ -125,7 +125,8 @@
         "foo.h": "c",
         "bar.h": "c",
         "__bit_reference": "cpp",
-        "aarch64.h": "c"
+        "aarch64.h": "c",
+        "charconv": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

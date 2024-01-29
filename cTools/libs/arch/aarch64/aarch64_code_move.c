@@ -31,24 +31,24 @@
 
 #include <inttypes.h>
 
-#define GET_PRE_INIT_BT_RELOC(sv_rel)                                       \
-    (                                                                       \
-        {                                                                   \
-            static bt_reloc local_r = {};                                   \
-            local_r.old_pc = old_pc;                                        \
-            local_r.new_pc = new_pc;                                        \
-            local_r.old_size = 4;                                           \
-            local_r.new_size = 4;                                           \
-            local_r.type = RELOC_GP;                                        \
-            bt_reloc *r = &local_r;                                         \
-            if (sv_rel)                                                     \
-                r = (bt_reloc*) sorted_vector_find_elem((sv_rel), &local_r);\
-            r;                                                              \
-        }                                                                   \
+#define GET_PRE_INIT_BT_RELOC(sv_rel)                                          \
+    (                                                                          \
+        {                                                                      \
+            static bt_reloc local_r = {};                                      \
+            local_r.old_pc = old_pc;                                           \
+            local_r.new_pc = new_pc;                                           \
+            local_r.old_size = 4;                                              \
+            local_r.new_size = 4;                                              \
+            local_r.type = RELOC_GP;                                           \
+            bt_reloc *r = &local_r;                                            \
+            if (sv_rel)                                                        \
+                r = (bt_reloc*) vt_sorted_vector_find_elem((sv_rel), &local_r);\
+            r;                                                                 \
+        }                                                                      \
     );
 
 static int
-pre_init_relocations( Sorted_vector *rel
+pre_init_relocations( vt_sorted_vector_t *rel
                     , uint64_t old_pc
                     , uint64_t new_pc
                     , uint64_t instr_num
@@ -64,7 +64,7 @@ pre_init_relocations( Sorted_vector *rel
             .new_size = 4,
         };
 
-        if (sorted_vector_insert(rel, &r)) {
+        if (vt_sorted_vector_insert(rel, &r)) {
             return -1;
         }
     }
@@ -77,7 +77,7 @@ aarch64_move_adr( uint32_t instr
                 , uint8_t  *dst
                 , uint64_t old_pc
                 , uint64_t new_pc
-                , Sorted_vector *rel
+                , vt_sorted_vector_t *rel
                 )
 {
     bt_reloc *r = GET_PRE_INIT_BT_RELOC(rel);
@@ -132,7 +132,7 @@ aarch64_move_adrp( uint32_t instr
                  , uint8_t  *dst
                  , uint64_t old_pc
                  , uint64_t new_pc
-                 , Sorted_vector *rel
+                 , vt_sorted_vector_t *rel
                  )
 {
     bt_reloc *r = GET_PRE_INIT_BT_RELOC(rel);
@@ -187,7 +187,7 @@ aarch64_move_b( uint32_t instr
               , uint8_t  *dst
               , uint64_t old_pc
               , uint64_t new_pc
-              , Sorted_vector *rel
+              , vt_sorted_vector_t *rel
               )
 {
     bt_reloc *r = GET_PRE_INIT_BT_RELOC(rel);
@@ -225,7 +225,7 @@ aarch64_move_bl( uint32_t instr
                , uint8_t  *dst
                , uint64_t old_pc
                , uint64_t new_pc
-               , Sorted_vector *rel
+               , vt_sorted_vector_t *rel
                )
 {
     bt_reloc *r = GET_PRE_INIT_BT_RELOC(rel);
@@ -273,7 +273,7 @@ aarch64_move_ldr( uint32_t instr
                 , uint64_t old_pc
                 , uint64_t new_pc
                 , bool x64
-                , Sorted_vector *rel
+                , vt_sorted_vector_t *rel
                 )
 {
     bt_reloc *r = GET_PRE_INIT_BT_RELOC(rel);
@@ -329,7 +329,7 @@ aarch64_move_b_cond( uint32_t instr
                    , uint8_t  *dst
                    , uint64_t old_pc
                    , uint64_t new_pc
-                   , Sorted_vector *rel
+                   , vt_sorted_vector_t *rel
                    )
 {
     bt_reloc *r = GET_PRE_INIT_BT_RELOC(rel);
@@ -372,7 +372,7 @@ aarch64_move_cb( uint32_t instr
                , uint8_t  *dst
                , uint64_t old_pc
                , uint64_t new_pc
-               , Sorted_vector *rel
+               , vt_sorted_vector_t *rel
                )
 {
     bt_reloc *r = GET_PRE_INIT_BT_RELOC(rel);
@@ -415,7 +415,7 @@ aarch64_instr_move( const uint8_t *src
                   , uint64_t old_pc
                   , uint64_t new_pc
                   , uint64_t dst_size
-                  , Sorted_vector *rel
+                  , vt_sorted_vector_t *rel
                   )
 {
     if (src == NULL || dst == NULL || dst_size == (uint64_t)(-1)) {
@@ -531,7 +531,7 @@ aarch64_instr_move( const uint8_t *src
 }
 
 static void
-resolve_relocations( Sorted_vector *rel
+resolve_relocations( vt_sorted_vector_t *rel
                    , uint8_t *dst
                    , uint64_t old_pc
                    , uint64_t instr_num
@@ -541,7 +541,7 @@ resolve_relocations( Sorted_vector *rel
         .old_pc = old_pc,
     };
 
-    bt_reloc *r = (bt_reloc*) sorted_vector_find_elem(rel, &start_reloc);
+    bt_reloc *r = (bt_reloc*) vt_sorted_vector_find_elem(rel, &start_reloc);
     uint64_t i = 0;
     uint8_t *instr_p = dst;
     for (i = 0; i < instr_num; ++i, instr_p += r[i].new_size) {
@@ -554,7 +554,7 @@ resolve_relocations( Sorted_vector *rel
         bt_reloc target_r = {
             .old_pc = r[i].old_target,
         };
-        bt_reloc *old_target = (bt_reloc*) sorted_vector_find_elem(rel, &target_r);
+        bt_reloc *old_target = (bt_reloc*) vt_sorted_vector_find_elem(rel, &target_r);
         if (old_target == NULL) {
             // Old target wasn't relocated, so don't need to rebase
             continue;
@@ -766,7 +766,7 @@ aarch64_code_move( const uint8_t *src
                  , uint64_t new_pc
                  , uint64_t src_size
                  , uint64_t dst_size
-                 , Sorted_vector *rel
+                 , vt_sorted_vector_t *rel
                  )
 {
     if (src == NULL                || dst == NULL ||
@@ -774,8 +774,8 @@ aarch64_code_move( const uint8_t *src
         return CODE_MOVE_ERROR_BAD_ARG;
     }
 
-    Sorted_vector local_rel = {};
-    sorted_vector_init(&local_rel, 1, sizeof(bt_reloc), cmp_bt_reloc);
+    vt_sorted_vector_t local_rel = {};
+    vt_sorted_vector_init(&local_rel, 1, sizeof(bt_reloc), cmp_bt_reloc);
     if (rel == NULL) {
         rel = &local_rel;
     }
@@ -804,7 +804,7 @@ aarch64_code_move( const uint8_t *src
 
     resolve_relocations(rel, dst, old_pc, instr_num);
 
-    sorted_vector_fini(&local_rel);
+    vt_sorted_vector_fini(&local_rel);
     return (CODE_MOVE_ERROR)new_code_size;
 }
 

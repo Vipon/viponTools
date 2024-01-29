@@ -33,7 +33,7 @@ add_vipon_library(
   TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS ${CODE_MOVE_LIB_HEADERS}
   SOURCES ${CODE_MOVE_LIB_SOURCES}
-  LINK_LIBS containers
+  LINK_LIBS vt_containers
   INSTALL ON
 )
 

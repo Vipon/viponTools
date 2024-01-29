@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef __VECTOR_H
-#define __VECTOR_H
+#ifndef __VT_vt_vector_H
+#define __VT_vt_vector_H
 
 #include "os.h"
 #include "comdef.h"
@@ -35,25 +35,25 @@ typedef struct {
     size_t  capacity;
     size_t  end;
     size_t  elem_size;
-} Vector;
+} vt_vector_t;
 
-#define GET_PTR_VECTOR_ELEM(v, num) ((v)->data + (num) * (v)->elem_size)
+#define GET_PTR_VT_VECTOR_ELEM(v, num) ((v)->data + (num) * (v)->elem_size)
 
 /***
  * @brief
- * @param[in] v Pointer to the Vector.
+ * @param[in] v Pointer to the vector.
  * @param[in] i Iteration pointer.
  * @param[in] code Body of code which is neded to execute.
  */
-#define vector_for_each(v, i, code)                             \
-    DEF_GUARD(                                                  \
-        for ((i) = vector_begin(v); (void*)(i) < vector_end(v); \
-            (i) = (void*)i + (v)->elem_size) {                  \
-            code;                                               \
-        }                                                       \
+#define vt_vector_for_each(v, i, code)                                \
+    DEF_GUARD(                                                        \
+        for ((i) = vt_vector_begin(v); (void*)(i) < vt_vector_end(v); \
+            (i) = (void*)i + (v)->elem_size) {                        \
+            code;                                                     \
+        }                                                             \
     );
 
-#define vector_sort(v, cmp)                                  \
+#define vt_vector_sort(v, cmp)                               \
     DEF_GUARD(                                               \
         qsort((v)->data, (v)->end + 1, (v)->elem_size, cmp); \
     );
@@ -68,7 +68,7 @@ typedef struct {
  * \return 0 if success. -1 if fail.
  */
 EXPORT_FUNC int
-vector_init(Vector *v, size_t capacity, size_t elem_size);
+vt_vector_init(vt_vector_t *v, size_t capacity, size_t elem_size);
 
 /**
  * \brief Finalizes vector sotred at the pointer \param src.
@@ -76,7 +76,7 @@ vector_init(Vector *v, size_t capacity, size_t elem_size);
  * \param[in] v Point to vector needed to be finalized.
  */
 EXPORT_FUNC void
-vector_fini(Vector *v);
+vt_vector_fini(vt_vector_t *v);
 
 /**
  * \brief Returns pointer to the first element in vector.
@@ -84,7 +84,7 @@ vector_fini(Vector *v);
  * \param[in] v Point to vector.
  */
 EXPORT_FUNC void *
-vector_begin(Vector *v);
+vt_vector_begin(vt_vector_t *v);
 
 /**
  * \brief Returns pointer to the element after last.
@@ -92,7 +92,7 @@ vector_begin(Vector *v);
  * \param[in] v Point to vector.
  */
 EXPORT_FUNC void *
-vector_end(Vector *v);
+vt_vector_end(vt_vector_t *v);
 
 /**
  * \brief Change capacity of vector.
@@ -103,7 +103,7 @@ vector_end(Vector *v);
  * \return 0 if success. -1 if fail.
  */
 EXPORT_FUNC int
-vector_resize(Vector *v, size_t capacity);
+vt_vector_resize(vt_vector_t *v, size_t capacity);
 
 /**
  * \brief Add new elem at the end of vector.
@@ -114,7 +114,7 @@ vector_resize(Vector *v, size_t capacity);
  * \return 0 if success. -1 if fail.
  */
 EXPORT_FUNC int
-vector_push_back(Vector *v, const void* elem);
+vt_vector_push_back(vt_vector_t *v, const void* elem);
 
 /**
  * \brief Return point to the last elem in the vector. Need to save element.
@@ -124,7 +124,7 @@ vector_push_back(Vector *v, const void* elem);
  * \return NULL if fail.
  */
 EXPORT_FUNC void *
-vector_pop_back(Vector *v);
+vt_vector_pop_back(vt_vector_t *v);
 
 /**
  * \brief Add new elem at the end of vector.
@@ -136,7 +136,7 @@ vector_pop_back(Vector *v);
  * \return 0 if success. -1 if fail.
  */
 EXPORT_FUNC int
-vector_set_elem(Vector *v, size_t num, const void *elem);
+vt_vector_set_elem(vt_vector_t *v, size_t num, const void *elem);
 
 /**
  * \brief Return point to the last elem in the vector with number \param num.
@@ -147,11 +147,11 @@ vector_set_elem(Vector *v, size_t num, const void *elem);
  * \return NULL if fail.
  */
 EXPORT_FUNC void *
-vector_get_elem(Vector *v, size_t num);
+vt_vector_get_elem(vt_vector_t *v, size_t num);
 
-EXPORT_FUNC
-void *vector_find_elem(Vector *v, const void *elem,
+EXPORT_FUNC void *
+vt_vector_find_elem(vt_vector_t *v, const void *elem,
     int (*cmp)(const void *, const void *));
 
-#endif /* __VECTOR_H */
+#endif /* __VT_vt_vector_H */
 
