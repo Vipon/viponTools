@@ -67,14 +67,22 @@ void call_func3(uint32_t *n)
     temp = *n;
     printf("temp %"PRIx32" n_addr %p\n", temp, n);
 }
-
 extern
 void call_func4(uint32_t *n);
 void call_func4(uint32_t *n)
 {
+    if (*n) {
+        printf("call_func4\n");
+    }
+}
+
+extern
+void call_func5(uint32_t *n);
+void call_func5(uint32_t *n)
+{
     uint32_t i = 0;
     for (i = 0; i < *n; ++i) {
-        printf("call_func2\n");
+        printf("call_func5\n");
     }
 }
 
@@ -142,7 +150,8 @@ int main(int argc, const char *argv[])
     uint32_t arg32 = 2;
     test_move_and_exec(call_func2, SYM_PREFIX"call_func2", &arg32);
     test_move_and_exec(call_func3, SYM_PREFIX"call_func3", &arg32);
-    //test_move_and_exec(call_func4, SYM_PREFIX"call_func4", &arg32);
+    test_move_and_exec(call_func4, SYM_PREFIX"call_func4", &arg32);
+    test_move_and_exec(call_func5, SYM_PREFIX"call_func5", &arg32);
 #endif /* AARCH64_DEFINED == 1 */
 
     finiBinParser();

@@ -579,7 +579,7 @@ uint8_t aarch64_put_b_cond( uint32_t *dst
 {
     int64_t imm19 = SIGN_EXTEND((int64_t)(target_addr - pc) >> 2, 18);
     *dst = (uint32_t)0x54000000
-         | (uint32_t)(imm19 & 0x5FFFF) << 5
+         | (uint32_t)(imm19 & 0x7FFFF) << 5
          | (uint32_t)(cond & 0xF);
 
     return 4;
@@ -593,8 +593,27 @@ uint8_t aarch64_put_bc_cond( uint32_t *dst
 {
     int64_t imm19 = SIGN_EXTEND((int64_t)(target_addr - pc) >> 2, 18);
     *dst = (uint32_t)0x54000010
-         | (uint32_t)(imm19 & 0x5FFFF) << 5
+         | (uint32_t)(imm19 & 0x7FFFF) << 5
          | (uint32_t)(cond & 0xF);
+
+    return 4;
+}
+
+uint8_t aarch64_put_cb( uint32_t *dst
+                      , uint64_t pc
+                      , uint64_t target_addr
+                      , uint8_t reg_num
+                      , bool non_zero
+                      , bool x64
+                      )
+{
+    int64_t imm19 = SIGN_EXTEND((int64_t)(target_addr - pc) >> 2, 18);
+
+    *dst = (x64 ? 0x10000000 : 0x0)
+         | (uint32_t)0x34000000
+         | (non_zero ? 0x01000000 : 0x0)
+         | (uint32_t)(imm19 & 0x7FFFF) << 5
+         | (uint32_t)(reg_num & 0x1F);
 
     return 4;
 }

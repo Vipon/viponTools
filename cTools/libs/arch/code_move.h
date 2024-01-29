@@ -26,6 +26,8 @@
 #define __CODE_MOVE_H
 
 #include "comdef.h"
+#include "sorted_vector.h"
+
 #include <stdint.h>
 #include <assert.h>
 
@@ -59,20 +61,30 @@ typedef enum {
     RELOC_AARCH64_LDR_REL33,
     RELOC_AARCH64_LDR_ABS48,
     RELOC_AARCH64_LDR_ABS,
+    RELOC_AARCH64_B_COND,
+    RELOC_AARCH64_CB,
 } RELOC_TYPE;
 
 static_assert(sizeof(RELOC_TYPE) == 4, "RELOC_TYPE must be 32 bit");
 
 typedef struct {
-    uint64_t           old_pc;      // Old program counter
-    uint64_t           new_pc;      // New program counter
-    uint64_t           old_target;  // Address of old command target
-    uint64_t           size;        // Size in bytes of initial instruction
-    RELOC_TYPE         type;        // Relocation type
+    uint64_t    old_pc;     // Old program counter
+    uint64_t    new_pc;     // New program counter
+    uint64_t    old_target; // Address of old command target
+    uint64_t    new_target; // Address of new command target
+    RELOC_TYPE  type;       // Relocation type
+    uint8_t     old_size;   // Size in bytes of initial instruction
+    uint8_t     new_size;   // Size of relocated instruction
 } bt_reloc;
 
-int
+EXPORT_FUNC int
 cmp_bt_reloc(const void *a, const void *b);
+
+uint64_t
+bt_reloc_get_new_size(const bt_reloc *r);
+
+EXPORT_FUNC uint64_t
+get_instr_new_addr(uint64_t old_addr, const Sorted_vector *rel);
 
 /* You could get description of code using the function get_strerr_code_move. */
 #ifdef __WIN__

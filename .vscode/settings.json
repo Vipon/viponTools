@@ -124,7 +124,8 @@
         "mman.h": "c",
         "foo.h": "c",
         "bar.h": "c",
-        "__bit_reference": "cpp"
+        "__bit_reference": "cpp",
+        "aarch64.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

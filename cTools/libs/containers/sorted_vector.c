@@ -28,9 +28,12 @@
 #include "sorted_vector.h"
 
 void *
-sorted_vector_find_elem(Sorted_vector *sv, const void* elem)
+sorted_vector_find_elem(const Sorted_vector *sv, const void* elem)
 {
-    Vector *v = (Vector*)sv;
+    if (sv == NULL || elem == NULL)
+        return NULL;
+
+    const Vector *v = (const Vector*)sv;
     int (*cmp)(const void *, const void *) = sv->cmp;
     return bsearch(elem, v->data, v->end + 1, v->elem_size, cmp);
 }

@@ -79,7 +79,7 @@ sorted_vector_resize(Sorted_vector *sv, size_t capacity)
 }
 
 EXPORT_FUNC void *
-sorted_vector_find_elem(Sorted_vector *sv, const void* elem);
+sorted_vector_find_elem(const Sorted_vector *sv, const void* elem);
 
 /**
  * \brief Insert new element in the sorted vector.

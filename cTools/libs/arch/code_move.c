@@ -37,6 +37,20 @@ cmp_bt_reloc(const void *a, const void *b)
     return 0;
 }
 
+uint64_t
+get_instr_new_addr(uint64_t old_pc, const Sorted_vector *rel)
+{
+    bt_reloc old = {
+        .old_pc = old_pc,
+    };
+
+    bt_reloc *r = sorted_vector_find_elem(rel, &old);
+    if (r != NULL)
+        return r->new_pc;
+    else
+        return old_pc;
+}
+
 const char *get_code_move_err_str(CODE_MOVE_ERROR err)
 {
     switch(err) {
