@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valera
+ * Copyright (c) 2021-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,48 +29,47 @@
 
 #include <stddef.h>
 
-#define GET_PTR_VECTOR_ELEM(v, num) (v->data + num * v->elemSize)
-
-int initVector(Vector *v, size_t capacity, size_t elemSize)
+int
+vector_init(Vector *v, size_t capacity, size_t elem_size)
 {
-    if ((v->data = Malloc(capacity * elemSize)) == NULL) {
+    if ((v->data = Malloc(capacity * elem_size)) == NULL) {
         LOG_ERROR("Cannot allocate memory");
         return -1;
     }
 
     v->capacity = capacity;
     v->end = 0;
-    v->elemSize = elemSize;
+    v->elem_size = elem_size;
 
     return 0;
 }
 
-
-void freeVector(Vector *v)
+void
+vector_fini(Vector *v)
 {
     Free(v->data);
     v->capacity = (size_t)-1;
-    v->elemSize = (size_t)-1;
+    v->elem_size = (size_t)-1;
     v->end = (size_t)-1;
 }
 
-
-uint8_t *beginVector(Vector *v)
+void *
+vector_begin(Vector *v)
 {
     return v->data;
 }
 
-
-uint8_t *endVector(Vector *v)
+void *
+vector_end(Vector *v)
 {
     return GET_PTR_VECTOR_ELEM(v, v->end);
 }
 
-
-int resizeVector(Vector *v, size_t capacity)
+int
+vector_resize(Vector *v, size_t capacity)
 {
     v->capacity = capacity;
-    void *data = Malloc(capacity * v->elemSize);
+    void *data = Malloc(capacity * v->elem_size);
     if (data == NULL) {
         LOG_ERROR("Cannot allocate memory");
         return -1;
@@ -81,7 +80,7 @@ int resizeVector(Vector *v, size_t capacity)
     }
 
     size_t num = v->end;
-    directCopyBytes(v->data, data, num * v->elemSize);
+    directCopyBytes(v->data, data, num * v->elem_size);
 
     Free(v->data);
     v->data = data;
@@ -89,41 +88,30 @@ int resizeVector(Vector *v, size_t capacity)
     return 0;
 }
 
-
-static int expandVector(Vector *v)
+static int
+vector_expand(Vector *v)
 {
-    v->capacity *= 2;
-    void *data = Malloc(v->capacity * v->elemSize);
-    if (data == NULL) {
-        LOG_ERROR("Cannot allocate memory");
-        return -1;
-    }
-
-    directCopyBytes(v->data, data, v->end * v->elemSize);
-    Free(v->data);
-    v->data = data;
-
-    return 0;
+    return vector_resize(v, v->capacity *= 2);
 }
 
-
-int pushBackVector(Vector *v, const void *elem)
+int
+vector_push_back(Vector *v, const void *elem)
 {
     if (v->capacity == v->end) {
-        if (expandVector(v) == -1) {
+        if (vector_expand(v) == -1) {
             LOG_ERROR("Cannot expand Vector");
             return -1;
         }
     }
 
-    directCopyBytes(elem, endVector(v), v->elemSize);
+    directCopyBytes(elem, vector_end(v), v->elem_size);
     ++v->end;
 
     return 0;
 }
 
-
-void *popBackVector(Vector *v)
+void *
+vector_pop_back(Vector *v)
 {
     if (v->end == 0) {
         LOG_ERROR("Vector is empty");
@@ -131,20 +119,20 @@ void *popBackVector(Vector *v)
     }
 
     --v->end;
-    return endVector(v);
+    return vector_end(v);
 }
 
-
-int setElemVector(Vector *v, size_t num, const void *elem)
+int
+vector_set_elem(Vector *v, size_t num, const void *elem)
 {
     if (num >= v->capacity) {
-        if (resizeVector(v, ROUND_UP_2(num))) {
+        if (vector_resize(v, ROUND_UP_2(num))) {
             LOG_ERROR("Cannot resize Vector");
             return -1;
         }
     }
 
-    directCopyBytes(elem, v->data + (num * v->elemSize), v->elemSize);
+    directCopyBytes(elem, v->data + (num * v->elem_size), v->elem_size);
 
     if (num > v->end) {
         v->end = num + 1;
@@ -153,13 +141,26 @@ int setElemVector(Vector *v, size_t num, const void *elem)
     return 0;
 }
 
-
-void *getElemVector(Vector *v, size_t num)
+void *
+vector_get_elem(Vector *v, size_t num)
 {
     if (num >= v->end) {
         return NULL;
     }
 
     return GET_PTR_VECTOR_ELEM(v, num);
+}
+
+void *
+vector_find_elem(Vector *v, const void *elem,
+    int (*cmp)(const void *, const void *))
+{
+    void *i = NULL;
+    vector_for_each(v, i,
+        if (cmp(elem, i) == 0)
+            return i;
+    );
+
+    return NULL;
 }
 

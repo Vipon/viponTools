@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valera
+ * Copyright (c) 2021-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 #define __CONTEINERS_H
 
 #include "vector.h"
+#include "sorted_vector.h"
 #include <stdint.h>
 
 #if __STDC_VERSION__ >= 201112L

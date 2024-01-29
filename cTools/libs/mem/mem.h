@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2021 Konychev Valera
+ * Copyright (c) 2020-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -88,22 +88,49 @@ size_t alignUpToPageSize(size_t val);
 
 
 /**
- * \brief Copies num bytes from the dest to the source buffer. Coping from a
- *        firs to a last byte.
- * \param source point to source buffer.
- * \param dest point to destination.
- * \param num number of bytes that need to copy.
- * \return Success: point to dest.
- *         Fail: NULL point.
+ * \brief Copies num bytes from the \param dst to the \param src buffer. Coping
+ * from a firs to a last byte.
+ *
+ * \param[in] src Point to source buffer.
+ * \param[in] dst Point to destination.
+ * \param[in] num Amount of bytes that need to copy.
+ *
+ * \return Point to \param dst.
  */
 EXPORT_FUNC
-uint8_t *directCopyBytes(const uint8_t *source, uint8_t *dest, size_t num);
+uint8_t *directCopyBytes(const uint8_t *src, uint8_t *dst, size_t num);
+
+/**
+ * \brief Copy num bytes from the \param dst to the \param src buffer. Coping
+ * from a last to a first byte.
+ *
+ * \param[in] src Point to source buffer.
+ * \param[in] dst Point to destination.
+ * \param[in] num Amount of bytes that need to copy.
+ *
+ * \return Point to \param dst.
+ */
+EXPORT_FUNC uint8_t*
+backwards_copy_bytes(const uint8_t *src, uint8_t *dst, size_t num);
+
+/**
+ * \brief Copies \param num bytes from the \param src to the \param dst buffer.
+ * Works in case of overlapping memory space.
+ *
+ * \param[in] src Point to source buffer.
+ * \param[in] dst Point to destination.
+ * \param[in] num Amount of bytes needed to copy.
+ *
+ * \return Point to \param dst
+ */
+EXPORT_FUNC uint8_t*
+copy_bytes(const uint8_t *src, uint8_t *dst, size_t num);
 
 /**
  * \brief Set memory protection.
- * \param addr point to memory should be align to page size.
- * \param len size of memory region.
- * \param prot protection flags.
+ * \param[in] addr point to memory should be align to page size.
+ * \param[in] len size of memory region.
+ * \param[in] prot protection flags.
  * \return Success: 0.
  *         Fail: error code.
  */

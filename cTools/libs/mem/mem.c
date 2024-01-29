@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valera
+ * Copyright (c) 2021-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,16 +116,40 @@ size_t alignUpToPageSize(size_t val)
     return (val + (size_t)pageSize) & ~((size_t)pageSize - 1);
 }
 
-uint8_t *directCopyBytes(const uint8_t *source, uint8_t *dest, size_t num)
+uint8_t*
+directCopyBytes(const uint8_t *src, uint8_t *dst, size_t num)
 {
-    if (source == NULL || dest == NULL)
-        return NULL;
-
     size_t i = 0;
     for (i = 0; i < num; ++i)
-        dest[i] = source[i];
+        dst[i] = src[i];
 
-    return dest;
+    return dst;
+}
+
+uint8_t*
+backwards_copy_bytes(const uint8_t *src, uint8_t *dst, size_t num)
+{
+    size_t i = num;
+    while (i) {
+        --i;
+        dst[i] = src[i];
+    }
+
+    return dst;
+}
+
+uint8_t*
+copy_bytes(const uint8_t *src, uint8_t *dst, size_t num)
+{
+    /***
+     * If destination address is bigger than source address, we should copy
+     * from the last byte, because overlapping of address spaces is
+     * possible.
+     */
+    if ((size_t)src >= (size_t)dst)
+        return directCopyBytes(src, dst, num);
+    else
+        return backwards_copy_bytes(src, dst, num);
 }
 
 const

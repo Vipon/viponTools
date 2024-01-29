@@ -58,7 +58,7 @@ if (MSVC)
     -Wno-old-style-cast
     -Wno-float-equal
     -Wno-c++98-compat-pedantic
-
+    -Wno-compound-token-split-by-space
   )
 
   message(STATUS "msvc_version: ${MSVC_VERSION}")

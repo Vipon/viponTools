@@ -256,5 +256,27 @@ uint8_t aarch64_put_add_reg64_imm( uint32_t *dst
                                  , int64_t imm12
                                  );
 
+EXPORT_FUNC
+uint8_t aarch64_put_b_cond( uint32_t *dst
+                          , uint64_t pc
+                          , uint64_t target_addr
+                          , uint8_t cond
+                          );
+EXPORT_FUNC
+uint8_t aarch64_put_bc_cond( uint32_t *dst
+                           , uint64_t pc
+                           , uint64_t target_addr
+                           , uint8_t cond
+                           );
+
+EXPORT_FUNC
+uint8_t aarch64_put_cb( uint32_t *dst
+                      , uint64_t pc
+                      , uint64_t target_addr
+                      , uint8_t reg_num
+                      , bool non_zero
+                      , bool x64
+                      );
+
 #endif /* __AARCH64_H */
 
