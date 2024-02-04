@@ -25,25 +25,25 @@
 #include <stdlib.h>
 
 #include "mem.h"
-#include "sorted_vector.h"
+#include "vt_sorted_vector.h"
 
 void *
-sorted_vector_find_elem(const Sorted_vector *sv, const void* elem)
+vt_sorted_vector_find_elem(const vt_sorted_vector_t *sv, const void* elem)
 {
     if (sv == NULL || elem == NULL)
         return NULL;
 
-    const Vector *v = (const Vector*)sv;
+    const vt_vector_t *v = (const vt_vector_t*)sv;
     int (*cmp)(const void *, const void *) = sv->cmp;
     return bsearch(elem, v->data, v->end + 1, v->elem_size, cmp);
 }
 
 int
-sorted_vector_insert(Sorted_vector *sv, const void* elem)
+vt_sorted_vector_insert(vt_sorted_vector_t *sv, const void* elem)
 {
-    Vector *v = (Vector*)sv;
+    vt_vector_t *v = (vt_vector_t*)sv;
     if (v->capacity == v->end) {
-        if (vector_resize(v, v->capacity * 2) == -1) {
+        if (vt_vector_resize(v, v->capacity * 2) == -1) {
             LOG_ERROR("Cannot expand Vector");
             return -1;
         }
@@ -55,18 +55,18 @@ sorted_vector_insert(Sorted_vector *sv, const void* elem)
     size_t right = v->end;
     while (left < right) {
         size_t mid = (left + right) / 2;
-        int cmp_res = cmp(elem, GET_PTR_VECTOR_ELEM(v, mid));
+        int cmp_res = cmp(elem, GET_PTR_VT_VECTOR_ELEM(v, mid));
         if (cmp_res > 0)
             left = mid + 1;
         else
             right = mid;
     }
 
-    uint8_t *src = GET_PTR_VECTOR_ELEM(v, left);
-    uint8_t *dst = GET_PTR_VECTOR_ELEM(v, left + 1);
+    uint8_t *src = GET_PTR_VT_VECTOR_ELEM(v, left);
+    uint8_t *dst = GET_PTR_VT_VECTOR_ELEM(v, left + 1);
     size_t num = v->end - left;
     backwards_copy_bytes(src, dst, num * v->elem_size);
-    vector_set_elem(v, left, elem);
+    vt_vector_set_elem(v, left, elem);
     ++(v->end);
 
     return 0;

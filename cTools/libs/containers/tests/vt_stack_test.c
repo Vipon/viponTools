@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2024 Konychev Valera
+ * Copyright (c) 2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,59 @@
  * SOFTWARE.
  */
 
-#ifndef __CONTEINERS_H
-#define __CONTEINERS_H
+#include "test.h"
+#include "comdef.h"
+#include "vt_stack.h"
 
-#include "vector.h"
-#include "sorted_vector.h"
-#include <stdint.h>
+#include <stddef.h>
 
-#if __STDC_VERSION__ >= 201112L
-# define forEachContainer(c, func, ...) \
-    _Generic((c),                       \
-        Vector : forEachVector          \
-    )(c, func, __VA_ARGS__)
-#endif
+static void
+vt_stack_init_test(void)
+{
+    vt_stack_t s;
+    EXPECT_FUNC_EQ(0, vt_stack_init(&s, 0, sizeof(int)));
 
-#endif /* __CONTEINERS_H  */
+    vt_stack_fini(&s);
+}
 
+static void
+vt_stack_push_pop_test(void)
+{
+    vt_stack_t s;
+    vt_stack_init(&s, 0, sizeof(int));
+
+    int i = 0;
+    for (i = 0; i <= 100; ++i) {
+        vt_stack_push(&s, &i);
+    }
+
+    for (i = 100; i >= 0; --i) {
+        int a = *(int*)vt_stack_pop(&s);
+        EXPECT_INT_EQ(i, a);
+    }
+
+    vt_stack_fini(&s);
+}
+
+static void
+vt_stack_pop_empty_test(void)
+{
+    vt_stack_t s;
+    vt_stack_init(&s, 0, sizeof(int));
+
+    EXPECT_FUNC_EQ(NULL, vt_stack_pop(&s));
+    EXPECT_FUNC_EQ(true, vt_stack_is_empty(&s));
+
+    vt_stack_fini(&s);
+}
+
+int
+main(void)
+{
+    VERBOSE = 1;
+    vt_stack_init_test();
+    vt_stack_push_pop_test();
+    vt_stack_pop_empty_test();
+
+    return 0;
+}

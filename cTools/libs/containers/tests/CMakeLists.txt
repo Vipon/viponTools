@@ -21,13 +21,20 @@
 # SOFTWARE.
 
 add_vipon_test(
-  NAME vector_test
-  SOURCES vector_test.c
-  LINK_LIBS containers mem comdef
+  NAME vt_vector_test
+  SOURCES vt_vector_test.c
+  LINK_LIBS vt_containers mem comdef
 )
 
 add_vipon_test(
-  NAME sorted_vector_test
-  SOURCES sorted_vector_test.c
-  LINK_LIBS containers mem comdef
+  NAME vt_sorted_vector_test
+  SOURCES vt_sorted_vector_test.c
+  LINK_LIBS vt_containers mem comdef
 )
+
+add_vipon_test(
+  NAME vt_stack_test
+  SOURCES vt_stack_test.c
+  LINK_LIBS vt_containers mem comdef
+)
+

@@ -26,7 +26,7 @@
 #define __CODE_MOVE_H
 
 #include "comdef.h"
-#include "sorted_vector.h"
+#include "vt_sorted_vector.h"
 
 #include <stdint.h>
 #include <assert.h>
@@ -84,7 +84,7 @@ uint64_t
 bt_reloc_get_new_size(const bt_reloc *r);
 
 EXPORT_FUNC uint64_t
-get_instr_new_addr(uint64_t old_addr, const Sorted_vector *rel);
+get_instr_new_addr(uint64_t old_addr, const vt_sorted_vector_t *rel);
 
 /* You could get description of code using the function get_strerr_code_move. */
 #ifdef __WIN__

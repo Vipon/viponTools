@@ -24,14 +24,17 @@
 
 #include "mem.h"
 #include "bits.h"
-#include "vector.h"
+#include "vt_vector.h"
 #include "comdef.h"
 
 #include <stddef.h>
 
 int
-vector_init(Vector *v, size_t capacity, size_t elem_size)
+vt_vector_init(vt_vector_t *v, size_t capacity, size_t elem_size)
 {
+    if (capacity == 0)
+        capacity = 1;
+
     if ((v->data = Malloc(capacity * elem_size)) == NULL) {
         LOG_ERROR("Cannot allocate memory");
         return -1;
@@ -45,7 +48,7 @@ vector_init(Vector *v, size_t capacity, size_t elem_size)
 }
 
 void
-vector_fini(Vector *v)
+vt_vector_fini(vt_vector_t *v)
 {
     Free(v->data);
     v->capacity = (size_t)-1;
@@ -54,19 +57,19 @@ vector_fini(Vector *v)
 }
 
 void *
-vector_begin(Vector *v)
+vt_vector_begin(vt_vector_t *v)
 {
     return v->data;
 }
 
 void *
-vector_end(Vector *v)
+vt_vector_end(vt_vector_t *v)
 {
-    return GET_PTR_VECTOR_ELEM(v, v->end);
+    return GET_PTR_VT_VECTOR_ELEM(v, v->end);
 }
 
 int
-vector_resize(Vector *v, size_t capacity)
+vt_vector_resize(vt_vector_t *v, size_t capacity)
 {
     v->capacity = capacity;
     void *data = Malloc(capacity * v->elem_size);
@@ -89,45 +92,43 @@ vector_resize(Vector *v, size_t capacity)
 }
 
 static int
-vector_expand(Vector *v)
+vt_vector_expand(vt_vector_t *v)
 {
-    return vector_resize(v, v->capacity *= 2);
+    return vt_vector_resize(v, v->capacity *= 2);
 }
 
 int
-vector_push_back(Vector *v, const void *elem)
+vt_vector_push_back(vt_vector_t *v, const void *elem)
 {
     if (v->capacity == v->end) {
-        if (vector_expand(v) == -1) {
+        if (vt_vector_expand(v) == -1) {
             LOG_ERROR("Cannot expand Vector");
             return -1;
         }
     }
 
-    directCopyBytes(elem, vector_end(v), v->elem_size);
+    directCopyBytes(elem, vt_vector_end(v), v->elem_size);
     ++v->end;
 
     return 0;
 }
 
 void *
-vector_pop_back(Vector *v)
+vt_vector_pop_back(vt_vector_t *v)
 {
     if (v->end == 0) {
-        LOG_ERROR("Vector is empty");
         return NULL;
     }
 
     --v->end;
-    return vector_end(v);
+    return vt_vector_end(v);
 }
 
 int
-vector_set_elem(Vector *v, size_t num, const void *elem)
+vt_vector_set_elem(vt_vector_t *v, size_t num, const void *elem)
 {
     if (num >= v->capacity) {
-        if (vector_resize(v, ROUND_UP_2(num))) {
-            LOG_ERROR("Cannot resize Vector");
+        if (vt_vector_resize(v, ROUND_UP_2(num))) {
             return -1;
         }
     }
@@ -142,21 +143,21 @@ vector_set_elem(Vector *v, size_t num, const void *elem)
 }
 
 void *
-vector_get_elem(Vector *v, size_t num)
+vt_vector_get_elem(vt_vector_t *v, size_t num)
 {
     if (num >= v->end) {
         return NULL;
     }
 
-    return GET_PTR_VECTOR_ELEM(v, num);
+    return GET_PTR_VT_VECTOR_ELEM(v, num);
 }
 
 void *
-vector_find_elem(Vector *v, const void *elem,
+vt_vector_find_elem(vt_vector_t *v, const void *elem,
     int (*cmp)(const void *, const void *))
 {
     void *i = NULL;
-    vector_for_each(v, i,
+    vt_vector_for_each(v, i,
         if (cmp(elem, i) == 0)
             return i;
     );

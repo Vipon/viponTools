@@ -104,8 +104,8 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
     if (buff == NULL)
         return;
 
-    Sorted_vector sv;
-    sorted_vector_init(&sv, 1, sizeof(bt_reloc), cmp_bt_reloc);
+    vt_sorted_vector_t sv;
+    vt_sorted_vector_init(&sv, 1, sizeof(bt_reloc), cmp_bt_reloc);
 
     aarch64_code_move( (const uint8_t*)func
                      , buff
@@ -128,7 +128,7 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
         PERROR("Cannot change memory protection");
     }
     Free(buff);
-    sorted_vector_fini(&sv);
+    vt_sorted_vector_fini(&sv);
 
     //asm("msr NZCV, x1\n");
     //asm("mrs x0, NZCV");
