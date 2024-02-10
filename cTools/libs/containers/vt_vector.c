@@ -72,6 +72,7 @@ int
 vt_vector_resize(vt_vector_t *v, size_t capacity)
 {
     v->capacity = capacity;
+    STDERROR_PRINT("capacity: %zu, elem_size: %zu\n", capacity, v->elem_size);
     void *data = Malloc(capacity * v->elem_size);
     if (data == NULL) {
         LOG_ERROR("Cannot allocate memory");
@@ -83,7 +84,9 @@ vt_vector_resize(vt_vector_t *v, size_t capacity)
     }
 
     size_t num = v->end;
-    directCopyBytes(v->data, data, num * v->elem_size);
+    if (v->end) {
+        directCopyBytes(v->data, data, num * v->elem_size);
+    }
 
     Free(v->data);
     v->data = data;
@@ -94,7 +97,11 @@ vt_vector_resize(vt_vector_t *v, size_t capacity)
 static int
 vt_vector_expand(vt_vector_t *v)
 {
-    return vt_vector_resize(v, v->capacity *= 2);
+    size_t new_cap = v->capacity *= 2;
+    if (new_cap == 0) {
+        new_cap = 1;
+    }
+    return vt_vector_resize(v, new_cap);
 }
 
 int

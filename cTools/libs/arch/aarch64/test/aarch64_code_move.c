@@ -27,6 +27,7 @@
 #include "comdef.h"
 #include "binParse.h"
 #include "aarch64_code_move.h"
+#include "aarch64_global_stack.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -86,12 +87,25 @@ void call_func5(uint32_t *n)
     }
 }
 
+static volatile
+uint32_t temp6 = 0;
+extern
+void call_func6(uint32_t *n);
+void call_func6(uint32_t *n)
+{
+    ++temp6;
+    if (temp6 == 3) {
+        return;
+    }
+
+    call_func6(n);
+}
+
 extern
 void test_move_and_exec(void *func, const char *fn, void *arg);// __attribute__((section("__TEXT,__my_sect")));
 
 void test_move_and_exec(void *func, const char *fn, void *arg)
 {
-    STDERROR_PRINT("arg %p\n", arg);
     BinSymPtr sym = binParser.getSymByName(binParser.bin, fn);
     uint64_t func_size = binParser.getSSymSize(binParser.bin, sym);
     uint64_t buff_size = (uint64_t)aarch64_estimate_space( (const uint8_t*)func
@@ -100,6 +114,7 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
                                                , func_size
                                                );
 
+    buff_size += 1024;
     uint8_t *buff = Calloc(buff_size, 1);
     if (buff == NULL)
         return;
@@ -129,9 +144,6 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
     }
     Free(buff);
     vt_sorted_vector_fini(&sv);
-
-    //asm("msr NZCV, x1\n");
-    //asm("mrs x0, NZCV");
 }
 
 #endif /* AARCH64_DEFINED == 1 */
@@ -139,19 +151,18 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
 int main(int argc, const char *argv[])
 {
     UNUSED(argc);
-    UNUSED(argv);
 
-    //VERBOSE = 1;
     initBinParser(argv[0]);
 
 #if AARCH64_DEFINED == 1
     test_move_and_exec(call_func0, SYM_PREFIX"call_func0", NULL);
     test_move_and_exec(call_func1, SYM_PREFIX"call_func1", NULL);
-    uint32_t arg32 = 2;
+    uint32_t arg32 = 3;
     test_move_and_exec(call_func2, SYM_PREFIX"call_func2", &arg32);
     test_move_and_exec(call_func3, SYM_PREFIX"call_func3", &arg32);
     test_move_and_exec(call_func4, SYM_PREFIX"call_func4", &arg32);
     test_move_and_exec(call_func5, SYM_PREFIX"call_func5", &arg32);
+    test_move_and_exec(call_func6, SYM_PREFIX"call_func6", &arg32);
 #endif /* AARCH64_DEFINED == 1 */
 
     finiBinParser();

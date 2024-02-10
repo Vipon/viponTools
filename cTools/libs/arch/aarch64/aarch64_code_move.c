@@ -28,6 +28,7 @@
 #include "comdef.h"
 #include "aarch64.h"
 #include "aarch64_code_move.h"
+#include "vt_containers.h"
 
 #include <inttypes.h>
 
@@ -65,6 +66,7 @@ pre_init_relocations( vt_sorted_vector_t *rel
         };
 
         if (vt_sorted_vector_insert(rel, &r)) {
+            STDERROR_PRINT("fail\n");
             return -1;
         }
     }
@@ -208,12 +210,11 @@ aarch64_move_b( uint32_t instr
                                    );
     } else {
         STDERROR_LOG("B_STUB\n");
-        static uint64_t x30_temp = 0;
+        STDERROR_LOG("target_addr: %"PRIx64"\n", target_addr);
         // We cannot fit offset into 26 bits. Need to place b_stub.
         r->type = RELOC_AARCH64_B_ABS;
         r->new_size = aarch64_put_b_stub_abs( (uint32_t*)dst
                                             , target_addr
-                                            , (uint64_t)(&x30_temp)
                                             );
     }
 
@@ -362,6 +363,11 @@ aarch64_move_b_cond( uint32_t instr
                                         );
     } else {
         STDERROR_LOG("BC: cannot fit in the 19 bits\n");
+        r->type = RELOC_AARCH64_B_COND_ABS;
+        r->new_size = aarch64_put_b_cond_stub_abs( (uint32_t*)dst
+                                                 , target_addr
+                                                 , cond
+                                                 );
     }
 
     return r->new_size;
@@ -530,7 +536,13 @@ aarch64_instr_move( const uint8_t *src
     return (CODE_MOVE_ERROR)r->new_size;
 }
 
-static void
+extern void
+resolve_relocations( vt_sorted_vector_t *rel
+                   , uint8_t *dst
+                   , uint64_t old_pc
+                   , uint64_t instr_num
+                   );
+void
 resolve_relocations( vt_sorted_vector_t *rel
                    , uint8_t *dst
                    , uint64_t old_pc
@@ -544,8 +556,8 @@ resolve_relocations( vt_sorted_vector_t *rel
     bt_reloc *r = (bt_reloc*) vt_sorted_vector_find_elem(rel, &start_reloc);
     uint64_t i = 0;
     uint8_t *instr_p = dst;
-    for (i = 0; i < instr_num; ++i, instr_p += r[i].new_size) {
-        STDERROR_LOG("\tinstr_p: %p | new_size %u\n", (void*)instr_p, r[i].new_size);
+    for (i = 0; i < instr_num; instr_p += r[i].new_size, ++i) {
+        STDERROR_PRINT("\tinstr_p: %p | new_size %u\n", (void*)instr_p, r[i].new_size);
         if (r[i].type == RELOC_GP) {
             // General instructions doesn't need to rebase
             continue;
@@ -649,10 +661,9 @@ resolve_relocations( vt_sorted_vector_t *rel
         */
         case RELOC_AARCH64_B_ABS:
         {
-            uint64_t x30_addr = *(uint64_t*)(instr_p + 48);
+            //uint64_t x30_addr = *(uint64_t*)(instr_p + 48);
             aarch64_put_b_stub_abs( (uint32_t*)instr_p
                                   , r[i].new_target
-                                  , x30_addr
                                   );
             break;
         }
@@ -723,7 +734,7 @@ resolve_relocations( vt_sorted_vector_t *rel
         }
         case RELOC_AARCH64_B_COND:
         {
-            STDERROR_LOG("Reloc B_COND:\n");
+            STDERROR_PRINT("Reloc B_COND:\n");
             STDERROR_LOG("\told_target: 0x%"PRIx64", new_pc_old_target: 0x%"PRIx64"\n", r[i].old_target
                     , old_target->new_pc);
             uint8_t cond = (*((uint32_t*)instr_p)) & 0xF;
@@ -732,6 +743,16 @@ resolve_relocations( vt_sorted_vector_t *rel
                               , r[i].new_target
                               , cond
                               );
+            break;
+        }
+        case RELOC_AARCH64_B_COND_ABS:
+        {
+            STDERROR_PRINT("Reloc B_COND_ABS:\n");
+            uint8_t cond = (*((uint32_t*)instr_p)) & 0xF;
+            aarch64_put_b_cond_stub_abs( (uint32_t*)instr_p
+                                       , r[i].new_target
+                                       , cond
+                                       );
             break;
         }
         case RELOC_AARCH64_CB:
@@ -797,7 +818,8 @@ aarch64_code_move( const uint8_t *src
                                                                , dst_size
                                                                , rel
                                                                );
-        //print_bytes(stderr, dst, new_instr_size);
+        //print_bytes(stderr, dst + new_code_size, new_instr_size);
+        //putchar('\n');
 
         new_code_size += new_instr_size;
     }

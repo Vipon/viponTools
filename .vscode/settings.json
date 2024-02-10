@@ -126,7 +126,8 @@
         "bar.h": "c",
         "__bit_reference": "cpp",
         "aarch64.h": "c",
-        "charconv": "cpp"
+        "charconv": "cpp",
+        "__locale": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

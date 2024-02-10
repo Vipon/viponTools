@@ -115,11 +115,30 @@ vt_vector_for_each_test(void)
 
     --i;
     for (; i >= 0  ; --i) {
-        EXPECT_INT_EQ(*(int*) vt_vector_pop_back(&v), i + 2);
+        int res = *(int*) vt_vector_pop_back(&v);
+        EXPECT_INT_EQ(i + 2, res);
     }
 
     vt_vector_fini(&v);
     return 0;
+}
+
+static vt_vector_t global_vector = {
+    .capacity = 0,
+    .data = NULL,
+    .elem_size = sizeof(int),
+    .end = 0,
+};
+static void
+vt_vector_null_global_test(void)
+{
+    int i = 0;
+    vt_vector_push_back(&global_vector, &i);
+    i = 100;
+    vt_vector_push_back(&global_vector, &i);
+    int res = *(int*) vt_vector_pop_back(&global_vector);
+    EXPECT_INT_EQ(i, res);
+    vt_vector_fini(&global_vector);
 }
 
 int
@@ -129,6 +148,7 @@ main(void)
     EXPECT_FUNC_EQ(vt_vector_push_back_test(), 0);
     EXPECT_FUNC_EQ(vt_vector_pop_back_test(), 0);
     EXPECT_FUNC_EQ(vt_vector_for_each_test(), 0);
+    vt_vector_null_global_test();
     return 0;
 }
 

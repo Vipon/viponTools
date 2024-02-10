@@ -35,7 +35,7 @@ vt_sorted_vector_find_elem(const vt_sorted_vector_t *sv, const void* elem)
 
     const vt_vector_t *v = (const vt_vector_t*)sv;
     int (*cmp)(const void *, const void *) = sv->cmp;
-    return bsearch(elem, v->data, v->end + 1, v->elem_size, cmp);
+    return bsearch(elem, v->data, v->end, v->elem_size, cmp);
 }
 
 int
@@ -43,7 +43,11 @@ vt_sorted_vector_insert(vt_sorted_vector_t *sv, const void* elem)
 {
     vt_vector_t *v = (vt_vector_t*)sv;
     if (v->capacity == v->end) {
-        if (vt_vector_resize(v, v->capacity * 2) == -1) {
+        size_t new_cap = v->capacity * 2;
+        if (new_cap == 0) {
+            new_cap = 1;
+        }
+        if (vt_vector_resize(v, new_cap) == -1) {
             LOG_ERROR("Cannot expand Vector");
             return -1;
         }
