@@ -85,12 +85,12 @@ CODE_MOVE_ERROR aarch64_code_move( const uint8_t *src
  *                   will return maximum estimation.
  * @param[in] src_size Size of source binary code in bytes.
  */
-EXPORT_FUNC
-CODE_MOVE_ERROR aarch64_estimate_space( const uint8_t *src
-                                      , uint64_t old_pc
-                                      , uint64_t new_pc
-                                      , uint64_t src_size
-                                      );
+EXPORT_FUNC CODE_MOVE_ERROR
+aarch64_estimate_space( const uint8_t *src
+                      , uint64_t old_pc
+                      , uint64_t new_pc
+                      , uint64_t src_size
+                      );
 
 #endif /* __AARCH64_CODE_MOVE_H */
 

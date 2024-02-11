@@ -33,7 +33,24 @@ add_vipon_library(
   TYPE ${VIPON_TOOLS_LIB_TYPE}
   HEADERS ${AARCH64_LIB_HEADERS}
   SOURCES ${AARCH64_LIB_SOURCES}
-  LINK_LIBS string
+  LINK_LIBS string aarch64_global_stack
+  INSTALL ON
+)
+
+set(AARCH64_GLOBAL_STACK_LIB_SOURCES
+  aarch64_global_stack.c
+)
+
+set(AARCH64_GLOBAL_STACK_LIB_HEADERS
+  aarch64_global_stack.h
+)
+
+add_vipon_library(
+  NAME aarch64_global_stack
+  TYPE ${VIPON_TOOLS_LIB_TYPE}
+  HEADERS ${AARCH64_GLOBAL_STACK_LIB_SOURCES}
+  SOURCES ${AARCH64_GLOBAL_STACK_LIB_HEADERS}
+  LINK_LIBS vt_containers
   INSTALL ON
 )
 

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valera
+ * Copyright (c) 2023-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -188,7 +188,6 @@ uint8_t aarch64_put_b_x16_stub_abs( uint32_t *dst
 EXPORT_FUNC
 uint8_t aarch64_put_b_stub_abs( uint32_t *dst
                               , uint64_t target_addr
-                              , uint64_t x30_addr
                               );
 
 #define SIZE_BL_STUB_ABS   20
@@ -262,6 +261,11 @@ uint8_t aarch64_put_b_cond( uint32_t *dst
                           , uint64_t target_addr
                           , uint8_t cond
                           );
+EXPORT_FUNC
+uint8_t aarch64_put_b_cond_stub_abs( uint32_t *dst
+                                   , uint64_t target_addr
+                                   , uint8_t cond
+                                   );
 EXPORT_FUNC
 uint8_t aarch64_put_bc_cond( uint32_t *dst
                            , uint64_t pc

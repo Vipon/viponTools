@@ -55,6 +55,7 @@ vt_stack_init(vt_stack_t *s, size_t capacity, size_t elem_size)
 static inline void
 vt_stack_fini(vt_stack_t *s)
 {
+    STDERROR_PRINT("vt_stack_fini\n");
     vt_vector_fini((vt_vector_t*)s);
 }
 

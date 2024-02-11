@@ -30,7 +30,8 @@ add_vipon_test(
 add_vipon_test(
   NAME aarch64_pc_rel
   SOURCES aarch64_pc_rel.c
-  LINK_LIBS aarch64_asm_wrap aarch64 string mem
+  LINK_LIBS aarch64_asm_wrap aarch64 aarch64_global_stack ${AARCH64_ASM_WRAP_LIB_LINKS}
+            vt_containers string comdef mem
   DEFINES -DKEYSTONE_ASM
 )
 

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valera
+ * Copyright (c) 2023-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 #include "bits.h"
 #include "string.h"
 #include "aarch64.h"
+#include "aarch64_global_stack.h"
 
 #include <inttypes.h>
 
@@ -357,34 +358,70 @@ uint8_t aarch64_put_b_x16_stub_abs( uint32_t *dst
     return sizeof(b_x16_stub_abs);
 }
 
+static uint16_t key = 0;
 uint8_t aarch64_put_b_stub_abs( uint32_t *dst
                               , uint64_t target_addr
-                              , uint64_t x30_addr
                               )
 {
-    uint8_t b_stub[] = {
+    UNUSED(target_addr);
+    STDERROR_PRINT("aarch64_put_b_stub_abs\n");
+    uint8_t instr_size = 0;
+    uint8_t b_stub_part0[] = {
         0xfe, 0x77, 0xbf, 0xa9, // stp x30, x29, [sp, #-16]!
-        0x7d, 0x01, 0x00, 0x58, // ldr x29, 0x2c
-        0xbe, 0x03, 0x40, 0xf9, // ldr x30, [x29]
-        0x7e, 0x00, 0x00, 0xb5, // cbnz x30, 0xc
-        0xfe, 0x03, 0x40, 0xf9, // ldr x30, [sp, #16]
-        0xbe, 0x03, 0x00, 0xf9, // str x30, [x29]
-        0xfe, 0x77, 0xc1, 0xa8, // ldp x30, x29, [sp], #16
-        0xfe, 0x00, 0x00, 0x58, // ldr x30, 0x1c
-        0xc0, 0x03, 0x3f, 0xd6, // blr x30
-        0x7e, 0x00, 0x00, 0x58, // ldr x30, 0xc
-        0xde, 0x03, 0x40, 0xf9, // ldr x30, [x30]
-        0xc0, 0x03, 0x5f, 0xd6, // ret
-        0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde, // .quad 0xdeadbeefdeadbeef
-        0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde, // .quad 0xdeadbeefdeadbeef
+        0xe0, 0x07, 0xbf, 0xa9, // stp x0, x1, [sp, #-16]!
+        0xe0, 0x03, 0x1e, 0xaa, // mov x0, x30 // first argument for push_x30
+        0x01, 0x00, 0x80, 0xd2, // movz x1, key // second argument for push_x30
     };
 
-    *(uint64_t*)(b_stub + 48) = x30_addr;
-    *(uint64_t*)(b_stub + 56) = target_addr;
+    uint32_t *instr = ((uint32_t*)b_stub_part0) + 3;
+    *instr |= (uint32_t)((key & 0xFFFF) << 5);
+    instr_size += sizeof(b_stub_part0);
+    memcpy(dst, b_stub_part0, sizeof(b_stub_part0));
 
-    memcpy(dst, b_stub, sizeof(b_stub));
+    instr_size += aarch64_put_adr_stub_abs(dst + (instr_size >> 2) //number of intr
+                                          , (uint64_t)push_x30
+                                          , 30
+                                          );
 
-    return sizeof(b_stub);
+    uint8_t b_stub_part1[] = {
+        0xc0, 0x03, 0x3f, 0xd6, // blr x30 // call push_x30
+        0xe0, 0x07, 0xc1, 0xa8, // ldp x0, x1, [sp], #16
+        0xfe, 0x77, 0xc1, 0xa8, // ldp x30, x29, [sp], #16
+    };
+    memcpy(dst + (instr_size >> 2), b_stub_part1, sizeof(b_stub_part1));
+    instr_size += sizeof(b_stub_part1);
+
+    instr_size += aarch64_put_adr_stub_abs( dst + (instr_size >> 2)
+                                          , target_addr
+                                          , 30
+                                          );
+
+    uint8_t b_stub_part2[] = {
+        0xc0, 0x03, 0x3f, 0xd6, // blr x30 // call target_addr
+        0xe0, 0x0f, 0x1f, 0xf8, // str x0, [sp, #-16]!
+        0x00, 0x00, 0x80, 0xd2, // movz x0, key
+    };
+    instr = ((uint32_t*)b_stub_part2) + 2;
+    *instr |= (uint32_t)((key & 0xFFFF) << 5);
+    memcpy(dst + (instr_size >> 2), b_stub_part2, sizeof(b_stub_part2));
+    instr_size += sizeof(b_stub_part2);
+
+    instr_size += aarch64_put_adr_stub_abs( dst + (instr_size >> 2)
+                                        , (uint64_t)pop_x30
+                                        , 30
+                                        );
+
+    uint8_t b_stub_part3[] = {
+        0xc0, 0x03, 0x3f, 0xd6, // blr x30 // call pop_x30
+        0xfe, 0x03, 0x00, 0xaa, // mov x30, x0
+        0xe0, 0x07, 0x41, 0xf8, // ldr x0, [sp], #16
+        0xc0, 0x03, 0x5f, 0xd6, // ret
+    };
+    memcpy(dst + (instr_size >> 2), b_stub_part3, sizeof(b_stub_part3));
+    instr_size += sizeof(b_stub_part3);
+
+    ++key;
+    return instr_size;
 }
 
 uint8_t aarch64_put_bl( uint32_t *dst
@@ -583,6 +620,26 @@ uint8_t aarch64_put_b_cond( uint32_t *dst
          | (uint32_t)(cond & 0xF);
 
     return 4;
+}
+
+uint8_t aarch64_put_b_cond_stub_abs( uint32_t *dst
+                                   , uint64_t target_addr
+                                   , uint8_t cond
+                                   )
+{
+    //      b_cond CONDITION_TRUE
+    //      b CONDITION_FALSE
+    // CONDITION_TRUE:
+    //      b_stub_abs
+    // CONDITION_FALSE:
+    uint8_t b_cond_size = aarch64_put_b_cond(dst, 0 , 8, cond);
+    uint8_t b_abs_size = aarch64_put_b_stub_abs(
+                            dst + 2, // two jumps before absolute stub
+                            target_addr
+                        );
+    uint8_t b_size = aarch64_put_b(dst + 1, 0, 4 + b_abs_size);
+
+    return (b_cond_size + b_abs_size + b_size);
 }
 
 uint8_t aarch64_put_bc_cond( uint32_t *dst
