@@ -39,8 +39,29 @@
 
 BinDynMod binDynMod = {};
 
-#define INIT_BIN_DYN_MOD(type)               \
-    binDynMod.hook = (BinHook)&type ## Hook;
+static uint64_t
+get_seed(void)
+{
+    // Get seed for work with randomize adress space
+    BinSymPtr sym = binParser.getSymByName(binParser.bin, SYM_PREFIX"get_seed");
+    if (sym == NULL)  {
+        STDERROR_PRINT("Cannot get the symbol "SYM_PREFIX"get_seed\n");
+        return (uint64_t)-1;
+    }
+
+    uint64_t sym_addr = binParser.getSSymAddr(sym);
+    if (sym_addr == (uint64_t)-1) {
+        STDERROR_PRINT("Cannot get an addr of symbol "SYM_PREFIX"get_seed\n");
+        return (uint64_t)-1;
+    }
+
+    uint64_t seed = (uint64_t)get_seed - sym_addr;
+    return seed;
+}
+
+#define INIT_BIN_DYN_MOD(type)                  \
+    binDynMod.hook = (BinHook)&type ## Hook;    \
+    binDynMod.get_seed = (BinGetSeed)&get_seed;
 
 int initBinDynMod(BIN_FILE_TYPE type)
 {
@@ -72,4 +93,6 @@ int initBinDynMod(BIN_FILE_TYPE type)
 
     return 0;
 }
+
+
 

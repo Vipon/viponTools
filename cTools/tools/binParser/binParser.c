@@ -36,7 +36,7 @@ static Arch binParserArch = ARCH;
 static const char doc[] =
     "Binary parser. Support binare format: mach-o/fat (64 bit), elf (64 bit), pe (64 bit)";
 static const char argsDoc[] = "BIN_FILE";
-static const char progVersion[] = "0.5.0";
+static const char progVersion[] = "0.6.0";
 
 typedef enum {
     HEADER = 0,
@@ -55,6 +55,7 @@ typedef enum {
     EXPORTS,
     RELOCATIONS,
     DYNAMIC,
+    FIXUPS,
     VERSION_INFO,
     NUM_FLAGS
 } BinParserOpt;
@@ -171,6 +172,13 @@ void printDynamicSection(const char *arg)
 {
     UNUSED(arg);
     flags[DYNAMIC] = true;
+}
+
+static
+void printFixups(const char *arg)
+{
+    UNUSED(arg);
+    flags[FIXUPS] = true;
 }
 
 static
@@ -311,6 +319,11 @@ int main(int argc, char *argv[])
                             , .doc = "elf: print symbols version info from sections:"
                                      ".gnu.version, .gnu.version_r"
     );
+    ADD_ARG(printFixups, .name = "fixups"
+                       , .key = 159
+                       , .flags = OPTION_ARG_OPTIONAL
+                       , .doc = "macho: print all fixups information"
+    );
 
     ARG_PARSE(argc, argv);
     setupBinPrinterArch(binParserArch);
@@ -364,6 +377,9 @@ int main(int argc, char *argv[])
     }
     if (flags[VERSION_INFO]) {
         binPrinter.elf.printVersionInfo(binParser.bin);
+    }
+    if (flags[FIXUPS]) {
+        binPrinter.macho.printFixups(binParser.bin);
     }
 
     finiBinPrinter();

@@ -97,3 +97,12 @@ void fatMacho64PrintRelocations(const FatMacho64File *ff)
     macho64PrintRelocations(mf);
 }
 
+void fatMacho64PrintFixups(const FatMacho64File *ff)
+{
+    const Macho64File *mf = fatMacho64GetConstMacho64ByArch(ff, fatMacho64ParseArch);
+    if (mf == NULL)
+        return;
+
+    macho64PrintFixups(mf);
+}
+

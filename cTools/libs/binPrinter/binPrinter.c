@@ -41,7 +41,8 @@ BinPrinter binPrinter = {};
 #define INIT_MACHO_PRINT_FUNC(type) \
     binPrinter.macho.printFuncStarts = (BinPrintFuncStarts)&(type ## PrintFuncStarts); \
     binPrinter.macho.printLComs = (BinPrintLComs)&(type ## PrintLComs); \
-    binPrinter.macho.printCodeSign = (BinPrintCodeSign)&(type ## PrintCodeSign);
+    binPrinter.macho.printCodeSign = (BinPrintCodeSign)&(type ## PrintCodeSign); \
+    binPrinter.macho.printFixups = (BinPrintFixups)&(type ## PrintFixups);
 
 #define INIT_FAT_MACHO_PRINT_FUNC(type) \
     binPrinter.fatMacho.printFatHeader = (BinPrintFatHeader)&(type ## PrintHeader);

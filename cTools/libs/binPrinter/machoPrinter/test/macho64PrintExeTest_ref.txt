@@ -3,8 +3,8 @@ macho64 header:
    cputype: 0x0100000c (ARM64)
 cpusubtype: 0x00000000 (ARM64_ALL)
   filetype: 0x00000002 (EXECUTE)
-     ncmds: 0x0000001d
-sizeofcmds: 0x00000768
+     ncmds: 0x00000026
+sizeofcmds: 0x00000a98
      flags: 0x00200085 (PIE | TWOLEVEL | DYLDLINK | NOUNDEFS)
 
 Load Command: 0
@@ -21,7 +21,7 @@ Load Command: 0
     flags: 0x0
 Load Command: 1
       cmd: LC_SEGMENT_64
-  cmdsize: 392
+  cmdsize: 472
   segname: __TEXT
    vmaddr: 0x100000000
    vmsize: 0x4000
@@ -29,14 +29,14 @@ Load Command: 1
  filesize: 16384
   maxprot: xr
  initprot: xr
-   nsects: 4
+   nsects: 5
     flags: 0x0
 Section:
   sectname: __text
    segname: __TEXT
-      addr: 0x100003eb4
-      size: 0x80
-    offset: 16052
+      addr: 0x100003c98
+      size: 0x168
+    offset: 15512
      align: 4
     reloff: 0
     nreloc: 0
@@ -46,9 +46,9 @@ Section:
 Section:
   sectname: __stubs
    segname: __TEXT
-      addr: 0x100003f34
-      size: 0x6c
-    offset: 16180
+      addr: 0x100003e00
+      size: 0xc0
+    offset: 15872
      align: 4
     reloff: 0
     nreloc: 0
@@ -58,9 +58,9 @@ Section:
 Section:
   sectname: __cstring
    segname: __TEXT
-      addr: 0x100003fa0
-      size: 0x17
-    offset: 16288
+      addr: 0x100003ec0
+      size: 0xd8
+    offset: 16064
      align: 1
     reloff: 0
     nreloc: 0
@@ -68,11 +68,23 @@ Section:
  reserved1: 0
  reserved2: 0
 Section:
+  sectname: __const
+   segname: __TEXT
+      addr: 0x100003f98
+      size: 0x18
+    offset: 16280
+     align: 1
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000000
+ reserved1: 0
+ reserved2: 0
+Section:
   sectname: __unwind_info
    segname: __TEXT
-      addr: 0x100003fb8
-      size: 0x48
-    offset: 16312
+      addr: 0x100003fb0
+      size: 0x50
+    offset: 16304
      align: 4
     reloff: 0
     nreloc: 0
@@ -95,122 +107,139 @@ Section:
   sectname: __got
    segname: __DATA_CONST
       addr: 0x100004000
-      size: 0x50
+      size: 0x90
     offset: 16384
      align: 8
     reloff: 0
     nreloc: 0
      flags: 0x00000006 NON_LAZY_SYM
- reserved1: 9 (index into indirect symbol table)
+ reserved1: 16 (index into indirect symbol table)
  reserved2: 0
 Load Command: 3
       cmd: LC_SEGMENT_64
-  cmdsize: 72
-  segname: __LINKEDIT
+  cmdsize: 152
+  segname: __MY_SEG
    vmaddr: 0x100008000
    vmsize: 0x4000
   fileoff: 32768
- filesize: 1664
+ filesize: 16384
+  maxprot: wr
+ initprot: wr
+   nsects: 1
+    flags: 0x0
+Section:
+  sectname: __my_sect
+   segname: __MY_SEG
+      addr: 0x100008000
+      size: 0x8
+    offset: 32768
+     align: 256
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000000
+ reserved1: 0
+ reserved2: 0
+Load Command: 4
+      cmd: LC_SEGMENT_64
+  cmdsize: 72
+  segname: __LINKEDIT
+   vmaddr: 0x10000c000
+   vmsize: 0x4000
+  fileoff: 49152
+ filesize: 1872
   maxprot: r
  initprot: r
    nsects: 0
     flags: 0x0
-Load Command: 4
+Load Command: 5
       cmd: LC_DYLD_CHAINED_FIXUPS
   cmdsize: 16
-  dataoff: 32768
- datasize: 296
-Load Command: 5
+  dataoff: 49152
+ datasize: 456
+Load Command: 6
       cmd: LC_DYLD_EXPORTS_TRIE
   cmdsize: 16
-  dataoff: 33064
+  dataoff: 49608
  datasize: 48
-Load Command: 6
+Load Command: 7
       cmd: LC_SYMTAB
   cmdsize: 24
-   symoff: 33120
-    nsyms: 21
-   stroff: 33536
-  strsize: 472
-Load Command: 7
+   symoff: 49664
+    nsyms: 22
+   stroff: 50152
+  strsize: 328
+Load Command: 8
            cmd: LC_DYSYMTAB
        cmdsize: 80
      ilocalsym: 0
-     nlocalsym: 9
-    iextdefsym: 9
+     nlocalsym: 2
+    iextdefsym: 2
     nextdefsym: 2
-     iundefsym: 11
-     nundefsym: 10
+     iundefsym: 4
+     nundefsym: 18
         tocoff: 0
           ntoc: 0
      modtaboff: 0
        nmodtab: 0
   extrefsymoff: 0
    nextrefsyms: 0
-indirectsymoff: 33456
- nindirectsyms: 19
+indirectsymoff: 50016
+ nindirectsyms: 34
      extreloff: 0
        nextrel: 0
      locreloff: 0
        nlocrel: 0
-Load Command: 8
+Load Command: 9
       cmd: LC_LOAD_DYLINKER
   cmdsize: 32
      name: /usr/lib/dyld
-Load Command: 9
+Load Command: 10
       cmd: LC_UUID
   cmdsize: 24
-     uuid: 9F91D6AF8FA3360AA842E952A1584BEA
-Load Command: 10
+     uuid: AA64669EB8F63DDC8B1548F6C6305E4C
+Load Command: 11
       cmd: LC_BUILD_VERSION
   cmdsize: 32
  platform: MACOS
-    minos: 13.0.0
-      sdk: 13.1.0
+    minos: 14.0.0
+      sdk: 14.2.0
    ntools: 1
      tool: LD
-  version: 820.1.0
-Load Command: 11
+  version: 907.0.0
+Load Command: 12
       cmd: LC_SOURCE_VERSION
   cmdsize: 16
   version: 0.0.0.0.0
-Load Command: 12
+Load Command: 13
       cmd: LC_MAIN
   cmdsize: 24
- entryoff: 16052
+ entryoff: 15512
 stacksize: 0
-Load Command: 13
-      cmd: LC_LOAD_DYLIB
-  cmdsize: 56
-     name: @rpath/libmacho64Printer.dylib (offset 24)
-timestamp: Thu Jan  1 00:00:02 1970
-dylib ver: 0.0.0
- comp ver: 0.0.0
 Load Command: 14
       cmd: LC_LOAD_DYLIB
   cmdsize: 48
-     name: @rpath/libLEB128.dylib (offset 24)
+     name: @rpath/libvTest.dylib (offset 24)
 timestamp: Thu Jan  1 00:00:02 1970
 dylib ver: 0.0.0
  comp ver: 0.0.0
 Load Command: 15
       cmd: LC_LOAD_DYLIB
   cmdsize: 56
-     name: @rpath/libmacho64Parse.dylib (offset 24)
+     name: @rpath/libmacho64Printer.dylib (offset 24)
 timestamp: Thu Jan  1 00:00:02 1970
 dylib ver: 0.0.0
  comp ver: 0.0.0
 Load Command: 16
       cmd: LC_LOAD_DYLIB
-  cmdsize: 48
-     name: @rpath/libfile.dylib (offset 24)
+  cmdsize: 56
+     name: @rpath/libmacho64Parse.dylib (offset 24)
 timestamp: Thu Jan  1 00:00:02 1970
 dylib ver: 0.0.0
  comp ver: 0.0.0
 Load Command: 17
       cmd: LC_LOAD_DYLIB
   cmdsize: 48
-     name: @rpath/libmem.dylib (offset 24)
+     name: @rpath/libfile.dylib (offset 24)
 timestamp: Thu Jan  1 00:00:02 1970
 dylib ver: 0.0.0
  comp ver: 0.0.0
@@ -223,50 +252,98 @@ dylib ver: 0.0.0
  comp ver: 0.0.0
 Load Command: 19
       cmd: LC_LOAD_DYLIB
+  cmdsize: 48
+     name: @rpath/libLEB128.dylib (offset 24)
+timestamp: Thu Jan  1 00:00:02 1970
+dylib ver: 0.0.0
+ comp ver: 0.0.0
+Load Command: 20
+      cmd: LC_LOAD_DYLIB
+  cmdsize: 48
+     name: @rpath/libmem.dylib (offset 24)
+timestamp: Thu Jan  1 00:00:02 1970
+dylib ver: 0.0.0
+ comp ver: 0.0.0
+Load Command: 21
+      cmd: LC_LOAD_DYLIB
+  cmdsize: 48
+     name: @rpath/libcomdef.dylib (offset 24)
+timestamp: Thu Jan  1 00:00:02 1970
+dylib ver: 0.0.0
+ comp ver: 0.0.0
+Load Command: 22
+      cmd: LC_LOAD_DYLIB
+  cmdsize: 72
+     name: @rpath/libclang_rt.asan_osx_dynamic.dylib (offset 24)
+timestamp: Thu Jan  1 00:00:02 1970
+dylib ver: 0.0.0
+ comp ver: 0.0.0
+Load Command: 23
+      cmd: LC_LOAD_DYLIB
   cmdsize: 56
      name: /usr/lib/libSystem.B.dylib (offset 24)
 timestamp: Thu Jan  1 00:00:02 1970
-dylib ver: 1319.0.0
+dylib ver: 1336.61.1
  comp ver: 1.0.0
-Load Command: 20
-      cmd: LC_RPATH
-  cmdsize: 104
-     path: /Users/valeriikonychev/workspace/viponTools/output/cTools/libs/binPrinter/machoPrinter
-Load Command: 21
-      cmd: LC_RPATH
-  cmdsize: 88
-     path: /Users/valeriikonychev/workspace/viponTools/output/cTools/libs/LEB128
-Load Command: 22
-      cmd: LC_RPATH
-  cmdsize: 96
-     path: /Users/valeriikonychev/workspace/viponTools/output/cTools/libs/binParse/machoParse
-Load Command: 23
-      cmd: LC_RPATH
-  cmdsize: 80
-     path: /Users/valeriikonychev/workspace/viponTools/output/cTools/libs/file
 Load Command: 24
       cmd: LC_RPATH
-  cmdsize: 80
-     path: /Users/valeriikonychev/workspace/viponTools/output/cTools/libs/mem
+  cmdsize: 72
+     path: /Users/valeriikonychev/workspace/viponTools/external/lib
 Load Command: 25
       cmd: LC_RPATH
   cmdsize: 88
-     path: /Users/valeriikonychev/workspace/viponTools/output/cTools/libs/string
+     path: /Users/valeriikonychev/workspace/viponTools/release/cTools/libs/test
 Load Command: 26
+      cmd: LC_RPATH
+  cmdsize: 104
+     path: /Users/valeriikonychev/workspace/viponTools/release/cTools/libs/binPrinter/machoPrinter
+Load Command: 27
+      cmd: LC_RPATH
+  cmdsize: 96
+     path: /Users/valeriikonychev/workspace/viponTools/release/cTools/libs/binParse/machoParse
+Load Command: 28
+      cmd: LC_RPATH
+  cmdsize: 88
+     path: /Users/valeriikonychev/workspace/viponTools/release/cTools/libs/file
+Load Command: 29
+      cmd: LC_RPATH
+  cmdsize: 88
+     path: /Users/valeriikonychev/workspace/viponTools/release/cTools/libs/string
+Load Command: 30
+      cmd: LC_RPATH
+  cmdsize: 88
+     path: /Users/valeriikonychev/workspace/viponTools/release/cTools/libs/LEB128
+Load Command: 31
+      cmd: LC_RPATH
+  cmdsize: 80
+     path: /Users/valeriikonychev/workspace/viponTools/release/cTools/libs/mem
+Load Command: 32
+      cmd: LC_RPATH
+  cmdsize: 88
+     path: /Users/valeriikonychev/workspace/viponTools/release/cTools/libs/comdef
+Load Command: 33
+      cmd: LC_RPATH
+  cmdsize: 32
+     path: @executable_path
+Load Command: 34
+      cmd: LC_RPATH
+  cmdsize: 128
+     path: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/lib/darwin
+Load Command: 35
       cmd: LC_FUNCTION_STARTS
   cmdsize: 16
-  dataoff: 33112
+  dataoff: 49656
  datasize: 8
-Load Command: 27
+Load Command: 36
       cmd: LC_DATA_IN_CODE
   cmdsize: 16
-  dataoff: 33120
+  dataoff: 49664
  datasize: 0
-Load Command: 28
+Load Command: 37
       cmd: LC_CODE_SIGNATURE
   cmdsize: 16
-  dataoff: 34016
- datasize: 416
+  dataoff: 50480
+ datasize: 544
 
 Segment 0:
   segname: __PAGEZERO
@@ -286,14 +363,14 @@ Segment 1:
  filesize: 16384
   maxprot: xr
  initprot: xr
-   nsects: 4
+   nsects: 5
     flags: 0x0
 Section:
   sectname: __text
    segname: __TEXT
-      addr: 0x100003eb4
-      size: 0x80
-    offset: 16052
+      addr: 0x100003c98
+      size: 0x168
+    offset: 15512
      align: 4
     reloff: 0
     nreloc: 0
@@ -303,9 +380,9 @@ Section:
 Section:
   sectname: __stubs
    segname: __TEXT
-      addr: 0x100003f34
-      size: 0x6c
-    offset: 16180
+      addr: 0x100003e00
+      size: 0xc0
+    offset: 15872
      align: 4
     reloff: 0
     nreloc: 0
@@ -315,9 +392,9 @@ Section:
 Section:
   sectname: __cstring
    segname: __TEXT
-      addr: 0x100003fa0
-      size: 0x17
-    offset: 16288
+      addr: 0x100003ec0
+      size: 0xd8
+    offset: 16064
      align: 1
     reloff: 0
     nreloc: 0
@@ -325,11 +402,23 @@ Section:
  reserved1: 0
  reserved2: 0
 Section:
+  sectname: __const
+   segname: __TEXT
+      addr: 0x100003f98
+      size: 0x18
+    offset: 16280
+     align: 1
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000000
+ reserved1: 0
+ reserved2: 0
+Section:
   sectname: __unwind_info
    segname: __TEXT
-      addr: 0x100003fb8
-      size: 0x48
-    offset: 16312
+      addr: 0x100003fb0
+      size: 0x50
+    offset: 16304
      align: 4
     reloff: 0
     nreloc: 0
@@ -350,20 +439,42 @@ Section:
   sectname: __got
    segname: __DATA_CONST
       addr: 0x100004000
-      size: 0x50
+      size: 0x90
     offset: 16384
      align: 8
     reloff: 0
     nreloc: 0
      flags: 0x00000006 NON_LAZY_SYM
- reserved1: 9 (index into indirect symbol table)
+ reserved1: 16 (index into indirect symbol table)
  reserved2: 0
 Segment 3:
-  segname: __LINKEDIT
+  segname: __MY_SEG
    vmaddr: 0x100008000
    vmsize: 0x4000
   fileoff: 32768
- filesize: 1664
+ filesize: 16384
+  maxprot: wr
+ initprot: wr
+   nsects: 1
+    flags: 0x0
+Section:
+  sectname: __my_sect
+   segname: __MY_SEG
+      addr: 0x100008000
+      size: 0x8
+    offset: 32768
+     align: 256
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000000
+ reserved1: 0
+ reserved2: 0
+Segment 4:
+  segname: __LINKEDIT
+   vmaddr: 0x10000c000
+   vmsize: 0x4000
+  fileoff: 49152
+ filesize: 1872
   maxprot: r
  initprot: r
    nsects: 0
@@ -372,9 +483,9 @@ Segment 3:
 Section 1:
   sectname: __text
    segname: __TEXT
-      addr: 0x100003eb4
-      size: 0x80
-    offset: 16052
+      addr: 0x100003c98
+      size: 0x168
+    offset: 15512
      align: 4
     reloff: 0
     nreloc: 0
@@ -384,9 +495,9 @@ Section 1:
 Section 2:
   sectname: __stubs
    segname: __TEXT
-      addr: 0x100003f34
-      size: 0x6c
-    offset: 16180
+      addr: 0x100003e00
+      size: 0xc0
+    offset: 15872
      align: 4
     reloff: 0
     nreloc: 0
@@ -396,9 +507,9 @@ Section 2:
 Section 3:
   sectname: __cstring
    segname: __TEXT
-      addr: 0x100003fa0
-      size: 0x17
-    offset: 16288
+      addr: 0x100003ec0
+      size: 0xd8
+    offset: 16064
      align: 1
     reloff: 0
     nreloc: 0
@@ -406,183 +517,212 @@ Section 3:
  reserved1: 0
  reserved2: 0
 Section 4:
-  sectname: __unwind_info
+  sectname: __const
    segname: __TEXT
-      addr: 0x100003fb8
-      size: 0x48
-    offset: 16312
-     align: 4
+      addr: 0x100003f98
+      size: 0x18
+    offset: 16280
+     align: 1
     reloff: 0
     nreloc: 0
      flags: 0x00000000
  reserved1: 0
  reserved2: 0
 Section 5:
+  sectname: __unwind_info
+   segname: __TEXT
+      addr: 0x100003fb0
+      size: 0x50
+    offset: 16304
+     align: 4
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000000
+ reserved1: 0
+ reserved2: 0
+Section 6:
   sectname: __got
    segname: __DATA_CONST
       addr: 0x100004000
-      size: 0x50
+      size: 0x90
     offset: 16384
      align: 8
     reloff: 0
     nreloc: 0
      flags: 0x00000006 NON_LAZY_SYM
- reserved1: 9 (index into indirect symbol table)
+ reserved1: 16 (index into indirect symbol table)
+ reserved2: 0
+Section 7:
+  sectname: __my_sect
+   segname: __MY_SEG
+      addr: 0x100008000
+      size: 0x8
+    offset: 32768
+     align: 256
+    reloff: 0
+    nreloc: 0
+     flags: 0x00000000
+ reserved1: 0
  reserved2: 0
 
 Function starts:
             offset              vaddr func
-0x0000000000003eb4 0x0000000100003eb4 _main
-0x0000000000000000 0x0000000100003eb4 _main
-0x0000000000000000 0x0000000100003eb4 _main
-0x0000000000000000 0x0000000100003eb4 _main
-0x0000000000000000 0x0000000100003eb4 _main
-0x0000000000000000 0x0000000100003eb4 _main
-0x0000000000000000 0x0000000100003eb4 _main
+0x0000000000003c98 0x0000000100003c98 _main
+0x0000000000000090 0x0000000100003d28 my_label
+0x0000000000000000 0x0000000100003d28 my_label
+0x0000000000000000 0x0000000100003d28 my_label
+0x0000000000000000 0x0000000100003d28 my_label
+0x0000000000000000 0x0000000100003d28 my_label
 
 Symbol table:
 0.
-     name: 
-     type: 0x64 N_SO
+     name: my_label
+     type: 0x0e N_SECT
      sect: 0x01 __TEXT,__text
      desc: 0x0
-    value: 0x0
+    value: 0x100003d28
 1.
-     name: /Users/valeriikonychev/workspace/viponTools/cTools/libs/binPrinter/machoPrinter/test/
-     type: 0x64 N_SO
-     sect: 0x00 NO_SECT
+     name: _TESTOUT
+     type: 0x0e N_SECT
+     sect: 0x04 __TEXT,__const
      desc: 0x0
-    value: 0x0
+    value: 0x100003f98
 2.
-     name: macho64PrintExeTest.c
-     type: 0x64 N_SO
-     sect: 0x00 NO_SECT
-     desc: 0x0
-    value: 0x0
-3.
-     name: /Users/valeriikonychev/workspace/viponTools/output/cTools/libs/binPrinter/machoPrinter/test/CMakeFiles/macho64PrintExeTest.dir/macho64PrintExeTest.c.o
-     type: 0x66 N_OSO
-     sect: 0x00 NO_SECT
-     desc: 0x1
-    value: 0x64a1a023
-4.
-     name: 
-     type: 0x2e N_BNSYM
-     sect: 0x01 __TEXT,__text
-     desc: 0x0
-    value: 0x100003eb4
-5.
-     name: _main
-     type: 0x24 N_FUN
-     sect: 0x01 __TEXT,__text
-     desc: 0x0
-    value: 0x100003eb4
-6.
-     name: 
-     type: 0x24 N_FUN
-     sect: 0x00 NO_SECT
-     desc: 0x0
-    value: 0x80
-7.
-     name: 
-     type: 0x4e N_ENSYM
-     sect: 0x01 __TEXT,__text
-     desc: 0x0
-    value: 0x100003eb4
-8.
-     name: 
-     type: 0x64 N_SO
-     sect: 0x01 __TEXT,__text
-     desc: 0x0
-    value: 0x0
-9.
      name: __mh_execute_header
      type: 0x0f N_SECT | N_EXT
      sect: 0x01 __TEXT,__text
      desc: 0x10
     value: 0x100000000
-10.
+3.
      name: _main
      type: 0x0f N_SECT | N_EXT
      sect: 0x01 __TEXT,__text
      desc: 0x0
-    value: 0x100003eb4
-11.
+    value: 0x100003c98
+4.
+     name: ___stderrp
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0xa00 (/usr/lib/libSystem.B.dylib)
+    value: 0x0
+5.
      name: ___stdoutp
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
-     desc: 0x700 (/usr/lib/libSystem.B.dylib)
+     desc: 0xa00 (/usr/lib/libSystem.B.dylib)
     value: 0x0
-12.
+6.
+     name: _cmpFiles
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0x400 (@rpath/libfile.dylib)
+    value: 0x0
+7.
+     name: _exit
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0xa00 (/usr/lib/libSystem.B.dylib)
+    value: 0x0
+8.
+     name: _fclose
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0xa00 (/usr/lib/libSystem.B.dylib)
+    value: 0x0
+9.
+     name: _fprintf
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0xa00 (/usr/lib/libSystem.B.dylib)
+    value: 0x0
+10.
+     name: _fputc
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0xa00 (/usr/lib/libSystem.B.dylib)
+    value: 0x0
+11.
      name: _freopen
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
-     desc: 0x700 (/usr/lib/libSystem.B.dylib)
+     desc: 0xa00 (/usr/lib/libSystem.B.dylib)
     value: 0x0
-13.
+12.
      name: _macho64Free
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
      desc: 0x300 (@rpath/libmacho64Parse.dylib)
     value: 0x0
-14.
+13.
      name: _macho64Parse
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
      desc: 0x300 (@rpath/libmacho64Parse.dylib)
     value: 0x0
+14.
+     name: _macho64PrintChainedFixups
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0x200 (@rpath/libmacho64Printer.dylib)
+    value: 0x0
 15.
+     name: _macho64PrintCodeSign
+     type: 0x01 N_UNDF | N_EXT
+     sect: 0x00 NO_SECT
+     desc: 0x200 (@rpath/libmacho64Printer.dylib)
+    value: 0x0
+16.
      name: _macho64PrintFuncStarts
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
-     desc: 0x100 (@rpath/libmacho64Printer.dylib)
+     desc: 0x200 (@rpath/libmacho64Printer.dylib)
     value: 0x0
-16.
+17.
      name: _macho64PrintHeader
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
-     desc: 0x100 (@rpath/libmacho64Printer.dylib)
+     desc: 0x200 (@rpath/libmacho64Printer.dylib)
     value: 0x0
-17.
+18.
      name: _macho64PrintLComs
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
-     desc: 0x100 (@rpath/libmacho64Printer.dylib)
+     desc: 0x200 (@rpath/libmacho64Printer.dylib)
     value: 0x0
-18.
+19.
      name: _macho64PrintSections
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
-     desc: 0x100 (@rpath/libmacho64Printer.dylib)
+     desc: 0x200 (@rpath/libmacho64Printer.dylib)
     value: 0x0
-19.
+20.
      name: _macho64PrintSegments
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
-     desc: 0x100 (@rpath/libmacho64Printer.dylib)
+     desc: 0x200 (@rpath/libmacho64Printer.dylib)
     value: 0x0
-20.
+21.
      name: _macho64PrintSymbols
      type: 0x01 N_UNDF | N_EXT
      sect: 0x00 NO_SECT
-     desc: 0x100 (@rpath/libmacho64Printer.dylib)
+     desc: 0x200 (@rpath/libmacho64Printer.dylib)
     value: 0x0
 
 Code Signature:
 Super Blob:
     magic: 0xfade0cc0
-   length: 416
+   length: 544
     count: 1
          Blob[0]: (type: 0x00000000, offset: 20)
             magic: 0xfade0c02
-           length: 396
+           length: 524
           version: 2.4.0
             flags: 0x20002
        hashOffset: 108
       identOffset: 88 (macho64PrintExeTest)
     nSpecialSlots: 0
-       nCodeSlots: 9
-        codeLimit: 0x84e0
+       nCodeSlots: 13
+        codeLimit: 0xc530
          hashSize: 32
          hashType: SHA256
          platform: 0
@@ -591,13 +731,126 @@ Super Blob:
       execSegBase: 0x0
      execSegLimit: 0x4000
      execSegFlags: 0x1
-         HashSlot[0]: 180a4094c6e05e878e7918122bf2d3d2cc8078d20f0f4e242898fe5d22afc3b4
+         HashSlot[0]: 8a9eb8ede57a11aa6fdbc4bfd90a79bb58ce52d2d3128981af3c201924ad962c
          HashSlot[1]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
          HashSlot[2]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
-         HashSlot[3]: 9aaf5f354ac850971a5559bc0fc622c27af6dea7e26776b9ddce39c65173ab93
-         HashSlot[4]: 5de953ae7ee78e3a13ad8ddb8c0b7ca03c253e1a65cfa786af8d3ba8dbde967d
+         HashSlot[3]: 4acd3899c28bc49fdc1c65b093e5061e71e4fe8cb2e64b1cd7810fb629ba42a5
+         HashSlot[4]: 22c34e8f60d09ce065c150c2c03dc50eec08ba44ac9a4df70ea1643d31a43863
          HashSlot[5]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
          HashSlot[6]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
          HashSlot[7]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
-         HashSlot[8]: d5b092c0cb51e19d123e40e034f8642bef9b1104bfcb2743373d2a9d6c38f21a
+         HashSlot[8]: 9a94fa3bd3d6aea41fe64ecee37d97ce353533922ffc09ae824fb88c729fd2af
+         HashSlot[9]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
+         HashSlot[10]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
+         HashSlot[11]: ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7
+         HashSlot[12]: a3cc7accc9536b1de41ae01cfc195765410368cbdebbd436c11648dc96a65886
+
+fixups:
+ fixups_headers:
+    fixups_version: 0x00000000
+     starts_offset: 0x00000020
+    imports_offset: 0x00000068
+    symbols_offset: 0x000000b0
+     imports_count: 0x00000012
+    imports_format: chained_import
+    symbols_format: uncompressed
+starts_in_image:
+    seg_count 5
+    seg_info_offset[0] 0x00000000
+    seg_info_offset[1] 0x00000000
+    seg_info_offset[2] 0x00000018
+    seg_info_offset[3] 0x00000030
+    seg_info_offset[4] 0x00000000
+ starts_in_segment:
+                size: 0x00000018
+           page_size: 0x00004000
+      pointer_format: 64_offset
+      segment_offset: 0x00004000
+   max_valid_pointer: 0x00000000
+          page_count: 0x00000001
+              page_start[0]: 0x00000000
+                  address     type   target
+                  0x100004000 bind   /usr/lib/libSystem.B.dylib:___stderrp
+                  0x100004008 bind   /usr/lib/libSystem.B.dylib:___stdoutp
+                  0x100004010 bind   @rpath/libfile.dylib:_cmpFiles
+                  0x100004018 bind   /usr/lib/libSystem.B.dylib:_exit
+                  0x100004020 bind   /usr/lib/libSystem.B.dylib:_fclose
+                  0x100004028 bind   /usr/lib/libSystem.B.dylib:_fprintf
+                  0x100004030 bind   /usr/lib/libSystem.B.dylib:_fputc
+                  0x100004038 bind   /usr/lib/libSystem.B.dylib:_freopen
+                  0x100004040 bind   @rpath/libmacho64Parse.dylib:_macho64Free
+                  0x100004048 bind   @rpath/libmacho64Parse.dylib:_macho64Parse
+                  0x100004050 bind   @rpath/libmacho64Printer.dylib:_macho64PrintChainedFixups
+                  0x100004058 bind   @rpath/libmacho64Printer.dylib:_macho64PrintCodeSign
+                  0x100004060 bind   @rpath/libmacho64Printer.dylib:_macho64PrintFuncStarts
+                  0x100004068 bind   @rpath/libmacho64Printer.dylib:_macho64PrintHeader
+                  0x100004070 bind   @rpath/libmacho64Printer.dylib:_macho64PrintLComs
+                  0x100004078 bind   @rpath/libmacho64Printer.dylib:_macho64PrintSections
+                  0x100004080 bind   @rpath/libmacho64Printer.dylib:_macho64PrintSegments
+                  0x100004088 bind   @rpath/libmacho64Printer.dylib:_macho64PrintSymbols
+ starts_in_segment:
+                size: 0x00000018
+           page_size: 0x00004000
+      pointer_format: 64_offset
+      segment_offset: 0x00008000
+   max_valid_pointer: 0x00000000
+          page_count: 0x00000001
+              page_start[0]: 0x00000000
+                  address     type   target
+                  0x100008000 rebase 0x000003d28
+ imports:
+00000000       lib: /usr/lib/libSystem.B.dylib
+            symbol: ___stderrp
+       weak_import: false
+00000001       lib: /usr/lib/libSystem.B.dylib
+            symbol: ___stdoutp
+       weak_import: false
+00000002       lib: @rpath/libfile.dylib
+            symbol: _cmpFiles
+       weak_import: false
+00000003       lib: /usr/lib/libSystem.B.dylib
+            symbol: _exit
+       weak_import: false
+00000004       lib: /usr/lib/libSystem.B.dylib
+            symbol: _fclose
+       weak_import: false
+00000005       lib: /usr/lib/libSystem.B.dylib
+            symbol: _fprintf
+       weak_import: false
+00000006       lib: /usr/lib/libSystem.B.dylib
+            symbol: _fputc
+       weak_import: false
+00000007       lib: /usr/lib/libSystem.B.dylib
+            symbol: _freopen
+       weak_import: false
+00000008       lib: @rpath/libmacho64Parse.dylib
+            symbol: _macho64Free
+       weak_import: false
+00000009       lib: @rpath/libmacho64Parse.dylib
+            symbol: _macho64Parse
+       weak_import: false
+00000010       lib: @rpath/libmacho64Printer.dylib
+            symbol: _macho64PrintChainedFixups
+       weak_import: false
+00000011       lib: @rpath/libmacho64Printer.dylib
+            symbol: _macho64PrintCodeSign
+       weak_import: false
+00000012       lib: @rpath/libmacho64Printer.dylib
+            symbol: _macho64PrintFuncStarts
+       weak_import: false
+00000013       lib: @rpath/libmacho64Printer.dylib
+            symbol: _macho64PrintHeader
+       weak_import: false
+00000014       lib: @rpath/libmacho64Printer.dylib
+            symbol: _macho64PrintLComs
+       weak_import: false
+00000015       lib: @rpath/libmacho64Printer.dylib
+            symbol: _macho64PrintSections
+       weak_import: false
+00000016       lib: @rpath/libmacho64Printer.dylib
+            symbol: _macho64PrintSegments
+       weak_import: false
+00000017       lib: @rpath/libmacho64Printer.dylib
+            symbol: _macho64PrintSymbols
+       weak_import: false
 

@@ -43,6 +43,7 @@ typedef void (*BinPrintExports)(const BinFilePtr bin);
 typedef void (*BinPrintRelocations)(const BinFilePtr bin);
 typedef void (*BinPrintDynamicSection)(const BinFilePtr bin);
 typedef void (*BinPrintVersionInfo)(const BinFilePtr bin);
+typedef void (*BinPrintFixups)(const BinFilePtr bin);
 
 typedef struct {
     BinPrintHeader printHeader;
@@ -54,6 +55,7 @@ typedef struct {
         BinPrintFuncStarts printFuncStarts;
         BinPrintLComs printLComs;
         BinPrintCodeSign printCodeSign;
+        BinPrintFixups printFixups;
     } macho;
     struct {
         BinPrintFatHeader printFatHeader;

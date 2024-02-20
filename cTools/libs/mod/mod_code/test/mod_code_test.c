@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -13,7 +13,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ { * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR AARCH64_INSTR_TYPE_CBR },
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -22,52 +22,29 @@
  * SOFTWARE.
  */
 
-#include "test.h"
-#include "file.h"
 #include "comdef.h"
-#include "macho64Parse.h"
-#include "macho64Printer.h"
+#include "mod_code.h"
+#include <inttypes.h>
 
-#include <stdio.h>
+extern void test_func(void);
+void test_func(void)
+{
+    STDERROR_PRINT("I'm here\n");
+}
 
-static const char TESTOUT[] = "macho64PrintExeTest.txt";
-
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
     UNUSED(argc);
-    Macho64File *mf = macho64Parse(argv[1]);
-    if (mf == NULL) {
-        VT_ERROR("Cannot parse %s", argv[1]);
-        exit(EXIT_FAILURE);
-    }
+    UNUSED(argv);
 
-    FILE *f = freopen(TESTOUT, "w", stdout);
+    MOD_CODE(printf("hello\n"););
 
-    macho64PrintHeader(mf);
-    macho64PrintLComs(mf);
-    macho64PrintSegments(mf);
-    macho64PrintSections(mf);
-    macho64PrintFuncStarts(mf);
-    macho64PrintSymbols(mf);
-    macho64PrintCodeSign(mf);
-    macho64PrintFixups(mf);
+    mod_code_init(argv[0]);
+    mod_code_dump();
 
-    asm volatile (
-    "my_label:\n"
-    "1:\n"
-        ".pushsection __MY_SEG,__my_sect\n"
-        ".align 8\n"
-        ".quad 1b\n"
-        ".popsection\n"
-        ::: "memory"
-    );
+    ((void(*)(void))(mc[0].start))();
 
-    macho64Free(mf);
-
-    fclose(f);
-
-    EXPECT_FILE_EQ(TESTOUT, argv[2]);
-
+    test_func();
     return 0;
 }
 

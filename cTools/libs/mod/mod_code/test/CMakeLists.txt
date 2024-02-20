@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2024 Konychev Valerii
+# Copyright (c) 2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(comdef)
-add_subdirectory(mem)
-add_subdirectory(file)
-add_subdirectory(string)
-add_subdirectory(LEB128)
-add_subdirectory(containers)
-add_subdirectory(args)
-add_subdirectory(binParse)
-add_subdirectory(binPrinter)
-add_subdirectory(binDynMod)
-if (NOT APPLE)
-add_subdirectory(perfAnalysis)
-endif (NOT APPLE)
-add_subdirectory(test)
-add_subdirectory(x86_64)
-add_subdirectory(arch)
-add_subdirectory(mod)
+add_vipon_test(
+  NAME mod_code_test
+  SOURCES mod_code_test.c
+  LINK_LIBS mod_code
+)
+
+# Debug info causes fails at the compile time for AArch64
+target_compile_options(mod_code_test PRIVATE "-g0")
 

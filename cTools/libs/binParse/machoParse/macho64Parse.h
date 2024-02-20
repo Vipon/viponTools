@@ -92,6 +92,7 @@ typedef enum {  PAGEZERO_NSEG = 0,
 typedef struct Macho64File {
     char              *fn;
     FileD             fd;
+    uint64_t          base_addr;
     uint64_t          hOff; // file offset to mach-o header
     uint32_t          type;
     Arch              arch;

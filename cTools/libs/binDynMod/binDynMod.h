@@ -30,9 +30,11 @@
 #include "binParse.h"
 
 typedef void* (*BinHook)(const BinFilePtr, const char*, const void*);
+typedef uint64_t (*BinGetSeed)(void);
 
 typedef struct {
-    BinHook hook;
+    BinHook    hook;
+    BinGetSeed get_seed;
 } BinDynMod;
 
 extern BinDynMod binDynMod;

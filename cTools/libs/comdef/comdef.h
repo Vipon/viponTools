@@ -251,5 +251,11 @@ extern int VERBOSE;
 # define FALLTHROUGH __attribute__((fallthrough))
 #endif /* FALLTHROUGH */
 
+#if __has_attribute(packed)
+# define PACKED __attribute__((packed))
+#else
+# define PACKED
+#endif
+
 #endif /* __COMDEF_H */
 
