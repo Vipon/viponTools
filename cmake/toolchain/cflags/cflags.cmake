@@ -60,8 +60,10 @@ set(CMAKE_CXX_FLAGS_DEBUG ${CXX_FLAGS_DEBUG})
 set(CMAKE_CXX_FLAGS_RELEASE ${CXX_FLAGS_RELEASE})
 
 if (APPLE)
-  # Main MacOsX linker has problem with linking MOD_CODE macro
-  string(APPEND _LINKER_FLAGS " -ld_classic")
+  if ("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "arm64")
+    # Main MacOsX linker has problem with linking MOD_CODE macro
+    string(APPEND _LINKER_FLAGS " -ld_classic")
+  endif ()
 endif (APPLE)
 
 if (NOT "${_LINKER_FLAGS}" STREQUAL "")
