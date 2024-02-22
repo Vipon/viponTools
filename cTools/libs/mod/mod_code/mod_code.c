@@ -75,9 +75,9 @@ eexit_0:
 void
 mod_code_print(mod_code_t *mc)
 {
-    STDERROR_PRINT("%12s: %p\n", "insert_point", mc->insert_point);
-    STDERROR_PRINT("%12s: %p\n", "start", mc->start);
-    STDERROR_PRINT("%12s: %p\n", "end", mc->end);
+    STDERROR_PRINT("%12s: %p\n", "insert_point", (void*)mc->insert_point);
+    STDERROR_PRINT("%12s: %p\n", "start", (void*)mc->start);
+    STDERROR_PRINT("%12s: %p\n", "end", (void*)mc->end);
 }
 
 void

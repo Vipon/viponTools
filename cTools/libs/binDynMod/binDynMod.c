@@ -37,7 +37,7 @@
 # include "fatMacho64DynMod.h"
 #endif /* __MAC_OS_X__ */
 
-BinDynMod binDynMod = {};
+BinDynMod binDynMod;
 
 static uint64_t
 get_seed(void)
@@ -45,13 +45,13 @@ get_seed(void)
     // Get seed for work with randomize adress space
     BinSymPtr sym = binParser.getSymByName(binParser.bin, SYM_PREFIX"get_seed");
     if (sym == NULL)  {
-        STDERROR_PRINT("Cannot get the symbol "SYM_PREFIX"get_seed\n");
+        //STDERROR_PRINT("Cannot get the symbol "SYM_PREFIX"get_seed\n");
         return (uint64_t)-1;
     }
 
     uint64_t sym_addr = binParser.getSSymAddr(sym);
     if (sym_addr == (uint64_t)-1) {
-        STDERROR_PRINT("Cannot get an addr of symbol "SYM_PREFIX"get_seed\n");
+        //STDERROR_PRINT("Cannot get an addr of symbol "SYM_PREFIX"get_seed\n");
         return (uint64_t)-1;
     }
 

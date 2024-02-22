@@ -36,21 +36,34 @@
 # define MOD_CODE_SECT_FLAGS "regular,pure_instructions"
 
 #elif defined(__ELF__)
-# define MOD_CODE_SEGSECT        ".mod_code"
-# define MOD_CODE_SECTION        ".mod_code"
-# define MOD_CODE_SECT_FLAGS     "\"axw\""
+# define MC_STRUCT_SEGSECT   ".mc_struct"
+# define MC_STRUCT_SECTION   ".mc_struct"
+# define MOD_SECT_FLAGS      "\"aw\""
+
+# define MOD_CODE_SEGSECT    ".mod_code"
+# define MOD_CODE_SECTION    ".mod_code"
+# define MOD_CODE_SECT_FLAGS "\"axw\""
+
+#elif defined(__WIN__)
+# define MC_STRUCT_SEGSECT   ".mc_struct"
+# define MC_STRUCT_SECTION   ".mc_struct"
+# define MOD_SECT_FLAGS      "\"aw\""
+
+# define MOD_CODE_SEGSECT    ".mod_code"
+# define MOD_CODE_SECTION    ".mod_code"
+# define MOD_CODE_SECT_FLAGS "\"axw\""
 
 #else
 # error "Uknonw binary format"
 
 #endif
 
-#if ARCH == AARCH64
+#if AARCH64_DEFINED == 1
 # define MOD_CODE(code)                                             \
     DEF_GUARD(                                                      \
         asm volatile(                                               \
         "0:\n"                                                      \
-        ".pushsection "MC_STRUCT_SEGSECT", "MOD_SECT_FLAGS"\n"      \
+        PUSHSECTION" "MC_STRUCT_SEGSECT", "MOD_SECT_FLAGS"\n"       \
             ".align 8\n"                                            \
             /* .insert_point */                                     \
             ".quad 0b\n"                                            \
@@ -58,8 +71,8 @@
             ".quad 1f\n"                                            \
             /* .end */                                              \
             ".quad 2f\n"                                            \
-        ".popsection\n"                                             \
-        ".pushsection "MOD_CODE_SEGSECT", "MOD_CODE_SECT_FLAGS "\n" \
+        POPSECTION"\n"                                              \
+        PUSHSECTION" "MOD_CODE_SEGSECT", "MOD_CODE_SECT_FLAGS "\n"  \
         "1:\n"                                                      \
         ".align 8\n"                                                \
         "stp x30, x29, [sp, #-16]!\n"                               \
@@ -72,16 +85,16 @@
         "2:\n"                                                      \
         "ldp x30, x29, [sp], #16\n"                                 \
         "ret\n"                                                     \
-        ".popsection\n"                                             \
+        POPSECTION"\n"                                              \
         ::: "memory"                                                \
         );                                                          \
     )
-#elif ARCH == X86_64
+#elif X86_64_DEFINED == 1
 # define MOD_CODE(code)                                             \
     DEF_GUARD(                                                      \
         asm volatile(                                               \
         "0:\n"                                                      \
-        ".pushsection "MC_STRUCT_SEGSECT", "MOD_SECT_FLAGS"\n"      \
+        PUSHSECTION" "MC_STRUCT_SEGSECT", "MOD_SECT_FLAGS"\n"       \
             ".align 8\n"                                            \
             /* .insert_point */                                     \
             ".quad 0b\n"                                            \
@@ -89,8 +102,8 @@
             ".quad 1f\n"                                            \
             /* .end */                                              \
             ".quad 2f\n"                                            \
-        ".popsection\n"                                             \
-        ".pushsection "MOD_CODE_SEGSECT", "MOD_CODE_SECT_FLAGS "\n" \
+        POPSECTION"\n"                                              \
+        PUSHSECTION" "MOD_CODE_SEGSECT", "MOD_CODE_SECT_FLAGS "\n"  \
         "1:\n"                                                      \
         ".align 8\n"                                                \
         ::: "memory"                                                \
@@ -101,7 +114,7 @@
         asm volatile(                                               \
         "2:\n"                                                      \
         "ret\n"                                                     \
-        ".popsection\n"                                             \
+        POPSECTION"\n"                                              \
         ::: "memory"                                                \
         );                                                          \
     )

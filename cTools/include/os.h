@@ -66,5 +66,13 @@
 # define DLLIMPORT
 #endif /* __WIN__ */
 
+#ifndef __WIN__
+# define PUSHSECTION ".pushsection"
+# define POPSECTION ".popsection"
+#else
+# define PUSHSECTION ".section"
+# define POPSECTION ".section .text"
+#endif
+
 #endif /* __OS_H */
 

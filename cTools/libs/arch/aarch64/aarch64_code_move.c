@@ -35,7 +35,7 @@
 #define GET_PRE_INIT_BT_RELOC(sv_rel)                                          \
     (                                                                          \
         {                                                                      \
-            static bt_reloc local_r = {};                                      \
+            static bt_reloc local_r = {0};                                     \
             local_r.old_pc = old_pc;                                           \
             local_r.new_pc = new_pc;                                           \
             local_r.old_size = 4;                                              \

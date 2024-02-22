@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "os.h"
 #include "test.h"
 #include "file.h"
 #include "comdef.h"
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
     macho64PrintCodeSign(mf);
     macho64PrintFixups(mf);
 
+#ifdef __MAC_OS_X__
     asm volatile (
     "my_label:\n"
     "1:\n"
@@ -61,6 +63,7 @@ int main(int argc, char *argv[])
         ".popsection\n"
         ::: "memory"
     );
+#endif /* __MAC_OS_X__ */
 
     macho64Free(mf);
 
