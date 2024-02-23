@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -342,8 +342,10 @@ MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
             char *name = ((Macho64Seg*)(void*)lc)->segname;
             if (strcmp("__PAGEZERO", name) == 0)
                 mf->segments[PAGEZERO_NSEG] = (Macho64Seg*)(void*)lc;
-            if (strcmp("__TEXT", name) == 0)
+            if (strcmp("__TEXT", name) == 0) {
                 mf->segments[TEXT_NSEG] = (Macho64Seg*)(void*)lc;
+                mf->base_addr = mf->segments[TEXT_NSEG]->vmaddr;
+            }
             if (strcmp("__DATA_CONST", name) == 0)
                 mf->segments[DATA_CONST_NSEG] = (Macho64Seg*)(void*)lc;
             if (strcmp("__DATA", name) == 0)

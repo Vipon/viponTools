@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021-2024 Konychev Valerii
+# Copyright (c) 2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +20,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-include_guard()
+set(MOD_CODE_SOURCES
+  mod_code.c
+)
 
-function(addPrefix prefix list)
-  set(newList "")
-  foreach(elem ${ARGN})
-    list(APPEND newList "${prefix}${elem}")
-  endforeach(elem)
-  set(${list} "${newList}" PARENT_SCOPE)
-endfunction(addPrefix)
+set(MOD_CODE_HEADERS
+  mod_code.h
+)
 
-include(${CMAKE_CURRENT_LIST_DIR}/file.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/test.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/tool.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/library.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/install.cmake)
+add_vipon_library(
+  NAME mod_code
+  TYPE STATIC
+  HEADERS ${MOD_CODE_HEADERS}
+  SOURCES ${MOD_CODE_SOURCES}
+  LINK_LIBS binParse binDynMod mem pe64Parse
+  INSTALL ON
+)
+
+# MSVC compiler wrongly works with inline assembler. MSVC emits a lot of "int3"
+# instructions if there is a ".section" directive.
+if (NOT MSVC)
+  add_subdirectory(test)
+endif ()
 

@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021-2023 Konychev Valerii
+# Copyright (c) 2021-2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +54,7 @@ function(add_vipon_test)
   target_link_options(${ARG_NAME} BEFORE PUBLIC ${ARG_LINK_FLAGS})
   target_link_libraries(${ARG_NAME} vTest ${ARG_LINK_LIBS})
   target_compile_definitions(${ARG_NAME} PRIVATE ${ARG_DEFINES})
+  target_compile_definitions(${ARG_NAME} PRIVATE EXECUTABLE)
   target_compile_options(${ARG_NAME} PRIVATE ${ARG_COMP_OPT})
 
   add_test(

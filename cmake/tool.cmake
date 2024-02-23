@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2023 Konychev Valerii
+# Copyright (c) 2023-2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,7 @@ function(add_vipon_tool)
 
   target_link_options(${ARG_NAME} PUBLIC ${ARG_LINK_OPTIONS})
   target_include_directories(${ARG_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+  target_compile_definitions(${ARG_NAME} PRIVATE EXECUTABLE)
 
   if(ARG_INSTALL)
     install(

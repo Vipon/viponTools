@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -103,6 +103,14 @@ extern const Macho64RelType MACHO64_X86_64_REL_TYPE[];
 
 EXPORT_FUNC
 void macho64PrintRelocations(const Macho64File *mf);
+
+typedef Macho64Flag Macho64ImportsFormat;
+extern const Macho64ImportsFormat MACHO64_IMPORTS_FORMAT[];
+typedef Macho64Flag Macho64PointerFormat;
+extern const Macho64PointerFormat MACHO64_POINTER_FORMAT[];
+
+EXPORT_FUNC
+void macho64PrintFixups(const Macho64File *mf);
 
 #endif /* __MACHO_64_PRINTER_H */
 

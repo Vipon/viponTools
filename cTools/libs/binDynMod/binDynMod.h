@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,11 @@
 #include "binParse.h"
 
 typedef void* (*BinHook)(const BinFilePtr, const char*, const void*);
+typedef uint64_t (*BinGetSeed)(void);
 
 typedef struct {
-    BinHook hook;
+    BinHook    hook;
+    BinGetSeed get_seed;
 } BinDynMod;
 
 extern BinDynMod binDynMod;

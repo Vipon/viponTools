@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
 #include "macho64Printer.h"
 #include "fatMacho64Printer.h"
 
-BinPrinter binPrinter = {};
+BinPrinter binPrinter = {0};
 
 #define INIT_BIN_PRINTER(type) \
     binPrinter.printHeader = (BinPrintHeader)&(type ## PrintHeader); \
@@ -41,7 +41,8 @@ BinPrinter binPrinter = {};
 #define INIT_MACHO_PRINT_FUNC(type) \
     binPrinter.macho.printFuncStarts = (BinPrintFuncStarts)&(type ## PrintFuncStarts); \
     binPrinter.macho.printLComs = (BinPrintLComs)&(type ## PrintLComs); \
-    binPrinter.macho.printCodeSign = (BinPrintCodeSign)&(type ## PrintCodeSign);
+    binPrinter.macho.printCodeSign = (BinPrintCodeSign)&(type ## PrintCodeSign); \
+    binPrinter.macho.printFixups = (BinPrintFixups)&(type ## PrintFixups);
 
 #define INIT_FAT_MACHO_PRINT_FUNC(type) \
     binPrinter.fatMacho.printFatHeader = (BinPrintFatHeader)&(type ## PrintHeader);

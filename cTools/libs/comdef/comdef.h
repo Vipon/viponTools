@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2023 Konychev Valera
+ * Copyright (c) 2020-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -250,6 +250,12 @@ extern int VERBOSE;
 #ifndef FALLTHROUGH
 # define FALLTHROUGH __attribute__((fallthrough))
 #endif /* FALLTHROUGH */
+
+#if __has_attribute(packed)
+# define PACKED __attribute__((packed))
+#else
+# define PACKED
+#endif
 
 #endif /* __COMDEF_H */
 

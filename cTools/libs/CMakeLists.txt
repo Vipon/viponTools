@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2023 Konychev Valerii
+# Copyright (c) 2020-2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -36,4 +36,5 @@ endif (NOT APPLE)
 add_subdirectory(test)
 add_subdirectory(x86_64)
 add_subdirectory(arch)
+add_subdirectory(mod)
 

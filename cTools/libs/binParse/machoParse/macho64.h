@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -115,6 +115,15 @@ typedef struct segment_command_64 Macho64Seg;
  *  };
  */
 typedef struct section_64 Macho64Sect;
+
+// Header introduced in 2018, cannot be found for 32-bits
+#include <mach-o/fixup-chains.h>
+typedef struct dyld_chained_fixups_header macho_fixups_headers_t;
+typedef struct dyld_chained_starts_in_image macho_starts_in_image_t;
+typedef struct dyld_chained_starts_in_segment macho_starts_in_segment_t;
+typedef struct dyld_chained_import macho_chained_import_t;
+typedef struct dyld_chained_ptr_64_rebase macho_ptr_64_rebase_t;
+typedef struct dyld_chained_ptr_64_bind macho_ptr_64_bind_t;
 
 /***
  * Returns sections type value

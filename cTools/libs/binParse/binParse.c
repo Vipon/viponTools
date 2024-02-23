@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valera
+ * Copyright (c) 2021-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,10 @@
 #include "macho64Parse.h"
 #include "fatMacho64Parse.h"
 
-BinParser binParser;
+#ifdef BIN_PARSER_SHARED_LIB
+EXPORT_VAR
+#endif /* BIN_PARSER_SHARED_LIB */
+BinParser binParser = {0};
 
 #define INIT_BIN_PARSER_FUNCS(type) \
     binParser.parse = (BinParse)&type ## Parse; \

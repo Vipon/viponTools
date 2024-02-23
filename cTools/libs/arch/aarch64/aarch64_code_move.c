@@ -35,7 +35,7 @@
 #define GET_PRE_INIT_BT_RELOC(sv_rel)                                          \
     (                                                                          \
         {                                                                      \
-            static bt_reloc local_r = {};                                      \
+            static bt_reloc local_r = {0};                                     \
             local_r.old_pc = old_pc;                                           \
             local_r.new_pc = new_pc;                                           \
             local_r.old_size = 4;                                              \
@@ -795,7 +795,7 @@ aarch64_code_move( const uint8_t *src
         return CODE_MOVE_ERROR_BAD_ARG;
     }
 
-    vt_sorted_vector_t local_rel = {};
+    vt_sorted_vector_t local_rel = {0};
     vt_sorted_vector_init(&local_rel, 1, sizeof(bt_reloc), cmp_bt_reloc);
     if (rel == NULL) {
         rel = &local_rel;

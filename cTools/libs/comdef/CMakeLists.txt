@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2023 Konychev Valerii
+# Copyright (c) 2020-2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,24 @@ add_library(comdef ${VIPON_TOOLS_LIB_TYPE}
   ${COMDEF_HEADERS}
 )
 
-install(
-  TARGETS comdef
-  DESTINATION ${INSTALL_LIB_DIR}
-)
+if (WIN32)
+  if (VIPON_TOOLS_LIB_TYPE STREQUAL "SHARED")
+    install(
+      TARGETS comdef
+      DESTINATION ${INSTALL_BIN_DIR}
+    )
+  else ()
+    install(
+      TARGETS comdef
+      DESTINATION ${INSTALL_LIB_DIR}
+    )
+  endif ()
+else (WIN32)
+  install(
+    TARGETS comdef
+    DESTINATION ${INSTALL_LIB_DIR}
+  )
+endif (WIN32)
 
 installHeaders("${COMDEF_HEADERS}")
 

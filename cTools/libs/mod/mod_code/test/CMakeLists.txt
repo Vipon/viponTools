@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021-2024 Konychev Valerii
+# Copyright (c) 2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-include_guard()
+add_vipon_test(
+  NAME mod_code_test
+  SOURCES mod_code_test.c
+  LINK_LIBS mod_code binParse pe64Parse fatMacho64Parse macho64Parse elf64Parse
+            elf32Parse binDynMod mem string file comdef
+)
 
-function(addPrefix prefix list)
-  set(newList "")
-  foreach(elem ${ARGN})
-    list(APPEND newList "${prefix}${elem}")
-  endforeach(elem)
-  set(${list} "${newList}" PARENT_SCOPE)
-endfunction(addPrefix)
-
-include(${CMAKE_CURRENT_LIST_DIR}/file.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/test.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/tool.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/library.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/install.cmake)
+# Debug info causes fails at the compile time for AArch64
+target_compile_options(mod_code_test PRIVATE "-g0")
 

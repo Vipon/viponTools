@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2024 Konychev Valera
+ * Copyright (c) 2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,59 +22,40 @@
  * SOFTWARE.
  */
 
-#ifndef __OS_H
-#define __OS_H
+#include "comdef.h"
+#include "mod_code.h"
+#include <inttypes.h>
 
-#if defined(unix) || defined(__unix) || defined(__unix__)
-# ifndef __UNIX__
-#  define __UNIX__
-# endif
-#endif
+extern void test_func(void);
+void test_func(void)
+{
+    STDERROR_PRINT("I'm here\n");
+}
 
-#if defined(__linux__)
-# ifndef __LINUX__
-#  define __LINUX__
-# endif
-# define SYM_PREFIX
-#endif
+extern volatile int a;
+volatile int a = 0;
 
-#if defined(__APPLE__) && defined(__MACH__)
-# ifndef __MAC_OS_X__
-#  define __MAC_OS_X__
-# endif
-# define SYM_PREFIX "_"
-#endif
+int main(int argc, const char *argv[])
+{
+    UNUSED(argc);
+    UNUSED(argv);
 
-#if defined(_WIN32) || defined(_WIN64)
-# ifndef __WIN__
-#  define __WIN__
-# endif
-# define SYM_PREFIX
-#endif
+    STDERROR_PRINT("main: %p\n", (void*)&main);
 
-#ifdef __WIN__
-# define DLLEXPORT __declspec(dllexport)
-# define DLLIMPORT __declspec(dllimport)
-# define EXPORT_FUNC DLLEXPORT
-# define EXPORT_VAR DLLEXPORT
-# define IMPORT_VAR DLLIMPORT
-#else /* __WIN__ */
-# define EXPORT_FUNC
-# define EXPORT_VAR
-# define IMPORT_VAR
-# define DLLEXPORT
-# define DLLIMPORT
-#endif /* __WIN__ */
+    MOD_CODE(
+        do {
+            printf("hello\n");
+        } while (a);
+    );
+
+    mod_code_init(argv[0]);
+    mod_code_dump();
 
 #ifndef __WIN__
-# define PUSHSECTION ".pushsection"
-# define POPSECTION ".popsection"
-# define ASM asm
-#else
-# define PUSHSECTION ".section"
-# define POPSECTION ".section .text"
-# define ASM __asm__
-#endif
+    ((void(*)(void))(mc[0].start))();
+#endif /*__WIN__*/
 
-#endif /* __OS_H */
+    test_func();
+    return 0;
+}
 

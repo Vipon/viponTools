@@ -140,7 +140,7 @@ vt_vector_set_elem(vt_vector_t *v, size_t num, const void *elem)
         }
     }
 
-    directCopyBytes(elem, v->data + (num * v->elem_size), v->elem_size);
+    directCopyBytes(elem, (uint8_t*)v->data + (num * v->elem_size), v->elem_size);
 
     if (num > v->end) {
         v->end = num + 1;

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,10 +37,46 @@
 # include "fatMacho64DynMod.h"
 #endif /* __MAC_OS_X__ */
 
-BinDynMod binDynMod = {};
+BinDynMod binDynMod = {0};
 
-#define INIT_BIN_DYN_MOD(type)               \
-    binDynMod.hook = (BinHook)&type ## Hook;
+#ifndef __WIN__
+static uint64_t
+get_seed(void)
+{
+    // Get seed for work with randomize adress space
+    BinSymPtr sym = binParser.getSymByName(binParser.bin, SYM_PREFIX"get_seed");
+    if (sym == NULL)  {
+        //STDERROR_PRINT("Cannot get the symbol "SYM_PREFIX"get_seed\n");
+        return (uint64_t)-1;
+    }
+
+    uint64_t sym_addr = binParser.getSSymAddr(sym);
+    if (sym_addr == (uint64_t)-1) {
+        //STDERROR_PRINT("Cannot get an addr of symbol "SYM_PREFIX"get_seed\n");
+        return (uint64_t)-1;
+    }
+
+    uint64_t seed = (uint64_t)get_seed - sym_addr;
+    return seed;
+}
+#else /* __WIN__ */
+static uint64_t
+get_seed(void)
+{
+    uint64_t seed = 0;
+    PE64File *pe = (PE64File*)binParser.bin;
+    if (pe->optHeader->DllCharacteristics & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE)
+        seed = (size_t)GetModuleHandle(NULL);
+    else
+        seed = pe->optHeader->ImageBase;
+
+    return seed;
+}
+#endif /* __WIN__ */
+
+#define INIT_BIN_DYN_MOD(type)                  \
+    binDynMod.hook = (BinHook)&type ## Hook;    \
+    binDynMod.get_seed = (BinGetSeed)&get_seed;
 
 int initBinDynMod(BIN_FILE_TYPE type)
 {
@@ -72,4 +108,6 @@ int initBinDynMod(BIN_FILE_TYPE type)
 
     return 0;
 }
+
+
 

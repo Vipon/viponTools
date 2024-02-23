@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "os.h"
 #include "test.h"
 #include "file.h"
 #include "comdef.h"
@@ -50,6 +51,19 @@ int main(int argc, char *argv[])
     macho64PrintFuncStarts(mf);
     macho64PrintSymbols(mf);
     macho64PrintCodeSign(mf);
+    macho64PrintFixups(mf);
+
+#ifdef __MAC_OS_X__
+    asm volatile (
+    "my_label:\n"
+    "1:\n"
+        ".pushsection __MY_SEG,__my_sect\n"
+        ".align 8\n"
+        ".quad 1b\n"
+        ".popsection\n"
+        ::: "memory"
+    );
+#endif /* __MAC_OS_X__ */
 
     macho64Free(mf);
 

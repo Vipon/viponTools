@@ -127,7 +127,8 @@
         "__bit_reference": "cpp",
         "aarch64.h": "c",
         "charconv": "cpp",
-        "__locale": "c"
+        "__locale": "c",
+        "bindynmod.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 
