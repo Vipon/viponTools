@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valera
+ * Copyright (c) 2021-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -69,9 +69,11 @@
 #ifndef __WIN__
 # define PUSHSECTION ".pushsection"
 # define POPSECTION ".popsection"
+# define ASM asm
 #else
 # define PUSHSECTION ".section"
 # define POPSECTION ".section .text"
+# define ASM __asm__
 #endif
 
 #endif /* __OS_H */

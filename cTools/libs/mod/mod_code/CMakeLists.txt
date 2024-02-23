@@ -33,9 +33,13 @@ add_vipon_library(
   TYPE STATIC
   HEADERS ${MOD_CODE_HEADERS}
   SOURCES ${MOD_CODE_SOURCES}
-  LINK_LIBS binParse binDynMod mem
+  LINK_LIBS binParse binDynMod mem pe64Parse
   INSTALL ON
 )
 
-add_subdirectory(test)
+# MSVC compiler wrongly works with inline assembler. MSVC emits a lot of "int3"
+# instructions if there is a ".section" directive.
+if (NOT MSVC)
+  add_subdirectory(test)
+endif ()
 

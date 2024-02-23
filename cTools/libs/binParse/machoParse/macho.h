@@ -248,7 +248,6 @@ typedef struct build_tool_version    MachoBuildToolVer;
  */
 typedef struct source_version_command MachoSourceVer;
 
-
 /***
  * Returns sections type value
  */

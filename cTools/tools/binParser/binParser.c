@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,7 +60,7 @@ typedef enum {
     NUM_FLAGS
 } BinParserOpt;
 
-static bool flags[NUM_FLAGS] = {};
+static bool flags[NUM_FLAGS] = {0};
 
 static
 void printHeader(const char *arg)

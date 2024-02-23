@@ -13,7 +13,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- { * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR AARCH64_INSTR_TYPE_CBR },
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -32,17 +32,28 @@ void test_func(void)
     STDERROR_PRINT("I'm here\n");
 }
 
+extern volatile int a;
+volatile int a = 0;
+
 int main(int argc, const char *argv[])
 {
     UNUSED(argc);
     UNUSED(argv);
 
-    MOD_CODE(printf("hello\n"););
+    STDERROR_PRINT("main: %p\n", (void*)&main);
+
+    MOD_CODE(
+        do {
+            printf("hello\n");
+        } while (a);
+    );
 
     mod_code_init(argv[0]);
     mod_code_dump();
 
+#ifndef __WIN__
     ((void(*)(void))(mc[0].start))();
+#endif /*__WIN__*/
 
     test_func();
     return 0;

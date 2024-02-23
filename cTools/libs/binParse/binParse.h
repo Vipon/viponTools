@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -102,11 +102,10 @@ typedef struct {
 } BinParser;
 
 #ifdef BIN_PARSER_SHARED_LIB
+// need export from dynamic lib
 EXPORT_VAR
-#else /* BIN_PARSER_SHARED_LIB */
-# ifndef STATIC_LIB
+#elif !defined(BIN_PARSER_STATIC_LIB)
 IMPORT_VAR
-# endif /* STATIC_LIB*/
 #endif /* BIN_PARSER_SHARED_LIB */
 extern BinParser binParser;
 

@@ -37,7 +37,7 @@ typedef struct {
     size_t  elem_size;
 } vt_vector_t;
 
-#define GET_PTR_VT_VECTOR_ELEM(v, num) ((v)->data + (num) * (v)->elem_size)
+#define GET_PTR_VT_VECTOR_ELEM(v, num) ((uint8_t*)(v)->data + (num) * (v)->elem_size)
 
 /***
  * @brief
@@ -48,7 +48,7 @@ typedef struct {
 #define vt_vector_for_each(v, i, code)                                \
     DEF_GUARD(                                                        \
         for ((i) = vt_vector_begin(v); (void*)(i) < vt_vector_end(v); \
-            (i) = (void*)i + (v)->elem_size) {                        \
+            (i) = (void*)((uint8_t*)i + (v)->elem_size)) {            \
             code;                                                     \
         }                                                             \
     );

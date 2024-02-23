@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2023 Konychev Valerii
+# Copyright (c) 2020-2024 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,8 @@ add_vipon_library(
 if (WIN32)
   if (VIPON_TOOLS_LIB_TYPE STREQUAL "SHARED")
     target_compile_definitions(binParse PRIVATE BIN_PARSER_SHARED_LIB)
+  elseif (VIPON_TOOLS_LIB_TYPE STREQUAL "STATIC")
+    target_compile_definitions(binParse PRIVATE BIN_PARSER_STATIC_LIB)
   endif ()
 endif (WIN32)
 

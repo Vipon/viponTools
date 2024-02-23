@@ -795,7 +795,7 @@ aarch64_code_move( const uint8_t *src
         return CODE_MOVE_ERROR_BAD_ARG;
     }
 
-    vt_sorted_vector_t local_rel = {};
+    vt_sorted_vector_t local_rel = {0};
     vt_sorted_vector_init(&local_rel, 1, sizeof(bt_reloc), cmp_bt_reloc);
     if (rel == NULL) {
         rel = &local_rel;

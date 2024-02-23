@@ -13,7 +13,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- { * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR AARCH64_INSTR_TYPE_CBR },
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -48,6 +48,7 @@ mod_code_init(const char *fn)
     }
 
     uint64_t mc_struct_vaddr = binParser.getSectAddr(mc_struct);
+    STDERROR_PRINT("mc_struct_vaddr: %"PRIx64"\n", mc_struct_vaddr);
     if (mc_struct_vaddr == (uint64_t)-1) {
         STDERROR_PRINT_DEBUG( "Cannot get vaddr of "MC_STRUCT_SECTION" section.");
         goto eexit_0;
@@ -55,6 +56,7 @@ mod_code_init(const char *fn)
 
     uint64_t seed = binDynMod.get_seed();
     mc = (mod_code_t*)(mc_struct_vaddr + seed);
+    STDERROR_PRINT("seed: %"PRIx64"\n", seed);
 
     uint64_t mc_struct_size = binParser.getSectSize(mc_struct);
     if (mc_struct_size == (size_t)-1) {

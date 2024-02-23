@@ -25,6 +25,6 @@ if(MSVC)
     append_cxxflags(CXX_FLAGS /std:c++latest /EHac)
 else()
     append_cflags(C_FLAGS -fPIC -std=gnu11)
-    append_cxxflags(CXX_FLAGS -fPIC -std=c++20 -fcxx-exceptions -fexceptions)
+    append_cxxflags(CXX_FLAGS -fPIC -std=gnu++20 -fcxx-exceptions -fexceptions)
 endif()
 

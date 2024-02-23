@@ -23,7 +23,8 @@
 add_vipon_test(
   NAME mod_code_test
   SOURCES mod_code_test.c
-  LINK_LIBS mod_code
+  LINK_LIBS mod_code binParse pe64Parse fatMacho64Parse macho64Parse elf64Parse
+            elf32Parse binDynMod mem string file comdef
 )
 
 # Debug info causes fails at the compile time for AArch64
