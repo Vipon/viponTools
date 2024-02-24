@@ -26,27 +26,22 @@
 #include "mod_code.h"
 #include <inttypes.h>
 
-extern void test_func(void);
+extern void test_func(void) __attribute__((noinline));
 void test_func(void)
 {
+    MOD_CODE(
+        printf("hello\n");
+    );
+
     STDERROR_PRINT("I'm here\n");
 }
-
-extern volatile int a;
-volatile int a = 0;
 
 int main(int argc, const char *argv[])
 {
     UNUSED(argc);
     UNUSED(argv);
 
-    STDERROR_PRINT("main: %p\n", (void*)&main);
-
-    MOD_CODE(
-        do {
-            printf("hello\n");
-        } while (a);
-    );
+    STDERROR_PRINT("test_func: %p\n", (void*)&test_func);
 
     mod_code_init(argv[0]);
     mod_code_dump();

@@ -72,6 +72,20 @@
     "r8", "r9", "r10", "r11",    \
     "r12", "r13", "r14", "r15"
 
+#ifdef _MSC_VER
+// Works without __builtin_expect also.
+// Code generated more redable with __builtin_expect.
+# define MSVC_WORKAROUND(code)              \
+    {                                       \
+        volatile static int a = 1;          \
+        if (__builtin_expect(a == 0, 0)) {  \
+            code;                           \
+        }                                   \
+    }
+#else /* _MSVC_LANG */
+# define MSVC_WORKAROUND(code) code
+#endif /* _MSVC_LANG */
+
 #if AARCH64_DEFINED == 1
 # define MOD_CODE(code)                                             \
     DEF_GUARD(                                                      \
@@ -108,6 +122,10 @@
     DEF_GUARD(                                                      \
         ASM volatile(                                               \
         "0:\n"                                                      \
+        ::: "memory", CLOBBERS_ALL_X86_64_REGS                      \
+        );                                                          \
+        MSVC_WORKAROUND(                                            \
+        ASM volatile(                                               \
         PUSHSECTION" "MC_STRUCT_SEGSECT", "MOD_SECT_FLAGS"\n"       \
             ".align 8\n"                                            \
             /* .insert_point */                                     \
@@ -130,6 +148,7 @@
         "ret\n"                                                     \
         POPSECTION"\n"                                              \
         ::: "memory", CLOBBERS_ALL_X86_64_REGS                      \
+        );                                                          \
         );                                                          \
     )
 #else
