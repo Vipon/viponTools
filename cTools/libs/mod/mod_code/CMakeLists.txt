@@ -37,9 +37,5 @@ add_vipon_library(
   INSTALL ON
 )
 
-# MSVC compiler wrongly works with inline assembler. MSVC emits a lot of "int3"
-# instructions if there is a ".section" directive.
-if (NOT MSVC)
-  add_subdirectory(test)
-endif ()
+add_subdirectory(test)
 
