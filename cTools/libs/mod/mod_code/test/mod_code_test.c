@@ -22,18 +22,75 @@
  * SOFTWARE.
  */
 
+#include "test.h"
 #include "comdef.h"
 #include "mod_code.h"
 #include <inttypes.h>
 
-extern void test_func(void) __attribute__((noinline));
-void test_func(void)
+static void
+test_mod_code_print(void)
 {
-    MOD_CODE(
-        printf("hello\n");
+    MOD_CODE(MOD_CODE_WITH_NOPS,
+        printf("hello with nops\n");
+    );
+}
+
+static void
+test_mod_code_local_val(void)
+{
+    volatile int i = 0;
+    MOD_CODE(MOD_CODE_WITH_NOPS,
+        i = 10;
     );
 
-    STDERROR_PRINT("I'm here\n");
+    EXPECT_INT_EQ(10, i);
+}
+
+int a = 0;
+static void
+test_mod_code_global_val(void)
+{
+    MOD_CODE(MOD_CODE_WITH_NOPS,
+        a = 1;
+    );
+
+    EXPECT_INT_EQ(1, a);
+}
+
+extern void __attribute__((noinline))
+test_mod_code_in_loop(void);
+void __attribute__((noinline))
+test_mod_code_in_loop(void)
+{
+    volatile int i = 0;
+    // work only with volatile
+    // without compiler make unwind and remove eveything
+    int count = 0;
+    for (i = 0; i < 10; ++i) {
+        MOD_CODE(MOD_CODE_WITH_NOPS,
+            ++count;
+        );
+
+        printf("%d\n", count);
+    }
+
+    EXPECT_INT_EQ(10, count);
+}
+
+static void
+test_mod_code_loop(void)
+{
+    int i = 0;
+    // work only with volatile
+    // without compiler make unwind and remove eveything
+    volatile int count = 0;
+    MOD_CODE(MOD_CODE_WITH_NOPS,
+        for (i = 0; i < 10; ++i) {
+                ++count;
+        }
+    );
+
+    EXPECT_INT_EQ(10, count);
 }
 
 int main(int argc, const char *argv[])
@@ -41,16 +98,18 @@ int main(int argc, const char *argv[])
     UNUSED(argc);
     UNUSED(argv);
 
-    STDERROR_PRINT("test_func: %p\n", (void*)&test_func);
+    STDERROR_PRINT("test_mod_code_print: %p\n", (void*)&test_mod_code_print);
 
     mod_code_init(argv[0]);
     mod_code_dump();
+    mod_code_on();
 
-#ifndef __WIN__
-    ((void(*)(void))(mc[0].start))();
-#endif /*__WIN__*/
+    test_mod_code_print();
+    test_mod_code_local_val();
+    test_mod_code_global_val();
+    test_mod_code_in_loop();
+    test_mod_code_loop();
 
-    test_func();
     return 0;
 }
 

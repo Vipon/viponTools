@@ -23,6 +23,7 @@
  */
 
 #include "mem.h"
+#include "aarch64.h"
 #include "mod_code.h"
 #include "binParse.h"
 #include "binDynMod.h"
@@ -88,6 +89,59 @@ mod_code_dump(void)
     uint64_t i = 0;
     for (i = 0; i < num_mc; ++i) {
         mod_code_print(mc + i);
+    }
+}
+
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
+#include <libkern/OSCacheControl.h>
+
+static void
+mod_code_patch(const mod_code_t *mc)
+{
+
+    uint64_t insert_addr = (uint64_t)mc->insert_point;
+    STDERROR_PRINT("insert_point %p\n", mc->insert_point);
+    uint64_t insert_addr_aligned = alignToPageSize((size_t)insert_addr);
+    STDERROR_PRINT("insert_addr_aligned 0x%"PRIx64"\n", insert_addr_aligned);
+    uint64_t mprotect_size = insert_addr - insert_addr_aligned + 4;
+    STDERROR_PRINT("mprotect_size 0x%"PRIx64"\n", mprotect_size);
+
+#ifdef __MAC_OS_X__
+    mach_vm_address_t addr = (mach_vm_address_t)mc->insert_point;
+    mach_vm_address_t remap;
+    vm_prot_t cur, max;
+    kern_return_t ret = mach_vm_remap(mach_task_self(), &remap, 0x4, 0, VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR, mach_task_self(), addr, FALSE, &cur, &max, VM_INHERIT_NONE);
+    STDERROR_PRINT("mach_vm_remap: %s\n", mach_error_string(ret));
+
+    ret = mach_vm_protect(mach_task_self(), remap, 0x4, FALSE, VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY);
+    STDERROR_PRINT("mach_vm_protect: %s\n", mach_error_string(ret));
+
+    uint64_t target_addr = (uint64_t)mc->start;
+#if ARCH == AARCH64
+    aarch64_put_b( (uint32_t*)remap
+                 , insert_addr
+                 , target_addr);
+#endif /* ARCH == AARCH64 */
+
+    sys_dcache_flush((void*)addr, 0x4);
+
+    ret = mach_vm_protect(mach_task_self(), remap, 0x4, FALSE, VM_PROT_READ | VM_PROT_EXECUTE);
+    STDERROR_PRINT("mach_vm_protect: %s\n", mach_error_string(ret));
+
+    sys_icache_invalidate((void*)addr, 0x4);
+
+    ret = mach_vm_remap(mach_task_self(), &addr, 0x4, 0, VM_FLAGS_OVERWRITE | VM_FLAGS_RETURN_DATA_ADDR, mach_task_self(), remap, FALSE, &cur, &max, VM_INHERIT_NONE);
+    STDERROR_PRINT("mach_vm_remap: %s\n", mach_error_string(ret));
+#endif /* __MAC_OS_X__ */
+}
+
+void
+mod_code_on(void)
+{
+    uint64_t i = 0;
+    for (i = 0; i < num_mc; ++i) {
+        mod_code_patch(mc + i);
     }
 }
 

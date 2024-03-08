@@ -128,7 +128,8 @@
         "aarch64.h": "c",
         "charconv": "cpp",
         "__locale": "c",
-        "bindynmod.h": "c"
+        "bindynmod.h": "c",
+        "forward_list": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 

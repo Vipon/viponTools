@@ -33,7 +33,7 @@ add_vipon_library(
   TYPE STATIC
   HEADERS ${MOD_CODE_HEADERS}
   SOURCES ${MOD_CODE_SOURCES}
-  LINK_LIBS binParse binDynMod mem pe64Parse
+  LINK_LIBS binParse binDynMod mem pe64Parse aarch64
   INSTALL ON
 )
 

@@ -25,6 +25,7 @@
 #include "comdef.h"
 
 #include <stdint.h>
+#include <assert.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
 # define MC_STRUCT_SEGSECT   "__DATA,__mc_struct"
@@ -87,33 +88,39 @@
 #endif /* _MSVC_LANG */
 
 #if AARCH64_DEFINED == 1
-# define MOD_CODE(code)                                             \
+# define MOD_CODE(type, code)                                       \
     DEF_GUARD(                                                      \
+        ASM volatile("0:\n" ::: "memory");                          \
+        if (type & MOD_CODE_WITH_NOPS) {                            \
+            ASM volatile("nop\n" ::: "memory");                     \
+        }                                                           \
         ASM volatile(                                               \
-        "0:\n"                                                      \
         PUSHSECTION" "MC_STRUCT_SEGSECT", "MOD_SECT_FLAGS"\n"       \
-            ".align 8\n"                                            \
+            ".align 4\n"                                            \
             /* .insert_point */                                     \
             ".quad 0b\n"                                            \
             /* .start */                                            \
             ".quad 1f\n"                                            \
             /* .end */                                              \
             ".quad 2f\n"                                            \
+            /* .type */                                             \
+            ".quad %0\n"                                            \
         POPSECTION"\n"                                              \
         PUSHSECTION" "MOD_CODE_SEGSECT", "MOD_CODE_SECT_FLAGS "\n"  \
         "1:\n"                                                      \
-        ".align 8\n"                                                \
-        "stp x30, x29, [sp, #-16]!\n"                               \
-        ::: "memory", CLOBBERS_ALL_AARCH64_REGS                     \
+            ".align 4\n"                                            \
+        :: "i"(type) : "memory", CLOBBERS_ALL_AARCH64_REGS          \
         );                                                          \
         DEF_GUARD(                                                  \
             code;                                                   \
         )                                                           \
+        ASM volatile("2:\n" ::: "memory");                          \
+        if (type & MOD_CODE_WITHOUT_NOPS) {                         \
+            ASM volatile("nop\n" ::: "memory");                     \
+        }                                                           \
         ASM volatile(                                               \
-        "2:\n"                                                      \
-        "ldp x30, x29, [sp], #16\n"                                 \
-        "ret\n"                                                     \
-        POPSECTION"\n"                                              \
+            "b 0b + 0x4\n"                                          \
+            POPSECTION"\n"                                          \
         ::: "memory", CLOBBERS_ALL_AARCH64_REGS                     \
         );                                                          \
     )
@@ -155,10 +162,23 @@
 # error "Unknown machine type"
 #endif
 
+#ifdef __WIN__
+typedef enum : uint64_t {
+#else
+typedef enum {
+#endif /* __WIN__ */
+    MOD_CODE_WITHOUT_NOPS = (uint64_t)((uint64_t)1 << 1),
+    MOD_CODE_WITH_NOPS = (uint64_t)((uint64_t)1 << 2),
+    MOD_CODE_INVALID = (uint64_t)-1,
+} mod_code_type_t;
+
+static_assert(sizeof(mod_code_type_t) == 8, "mod_code_type_t must be 64 bit");
+
 typedef struct {
-    uint8_t  *insert_point;
-    uint8_t  *start;
-    uint8_t  *end;
+    uint8_t         *insert_point;
+    uint8_t         *start;
+    uint8_t         *end;
+    mod_code_type_t type;
 } PACKED mod_code_t;
 
 EXPORT_VAR
@@ -174,4 +194,7 @@ mod_code_print(mod_code_t *mc);
 
 EXPORT_FUNC void
 mod_code_dump(void);
+
+EXPORT_FUNC void
+mod_code_on(void);
 
