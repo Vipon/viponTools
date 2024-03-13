@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -302,6 +302,8 @@ typedef enum {
 typedef struct {
     FileD          fd;
     char           *fn;
+    size_t         fs;
+    void           *faddr;
     Arch           arch;
     PE64_FILE_TYPE type;
     DosHeader      *dosHeader;  // Legacy stub
@@ -317,7 +319,6 @@ typedef struct {
     PEExport       *exp;        // Export table
     uint64_t       expNum;      // Number of exports
     PESymbol       *symtab;     // Symbol table
-    PESymbol       *sortSymtab; // Sorted symbol table
     uint64_t       symNum;      // Number of symbols in symtab
     char           *strtab;     // String table
 } PE64File;
@@ -409,8 +410,6 @@ uint64_t pe64GetSectVend(const PE64File *pe, const PESection *sect);
 
 EXPORT_FUNC
 PESymbol *pe64GetSSymTab(const PE64File *pe);
-EXPORT_FUNC
-PESymbol *pe64GetSSymSortTab(const PE64File *pe);
 EXPORT_FUNC
 PESymbol *pe64GetSymByName(const PE64File *pe, const char *name);
 

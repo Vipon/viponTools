@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2023 Konychev Valera
+ * Copyright (c) 2020-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,16 +33,11 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-size_t getFileSize(int fd)
+size_t
+get_file_size(int fd)
 {
-    if (fd < 0) {
-        LOG_ERROR("Invalid arguments.");
-        return (size_t)-1;
-    }
-
     struct stat st;
     if (fstat(fd, &st)) {
-        PERROR("fstat");
         return (size_t)-1;
     }
 
@@ -95,9 +90,25 @@ void *mapFileForRead(int fd, size_t fileSize)
     return mmap(NULL, fileSize, PROT_READ, MAP_PRIVATE | MAP_FILE, fd, 0);
 }
 
-int unmapFile(void *addr, size_t fileSize)
+void*
+map_file_write(int fd, size_t fs)
 {
-    return munmap(addr, fileSize);
+    fs = alignUpToPageSize(fs);
+    return mmap(NULL, fs, PROT_WRITE, MAP_PRIVATE | MAP_FILE, fd, 0);
+}
+
+void*
+map_file(FileD fd, size_t fs, mprot_t prot)
+{
+    fs = alignUpToPageSize(fs);
+    return mmap(NULL, fs, prot, MAP_PRIVATE | MAP_FILE, fd, 0);
+}
+
+int
+unmap_file(void *addr, size_t fs)
+{
+    fs = alignUpToPageSize(fs);
+    return munmap(addr, fs);
 }
 
 #elif defined(__WIN__)
@@ -135,7 +146,8 @@ ssize_t read(FileD fd, void *buf, size_t count)
         return -1;
 }
 
-size_t getFileSize(FileD fd)
+size_t
+get_file_size(FileD fd)
 {
     return GetFileSize(fd, NULL);
 }

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2023 Konychev Valera
+ * Copyright (c) 2020-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@
 
 typedef int FileD;
 typedef int FileFlag;
+typedef int mprot_t;
 
 #define INV_FD -1
 #define IS_VLD_FD(fd) (fd >= 0)
@@ -56,11 +57,6 @@ typedef int FileFlag;
  * \return addr of mapped file or MAP_FAILED
  */
 void *mapFileForRead(FileD fd, size_t fileSize);
-
-/***
- *
- */
-int unmapFile(void *addr, size_t fileSize);
 
 #elif defined(__WIN__)
 # include <Windows.h>
@@ -108,15 +104,15 @@ ssize_t read(FileD fd, void *buf, size_t count);
 # define MAP_FAILED ((void *) -1)
 #endif
 
-/**
- * \def getFileSize
+/***
+ * @brief return size of according file
  *
- * \param[in] fd file descriptor
+ * @param[in] fd file descriptor
  *
- * \return size of files or -1.
+ * @return size of files or -1.
  */
-EXPORT_FUNC
-size_t getFileSize(FileD fd);
+EXPORT_FUNC size_t
+get_file_size(FileD fd);
 
 /*
  * Description: read data from offset position in file.
@@ -145,6 +141,17 @@ void *readFromFile(FileD fd, const size_t *off, size_t size);
  */
 EXPORT_FUNC
 int cmpFiles(const char *a, const char *b);
+
+void*
+map_file_write(int fd, size_t fs);
+
+void*
+map_file(FileD fd, size_t fs, mprot_t prot);
+
+/***
+ *
+ */
+int unmap_file(void *addr, size_t fileSize);
 
 #endif /* _FILE_H */
 

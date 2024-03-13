@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -294,15 +294,6 @@ Macho64Sym *fatMacho64GetSSymTab(const FatMacho64File *ff)
         return NULL;
 
     return macho64GetSSymTab(mf);
-}
-
-Macho64Sym *fatMacho64GetSSymSortTab(const FatMacho64File *ff)
-{
-    const Macho64File *mf = fatMacho64GetConstMacho64ByArch(ff, fatMacho64ParseArch);
-    if (mf == NULL)
-        return NULL;
-
-    return macho64GetSSymSortTab(mf);
 }
 
 uint64_t fatMacho64GetAmountSSym(const FatMacho64File *ff)

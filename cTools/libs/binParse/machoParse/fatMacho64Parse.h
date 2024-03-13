@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -91,8 +91,8 @@ void fatMacho64Free(FatMacho64File *ff);
  *      MACHO64_OK
  *  Fail:
  *      MACHO64_INV_ARG, MACHO64_NO_HEADER, MACHO64_NO_LOAD_COMMAND,
- *      MACHO64_NO_SYMTAB_CMD, MACHO64_NO_SYMTAB, MACHO64_NO_SORT_SYMTAB,
- *      MACHO64_NO_SYM_NAME_TAB, MACHO64_NO_INDIRECT_SYM_TAB, MACHO64_NO_SEGMENTS
+ *      MACHO64_NO_SYMTAB_CMD, MACHO64_NO_SYMTAB, MACHO64_NO_SYM_NAME_TAB,
+ *       MACHO64_NO_INDIRECT_SYM_TAB, MACHO64_NO_SEGMENTS
  *      MACHO64_NO_FAT_HEADER
  */
 EXPORT_FUNC
@@ -118,9 +118,6 @@ int fatMacho64CmpSym(const void *a, const void *b)
 
 EXPORT_FUNC
 Macho64Sym *fatMacho64GetSSymTab(const FatMacho64File *ff);
-
-EXPORT_FUNC
-Macho64Sym *fatMacho64GetSSymSortTab(const FatMacho64File *ff);
 
 EXPORT_FUNC
 uint64_t fatMacho64GetAmountSSym(const FatMacho64File *ff);

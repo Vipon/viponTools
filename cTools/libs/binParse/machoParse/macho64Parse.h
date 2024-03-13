@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -92,6 +92,8 @@ typedef enum {  PAGEZERO_NSEG = 0,
 typedef struct Macho64File {
     char              *fn;
     FileD             fd;
+    size_t            fs;
+    void              *faddr;
     uint64_t          base_addr;
     uint64_t          hOff; // file offset to mach-o header
     uint32_t          type;
@@ -101,7 +103,6 @@ typedef struct Macho64File {
     SymtabCommand     *symtabCmd;
     DysymtabCommand   *dynsymCmd;
     Macho64Sym        *symtab;
-    Macho64Sym        *sortSymtab;
     uint32_t          *indirectSymtab;
     char              *symNameTab;
     Macho64Seg        *segments[MAX_NSEG];
@@ -141,7 +142,6 @@ typedef enum {
     MACHO64_NO_INDIRECT_SYM_TAB,
     MACHO64_NO_DYSYMTAB_CMD,
     MACHO64_NO_SYM_NAME_TAB,
-    MACHO64_NO_SORT_SYMTAB,
     MACHO64_NO_SYMTAB,
     MACHO64_NO_SYMTAB_CMD,
     MACHO64_NO_LOAD_COMMAND,
