@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 {
     UNUSED(argc);
 
-    VERBOSE = 0;
+    VERBOSE = 1;
 
     char *name = argv[0];
 #ifdef __WIN__

@@ -432,7 +432,7 @@ Elf64File *elf64Parse(const char *fn)
     }
 
     LOG("start elf64Parse\n")
-    FileD fd = open(fn, O_RDONLY);
+    FileD fd = open(fn, O_RDWR);
     if (IS_INV_FD(fd)) {
         PERROR("open()");
         return NULL;
@@ -440,17 +440,21 @@ Elf64File *elf64Parse(const char *fn)
 
     size_t fs = get_file_size(fd);
     if (fs == (size_t) -1) {
+        close(fd);
         return NULL;
     }
 
     void *faddr = map_file(fd, fs, PROT_READ | PROT_WRITE);
     if (faddr == NULL) {
+        LOG_ERROR("Cannot map file");
+        close(fd);
         return NULL;
     }
 
     Elf64File *elf64 = (Elf64File*) Calloc(1, sizeof(Elf64File));
     if (elf64 == NULL) {
         LOG_ERROR("Cannot allocate %zu bytes", sizeof(Elf64File));
+        close(fd);
         unmap_file(faddr, fs);
         goto eexit_0;
     }
