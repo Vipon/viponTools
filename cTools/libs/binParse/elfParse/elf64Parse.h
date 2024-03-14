@@ -180,6 +180,8 @@ typedef Elf64_Vernaux Elf64Vernaux;
 typedef struct {
     char        *fn;
     FileD       fd;
+    size_t      fs;
+    void        *faddr;
     uint32_t    type;
     Arch        arch;
     Elf64Ehdr   *header;
@@ -189,7 +191,6 @@ typedef struct {
     uint64_t    symnum;
     Elf64Sym    *dynsym;
     uint64_t    dynsymnum;
-    Elf64Sym    *sortSymtab;
     Elf64Rel    *relaplt;
     Elf64Rel    *reladyn;
     Elf64Dyn    *dynamic;
