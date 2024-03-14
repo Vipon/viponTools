@@ -447,7 +447,7 @@ macho64Parse(const char *fn)
     if (fn == NULL)
         return NULL;
 
-    FileD fd = open(fn, O_RDWR);
+    FileD fd = open(fn, O_RDONLY);
     if (IS_INV_FD(fd)) {
         return NULL;
     }
@@ -457,7 +457,7 @@ macho64Parse(const char *fn)
         return NULL;
     }
 
-    void *faddr = map_file(fd, fs, PROT_READ | PROT_WRITE);
+    void *faddr = map_file(fd, fs, PROT_READ);
     if (faddr == NULL) {
         return NULL;
     }
