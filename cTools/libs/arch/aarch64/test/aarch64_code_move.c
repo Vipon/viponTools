@@ -151,10 +151,11 @@ void test_move_and_exec(void *func, const char *fn, void *arg)
 int main(int argc, const char *argv[])
 {
     UNUSED(argc);
-
-    initBinParser(argv[0]);
+    UNUSED(argv);
 
 #if AARCH64_DEFINED == 1
+    initBinParser(argv[0]);
+
     test_move_and_exec(call_func0, SYM_PREFIX"call_func0", NULL);
     test_move_and_exec(call_func1, SYM_PREFIX"call_func1", NULL);
     uint32_t arg32 = 3;
@@ -163,8 +164,9 @@ int main(int argc, const char *argv[])
     test_move_and_exec(call_func4, SYM_PREFIX"call_func4", &arg32);
     test_move_and_exec(call_func5, SYM_PREFIX"call_func5", &arg32);
     test_move_and_exec(call_func6, SYM_PREFIX"call_func6", &arg32);
-#endif /* AARCH64_DEFINED == 1 */
 
     finiBinParser();
+#endif /* AARCH64_DEFINED == 1 */
+
     return 0;
 }

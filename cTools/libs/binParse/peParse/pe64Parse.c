@@ -339,7 +339,7 @@ PE64File *pe64Parse(const char *fn)
         return NULL;
     }
 
-    FileD fd = open(fn, O_RDONLY);
+    FileD fd = open(fn, O_RDWR);
     if (IS_INV_FD(fd)) {
         PERROR("open()");
         return NULL;

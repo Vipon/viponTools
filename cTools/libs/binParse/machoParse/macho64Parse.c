@@ -1216,7 +1216,7 @@ uint64_t macho64GetRelocForAddr(const Macho64File *mf, const Macho64Sect *sect, 
     uint64_t vaddr_sect = 0;  // vaddr of @sect
     uint64_t reloc_off = mf->hOff + sect->reloff;
     uint64_t num_reloc = sect->nreloc;
-    MachoRelocInfo *rel_info = (MachoRelocInfo*)(mf->faddr + reloc_off);
+    MachoRelocInfo *rel_info = (MachoRelocInfo*)((uint8_t*)mf->faddr + reloc_off);
     if ((uint32_t)rel_info->r_address & R_SCATTERED) {
         LOG_ERROR("It's scattered relocation info");
         return MACHO64_NO_RELOCATION;

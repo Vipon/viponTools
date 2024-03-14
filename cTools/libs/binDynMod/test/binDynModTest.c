@@ -30,6 +30,7 @@
 #include "comdef.h"
 #include "binDynMod.h"
 #ifdef __WIN__
+# include <Windows.h>
 # include "pe64DynMod.h"
 #endif /* __WIN__ */
 #ifdef __LINUX__
@@ -61,9 +62,15 @@ int main(int argc, char *argv[])
 
     VERBOSE = 0;
 
+    char *name = argv[0];
+#ifdef __WIN__
+    // Need copy, because Win prevents open file itsefl with write
+    name = "binDynModTest.copy";
+    CopyFile(argv[0], name, FALSE);
+#endif /* __WIN__ */
     foo();
     bar();
-    hookFooWithBar(argv[0]);
+    hookFooWithBar(name);
 
     char *str1 = foo();
     char *str2 = bar();

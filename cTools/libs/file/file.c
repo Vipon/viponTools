@@ -44,7 +44,8 @@ get_file_size(int fd)
     return (size_t)st.st_size;
 }
 
-void *readFromFile(int fd, const size_t *off, size_t size)
+void*
+readFromFile(int fd, const size_t *off, size_t size)
 {
     if (fd < 0) {
         STDERROR_PRINT_DEBUG("Invalid arguments.");
@@ -79,24 +80,6 @@ void *readFromFile(int fd, const size_t *off, size_t size)
     return data;
 }
 
-void *mapFileForRead(int fd, size_t fileSize)
-{
-    if (fd < 0 || fileSize == (size_t)-1) {
-        LOG_ERROR("Invalid arguments.");
-        return MAP_FAILED;
-    }
-
-    fileSize = alignUpToPageSize(fileSize);
-    return mmap(NULL, fileSize, PROT_READ, MAP_PRIVATE | MAP_FILE, fd, 0);
-}
-
-void*
-map_file_write(int fd, size_t fs)
-{
-    fs = alignUpToPageSize(fs);
-    return mmap(NULL, fs, PROT_WRITE, MAP_PRIVATE | MAP_FILE, fd, 0);
-}
-
 void*
 map_file(FileD fd, size_t fs, mprot_t prot)
 {
@@ -114,29 +97,33 @@ unmap_file(void *addr, size_t fs)
 #elif defined(__WIN__)
 #include <Windows.h>
 
-FileD open(const char *fn, FileFlag flags)
+FileD
+open(const char *fn, FileFlag flags)
 {
     return CreateFile(  fn,                     // file to open
                         flags,                  // purpose flags
-                        FILE_SHARE_RW,          // share for reading
+                        FILE_SHARE_READ,        // share for reading
                         NULL,                   // default security
                         OPEN_EXISTING,          // existing file only
                         FILE_ATTRIBUTE_NORMAL,  // normal file
                         NULL);
 }
 
-void close(FileD fd)
+void
+close(FileD fd)
 {
     CloseHandle(fd);
 }
 
-off_t lseek(FileD fd, off_t offset, int whence)
+off_t
+lseek(FileD fd, off_t offset, int whence)
 {
     // !TODO: work only with 32bits offset
     return (off_t)SetFilePointer(fd, offset, NULL, (DWORD)whence);
 }
 
-ssize_t read(FileD fd, void *buf, size_t count)
+ssize_t
+read(FileD fd, void *buf, size_t count)
 {
     DWORD num = 0;
     BOOL r = ReadFile(fd, buf, (DWORD)count, &num, NULL);
@@ -152,7 +139,8 @@ get_file_size(FileD fd)
     return GetFileSize(fd, NULL);
 }
 
-void *readFromFile(FileD fd, const size_t *off, size_t size)
+void *
+readFromFile(FileD fd, const size_t *off, size_t size)
 {
     if (fd == NULL) {
         STDERROR_PRINT_DEBUG("Invalid arguments.");
@@ -185,6 +173,45 @@ void *readFromFile(FileD fd, const size_t *off, size_t size)
     }
 
     return data;
+}
+
+void*
+map_file(FileD fd, size_t fs, mprot_t prot)
+{
+    UNUSED(fs);
+    HANDLE hMap =
+        CreateFileMapping( fd
+            // Mapping attributes
+            , NULL
+            // Protection flags
+            , (prot & PROT_WRITE) ? PAGE_READWRITE : PAGE_READONLY
+            // MaximumSizeHigh
+            , 0
+            // MaximumSizeLow, 0 - means file size
+            , 0
+            // Name of mapping object
+            , NULL
+            );
+    if (hMap == INVALID_HANDLE_VALUE) {
+        return NULL;
+    }
+
+    void *res = MapViewOfFile( hMap
+                             , prot // dwDesiredAccess
+                             , 0    // dwFileOffsetHigh
+                             , 0    // dwFileOffsetLow
+                             , 0
+                             );
+
+    CloseHandle(hMap);
+    return res;
+}
+
+int
+unmap_file(void *addr, size_t fs)
+{
+    UNUSED(fs);
+    return UnmapViewOfFile(addr);
 }
 
 #else
