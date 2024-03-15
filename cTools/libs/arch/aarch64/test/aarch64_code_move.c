@@ -102,8 +102,7 @@ void call_func6(uint32_t *n)
 }
 
 extern
-void test_move_and_exec(void *func, const char *fn, void *arg);// __attribute__((section("__TEXT,__my_sect")));
-
+void test_move_and_exec(void *func, const char *fn, void *arg);
 void test_move_and_exec(void *func, const char *fn, void *arg)
 {
     BinSymPtr sym = binParser.getSymByName(binParser.bin, fn);

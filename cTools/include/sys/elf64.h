@@ -149,9 +149,9 @@ typedef struct {
 
 /* Relocations that need an addend field. */
 typedef struct {
-    Elf64_Addr  r_offset;   /* Location to be relocated. */
-    Elf64_Xword r_info;     /* Relocation type and symbol index. */
-    Elf64_Sxword    r_addend;   /* Addend. */
+    Elf64_Addr   r_offset;   /* Location to be relocated. */
+    Elf64_Xword  r_info;     /* Relocation type and symbol index. */
+    Elf64_Sxword r_addend;   /* Addend. */
 } Elf64_Rela;
 
 /* Macros for accessing the fields of r_info. */
@@ -176,7 +176,7 @@ typedef Elf_Note Elf64_Nhdr;
  */
 typedef struct {
     Elf64_Lword m_value;    /* symbol value */
-    Elf64_Xword     m_info;     /* size + index */
+    Elf64_Xword m_info;     /* size + index */
     Elf64_Xword m_poffset;  /* symbol offset */
     Elf64_Half  m_repeat;   /* repeat count */
     Elf64_Half  m_stride;   /* stride info */

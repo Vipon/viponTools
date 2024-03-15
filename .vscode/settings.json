@@ -129,7 +129,10 @@
         "charconv": "cpp",
         "__locale": "c",
         "bindynmod.h": "c",
-        "windows.h": "c"
+        "windows.h": "c",
+        "stdint.h": "c",
+        "errno.h": "c",
+        "stddef.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
 
