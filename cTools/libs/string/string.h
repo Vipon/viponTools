@@ -111,6 +111,8 @@ char *copyString(const char *src, char* dest);
 */
 EXPORT_FUNC
 void *vt_memset(void *dst, int c, size_t n);
+EXPORT_FUNC
+volatile void *vt_memset_volatile(volatile void *dst, int c, size_t n);
 
 #ifdef __STD_LIB_EXT1__
 static inline
@@ -132,7 +134,7 @@ int vt_memset_s(void *dst, size_t dstsz, int c, size_t n)
     }
 #endif /* __STD_LIB_EXT1__ */
 
-    vt_memset(dst, c, n);
+    vt_memset_volatile(s, c, n);
     return 0;
 }
 

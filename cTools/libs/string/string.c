@@ -94,3 +94,16 @@ void *vt_memset(void *dst, int c, size_t n)
     return dst;
 }
 
+volatile void *vt_memset_volatile(volatile void *dst, int c, size_t n)
+{
+    volatile uint8_t *p = (volatile uint8_t*)dst;
+    uint8_t v = (uint8_t)c;
+
+    size_t i = 0;
+    for (i = 0; i < n; ++i) {
+        p[i] = v;
+    }
+
+    return dst;
+}
+

@@ -349,7 +349,7 @@ uint64_t elf64GetAmountDSym(const Elf64File *elf64);
 /***
  * @brief returns addr of static symbol without ASLR
  *
- * @param[in] sym pointer to the target static Elf64Sym.
+ * @param[in] sym pointer to the target static Elf64Sym
  *
  * @return address of -1
  */
@@ -370,6 +370,7 @@ uint64_t elf64GetAddrSymByName(const Elf64File *elf64, const char *name);
 /***
  * @brief returns size of static symbol
  *
+ * @param[in] elf64 pointer to Elf64File structer
  * @param[in] sym pointer to the target static Elf64Sym
  *
  * @return size of static symbol or -1

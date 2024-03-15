@@ -450,7 +450,7 @@ void elf64Free(Elf64File *elf64)
         unmap_file(elf64->faddr, elf64->fs);
     }
 
-    vt_memset_s(elf64, sizeof(elf64), 0xFF, sizeof(elf64));
+    vt_memset_s(elf64, sizeof(Elf64File), 0xFF, sizeof(Elf64File));
     Free(elf64);
 }
 

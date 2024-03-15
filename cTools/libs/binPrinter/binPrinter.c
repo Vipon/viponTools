@@ -44,6 +44,7 @@ BinPrinter binPrinter = {0};
     binPrinter.macho.printCodeSign = (BinPrintCodeSign)&(type ## PrintCodeSign); \
     binPrinter.macho.printFixups = (BinPrintFixups)&(type ## PrintFixups);
 
+// !FIXME: need print fat header not ordinary
 #define INIT_FAT_MACHO_PRINT_FUNC(type) \
     binPrinter.fatMacho.printFatHeader = (BinPrintFatHeader)&(type ## PrintHeader);
 
