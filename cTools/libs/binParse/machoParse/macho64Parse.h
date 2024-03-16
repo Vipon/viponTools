@@ -159,18 +159,11 @@ static_assert(((int64_t)MACHO64_INV_ARG) < 0, "ERRORS must be negative");
     (val <= MACHO64_INV_ARG && val > MACHO64_NO_ERROR)
 
 /***
- * Description:
- *  Function parses binary mach-o file and initializes a Macho64File structure
- *  from file @fn
- * Input:
- *  @fn  - name of file what you want to parse
- * Output:
- *  Success:
- *      point to initialized Macho64File structure
- *  Fail:
- *      NULL point
- * After:
- *  Need to call macho64Free
+ * @brief Parse macho64 binary file
+ *
+ * @param[in] fn Binary file name. C string with terminal null
+ *
+ * @return Pointer to Macho64File structer or NULL if fail
  */
 EXPORT_FUNC
 Macho64File *macho64Parse(const char *fn);
@@ -182,241 +175,189 @@ EXPORT_FUNC
 MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off);
 
 /***
- * Before:
- *  You must completed all jobs with this Macho64File, otherwise you will free
- *  all information about this file including sections, symbols etc
- * Description:
- *  Free memory of Macho64File structure @mf
- * Input:
- *  @mf - point to Macho64File structer, that is necessary to free
- * After:
- *  @mf should be assigned to = NULL
+ * @warning You must completed all jobs with this Macho64File, otherwise you
+ *          will free all information about this file including sections, symbols
+ *          etc
+ *
+ * @brief Free memory of Macho64File struct
+ *
+ * @param[in] mf pointer to Macho64File structer
  */
 EXPORT_FUNC
 void macho64Free(Macho64File *mf);
 
 /***
- * Before:
- *  You must completed all jobs with this Macho64File, otherwise you will free
- *  all information about this file including sections, symbols etc
- * Description:
- *  Clean all internal structure of @mf, but pointer will be valid.
- * Input:
- *  @mf - point to Macho64File structure should be cleaned
- * After:
- *  @mf should be freed after
+ * @warning You must completed all jobs with this Macho64File, otherwise you
+ *          will free all information about this file including sections, symbols
+ *          etc
+ *
+ * @brief Clean Macho64File struct without free memory
+ *
+ * @param[in] mf pointer to Macho64File structer
  */
 EXPORT_FUNC
 void macho64Clean(Macho64File *mf);
 
 /***
- * Description:
- *  Fully check Macho64File structure
- * Input:
- *  @mf - Macho64File structure, that is nedded to check.
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_HEADER, MACHO64_NO_LOAD_COMMAND,
- *      MACHO64_NO_SYMTAB_CMD, MACHO64_NO_SYMTAB, MACHO64_NO_SORT_SYMTAB,
- *      MACHO64_NO_SYM_NAME_TAB, MACHO64_NO_INDIRECT_SYM_TAB, MACHO64_NO_SEGMENTS
+ * @brief Fully check Macho64File structure
+ *
+ * @param[in] mf Macho64File structure
+ *
+ * @return MACHO64_OK or
+ *         MACHO64_INV_ARG, MACHO64_NO_HEADER, MACHO64_NO_LOAD_COMMAND,
+ *         MACHO64_NO_SYMTAB_CMD, MACHO64_NO_SYMTAB, MACHO64_NO_SORT_SYMTAB,
+ *         MACHO64_NO_SYM_NAME_TAB, MACHO64_NO_INDIRECT_SYM_TAB,
+ *         MACHO64_NO_SEGMENTS
  */
 EXPORT_FUNC
 MACHO64_ERROR macho64Check(const Macho64File *mf);
 
 /***
- * Description:
- *  Function prints an indirect symbol table from @mf with information
- * Input:
- *  @mf - point to target Macho64File
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief prints an indirect symbol table from @mf with information
+ *
+ * @param[in] mf - point to target Macho64File
+ *
+ * @return MACHO64_OK or MACHO64_INV_ARG
  */
 EXPORT_FUNC
 MACHO64_ERROR macho64PrintIndirectSymTab(const Macho64File *mf);
 
 /***
- * Description:
- *  Function returns a point to the mach-o symbol with target @indx
- * Input:
- *  @mf - point to the targer structure Macho64File
- *  @indx - index of target symbol
- * Output:
- *  Success:
- *      point to symbols(maybe dynamic) from Macho64File structure
- *  Fail:
- *      NULL point
+ * @brief returns a point to the mach-o symbol with indx
+ *
+ * @param[in] mf pointer to the targer structure Macho64File
+ * @param[in] indx index of target symbol
+ *
+ * @return pointer to symbol with index or NULL
  */
 EXPORT_FUNC
 Macho64Sym *macho64GetSymByIndx(const Macho64File *mf, uint64_t indx);
 
 /***
- * Description:
- *  Function returns a point to the mach-o symbol with target @name
- * Input:
- *  @mf - point to the targer structure Macho64File
- *  @name - name of target symbol
- * Output:
- *  Success:
- *      point to symbols(maybe dynamic) from Macho64File structure
- *  Fail:
- *      NULL point
+ * @brief Function returns pointer to the symbol with name
+ *
+ * @param[in] mf pointer to Macho64File structer
+ * @param[in] name symbol name needed to find
+ *
+ * @return pointer to Macho64Sym or NULL if fail
  */
+EXPORT_FUNC
 EXPORT_FUNC
 Macho64Sym *macho64GetSymByName(const Macho64File *mf, const char *name);
 
 /***
- * Description:
- *  Function returns a point to the mach-o symbol with target @addr
- * Input:
- *  @mf - point to the targer structure Macho64File
- *  @addr - address of target symbol
- * Output:
- *  Success:
- *      point to symbols(maybe dynamic) from Macho64File structure
- *  Fail:
- *      NULL point
+ * @brief returns a point to the mach-o symbol with addr
+ *
+ * @param[in] mf  Macho64File pointer
+ * @param[in] addr address of target symbol
+ *
+ * @return point to symbols or NULL
  */
 EXPORT_FUNC
 Macho64Sym *macho64GetSSymByAddr(const Macho64File *mf, uint64_t addr);
 
 /***
- * Description:
- *  Function returns a name of a symbol @ms
- * Input:
- *  @mf - point to the targer structure Macho64File
- *  @ms - point to symbol structure Macho64Sym
- * Output:
- *  Success:
- *      point to name of static symbol
- *  Fail:
- *      NULL point
+ * @brief Function returns name of the symbol
+ *
+ * @param[in] mf pointer to the target Macho64File
+ * @param[in] ms pointer to symbol structure
+ *
+ * @return pointer to name of symbol or NULL if fail
  */
 EXPORT_FUNC
 char *macho64GetSymName(const Macho64File *mf, const Macho64Sym *ms);
 
 /***
- * Description:
- *  Function returns an index of a mach-o symbol with @name in a symbols table
- * Input:
- *  @mf - point to the targer Macho64File
- *  @name - name of the symbol
- * Output:
- *  Success:
- *      index of the symbol with @name
- *  Fail:
- *      -1
+ * @brief returns index of symbol with name
+ *
+ * @param[in] mf Macho64File pointer
+ * @param[in] name symbol name
+ *
+ * @return index of the symbol or -1
  */
 EXPORT_FUNC
 uint64_t macho64GetSymIndxByName(const Macho64File *mf, const char *name);
 
-// !TODO
-EXPORT_FUNC
-uint64_t macho64GetDSymIndx(const Macho64File *mf, const char *name);
-
 /***
- * Description:
- *  Function for work with qsort. Function compares addresses of symbols and
- * Output:
- *  1 - if (a->addr > b->addr)
- *  -1 - if (a->addr < b->addr)
- *  0 - if (a->addr == b->addr)
+ * @brief Function for work with qsort. Functions compare addresses of symbols
+ *        and returns 1/-1/0 if a->addr >/</== b->addr.
+ *
+ * @param[in] a pointer to a fist symbol
+ * @param[in] b pointer to a second symbol
  */
 EXPORT_FUNC
 int macho64CmpSym(const void *a, const void *b);
 
 /***
- * Description:
- *  Function returns point to table of static symbols from Macho64File structure
- * Input:
- *  @mf - point to the targer structure Macho64File
- * Output:
- *  Success:
- *      point to table of static symbols from Macho64File structure
- *  Fail:
- *      NULL point
+ * @brief Function returns pointer to the static symbols table
+ *
+ * @param[in] mf Macho64File pointer
+ *
+ * @return pointer to static symbol table or NULL if fail
  */
 EXPORT_FUNC
 Macho64Sym *macho64GetSSymTab(const Macho64File *mf);
-EXPORT_FUNC
-Macho64Sym *macho64GetSSymSortTab(const Macho64File *mf);
 
 /***
- * Description:
- *  Function offset from start of binary file @mf to a symtab
- * Input:
- *  @mf - point to the targer structure Macho64File
- * Output:
- *  Success:
- *      Offset from start of nimary file to static symbols table
- *  Fail:
- *      -1
+ * @brief returnd file offset to a symtab
+ *
+ * @param[in] mf Macho64File pointer
+ *
+ * @return file offset or -1
  */
 EXPORT_FUNC
 uint64_t macho64GetSSymTabFileoff(const Macho64File *mf);
 
 /***
- * Description:
- *  Function returns an amount of static symbols from mach-o binary file
- * Input:
- *  @mf - point to the targer Macho64File
- * Output:
- *  Success:
- *      amount of static symbols from the Macho64File structure
- *  Fail:
- *      -1
+ * @brief Function returns amount of static symbols
+ *
+ * @param[in] mf pointer to the target Macho64File
+ *
+ * @return amount of static symbols or -1
  */
 EXPORT_FUNC
 uint64_t macho64GetAmountSSym(const Macho64File *mf);
 
 /***
- * Description:
- *  Function returns address of a mach-o static symbol
- * Input:
- *  @ms - point to the targer structure Macho64Sym
- * Output:
- *  Success:
- *      addr - of the static symbol ms
- *      0 - for dynamic symbol
- *  Fail:
- *      -1
+ * @brief returns addr of static symbol without ASLR
+ *
+ * @param[in] ms pointer to the target static Macho64Sym
+ *
+ * @return address of -1
  */
 EXPORT_FUNC
 uint64_t macho64GetSSymAddr(const Macho64Sym *ms);
 
-// TODO
+/***
+ * @brief Return addr of static symbol with name
+ *
+ * @param[in] mf Macho64File pointer
+ * @param[in] name name of static symbol
+ *
+ * @return static symbol address of -1
+ */
 EXPORT_FUNC
 uint64_t macho64GetAddrSymByName(const Macho64File *mf, const char *name);
 
 /***
- * Description:
- *  Function sets new @addr for symbol @ms
- * Input:
- *  @ms - point to the targer structure Macho64Sym
- *  @addr - new addr for symbol
- * Output:
- *  Always success
+ * @brief sets new addr for symbol ms
+ *
+ * @param[in,out] ms Macho64Syn pointer
+ * @param[in] addr new addr for symbol
  */
 EXPORT_FUNC
 void macho64SetSSymAddr(Macho64Sym *ms, uint64_t addr);
 
 /***
- * Description:
+ * @brief
  *  Functions return size of a mach-o symbol. If you don't know a type of
  *  symbol, you should call macho64GetSSymSize. Otherwise, macho64GetFuncSize for
  *  function and macho64GetGDataSize for global data
- * Input:
- *  @mf - point to the targer Macho64File
- *  @ms - point to the targer structure Macho64Sym
- * Output:
- *  Success:
- *      size - for static symbol
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_SYMBOL
+ *
+ * @param[in] mf Macho64File pointer
+ * @param[in] ms Macho64Sym pointer
+ *
+ * @return size for static symbol or MACHO64_INV_ARG, MACHO64_NO_SYMBOL
  */
 EXPORT_FUNC
 uint64_t macho64GetFuncSize(const Macho64File *mf, const Macho64Sym *ms);
@@ -426,271 +367,218 @@ EXPORT_FUNC
 uint64_t macho64GetSSymSize(const Macho64File *mf, const Macho64Sym *ms);
 
 /***
- * Description:
- *  Function returns file position for the static symbol @sym
- * Input:
- *  @mf - point to the targer Macho64File
- *  @sym - point to symbol structure
- * Output:
- *  Success:
- *      file position of the static symbol
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_FILE_TYPE
+ * @brief returns file position for the static symbol
+ *
+ * @param[in] mf Macho64File pointer
+ * @param[in] ms Macho64Sym pointer
+ *
+ * @return file position or MACHO64_INV_ARG, MACHO64_NO_FILE_TYPE
  */
 EXPORT_FUNC
 uint64_t macho64GetSSymFileoff(const Macho64File *mf, const Macho64Sym *sym);
 
 /***
- * Description:
- *  Function returns an amount of segments in the binary file
- * Input:
- *  @mf - point to the targer Macho64File
- * Output:
- *  Success:
- *      amount of segments in the binary file
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief returns an amount of segments
+ *
+ * @param[in] mf Macho64File pointer
+ *
+ * @return amount of segments
  */
 EXPORT_FUNC
 uint64_t macho64GetAmountSeg(const Macho64File *mf);
 
 /***
- * Description:
- *  Function returns a data segment descriptor from the binary file
- * Input:
- *  @mf - point to the targer Macho64File
- * Output:
- *  Success:
- *      pointer to the data segment descriptor
- *  Fail:
- *      NULL
+ * @brief returns __DATA segment descriptor from the binary file
+ *
+ * @param[in] mf Macho64File pointer
+ *
+ * @return __DATA segment pointer or NULL
  */
 EXPORT_FUNC
 Macho64Seg *macho64GetDataSeg(const Macho64File *mf);
 
 /***
- * Description:
- *  Function returns a descriptor of the last segment from the binary file
- * Input:
- *  @mf - point to the targer Macho64File
- * Output:
- *  Success:
- *      pointer to a descriptor of the last segment
- *  Fail:
- *      NULL
+ * @brief eturns a descriptor of the last segment from the binary file
+ *
+ * @param[in] mf Macho64File pointer
+ *
+ * @return pointer of the last segment descriptor or NULL
  */
 EXPORT_FUNC
 Macho64Seg *macho64GetLastSeg(const Macho64File *mf);
 
 /***
- * Description:
- *  Function returns a size of a segment
- * Input:
- *  @seg - pointer to a segment descriptor
- * Output:
- *  Success:
- *      size of a segment
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief returns a size of a segment
+ *
+ * @param[in] seg pointer to a segment descriptor
+ *
+ * @return size of a segment or -1
  */
 EXPORT_FUNC
 uint64_t macho64GetSegSize(const Macho64Seg *seg);
 
 /***
- * Description:
- *  Function returns a virtual address of a segment
- * Input:
- *  @seg - pointer to a segment descriptor
- * Output:
- *  Success:
- *      virtual address size of a segment
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief eturns a virtual address of a segment
+ *
+ * @param[in] seg pointer to a segment descriptor
+ *
+ * @return virtual address size of a segment or -1
  */
 EXPORT_FUNC
 uint64_t macho64GetSegAddr(const Macho64Seg *seg);
 
 /***
- * Description:
- *  Function returns a file possition of a segment
- * Input:
- *  @seg - pointer to a segment descriptor
- * Output:
- *  Success:
- *      virtual address size of a segment
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief returns a file possition of a segment
+ *
+ * @param[in] seg pointer to a segment descriptor
+ *
+ * @return virtual address size of a segment or -1
  */
 EXPORT_FUNC
 uint64_t macho64GetSegFileoff(const Macho64Seg *seg);
 
 /***
- * Description:
- *  Function returns point to the mach-o section with target @name
- * Input:
- *  @mf - point to the targer structure Macho64File
- *  @name - name of target section
- * Output:
- *  Success:
- *      point to Macho64Sect structure from Macho64File structure
- *  Fail:
- *      NULL point
+ * @brief returns a descriptor of a section with name
+ *
+ * @param[in] mf pointer to the target Macho64File
+ * @param[in] name section name
+ *
+ * @return pointer to a section of NULL
  */
 EXPORT_FUNC
 Macho64Sect *macho64GetSectByName(const Macho64File *mf, const char *name);
 
 /***
- * Description:
- *  Function returns point to the mach-o section contains target @addr
- * Input:
- *  @mf - point to the targer structure Macho64File
- *  @addr - addr in the target section
- * Output:
- *  Success:
- *      point to Macho64Sect structure from Macho64File structure
- *  Fail:
- *      NULL point
+ * @brief eturns point to the mach-o section contains target addr
+ *
+ * @param[in] mf Macho64File pointer
+ * @param[in] addr addr in the target section
+ *
+ * @return pointer to section descriptor of NULL
  */
 EXPORT_FUNC
 Macho64Sect *macho64GetSectByAddr(const Macho64File *mf, uint64_t addr);
 
 /***
- * Description:
- *  Function returns point to the mach-o section with target @indx
- * Input:
- *  @mf - point to the targer structure Macho64File
- *  @indx - indx of target section
- * Output:
- *  Success:
- *      point to Macho64Sect structure from Macho64File structure
- *  Fail:
- *      NULL point
+ * @brief returns point to the mach-o section with target indx
+ *
+ * @param[in] mf Macho64File pointer
+ * @param[in] indx indx of target section
+ *
+ * @return pointer to section descriptor of NULL
  */
 EXPORT_FUNC
 Macho64Sect *macho64GetSectByIndx(const Macho64File *mf, uint64_t indx);
 
 /***
- * Description:
- *  Function returns a descriptor of the last section from a segment @seg
- * Input:
- *  @seg - segment descriptor
- * Output:
- *  Success:
- *      point to descriptor of the last section from bin_file structer
- *  Fail:
- *      NULL point
+ * @brief returns sections on segment
+ *
+ * @param[in] seg segment descriptor
+ *
+ * @return pointer to a sections in segment or NULL
  */
 EXPORT_FUNC
 Macho64Sect *macho64GetAllSect(const Macho64Seg *seg);
+
+/***
+ * @brief returns a descriptor of the last section from a segment
+ *
+ * @param[in] seg segment descriptor
+ *
+ * @return pointer to a section descriptor or NULL
+ */
 EXPORT_FUNC
 Macho64Sect *macho64GetLastSect(const Macho64Seg *seg);
+
+/***
+ * @brief returns last loadable section in binary file
+ *
+ * @param[in] mf pointer to the target Macho64File
+ *
+ * @return pointer to a section of NULL
+ */
 EXPORT_FUNC
 Macho64Sect *macho64GetLastLoadableSect(const Macho64File *mf);
 
 /***
- * Description:
- *  Function returns pointer to a read from mach-o file section
- * Input:
- *  @mf - Macho64File descriptor
- *  @sect - section descriptor
- * Output:
- *  Success:
- *      point to a read section
- *  Fail:
- *    NULL point
+ * @brief Reads section contents
+ *
+ * @param[in] mf pointer to the target Macho64Sect
+ * @param[in] sect section descriptor
+ *
+ * @return pointer to a content or NULL
+ * @warning need to free memory
  */
 EXPORT_FUNC
 void *macho64ReadSect(const Macho64File *mf, const Macho64Sect *sect);
 
 /***
- * Description:
- *  Function returns number of sections from mach-o file
- * Input:
- *  @mf - Macho64File descriptor
- * Output:
- *  Success:
- *      number os sections
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief returns an amount of sections
+ *
+ * @param[in] mf pointer to the target Macho64File
+ *
+ * @return amount of sections
  */
 EXPORT_FUNC
 uint64_t macho64GetAmountSect(const Macho64File *mf);
 
 /***
- * Description:
- *  Function returns name of the section @sect
- * Input:
- *  @mf - point to the targer Macho64File
- *  @sect - point to section descriptor
- * Output:
- *  Success:
- *      pointer to a section name
- *  Fail:
- *      NULL
+ * @brief returns name of the section
+ *
+ * @param[in] mf pointer to the target Macho64File
+ * @param[in] sect section descriptor
+ *
+ * @return pointer of NULL
  */
 EXPORT_FUNC
 const char* macho64GetSectName(const Macho64File *mf, const Macho64Sect *sect);
 
 /***
- * Description:
- *  Function returns a size of a section
- * Input:
- *  @sect - point to section descriptor
- * Output:
- *  Success:
- *      size of a section
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief returns a size of a section
+ *
+ * @param[in] sect pointer to section descriptor
+ *
+ * @return section size or -1
  */
 EXPORT_FUNC
 uint64_t macho64GetSectSize(const Macho64Sect *sect);
 
 /***
- * Description:
- *  Function returns a virtual address of a section
- * Input:
- *  @sect - point to section descriptor
- * Output:
- *  Success:
- *      virtual address of a section
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief returns a virtual address of a section start
+ *
+ * @param[in] sect pointer to section descriptor
+ *
+ * @return addr or -1
  */
 EXPORT_FUNC
 uint64_t macho64GetSectAddr(const Macho64Sect *sect);
 
 /***
- * Description:
- *  Function returns a file offset of a section
- * Input:
- *  @sect - point to section descriptor
- * Output:
- *  Success:
- *      file offset of a section
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief returns a file offset of a section.
+ *
+ * @param[in] sect pointer to section descriptor.
+ *
+ * @return file offset to a section start
  */
 EXPORT_FUNC
 uint64_t macho64GetSectFileoff(const Macho64Sect *sect);
 
 /***
- *  Description:
- *      Function returns position in a mach-o file of a relocation for section
- *  Input:
- *      @sect - pointer to a section
- *  Output:
- *      File position in a mach-o file of a relocation
+ * @brief returns position in a mach-o file of a relocation for section
+ *
+ * @param[in] sect pointer to a section
+ *
+ * @return file position in a mach-o file of a relocation
  */
 EXPORT_FUNC
 uint64_t macho64GetSectRelocFileoff(const Macho64Sect *sect);
 
 /***
- *  Description:
- *      Function returns number of relocations for section
- *  Input:
- *      @sect - pointer to a section
- *  Output:
- *      number of relocations
+ * @brief returns number of relocations for section
+ *
+ * @param[in] sect pointer to a section
+ *
+ * @return number of relocations
  */
 EXPORT_FUNC
 uint64_t macho64GetSectRelocNum(const Macho64Sect *sect);
@@ -698,20 +586,19 @@ uint64_t macho64GetSectRelocNum(const Macho64Sect *sect);
 EXPORT_FUNC
 uint64_t macho64GetRelocAddr(const Macho64Sect *sect, const MachoRelocInfo *rel);
 
-
 EXPORT_FUNC
 void macho64ChangeRelocAddr(MachoRelocInfo *rel, int32_t diff);
 
 /***
- * Description:
+ * @brief
  *  Function returns a relocations number for data, that is located at @addr in
  *  section @ms
- * Input:
- *  @mf - binary file descriptor.
+ *
+ * @param[in] mf - binary file descriptor.
  *  @ms - point to section descriptor.
  *  @addr - address of relocatable data.
- * Output:
- *  Success:
+ *
+ * @return
  *      relocation offset.
  *  Fail:
  *      MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_NO_RELOCATION
@@ -720,13 +607,13 @@ EXPORT_FUNC
 uint64_t macho64GetRelocForAddr(const Macho64File *mf, const Macho64Sect *sect, uint64_t addr);
 
 /***
- * Description:
+ * @brief
  *  Function returns an index of a dynamic mach-o symbol in symbols table
- * Input:
- *  @mf - point to the targer Macho64File
+ *
+ * @param[in] mf - point to the targer Macho64File
  *  @name - name of the symbol
- * Output:
- *  Success:
+ *
+ * @return
  *      index of the symbol with name
  *  Fail:
  *      MACHO64_INV_ARG, MACHO64_NO_SYMBOL
@@ -737,8 +624,8 @@ uint64_t macho64GetDSymIndxByName(const Macho64File *mf, const char *name);
 /***
  *  Before:
  *      If you need a file position, you should to save it
- *  Input:
- *      @mf - mach-o descriptor
+ *
+ * @param[in] mf - mach-o descriptor
  *      @func - name of function, that is nedded to hooked
  *  Output:
  *      Success:

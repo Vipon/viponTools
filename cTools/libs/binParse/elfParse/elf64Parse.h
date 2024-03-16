@@ -298,7 +298,7 @@ char *elf64GetDSymName(const Elf64File *elf64, const Elf64Sym *sym);
 
 /***
  * @brief Function for work with qsort. Functions compare addresses of symbols
- *        and returns 1/-1/0 if @a->addr >/</== b->addr.
+ *        and returns 1/-1/0 if a->addr >/</== b->addr.
  *
  * @param[in] a pointer to a fist symbol
  * @param[in] b pointer to a second symbol

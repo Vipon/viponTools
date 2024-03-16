@@ -278,9 +278,6 @@ static ELF64_ERROR elf64ParseRelaPlt(Elf64File *elf64)
  */
 static ELF64_ERROR elf64ParseRelaDyn(Elf64File *elf64)
 {
-    if (elf64 == NULL || elf64->fn == NULL)
-        return ELF64_INV_ARG;
-
     Elf64Shdr *reladyn = elf64GetSectByName(elf64, RELADYN);
     if (reladyn == NULL)
         return ELF64_NO_RELADYN;

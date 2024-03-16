@@ -136,7 +136,7 @@ char *fatMacho64GetSymName(const FatMacho64File *ff, const Macho64Sym *ms);
 
 /***
  * @brief Function for work with qsort. Functions compare addresses of symbols
- *        and returns 1/-1/0 if @a->addr >/</== b->addr.
+ *        and returns 1/-1/0 if a->addr >/</== b->addr.
  *
  * @param[in] a pointer to a fist symbol
  * @param[in] b pointer to a second symbol
@@ -183,7 +183,7 @@ uint64_t fatMacho64GetSSymAddr(const Macho64Sym *ms)
 /***
  * @brief Return addr of static symbol with name
  *
- * @param[in] elf64 pointer to Elf64File structer
+ * @param[in] ff pointer to FatMacho64File structer
  * @param[in] name name of static symbol
  *
  * @return static symbol address of -1

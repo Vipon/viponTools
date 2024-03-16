@@ -36,11 +36,8 @@
 #include <string.h>
 #include <inttypes.h>
 
-static MACHO64_ERROR macho64ParseArch(Macho64File *mf)
+static void macho64ParseArch(Macho64File *mf)
 {
-    if (mf == NULL || mf->header == NULL)
-        return MACHO64_INV_ARG;
-
     switch (mf->header->cputype) {
     case CPU_TYPE_X86:
         mf->arch = X86;
@@ -58,8 +55,6 @@ static MACHO64_ERROR macho64ParseArch(Macho64File *mf)
         mf->arch = UNKNOWN_ARCH;
         break;
     };
-
-    return MACHO64_OK;
 }
 
 /***
@@ -75,9 +70,6 @@ static MACHO64_ERROR macho64ParseArch(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
 {
-    if (mf == NULL || IS_INV_FD(mf->fd))
-        return MACHO64_INV_ARG;
-
     size_t off = mf->hOff;
     mf->header = (Macho64Header*)((uint8_t*)mf->faddr + off);
     macho64ParseArch(mf);
@@ -110,9 +102,6 @@ static MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseLCommands(Macho64File *mf)
 {
-    if (mf == NULL || IS_INV_FD(mf->fd) || mf->header == NULL)
-        return MACHO64_INV_ARG;
-
     size_t off = mf->hOff + sizeof(Macho64Header);
     if (mf->header->ncmds == 0)
         return MACHO64_NO_LOAD_COMMAND;
@@ -134,9 +123,6 @@ static MACHO64_ERROR macho64ParseLCommands(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseSymtabCom(Macho64File *mf)
 {
-    if (mf == NULL || mf->lcom == NULL)
-        return MACHO64_INV_ARG;
-
     FOREACH_LOAD_COMMAND(mf,
         if (lcom->cmd == LC_SYMTAB)
             mf->symtabCmd = (SymtabCommand*)lcom;
@@ -161,10 +147,6 @@ static MACHO64_ERROR macho64ParseSymtabCom(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseSymTab(Macho64File *mf)
 {
-    if (mf == NULL || IS_INV_FD(mf->fd) || mf->symtabCmd == NULL) {
-        return MACHO64_INV_ARG;
-    }
-
     if (mf->symtabCmd->nsyms == 0) {
         return MACHO64_NO_SYMTAB;
     }
@@ -188,9 +170,6 @@ static MACHO64_ERROR macho64ParseSymTab(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseSymNameTab(Macho64File *mf)
 {
-    if (mf == NULL || mf->symtab == NULL)
-        return MACHO64_INV_ARG;
-
     size_t off = mf->hOff + mf->symtabCmd->stroff;
     size_t size = mf->symtabCmd->strsize;
     if (size == 0)
@@ -214,9 +193,6 @@ static MACHO64_ERROR macho64ParseSymNameTab(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseDysymtabCom(Macho64File *mf)
 {
-    if (mf == NULL || mf->lcom == NULL)
-        return MACHO64_INV_ARG;
-
     uint32_t i = 0;
     uint32_t ncmds = mf->header->ncmds;
     uint32_t cmdsize = 0;
@@ -247,9 +223,6 @@ static MACHO64_ERROR macho64ParseDysymtabCom(Macho64File *mf)
  */
 static MACHO64_ERROR macho64ParseInderectSymtab(Macho64File *mf)
 {
-    if (mf == NULL || IS_INV_FD(mf->fd))
-        return MACHO64_INV_ARG;
-
     if (mf->dynsymCmd != NULL) {
         if (mf->dynsymCmd->nindirectsyms == 0)
             return MACHO64_NO_INDIRECT_SYM_TAB;
@@ -276,9 +249,6 @@ static MACHO64_ERROR macho64ParseInderectSymtab(Macho64File *mf)
 static
 MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
 {
-    if (mf == NULL || mf->header == NULL || mf->lcom == NULL)
-        return MACHO64_INV_ARG;
-
     uint32_t i = 0;
     size_t cmdsize = 0;
     LoadCommand *lc = (LoadCommand*)(void*)mf->lcom;
@@ -314,9 +284,6 @@ MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
 static
 MACHO64_ERROR macho64ParseFuncStarts(Macho64File *mf)
 {
-    if (mf == NULL || mf->header == NULL || mf->lcom == NULL)
-        return MACHO64_INV_ARG;
-
     FOREACH_LOAD_COMMAND(mf,
         if (lcom->cmd == LC_FUNCTION_STARTS) {
             mf->funcStarts = (MachoLinkEditData*)lcom;
@@ -329,9 +296,6 @@ MACHO64_ERROR macho64ParseFuncStarts(Macho64File *mf)
 static
 MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
 {
-    if (mf == NULL || mf->header == NULL || mf->lcom == NULL)
-        return MACHO64_INV_ARG;
-
     FOREACH_LOAD_COMMAND(mf,
         if (lcom->cmd == LC_LOAD_DYLIB) {
             ++(mf->numDyLibCom);
@@ -359,9 +323,6 @@ MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
 static
 MACHO64_ERROR macho64ParseCodeSign(Macho64File *mf)
 {
-    if (mf == NULL || mf->header == NULL || mf->lcom == NULL)
-        return MACHO64_INV_ARG;
-
     FOREACH_LOAD_COMMAND(mf,
         if (lcom->cmd == LC_CODE_SIGNATURE) {
             mf->sign = (MachoLinkEditData*)lcom;

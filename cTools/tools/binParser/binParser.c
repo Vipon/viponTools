@@ -231,98 +231,116 @@ int main(int argc, char *argv[])
                        , .key = 'h'
                        , .flags = OPTION_ARG_OPTIONAL
                        , .doc = "print all headers"
+                       , .group = 0
     );
     ADD_ARG(printSegments, .name = "segments"
                          , .key = 150
                          , .flags = OPTION_ARG_OPTIONAL
                          , .doc = "print all segments"
+                         , .group = 0
     );
     ADD_ARG(printSections, .name = "sections"
                          , .key = 'S'
                          , .flags = OPTION_ARG_OPTIONAL
                          , .doc = "print all section"
+                         , .group = 0
     );
     ADD_ARG(printSymbols, .name = "symbols"
                         , .key = 's'
                         , .flags = OPTION_ARG_OPTIONAL
                         , .doc = "print all symbols"
+                        , .group = 0
     );
     ADD_ARG(printRelocations, .name = "relocs"
                             , .key = 'r'
                             , .flags = OPTION_ARG_OPTIONAL
                             , .doc = "print relocations"
+                            , .group = 0
+    );
+    ADD_ARG(setArch, .name = "mcpu"
+                   , .key = 'm'
+                   , .arg = "CPU_TYPE"
+                   , .doc = "set up cpu type for parser"
+                   , .group = 0
     );
     ADD_ARG(printFatHeader, .name = "fat-header"
                           , .key = 151
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "macho: print fat header information"
+                          , .group = 1
+    );
+    ADD_ARG(printFixups, .name = "fixups"
+                       , .key = 159
+                       , .flags = OPTION_ARG_OPTIONAL
+                       , .doc = "macho: print all fixups information"
+                       , .group = 1
     );
     ADD_ARG(printFuncStarts, .name = "func-starts"
                            , .key = 152
                            , .flags = OPTION_ARG_OPTIONAL
                            , .doc = "macho: print information about func starts"
+                           , .group = 1
     );
     ADD_ARG(printLComs, .name = "lcom"
                       , .key = 'l'
                       , .flags = OPTION_ARG_OPTIONAL
                       , .doc = "macho: print load commands"
+                      , .group = 1
     );
     ADD_ARG(printCodeSign, .name = "code-sign"
                          , .key = 153
                          , .flags = OPTION_ARG_OPTIONAL
                          , .doc = "macho: print code sign"
-    );
-    ADD_ARG(setArch, .name = "mcpu"
-                   , .key = 'm'
-                   , .arg = "CPU_TYPE"
-                   , .flags = OPTION_ARG_OPTIONAL
-                   , .doc = "set up cpu type for parser"
+                         , .group = 1
     );
     ADD_ARG(printDosHeader, .name = "dos-header"
                           , .key = 154
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "pe: print dos header"
+                          , .group = 2
     );
     ADD_ARG(printFileHeader, .name = "file-header"
                            , .key = 155
                            , .flags = OPTION_ARG_OPTIONAL
                            , .doc = "pe: print file header"
+                           , .group = 2
     );
     ADD_ARG(printOptHeader, .name = "opt-header"
                           , .key = 156
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "pe: print opt header"
+                          , .group = 2
     );
     ADD_ARG(printImports, .name = "imports"
                           , .key = 'i'
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "pe: print imports"
+                          , .group = 2
     );
     ADD_ARG(printDelayImports, .name = "delay-imports"
                              , .key = 'd'
                              , .flags = OPTION_ARG_OPTIONAL
                              , .doc = "pe: print delay imports"
+                             , .group = 2
     );
     ADD_ARG(printExports, .name = "exports"
                         , .key = 'e'
                         , .flags = OPTION_ARG_OPTIONAL
                         , .doc = "pe: print exports"
+                        , .group = 2
     );
     ADD_ARG(printDynamicSection, .name = "dynamic"
                                , .key = 157
                                , .flags = OPTION_ARG_OPTIONAL
                                , .doc = "elf: print .dynamic section"
+                               , .group = 3
     );
     ADD_ARG(printVersionInfo, .name = "version-info"
                             , .key = 158
                             , .flags = OPTION_ARG_OPTIONAL
                             , .doc = "elf: print symbols version info from sections:"
                                      ".gnu.version, .gnu.version_r"
-    );
-    ADD_ARG(printFixups, .name = "fixups"
-                       , .key = 159
-                       , .flags = OPTION_ARG_OPTIONAL
-                       , .doc = "macho: print all fixups information"
+                            , .group = 3
     );
 
     ARG_PARSE(argc, argv);
@@ -339,47 +357,59 @@ int main(int argc, char *argv[])
     if (flags[SYMBOLS]) {
         binPrinter.printSymbols(binParser.bin);
     }
-    if (flags[FAT_HEADER]) {
-        binPrinter.fatMacho.printFatHeader(binParser.bin);
-    }
-    if (flags[FUNC_STARTS]) {
-        binPrinter.macho.printFuncStarts(binParser.bin);
-    }
-    if (flags[LCOMS]) {
-        binPrinter.macho.printLComs(binParser.bin);
-    }
-    if (flags[CODE_SIGN]) {
-        binPrinter.macho.printCodeSign(binParser.bin);
-    }
-    if (flags[DOS_HEADER]) {
-        binPrinter.pe.printDosHeader(binParser.bin);
-    }
-    if (flags[FILE_HEADER]) {
-        binPrinter.pe.printFileHeader(binParser.bin);
-    }
-    if (flags[OPT_HEADER]) {
-        binPrinter.pe.printOptHeader(binParser.bin);
-    }
-    if (flags[IMPORTS]) {
-        binPrinter.pe.printImports(binParser.bin);
-    }
-    if (flags[DELAY_IMPORTS]) {
-        binPrinter.pe.printDelayImports(binParser.bin);
-    }
-    if (flags[EXPORTS]) {
-        binPrinter.pe.printExports(binParser.bin);
-    }
     if (flags[RELOCATIONS]) {
         binPrinter.printRelocations(binParser.bin);
     }
-    if (flags[DYNAMIC]) {
-        binPrinter.elf.printDynamicSection(binParser.bin);
+
+    if (binParser.type == FATMACHO64) {
+        if (flags[FAT_HEADER]) {
+            binPrinter.fatMacho.printFatHeader(binParser.bin);
+        }
     }
-    if (flags[VERSION_INFO]) {
-        binPrinter.elf.printVersionInfo(binParser.bin);
+
+    if (binParser.type == FATMACHO64 || binParser.type == MACHO64) {
+        if (flags[FUNC_STARTS]) {
+            binPrinter.macho.printFuncStarts(binParser.bin);
+        }
+        if (flags[LCOMS]) {
+            binPrinter.macho.printLComs(binParser.bin);
+        }
+        if (flags[CODE_SIGN]) {
+            binPrinter.macho.printCodeSign(binParser.bin);
+        }
+        if (flags[FIXUPS]) {
+            binPrinter.macho.printFixups(binParser.bin);
+        }
     }
-    if (flags[FIXUPS]) {
-        binPrinter.macho.printFixups(binParser.bin);
+
+    if (binParser.type == PE64) {
+        if (flags[DOS_HEADER]) {
+            binPrinter.pe.printDosHeader(binParser.bin);
+        }
+        if (flags[FILE_HEADER]) {
+            binPrinter.pe.printFileHeader(binParser.bin);
+        }
+        if (flags[OPT_HEADER]) {
+            binPrinter.pe.printOptHeader(binParser.bin);
+        }
+        if (flags[IMPORTS]) {
+            binPrinter.pe.printImports(binParser.bin);
+        }
+        if (flags[DELAY_IMPORTS]) {
+            binPrinter.pe.printDelayImports(binParser.bin);
+        }
+        if (flags[EXPORTS]) {
+            binPrinter.pe.printExports(binParser.bin);
+        }
+    }
+
+    if (binParser.type == ELF64) {
+        if (flags[DYNAMIC]) {
+            binPrinter.elf.printDynamicSection(binParser.bin);
+        }
+        if (flags[VERSION_INFO]) {
+            binPrinter.elf.printVersionInfo(binParser.bin);
+        }
     }
 
     finiBinPrinter();
