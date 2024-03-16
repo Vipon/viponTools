@@ -38,7 +38,8 @@
  *
  * @param[in,out] elf64 elf64File descriptor
  */
-static void elf64ParseArch(Elf64File *elf64)
+static
+void elf64ParseArch(Elf64File *elf64)
 {
     switch (elf64->header->e_machine) {
     case EM_386:
@@ -66,7 +67,8 @@ static void elf64ParseArch(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_HEADER
  */
-static ELF64_ERROR elf64ParseHeader(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseHeader(Elf64File *elf64)
 {
     uint64_t ehOff = 0;
     Elf64Ehdr *header = (Elf64Ehdr*)(elf64->faddr + ehOff);
@@ -90,7 +92,8 @@ static ELF64_ERROR elf64ParseHeader(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_SECTIONS
  */
-static ELF64_ERROR elf64ParseSections(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseSections(Elf64File *elf64)
 {
     /***
      * e_shoff - contains the file offset, in bytes, of the section header
@@ -123,7 +126,8 @@ static ELF64_ERROR elf64ParseSections(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_SEGMENTS
  */
-static ELF64_ERROR elf64ParseSegments(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseSegments(Elf64File *elf64)
 {
     uint64_t phoff = elf64->header->e_phoff;
     uint64_t phnum = elf64->header->e_phnum;
@@ -141,7 +145,8 @@ static ELF64_ERROR elf64ParseSegments(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_SYMTAB
  */
-static ELF64_ERROR elf64ParseSymTab(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseSymTab(Elf64File *elf64)
 {
     /***
      * SHT_SYMTAB - Contains a linker symbol table.
@@ -162,7 +167,8 @@ static ELF64_ERROR elf64ParseSymTab(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_DYNSYM
  */
-static ELF64_ERROR elf64ParseDynSym(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseDynSym(Elf64File *elf64)
 {
     /***
      * SHT_DYNSYM - Contains a dynamic loader symbol table.
@@ -183,7 +189,8 @@ static ELF64_ERROR elf64ParseDynSym(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_SYMBOLS
  */
-static ELF64_ERROR elf64ParseSymbols(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseSymbols(Elf64File *elf64)
 {
     elf64ParseSymTab(elf64);
     elf64ParseDynSym(elf64);
@@ -201,7 +208,8 @@ static ELF64_ERROR elf64ParseSymbols(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_SH_NAME_TAB
 */
-static ELF64_ERROR elf64ParseSectNameTab(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseSectNameTab(Elf64File *elf64)
 {
     /***
      * e_shstrndx - contains the section header table index of the
@@ -225,7 +233,8 @@ static ELF64_ERROR elf64ParseSectNameTab(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_SYM_NAME_TAB
  */
-static ELF64_ERROR elf64ParseSymNameTab(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseSymNameTab(Elf64File *elf64)
 {
     Elf64Shdr *strtab = elf64GetSectByName(elf64, STRTAB);
     if (strtab == NULL)
@@ -242,7 +251,8 @@ static ELF64_ERROR elf64ParseSymNameTab(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_DYN_SYM_NAME_TAB
  */
-static ELF64_ERROR elf64ParseDynSymNameTab(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseDynSymNameTab(Elf64File *elf64)
 {
     Elf64Shdr *dynSymTab = elf64GetSectByName(elf64, DYNSTR);
     if (dynSymTab == NULL)
@@ -259,7 +269,8 @@ static ELF64_ERROR elf64ParseDynSymNameTab(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_RELAPLT
  */
-static ELF64_ERROR elf64ParseRelaPlt(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseRelaPlt(Elf64File *elf64)
 {
     Elf64Shdr *relaplt = elf64GetSectByName(elf64, RELAPLT);
     if (relaplt == NULL)
@@ -276,7 +287,8 @@ static ELF64_ERROR elf64ParseRelaPlt(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_RELADYN
  */
-static ELF64_ERROR elf64ParseRelaDyn(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseRelaDyn(Elf64File *elf64)
 {
     Elf64Shdr *reladyn = elf64GetSectByName(elf64, RELADYN);
     if (reladyn == NULL)
@@ -293,7 +305,8 @@ static ELF64_ERROR elf64ParseRelaDyn(Elf64File *elf64)
  *
  * @return ELF64_OK or ELF64_NO_DYNAMIC
 */
-static ELF64_ERROR elf64ParseDynamic(Elf64File *elf64)
+static
+ELF64_ERROR elf64ParseDynamic(Elf64File *elf64)
 {
     Elf64Shdr *dyn = elf64GetSectByType(elf64, SHT_DYNAMIC);
     if (dyn == NULL)
@@ -314,7 +327,8 @@ static ELF64_ERROR elf64ParseDynamic(Elf64File *elf64)
     return ELF64_OK;
 }
 
-Elf64File *elf64Parse(const char *fn)
+Elf64File
+*elf64Parse(const char *fn)
 {
     if (fn == NULL) {
         LOG_ERROR("Invalid file name");

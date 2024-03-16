@@ -93,7 +93,7 @@ typedef struct Macho64File {
     char              *fn;
     FileD             fd;
     size_t            fs;
-    void              *faddr;
+    uint8_t           *faddr;
     uint64_t          base_addr;
     uint64_t          hOff; // file offset to mach-o header
     uint32_t          type;
@@ -130,7 +130,10 @@ typedef enum : uint64_t {
 #else
 typedef enum {
 #endif /* __WIN__ */
-    MACHO64_NO_ERROR = (uint64_t)-20,
+    MACHO64_NO_ERROR = (uint64_t)-22,
+    MACHO64_NO_CODE_SIG,
+    MACHO64_NO_DYLIB_COM,
+    MACHO64_NO_FUNC_STARTS,
     MACHO64_NO_RELOCATION,
     MACHO64_NO_FILE_TYPE,
     MACHO64_NO_SECTION,

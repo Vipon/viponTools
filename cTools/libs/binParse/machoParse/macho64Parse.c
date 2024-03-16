@@ -36,7 +36,13 @@
 #include <string.h>
 #include <inttypes.h>
 
-static void macho64ParseArch(Macho64File *mf)
+/***
+ * @brief parse machine architecture from mach-o header
+ *
+ * @param[in,out] mf Macho64File pointer
+*/
+static
+void macho64ParseArch(Macho64File *mf)
 {
     switch (mf->header->cputype) {
     case CPU_TYPE_X86:
@@ -58,20 +64,17 @@ static void macho64ParseArch(Macho64File *mf)
 }
 
 /***
- * Description:
- *  Function init Macho64Header of a Macho64File  @mf.
- * Input:
- *  @mf - macho64 file descriptor.
- * Output:
- *  Success:
- *      MACHO64_OK.
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_NO_HEADER.
+ * @brief parse Macho64Header
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_HEADER
  */
-static MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
+static
+MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
 {
     size_t off = mf->hOff;
-    mf->header = (Macho64Header*)((uint8_t*)mf->faddr + off);
+    mf->header = (Macho64Header*)(mf->faddr + off);
     macho64ParseArch(mf);
 
     switch (mf->header->magic) {
@@ -89,109 +92,93 @@ static MACHO64_ERROR macho64ParseHeader(Macho64File *mf)
 }
 
 /***
- * Description:
- *  Function init mach-o LoadCommands of a Macho64File @mf.
- * Input:
- *  @mf - point to target Macho64File structure with initialized header
- *  @hOff - offset to the Macho64Header in the file
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_LOAD_COMMAND, MACHO64_NO_MEM
+ * @brief parse mach-o LoadCommands
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_LOAD_COMMAND
  */
-static MACHO64_ERROR macho64ParseLCommands(Macho64File *mf)
+static
+MACHO64_ERROR macho64ParseLCommands(Macho64File *mf)
 {
     size_t off = mf->hOff + sizeof(Macho64Header);
     if (mf->header->ncmds == 0)
         return MACHO64_NO_LOAD_COMMAND;
 
-    mf->lcom = (uint8_t*)mf->faddr + off;
+    mf->lcom = mf->faddr + off;
     return MACHO64_OK;
 }
 
 /***
- * Description:
- *  Function initializes symtabCmd field in mf.
- * Input:
- *  @mf - point to target Macho64File structure with initialized header and lcom
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_SYMTAB_CMD
+ * @brief parse LC_SYMTAB load command
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_SYMTAB_CMD
  */
-static MACHO64_ERROR macho64ParseSymtabCom(Macho64File *mf)
+static
+MACHO64_ERROR macho64ParseSymtabCom(Macho64File *mf)
 {
     FOREACH_LOAD_COMMAND(mf,
-        if (lcom->cmd == LC_SYMTAB)
+        if (lcom->cmd == LC_SYMTAB) {
             mf->symtabCmd = (SymtabCommand*)lcom;
+            return MACHO64_OK;
+        }
     )
 
-    if (mf->symtabCmd == NULL)
-        return MACHO64_NO_SYMTAB_CMD;
-
-    return MACHO64_OK;
+    return MACHO64_NO_SYMTAB_CMD;
 }
 
 /***
- * Description:
- *  Function reads mach-o table of symbols from file.
- * Input:
- *  @mf - point to target Macho64File structure with initialized symtabCmd.
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_SYMTAB, MACHO64_NO_MEM
+ * @brief parse symbol table
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_SYMTAB
  */
-static MACHO64_ERROR macho64ParseSymTab(Macho64File *mf)
+static
+MACHO64_ERROR macho64ParseSymTab(Macho64File *mf)
 {
     if (mf->symtabCmd->nsyms == 0) {
         return MACHO64_NO_SYMTAB;
     }
 
     size_t off = mf->hOff + mf->symtabCmd->symoff;
-    mf->symtab  = (Macho64Sym*)((uint8_t*)mf->faddr + off);
+    mf->symtab  = (Macho64Sym*)(mf->faddr + off);
 
     return MACHO64_OK;
 }
 
 /***
- * Description:
- *  Function returns a mach-o table of symbols name from a file
- * Input:
- *  @mf - point to target Macho64File structure with initialized symtab
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_SYM_NAME_TAB, MACHO64_NO_MEM
+ * @brief parse mach-o symbol name tab
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_SYM_NAME_TAB
  */
-static MACHO64_ERROR macho64ParseSymNameTab(Macho64File *mf)
+static
+MACHO64_ERROR macho64ParseSymNameTab(Macho64File *mf)
 {
     size_t off = mf->hOff + mf->symtabCmd->stroff;
     size_t size = mf->symtabCmd->strsize;
-    if (size == 0)
+    if (size == 0) {
         return MACHO64_NO_SYM_NAME_TAB;
+    }
 
-    mf->symNameTab = (char*)((uint8_t*)mf->faddr + off);
+    mf->symNameTab = (char*)(mf->faddr + off);
 
     return MACHO64_OK;
 }
 
 /***
- * Description:
- *  Function initializes dysymtabCmd fields in @mf.
- * Input:
- *  @mf - point to target Macho64File structure with initialized header and lcom
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_DYSYMTAB_CMD
+ * @brief parse LC_DYSYMTAB load command
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_DYSYMTAB_CMD
  */
-static MACHO64_ERROR macho64ParseDysymtabCom(Macho64File *mf)
+static
+MACHO64_ERROR macho64ParseDysymtabCom(Macho64File *mf)
 {
     uint32_t i = 0;
     uint32_t ncmds = mf->header->ncmds;
@@ -200,35 +187,31 @@ static MACHO64_ERROR macho64ParseDysymtabCom(Macho64File *mf)
     for (i = 0; i < ncmds; ++i) {
         lcom = (LoadCommand*) ((size_t)lcom + cmdsize);
         cmdsize = lcom->cmdsize;
-        if (lcom->cmd == LC_DYSYMTAB)
+        if (lcom->cmd == LC_DYSYMTAB) {
             mf->dynsymCmd = (DysymtabCommand*)lcom;
+            return MACHO64_OK;
+        }
     }
 
-    if (mf->dynsymCmd == NULL)
-        return MACHO64_NO_DYSYMTAB_CMD;
-
-    return MACHO64_OK;
+    return MACHO64_NO_DYSYMTAB_CMD;
 }
 
 /***
- * Description:
- *  Function reads mach-o inderect symbol table
- * Input:
- *  @mf - point to target Macho64File structure with initialized dynsymCmd
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_NO_DYSYMTAB_CMD
+ * @brief parse mach-o inderect symbol table
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_INDIRECT_SYM_TAB, MACHO64_NO_DYSYMTAB_CMD
  */
-static MACHO64_ERROR macho64ParseInderectSymtab(Macho64File *mf)
+static
+MACHO64_ERROR macho64ParseInderectSymtab(Macho64File *mf)
 {
     if (mf->dynsymCmd != NULL) {
         if (mf->dynsymCmd->nindirectsyms == 0)
             return MACHO64_NO_INDIRECT_SYM_TAB;
 
         size_t off = mf->hOff + mf->dynsymCmd->indirectsymoff;
-        mf->indirectSymtab = (uint32_t*)((uint8_t*)mf->faddr + off);
+        mf->indirectSymtab = (uint32_t*)(mf->faddr + off);
         return MACHO64_OK;
     } else {
         return MACHO64_NO_DYSYMTAB_CMD;
@@ -236,15 +219,11 @@ static MACHO64_ERROR macho64ParseInderectSymtab(Macho64File *mf)
 }
 
 /***
- * Description:
- *  Function initializes segments field in @mf.
- * Input:
- *  @mf - point to target Macho64File structure with initialized header and lcom
- * Output:
- *  Success:
- *      MACHO64_OK
- *  Fail:
- *      MACHO64_INV_ARG
+ * @brief parse mach-o segments
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK
  */
 static
 MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
@@ -278,21 +257,40 @@ MACHO64_ERROR macho64ParseSegCom(Macho64File *mf)
         }
     }
 
+    if (mf->segments[TEXT_NSEG] == NULL && mf->segments[UNNAMED_NSEG] == NULL) {
+        return MACHO64_NO_SEGMENTS;
+    }
+
     return MACHO64_OK;
 }
 
+/***
+ * @brief parse LC_FUNCTION_STARTS load comand
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_FUNC_STARTS
+ */
 static
 MACHO64_ERROR macho64ParseFuncStarts(Macho64File *mf)
 {
     FOREACH_LOAD_COMMAND(mf,
         if (lcom->cmd == LC_FUNCTION_STARTS) {
             mf->funcStarts = (MachoLinkEditData*)lcom;
+            return MACHO64_OK;
         }
     );
 
-    return MACHO64_OK;
+    return MACHO64_NO_FUNC_STARTS;
 }
 
+/***
+ * @brief parse LC_LOAD_DYLIB load comand
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_MEM, MACHO64_NO_DYLIB_COM
+ */
 static
 MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
 {
@@ -304,11 +302,14 @@ MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
 
     if (mf->numDyLibCom == 0) {
         mf->dylibCom = NULL;
-        return MACHO64_OK;
+        return MACHO64_NO_DYLIB_COM;
     }
 
     mf->dylibCom = (MachoDylibCommand**)
         Malloc(sizeof(MachoDylibCommand*) * mf->numDyLibCom);
+    if (mf->dylibCom == NULL) {
+        return MACHO64_NO_MEM;
+    }
 
     uint32_t j = 0;
     FOREACH_LOAD_COMMAND(mf,
@@ -320,6 +321,13 @@ MACHO64_ERROR macho64ParseDylibCom(Macho64File *mf)
     return MACHO64_OK;
 }
 
+/***
+ * @brief parse LC_CODE_SIGNATURE load comand
+ *
+ * @param[in,out] mf Macho64File pointer
+ *
+ * @return MACHO64_OK or MACHO64_NO_CODE_SIG
+ */
 static
 MACHO64_ERROR macho64ParseCodeSign(Macho64File *mf)
 {
@@ -330,11 +338,10 @@ MACHO64_ERROR macho64ParseCodeSign(Macho64File *mf)
         }
     );
 
-    return MACHO64_OK;
+    return MACHO64_NO_CODE_SIG;
 }
 
-MACHO64_ERROR
-_macho64Parse(Macho64File *mf, uint64_t off)
+MACHO64_ERROR _macho64Parse(Macho64File *mf, uint64_t off)
 {
     if (mf == NULL)
         return MACHO64_INV_ARG;
@@ -358,8 +365,7 @@ _macho64Parse(Macho64File *mf, uint64_t off)
         if (IS_MACHO64_FILE_OBJ(mf)) {
             LOG_ERROR("Cannot parse mach-o symtab command");
             return err;
-        } else
-            LOG_WARNING("Cannot parse mach-o symtab command");
+        }
     } else {
         err = macho64ParseSymTab(mf);
         if (err) {
@@ -375,11 +381,10 @@ _macho64Parse(Macho64File *mf, uint64_t off)
     }
 
     err = macho64ParseDysymtabCom(mf);
-    if (err) {
-        LOG_WARNING("Cannot parse mach-o dysyntab commd");
-    } else {
+    if (err == MACHO64_OK) {
         err = macho64ParseInderectSymtab(mf);
         if (err) {
+            // object file can have dynsym tab without inderect symtab
             if (IS_MACHO64_FILE_EXEC(mf)) {
                 LOG_ERROR("Cannot parse mach-o inderect symbol table");
                 return err;
@@ -402,82 +407,71 @@ _macho64Parse(Macho64File *mf, uint64_t off)
     return MACHO64_OK;
 }
 
-Macho64File*
-macho64Parse(const char *fn)
+Macho64File *macho64Parse(const char *fn)
 {
-    if (fn == NULL)
-        return NULL;
-
-    FileD fd = open(fn, O_RDONLY);
-    if (IS_INV_FD(fd)) {
-        return NULL;
-    }
-
-    size_t fs = get_file_size(fd);
-    if (fs == (size_t) -1) {
-        return NULL;
-    }
-
-    void *faddr = map_file(fd, fs, PROT_READ);
-    if (faddr == NULL) {
+    if (fn == NULL) {
         return NULL;
     }
 
     Macho64File *mf = (Macho64File*) Calloc(1, sizeof(Macho64File));
     if (mf == NULL) {
         LOG_ERROR("Cannot allocate %zu bytes", sizeof(Macho64File));
-        goto eexit_0;
+        return NULL;
     }
 
-    mf->fd = fd;
-    mf->fs = fs;
-    mf->faddr = faddr;
+    mf->fd = open(fn, O_RDONLY);
+    if (IS_INV_FD(mf->fd)) {
+        goto eexit0;
+    }
+
+    mf->fs = get_file_size(mf->fd);
+    if (mf->fs == (size_t) -1) {
+        goto eexit0;
+    }
+
+    mf->faddr = (uint8_t*)map_file(mf->fd, mf->fs, PROT_READ);
+    if (mf->faddr == NULL) {
+        goto eexit0;
+    }
+
     size_t nameLen = strlen(fn) + 1;
     if ((mf->fn = (char*) Calloc(nameLen, sizeof(char))) == NULL) {
         LOG_ERROR("Cannot allocate %zu bytes", nameLen);
-        goto eexit_1;
+        goto eexit0;
     }
 
     strncpy(mf->fn, fn, nameLen);
 
-    if (_macho64Parse(mf, 0))
-        goto eexit_1;
+    if (_macho64Parse(mf, 0)) {
+        goto eexit0;
+    }
 
     return mf;
 
-eexit_1:
+eexit0:
     macho64Free(mf);
-    return NULL;
-eexit_0:
-    close(fd);
     return NULL;
 }
 
 void macho64Clean(Macho64File *mf)
 {
-    if (mf == NULL)
+    if (mf == NULL) {
         return;
-
+    }
     if (mf->faddr) {
         unmap_file(mf->faddr, mf->fs);
-        mf->faddr = NULL;
-        mf->fs = (size_t)-1;
     }
-
     if (mf->fn) {
         Free(mf->fn);
-        mf->fn = NULL;
     }
-
     if (mf->fd != INV_FD) {
         close(mf->fd);
-        mf->fd = INV_FD;
     }
-
     if (mf->dylibCom) {
         Free(mf->dylibCom);
-        mf->dylibCom = NULL;
     }
+
+    vt_memset_s(mf, sizeof(Macho64File), 0xff, sizeof(Macho64File));
 }
 
 void macho64Free(Macho64File *mf)
@@ -488,57 +482,41 @@ void macho64Free(Macho64File *mf)
 
 MACHO64_ERROR macho64Check(const Macho64File *mf)
 {
-    if (mf == NULL)
+    if (mf == NULL) {
         return MACHO64_INV_ARG;
+    }
 
     if (mf->header == NULL) {
-        STDERROR_PRINT_DEBUG("Uninitialized field mf->header.");
         return MACHO64_NO_HEADER;
     }
 
     if (mf->lcom == NULL) {
-        STDERROR_PRINT_DEBUG("Uninitialized field mf->lcom.");
         return MACHO64_NO_LOAD_COMMAND;
     }
 
     if (mf->symtabCmd == NULL) {
         if (IS_MACHO64_FILE_OBJ(mf)) {
-            LOG_ERROR("Uninitialized field mf->symtabCmd.");
             return MACHO64_NO_SYMTAB_CMD;
-        } else
-            LOG_WARNING("Uninitialized field mf->symtabCmd.");
+        }
     } else {
         if (mf->symtab == NULL) {
-            if (IS_MACHO64_FILE_EXEC(mf)) {
-                LOG_ERROR("Uninitialized field mf->symtab.");
-                return MACHO64_NO_SYMTAB;
-            } else
-                LOG_WARNING("Uninitialized field mf->symtab.");
-        } else {
-            if (mf->symNameTab == NULL) {
-                if (IS_MACHO64_FILE_EXEC(mf)) {
-                    LOG_ERROR("Uninitialized field mf->symNameTab.");
-                    return MACHO64_NO_SYM_NAME_TAB;
-                } else
-                    LOG_WARNING("Uninitialized field mf->symNameTab.");
-            }
+            return MACHO64_NO_SYMTAB;
+        } else if (mf->symNameTab == NULL) {
+            return MACHO64_NO_SYM_NAME_TAB;
         }
     }
 
-    if (mf->dynsymCmd == NULL) {
-        LOG_WARNING("Uninitialized field mf->dynsymCmd.\n");
-        //return MACHO64_NO_DYSYMTAB_CMD;
-    } else
+    if (mf->dynsymCmd) {
+        // object file can have dynsym tab without inderect symtab
         if (  mf->indirectSymtab == NULL
            && IS_MACHO64_FILE_EXEC(mf)
            )
         {
-            LOG_ERROR("Uninitialized field mf->indirectSymtab.");
             return MACHO64_NO_INDIRECT_SYM_TAB;
         }
+    }
 
     if (mf->segments[TEXT_NSEG] == NULL && mf->segments[UNNAMED_NSEG] == NULL) {
-        LOG_ERROR("Uninitialized field mf->segments.");
         return MACHO64_NO_SEGMENTS;
     }
 
@@ -687,7 +665,6 @@ uint64_t macho64GetSSymAddr(const Macho64Sym *ms)
 uint64_t macho64GetAddrSymByName(const Macho64File *elf64, const char *name)
 {
     if (macho64Check(elf64) || name == NULL) {
-        LOG_ERROR("Invalid arguments");
         return MACHO64_INV_ARG;
     }
 
@@ -1177,7 +1154,7 @@ uint64_t macho64GetRelocForAddr(const Macho64File *mf, const Macho64Sect *sect, 
     uint64_t vaddr_sect = 0;  // vaddr of @sect
     uint64_t reloc_off = mf->hOff + sect->reloff;
     uint64_t num_reloc = sect->nreloc;
-    MachoRelocInfo *rel_info = (MachoRelocInfo*)((uint8_t*)mf->faddr + reloc_off);
+    MachoRelocInfo *rel_info = (MachoRelocInfo*)(mf->faddr + reloc_off);
     if ((uint32_t)rel_info->r_address & R_SCATTERED) {
         LOG_ERROR("It's scattered relocation info");
         return MACHO64_NO_RELOCATION;

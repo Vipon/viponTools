@@ -32,16 +32,11 @@
 
 #include <inttypes.h>
 
-static PE64_ERROR pe64ParseDosHeader(PE64File *pe)
+static
+PE64_ERROR pe64ParseDosHeader(PE64File *pe)
 {
-    if (pe == NULL || IS_INV_FD(pe->fd))
-        return PE64_INV_ARG;
-
     uint64_t off = 0;
-    DosHeader *header = (DosHeader*)((uint8_t*)pe->faddr + off);
-    if (header == NULL)
-        return PE64_NO_MEM;
-
+    DosHeader *header = (DosHeader*)(pe->faddr + off);
     unsigned char *e_magic = (unsigned char *)&header->e_magic;
     if (e_magic[0] == 'M' && e_magic[1] == 'Z') {
         pe->dosHeader = header;
@@ -52,11 +47,9 @@ static PE64_ERROR pe64ParseDosHeader(PE64File *pe)
     }
 }
 
-static PE64_ERROR pe64ParseType(PE64File *pe)
+static
+PE64_ERROR pe64ParseType(PE64File *pe)
 {
-    if (pe == NULL || pe->ntHeader == NULL)
-        return PE64_INV_ARG;
-
     if (IS_PE64_FILE_EXEC(pe)) {
         pe->type = PE64_EXEC;
     } else if (IS_PE64_FILE_SHARED(pe)) {
@@ -70,22 +63,11 @@ static PE64_ERROR pe64ParseType(PE64File *pe)
     return PE64_OK;
 }
 
-static PE64_ERROR pe64ParseFileHeader(PE64File *pe, size_t off)
+static
+PE64_ERROR pe64ParseNTHeader(PE64File *pe)
 {
-    if (pe == NULL)
-        return PE64_INV_ARG;
-
-    pe->fileHeader = (FileHeader*)((uint8_t*)pe->faddr + off);
-    return PE64_OK;
-}
-
-static PE64_ERROR pe64ParseNTHeader(PE64File *pe)
-{
-    if (pe == NULL || pe->dosHeader == NULL)
-        return PE64_INV_ARG;
-
     uint64_t off = (uint64_t)pe->dosHeader->e_lfanew;
-    NTHeader64 *header = (NTHeader64*)((uint8_t*)pe->faddr + off);
+    NTHeader64 *header = (NTHeader64*)(pe->faddr + off);
     char *sig = (char*)&header->Signature;
     if (sig[0] == 'P' && sig[1] == 'E' && sig[2] == '\0' && sig[3] == '\0') {
         pe->ntHeader = header;
@@ -146,11 +128,9 @@ void pe64ParseArch(PE64File *pe)
     }
 }
 
-static PE64_ERROR pe64ParseSections(PE64File *pe)
+static
+PE64_ERROR pe64ParseSections(PE64File *pe)
 {
-    if (pe == NULL || pe->fileHeader == NULL)
-        return PE64_INV_ARG;
-
     uint64_t off = 0;
     if (IS_PE64_FILE_EXEC(pe) || IS_PE64_FILE_SHARED(pe))
         off = (uint64_t)pe->dosHeader->e_lfanew + sizeof(NTHeader64);
@@ -159,21 +139,15 @@ static PE64_ERROR pe64ParseSections(PE64File *pe)
     else
         return PE64_NO_SECTIONS;
 
-    PESection *sections = (PESection*)((uint8_t*)pe->faddr + off);
-    if (sections == NULL)
-        return PE64_NO_SECTIONS;
-
-    pe->sections = sections;
+    pe->sections = (PESection*)(pe->faddr + off);
     pe->sectNum = pe->fileHeader->NumberOfSections;
 
     return PE64_OK;
 }
 
-static PE64_ERROR pe64ParseImport(PE64File *pe)
+static
+PE64_ERROR pe64ParseImport(PE64File *pe)
 {
-    if (pe == NULL || pe->optHeader== NULL)
-        return PE64_INV_ARG;
-
     DataDir *importDir = pe->optHeader->DataDirectory + IMAGE_DIRECTORY_ENTRY_IMPORT;
     uint64_t importAddr = importDir->VirtualAddress;
 
@@ -182,16 +156,14 @@ static PE64_ERROR pe64ParseImport(PE64File *pe)
         return PE64_NO_IMPORTS;
 
     uint64_t off = pe64AddrToFileOff(pe, importAddr);
-    pe->import = (PEImport*)((uint8_t*)pe->faddr + off);
+    pe->import = (PEImport*)(pe->faddr + off);
     pe->importNum = size / sizeof(PEImport);
     return PE64_OK;
 }
 
-static PE64_ERROR pe64ParseDelayImport(PE64File *pe)
+static
+PE64_ERROR pe64ParseDelayImport(PE64File *pe)
 {
-    if (pe == NULL || pe->optHeader== NULL)
-        return PE64_INV_ARG;
-
     DataDir *delimpDir = pe->optHeader->DataDirectory
                        + IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT;
     uint64_t delimpAddr = delimpDir->VirtualAddress;
@@ -200,16 +172,14 @@ static PE64_ERROR pe64ParseDelayImport(PE64File *pe)
         return PE64_NO_DELIMP;
 
     uint64_t off = pe64AddrToFileOff(pe, delimpAddr);
-    pe->delimp = (PEDelimp*)((uint8_t*)pe->faddr + off);
+    pe->delimp = (PEDelimp*)(pe->faddr + off);
     pe->delimpNum = size / sizeof(PEDelimp);
     return PE64_OK;
 }
 
-static PE64_ERROR pe64ParseExport(PE64File *pe)
+static
+PE64_ERROR pe64ParseExport(PE64File *pe)
 {
-    if (pe == NULL || pe->optHeader== NULL)
-        return PE64_INV_ARG;
-
     DataDir *expDir = pe->optHeader->DataDirectory + IMAGE_DIRECTORY_ENTRY_EXPORT;
     uint64_t expAddr = expDir->VirtualAddress;
 
@@ -218,16 +188,14 @@ static PE64_ERROR pe64ParseExport(PE64File *pe)
         return PE64_NO_EXPORTS;
 
     uint64_t off = pe64AddrToFileOff(pe, expAddr);
-    pe->exp = (PEExport*)((uint8_t*)pe->faddr + off);
+    pe->exp = (PEExport*)(pe->faddr + off);
     pe->expNum = size / sizeof(PEExport);
     return PE64_OK;
 }
 
-static PE64_ERROR pe64ParseSymtab(PE64File *pe)
+static
+PE64_ERROR pe64ParseSymtab(PE64File *pe)
 {
-    if (pe == NULL || pe->fileHeader == NULL)
-        return PE64_INV_ARG;
-
     if (IS_PE64_FILE_EXEC(pe) || IS_PE64_FILE_SHARED(pe)) {
         pe->symtab = NULL;
         pe->symNum = 0;
@@ -242,17 +210,15 @@ static PE64_ERROR pe64ParseSymtab(PE64File *pe)
     if (num == 0)
         return PE64_NO_SYMTAB;
 
-    pe->symtab = (PESymbol*)((uint8_t*)pe->faddr + off);
+    pe->symtab = (PESymbol*)(pe->faddr + off);
     pe->symNum = num;
 
     return PE64_OK;
 }
 
-static PE64_ERROR pe64ParseStrtab(PE64File *pe)
+static
+PE64_ERROR pe64ParseStrtab(PE64File *pe)
 {
-    if (pe == NULL || pe->fileHeader == NULL)
-        return PE64_INV_ARG;
-
     if (IS_PE64_FILE_EXEC(pe) || IS_PE64_FILE_SHARED(pe)) {
         pe->strtab = NULL;
         return PE64_NO_SYMTAB;
@@ -269,21 +235,16 @@ static PE64_ERROR pe64ParseStrtab(PE64File *pe)
     uint64_t symNum = pe->fileHeader->NumberOfSymbols;
     uint64_t strtabOff = symOff + symNum * sizeof(PESymbol);
 
-    pe->strtab = (char*)((uint8_t*)pe->faddr + strtabOff);
+    pe->strtab = (char*)(pe->faddr + strtabOff);
     return PE64_OK;
 }
 
-static PE64_ERROR pe64ParseMaybeObj(PE64File *pe)
+static
+PE64_ERROR pe64ParseMaybeObj(PE64File *pe)
 {
-    if (pe == NULL)
-        return PE64_INV_ARG;
-
     PE64File peCopy = *pe;
     // There is nothing before FileHeader in Object file.
-    PE64_ERROR err = pe64ParseFileHeader(&peCopy, 0);
-    if (err != PE64_OK) {
-        return err;
-    }
+    peCopy.fileHeader = (FileHeader*)(peCopy.faddr);
 
     switch (pe64GetMachineID(&peCopy)) {
     case IMAGE_FILE_MACHINE_UNKNOWN:
@@ -322,9 +283,9 @@ static PE64_ERROR pe64ParseMaybeObj(PE64File *pe)
     }
 
     uint64_t off = sizeof (FileHeader);
-    char *firstSectName = (char*)((uint8_t*)pe->faddr + off);
+    char *firstSectName = (char*)(pe->faddr + off);
     if (strcmp(firstSectName, TEXT_SECT_NAME)) {
-        err = PE64_NO_OBJ;
+        return PE64_NO_OBJ;
     }
 
     pe->fileHeader = peCopy.fileHeader;
@@ -339,35 +300,32 @@ PE64File *pe64Parse(const char *fn)
         return NULL;
     }
 
-    FileD fd = open(fn, O_RDONLY);
-    if (IS_INV_FD(fd)) {
-        PERROR("open()");
-        return NULL;
-    }
-
-    size_t fs = get_file_size(fd);
-    if (fs == (size_t) -1) {
-        return NULL;
-    }
-
-    void *faddr = map_file(fd, fs, PROT_READ);
-    if (faddr == NULL) {
-        return NULL;
-    }
-
     PE64File *pe = (PE64File*) Calloc(1, sizeof(PE64File));
     if (pe == NULL) {
         LOG_ERROR("Cannot allocate %zu bytes", sizeof(PE64File));
-        goto eexit_0;
+        return NULL;
     }
 
-    pe->fd = fd;
-    pe->fs = fs;
-    pe->faddr = faddr;
+    pe->fd = open(fn, O_RDONLY);
+    if (IS_INV_FD(pe->fd)) {
+        PERROR("open()");
+        goto eexit0;
+    }
+
+    pe->fs = get_file_size(pe->fd);
+    if (pe->fs == (size_t) -1) {
+        goto eexit0;
+    }
+
+    pe->faddr = map_file(pe->fd, pe->fs, PROT_READ);
+    if (pe->faddr == NULL) {
+        goto eexit0;
+    }
+
     uint64_t nameSize = strlen(fn) * sizeof(char);
     if ((pe->fn = (char*) Calloc(nameSize, sizeof(char))) == NULL) {
         LOG_ERROR("Cannot allocate %"PRIu64" bytes", nameSize);
-        goto eexit_1;
+        goto eexit0;
     }
 
     strncpy(pe->fn, fn, nameSize);
@@ -375,12 +333,12 @@ PE64File *pe64Parse(const char *fn)
     if (pe64ParseMaybeObj(pe)) {
         if (pe64ParseDosHeader(pe)) {
             LOG_ERROR("Cannot parse dos header");
-            goto eexit_1;
+            goto eexit0;
         }
 
         if (pe64ParseNTHeader(pe)) {
             LOG_ERROR("Cannot parse nt header");
-            goto eexit_1;
+            goto eexit0;
         }
     }
 
@@ -388,36 +346,30 @@ PE64File *pe64Parse(const char *fn)
 
     if (pe64ParseSections(pe)) {
         LOG_ERROR("Cannot parse sections");
-        goto eexit_1;
+        goto eexit0;
     }
 
-    // File can be without imports
-    pe64ParseImport(pe);
-    pe64ParseDelayImport(pe);
-    // File canbe without exports
-    pe64ParseExport(pe);
-
-    if (pe64ParseSymtab(pe)) {
-        if (IS_PE64_FILE_OBJ(pe)) {
+    if (IS_PE64_FILE_EXEC(pe) || IS_PE64_FILE_SHARED(pe)) {
+        // File can be without imports
+        pe64ParseImport(pe);
+        pe64ParseDelayImport(pe);
+        // File canbe without exports
+        pe64ParseExport(pe);
+    } else if (IS_PE64_FILE_OBJ(pe)) {
+        if (pe64ParseSymtab(pe)) {
             LOG_ERROR("Cannot parse symbol table");
-            goto eexit_1;
+            goto eexit0;
         }
-    }
-
-    if (pe64ParseStrtab(pe)) {
-        if (IS_PE64_FILE_OBJ(pe)) {
+        if (pe64ParseStrtab(pe)) {
             LOG_ERROR("Cannot parse string table");
-            goto eexit_1;
+            goto eexit0;
         }
     }
 
     return pe;
 
-eexit_1:
+eexit0:
     pe64Free(pe);
-    return NULL;
-eexit_0:
-    close(fd);
     return NULL;
 }
 

@@ -36,7 +36,7 @@ static Arch binParserArch = ARCH;
 static const char doc[] =
     "Binary parser. Support binare format: mach-o/fat (64 bit), elf (64 bit), pe (64 bit)";
 static const char argsDoc[] = "BIN_FILE";
-static const char progVersion[] = "0.6.0";
+static const char progVersion[] = "0.7.0";
 
 typedef enum {
     HEADER = 0,
@@ -270,13 +270,13 @@ int main(int argc, char *argv[])
                           , .group = 1
     );
     ADD_ARG(printFixups, .name = "fixups"
-                       , .key = 159
+                       , .key = 152
                        , .flags = OPTION_ARG_OPTIONAL
                        , .doc = "macho: print all fixups information"
                        , .group = 1
     );
     ADD_ARG(printFuncStarts, .name = "func-starts"
-                           , .key = 152
+                           , .key = 153
                            , .flags = OPTION_ARG_OPTIONAL
                            , .doc = "macho: print information about func starts"
                            , .group = 1
@@ -288,25 +288,25 @@ int main(int argc, char *argv[])
                       , .group = 1
     );
     ADD_ARG(printCodeSign, .name = "code-sign"
-                         , .key = 153
+                         , .key = 154
                          , .flags = OPTION_ARG_OPTIONAL
                          , .doc = "macho: print code sign"
                          , .group = 1
     );
     ADD_ARG(printDosHeader, .name = "dos-header"
-                          , .key = 154
+                          , .key = 155
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "pe: print dos header"
                           , .group = 2
     );
     ADD_ARG(printFileHeader, .name = "file-header"
-                           , .key = 155
+                           , .key = 156
                            , .flags = OPTION_ARG_OPTIONAL
                            , .doc = "pe: print file header"
                            , .group = 2
     );
     ADD_ARG(printOptHeader, .name = "opt-header"
-                          , .key = 156
+                          , .key = 157
                           , .flags = OPTION_ARG_OPTIONAL
                           , .doc = "pe: print opt header"
                           , .group = 2
@@ -330,13 +330,13 @@ int main(int argc, char *argv[])
                         , .group = 2
     );
     ADD_ARG(printDynamicSection, .name = "dynamic"
-                               , .key = 157
+                               , .key = 158
                                , .flags = OPTION_ARG_OPTIONAL
                                , .doc = "elf: print .dynamic section"
                                , .group = 3
     );
     ADD_ARG(printVersionInfo, .name = "version-info"
-                            , .key = 158
+                            , .key = 159
                             , .flags = OPTION_ARG_OPTIONAL
                             , .doc = "elf: print symbols version info from sections:"
                                      ".gnu.version, .gnu.version_r"

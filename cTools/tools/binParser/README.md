@@ -14,24 +14,24 @@ The followed table shows support platforms and binary formats. macho files forma
 ## Command Line Arguments
 | Short Arg | Long Arg        | Description |
 |----------:|:----------------|:------------|
-|        -S |    --sections   | print all section |
-|           |   --code-sign   | macho: print code sign |
-|        -d | --delay-imports | pe: print delay imports |
-|           |  --dos-header   | pe: print dos header |
-|           |    --dynamic    | elf: print .dynamic section |
-|        -e |    --exports    | pe: print exports |
-|           |   --fat-header  | macho: print fat header information if it's |
-|           |  --file-header  | pe: print file header |
-|           |    --fixups     | macho: print all fixups information |
-|           |  --func-starts  | macho: print info about function starts |
 |        -h |     --header    | print all headers |
-|        -i |    --imports    | pe: print imports |
-|        -l |     --lcom      | macho: print load commands |
 |        -m |     --mcpu      | set up cpu type for parser, used for fat binaries |
-|           |  --opt-header   | pe: print opt header |
 |        -r |    --relocs     | print relocations |
 |           |    --segments   | print all segments |
 |        -s |    --symbols    | print all symbols |
+|        -S |    --sections   | print all section |
+|           |   --code-sign   | macho: print code sign |
+|           |   --fat-header  | macho: print fat header information if it's |
+|           |    --fixups     | macho: print all fixups information |
+|           |  --func-starts  | macho: print info about function starts |
+|        -l |     --lcom      | macho: print load commands |
+|        -d | --delay-imports | pe: print delay imports |
+|           |  --dos-header   | pe: print dos header |
+|        -e |    --exports    | pe: print exports |
+|           |  --file-header  | pe: print file header |
+|        -i |    --imports    | pe: print imports |
+|           |  --opt-header   | pe: print opt header |
+|           |    --dynamic    | elf: print .dynamic section |
 |           |  --version-info | elf: print symbols version info from sections:.gnu.version, .gnu.version_r |
 
 ## Examples

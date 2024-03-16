@@ -246,7 +246,7 @@ EXPORT_FUNC
 Elf64File *elf64Parse(const char *fn);
 
 /***
- * @brief You must complete all jobs with this elf64, otherwise you will free
+ * @warning You must complete all jobs with this elf64, otherwise you will free
  *        all information about this file including sections, symbols etc
  * @param[in] elf64 pointer to Elf64File structer
  */
@@ -258,7 +258,7 @@ void elf64Free(Elf64File *elf64);
  *
  * @param[in] elf64 pointer to Elf64File structure to check
  *
- * @return ELF64_OK or number of error (see ELF64ERROR)
+ * @return ELF64_OK or number of error (see ELF64_ERROR)
  */
 EXPORT_FUNC
 ELF64_ERROR elf64Check(const Elf64File *elf64);
