@@ -38,7 +38,8 @@ Arch fatMacho64ParseArch = ARCH;
  *
  * @return MACHO64_OK or MACHO64_NO_MEM
 */
-static MACHO64_ERROR macho64FatParseArch32(FatMacho64File *ff)
+static
+MACHO64_ERROR macho64FatParseArch32(FatMacho64File *ff)
 {
     FileD fd = ff->fd;
     size_t off = sizeof(FatHeader);
@@ -70,7 +71,8 @@ static MACHO64_ERROR macho64FatParseArch32(FatMacho64File *ff)
  *
  * @return MACHO64_OK or MACHO64_NO_MEM
 */
-static MACHO64_ERROR macho64FatParseArch64(FatMacho64File *ff)
+static
+MACHO64_ERROR macho64FatParseArch64(FatMacho64File *ff)
 {
     FileD fd = ff->fd;
     size_t off = sizeof(FatHeader);
@@ -104,7 +106,8 @@ static MACHO64_ERROR macho64FatParseArch64(FatMacho64File *ff)
  * @return MACHO64_OK or
  *         MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_NO_FAT_HEADER
  */
-static MACHO64_ERROR macho64FatParseHeader(FatMacho64File *ff)
+static
+MACHO64_ERROR macho64FatParseHeader(FatMacho64File *ff)
 {
     if (ff == NULL || IS_INV_FD(ff->fd))
         return MACHO64_INV_ARG;

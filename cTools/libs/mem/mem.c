@@ -116,8 +116,7 @@ size_t alignUpToPageSize(size_t val)
     return (val + (size_t)pageSize) & ~((size_t)pageSize - 1);
 }
 
-uint8_t*
-directCopyBytes(const uint8_t *src, uint8_t *dst, size_t num)
+uint8_t* directCopyBytes(const uint8_t *src, uint8_t *dst, size_t num)
 {
     size_t i = 0;
     for (i = 0; i < num; ++i)
@@ -126,8 +125,7 @@ directCopyBytes(const uint8_t *src, uint8_t *dst, size_t num)
     return dst;
 }
 
-uint8_t*
-backwards_copy_bytes(const uint8_t *src, uint8_t *dst, size_t num)
+uint8_t* backwards_copy_bytes(const uint8_t *src, uint8_t *dst, size_t num)
 {
     size_t i = num;
     while (i) {
@@ -138,8 +136,7 @@ backwards_copy_bytes(const uint8_t *src, uint8_t *dst, size_t num)
     return dst;
 }
 
-uint8_t*
-copy_bytes(const uint8_t *src, uint8_t *dst, size_t num)
+uint8_t* copy_bytes(const uint8_t *src, uint8_t *dst, size_t num)
 {
     /***
      * If destination address is bigger than source address, we should copy
@@ -152,8 +149,7 @@ copy_bytes(const uint8_t *src, uint8_t *dst, size_t num)
         return backwards_copy_bytes(src, dst, num);
 }
 
-const
-char *getMProtStr(int prot)
+const char *getMProtStr(int prot)
 {
     char *mprotStr[] = {
         ""      , // 000

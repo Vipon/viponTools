@@ -33,8 +33,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-size_t
-get_file_size(int fd)
+size_t get_file_size(int fd)
 {
     struct stat st;
     if (fstat(fd, &st)) {
@@ -44,8 +43,7 @@ get_file_size(int fd)
     return (size_t)st.st_size;
 }
 
-void*
-readFromFile(int fd, const size_t *off, size_t size)
+void* readFromFile(int fd, const size_t *off, size_t size)
 {
     if (fd < 0) {
         STDERROR_PRINT_DEBUG("Invalid arguments.");
@@ -80,15 +78,13 @@ readFromFile(int fd, const size_t *off, size_t size)
     return data;
 }
 
-void*
-map_file(FileD fd, size_t fs, mprot_t prot)
+void* map_file(FileD fd, size_t fs, mprot_t prot)
 {
     fs = alignUpToPageSize(fs);
     return mmap(NULL, fs, prot, MAP_PRIVATE | MAP_FILE, fd, 0);
 }
 
-int
-unmap_file(void *addr, size_t fs)
+int unmap_file(void *addr, size_t fs)
 {
     fs = alignUpToPageSize(fs);
     return munmap(addr, fs);
@@ -97,8 +93,7 @@ unmap_file(void *addr, size_t fs)
 #elif defined(__WIN__)
 #include <Windows.h>
 
-FileD
-open(const char *fn, FileFlag flags)
+FileD open(const char *fn, FileFlag flags)
 {
     return CreateFile(  fn,                     // file to open
                         flags,                  // purpose flags
@@ -109,21 +104,18 @@ open(const char *fn, FileFlag flags)
                         NULL);
 }
 
-void
-close(FileD fd)
+void close(FileD fd)
 {
     CloseHandle(fd);
 }
 
-off_t
-lseek(FileD fd, off_t offset, int whence)
+off_t lseek(FileD fd, off_t offset, int whence)
 {
     // !TODO: work only with 32bits offset
     return (off_t)SetFilePointer(fd, offset, NULL, (DWORD)whence);
 }
 
-ssize_t
-read(FileD fd, void *buf, size_t count)
+ssize_t read(FileD fd, void *buf, size_t count)
 {
     DWORD num = 0;
     BOOL r = ReadFile(fd, buf, (DWORD)count, &num, NULL);
@@ -133,14 +125,12 @@ read(FileD fd, void *buf, size_t count)
         return -1;
 }
 
-size_t
-get_file_size(FileD fd)
+size_t get_file_size(FileD fd)
 {
     return GetFileSize(fd, NULL);
 }
 
-void *
-readFromFile(FileD fd, const size_t *off, size_t size)
+void *readFromFile(FileD fd, const size_t *off, size_t size)
 {
     if (fd == NULL) {
         STDERROR_PRINT_DEBUG("Invalid arguments.");
@@ -175,8 +165,7 @@ readFromFile(FileD fd, const size_t *off, size_t size)
     return data;
 }
 
-void*
-map_file(FileD fd, size_t fs, mprot_t prot)
+void* map_file(FileD fd, size_t fs, mprot_t prot)
 {
     UNUSED(fs);
     HANDLE hMap =
@@ -207,8 +196,7 @@ map_file(FileD fd, size_t fs, mprot_t prot)
     return res;
 }
 
-int
-unmap_file(void *addr, size_t fs)
+int unmap_file(void *addr, size_t fs)
 {
     UNUSED(fs);
     return UnmapViewOfFile(addr);
