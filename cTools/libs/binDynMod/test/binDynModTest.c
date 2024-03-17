@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -59,11 +59,13 @@ int main(int argc, char *argv[])
 {
     UNUSED(argc);
 
-    VERBOSE = 0;
+    VERBOSE = 1;
+
+    char *name = argv[0];
 
     foo();
     bar();
-    hookFooWithBar(argv[0]);
+    hookFooWithBar(name);
 
     char *str1 = foo();
     char *str2 = bar();

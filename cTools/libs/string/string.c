@@ -30,11 +30,6 @@
 
 size_t strlen(const char *addr)
 {
-    if (addr == NULL) {
-        STDERROR_PRINT_DEBUG("Invalid arguments.");
-        return (size_t)-1;
-    }
-
     size_t len = 0;
     while (addr[len] != '\0')
         ++len;
@@ -84,5 +79,31 @@ char *copyString(const char *src, char* dest)
 
     dest[i] = '\0';
     return &dest[i];
+}
+
+void *vt_memset(void *dst, int c, size_t n)
+{
+    uint8_t *p = (uint8_t*)dst;
+    uint8_t v = (uint8_t)c;
+
+    size_t i = 0;
+    for (i = 0; i < n; ++i) {
+        p[i] = v;
+    }
+
+    return dst;
+}
+
+volatile void *vt_memset_volatile(volatile void *dst, int c, size_t n)
+{
+    volatile uint8_t *p = (volatile uint8_t*)dst;
+    uint8_t v = (uint8_t)c;
+
+    size_t i = 0;
+    for (i = 0; i < n; ++i) {
+        p[i] = v;
+    }
+
+    return dst;
 }
 

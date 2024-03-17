@@ -52,7 +52,6 @@ typedef BinSymPtr (*BinGetSymByName)(const BinFilePtr, const char*);
 typedef char* (*BinGetSymName)(const BinFilePtr, const BinSymPtr);
 typedef int (*BinCmpSym)(const void*, const void*);
 typedef BinSymPtr (*BinGetSSymTab)(const BinFilePtr);
-typedef BinSymPtr (*BinGetSSymSortTab)(const BinFilePtr);
 typedef uint64_t (*BinGetAmountSSym)(const BinFilePtr);
 typedef uint64_t (*BinGetSSymAddr)(const BinSymPtr);
 typedef uint64_t (*BinGetAddrSymByName)(const BinFilePtr, const char*);
@@ -81,7 +80,6 @@ typedef struct {
     BinGetSymName          getSymName;
     BinCmpSym              cmpSym;
     BinGetSSymTab          getSSymTab;
-    BinGetSSymSortTab      getSSymSortTab;
     BinGetAmountSSym       getAmountSSym;
     BinGetSSymAddr         getSSymAddr;
     BinGetAddrSymByName    getAddrSymByName;

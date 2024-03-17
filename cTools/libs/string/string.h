@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,10 @@
 #include "os.h"
 
 /* C standard headers */
+#include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 /*
  * Description:
@@ -96,6 +98,45 @@ void *memcpy(void *dest, const void *src, size_t n);
  */
 EXPORT_FUNC
 char *copyString(const char *src, char* dest);
+
+/***
+ * @brief The memset() function fills the first n bytes of the memory area
+ *        pointed to by dst with the constant byte c.
+ *
+ * @param[in,out] dst pointer to a memory needed to update
+ * @param[in] c fill byte
+ * @param[in] n number of bytes
+ *
+ * @return pointer to dst
+*/
+EXPORT_FUNC
+void *vt_memset(void *dst, int c, size_t n);
+EXPORT_FUNC
+volatile void *vt_memset_volatile(volatile void *dst, int c, size_t n);
+
+#ifdef __STD_LIB_EXT1__
+static inline
+errno_t vt_memset_s(void *dst, rsize_t dstsz, int c, rsize_t n)
+#else /* __STD_LIB_EXT1__ */
+static inline
+int vt_memset_s(void *dst, size_t dstsz, int c, size_t n)
+#endif /* __STD_LIB_EXT1__ */
+{
+    volatile uint8_t *s = dst;
+
+    if (s == NULL || n > dstsz) {
+        return errno = EINVAL;
+    }
+
+#ifdef __STD_LIB_EXT1__
+    if (dstsz > RSIZE_MAX) {
+        return errno = EINVAL;
+    }
+#endif /* __STD_LIB_EXT1__ */
+
+    vt_memset_volatile(s, c, n);
+    return 0;
+}
 
 #endif
 

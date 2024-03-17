@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -302,6 +302,8 @@ typedef enum {
 typedef struct {
     FileD          fd;
     char           *fn;
+    size_t         fs;
+    uint8_t        *faddr;
     Arch           arch;
     PE64_FILE_TYPE type;
     DosHeader      *dosHeader;  // Legacy stub
@@ -317,7 +319,6 @@ typedef struct {
     PEExport       *exp;        // Export table
     uint64_t       expNum;      // Number of exports
     PESymbol       *symtab;     // Symbol table
-    PESymbol       *sortSymtab; // Sorted symbol table
     uint64_t       symNum;      // Number of symbols in symtab
     char           *strtab;     // String table
 } PE64File;
@@ -351,100 +352,308 @@ typedef enum {
 static_assert(sizeof(PE64_ERROR) == 8, "PE64_ERROR must be 64 bit");
 static_assert(((int64_t)PE64_INV_ARG) < 0, "ERRORS must be negative");
 
+/***
+ * @brief Parse PE64File binary file
+ *
+ * @param[in] fn Binary file name. C string with terminal null
+ *
+ * @return Pointer to PE64File structer or NULL if fail
+ */
 EXPORT_FUNC
 PE64File *pe64Parse(const char *fn);
+
+/***
+ * @warning You must complete all jobs with this pe, otherwise you will free
+ *        all information about this file including sections, symbols etc
+ * @param[in] pe pointer to PE64File structer
+ */
 EXPORT_FUNC
 void pe64Free(PE64File *pe);
 
+/***
+ * @brief Check if pe points to a valid structure
+ *
+ * @param[in] pe pointer to PE64File structure to check
+ *
+ * @return PE64_OK or number of error (see PE64_ERROR)
+ */
 EXPORT_FUNC
 PE64_ERROR pe64Check(const PE64File *pe);
 
+/***
+ * @brief find out file position with specified virtual addr
+ *
+ * @param[in] pe PE64File pointer
+ * @param[in] addr interested addr
+ *
+ * @return file offset or -1
+*/
 EXPORT_FUNC
 uint64_t pe64AddrToFileOff(const PE64File *pe, uint64_t addr);
 
 /***
- * List of Machine_ID (not all):
- * IMAGE_FILE_MACHINE_UNKNOWN   0x0     To any machine type
- * IMAGE_FILE_MACHINE_AMD64     0x8664  x64
- * IMAGE_FILE_MACHINE_ARM       0x1c0   ARM little endian
- * IMAGE_FILE_MACHINE_ARM64     0xaa64  ARM64 little endian
- * IMAGE_FILE_MACHINE_ARMNT     0x1c4   ARM Thumb-2 little endian
- * IMAGE_FILE_MACHINE_I386      0x14c   Intel 386 or later processors
- * IMAGE_FILE_MACHINE_IA64      0x200   Intel Itanium processor family
+ * @brief get target machine specifier
+ *        List of Machine_ID (not all):
+ *        IMAGE_FILE_MACHINE_UNKNOWN   0x0     To any machine type
+ *        IMAGE_FILE_MACHINE_AMD64     0x8664  x64
+ *        IMAGE_FILE_MACHINE_ARM       0x1c0   ARM little endian
+ *        IMAGE_FILE_MACHINE_ARM64     0xaa64  ARM64 little endian
+ *        IMAGE_FILE_MACHINE_ARMNT     0x1c4   ARM Thumb-2 little endian
+ *        IMAGE_FILE_MACHINE_I386      0x14c   Intel 386 or later processors
+ *        IMAGE_FILE_MACHINE_IA64      0x200   Intel Itanium processor family
+ *
+ * @param[in] pe PE64File pointer
  */
 EXPORT_FUNC
 uint64_t pe64GetMachineID(const PE64File *pe);
 
+/***
+ * @brief returns a descriptor of a section contains addr
+ *
+ * @param[in] pe pointer to the target PE64File
+ * @param[in] addr address without ASLR
+ *
+ * @return pointer to a section of NULL
+ */
 EXPORT_FUNC
 PESection *pe64GetSectByAddr(const PE64File *pe, uint64_t addr);
+
+/***
+ * @brief returns a descriptor with index
+ *
+ * @param[in] pe pointer to the target PE64File
+ * @param[in] sectNum section number
+ *            section enumeration starts with 1
+ *
+ * @return pointer to a section of NULL
+ */
 EXPORT_FUNC
 PESection *pe64GetSectByIndx(const PE64File *pe, uint64_t sectNum);
+
+/***
+ * @brief returns a descriptor of a section with name
+ *
+ * @param[in] pe pointer to the target PE64File
+ * @param[in] name section name
+ *
+ * @return pointer to a section of NULL
+ */
 EXPORT_FUNC
 PESection *pe64GetSectByName(const PE64File *pe, const char *name);
+
+/***
+ * @brief returns last loadable section in binary file
+ *
+ * @param[in] pe pointer to the target PE64File
+ *
+ * @return pointer to a section of NULL
+ */
 EXPORT_FUNC
 PESection *pe64GetLastLoadableSect(const PE64File *pe);
 
+/***
+ * @brief Reads section contents
+ *
+ * @param[in] pe pointer to the target PE64File
+ * @param[in] sect section descriptor
+ *
+ * @return pointer to a content or NULL
+ * @warning need to free memory
+ */
 EXPORT_FUNC
 void *pe64ReadSect(const PE64File *pe, const PESection *sect);
 
+/***
+ * @brief returns an amount of sections
+ *
+ * @param[in] pe pointer to the target PE64File
+ *
+ * @return amount of sections
+ */
+EXPORT_FUNC
+uint64_t pe64GetAmountSect(const PE64File *pe);
+
+/***
+ * @brief returns name of the section
+ *
+ * @param[in] pe pointer to the target PE64File
+ * @param[in] sect section descriptor
+ *
+ * @return pointer of NULL
+ */
+EXPORT_FUNC
+const char *pe64GetSectName(const PE64File *pe, const PESection *sect);
 EXPORT_FUNC
 const char *pe64GetShortSectName(const PE64File *pe, const PESection *sect);
 EXPORT_FUNC
 const char *pe64GetLongSectName(const PE64File *pe, const PESection *sect);
-EXPORT_FUNC
-const char *pe64GetSectName(const PE64File *pe, const PESection *sect);
 
-EXPORT_FUNC
-uint64_t pe64GetAmountSect(const PE64File *pe);
+/***
+ * @brief returns a virtual address of a section start
+ *
+ * @param[in] sect pointer to section descriptor
+ *
+ * @return addr or -1
+ */
 EXPORT_FUNC
 uint64_t pe64GetSectAddr(const PESection *sect);
-EXPORT_FUNC
-uint64_t pe64GetSectSize(const PESection *sect);
-EXPORT_FUNC
-uint64_t pe64GetSectFileoff(const PESection *sect);
-EXPORT_FUNC
-uint64_t pe64GetSectEndFileoff(const PESection *sect);
+
+/***
+ * @brief returns a virtual address of a section end
+ *
+ * @param[in] sect pointer to section descriptor
+ *
+ * @return addr or -1
+ */
 EXPORT_FUNC
 uint64_t pe64GetSectVend(const PE64File *pe, const PESection *sect);
 
+/***
+ * @brief returns a size of a section
+ *
+ * @param[in] sect pointer to section descriptor
+ *
+ * @return section size or -1
+ */
+EXPORT_FUNC
+uint64_t pe64GetSectSize(const PESection *sect);
+
+/***
+ * @brief returns a file offset of a section.
+ *
+ * @param[in] sect pointer to section descriptor.
+ *
+ * @return file offset to a section start
+ */
+EXPORT_FUNC
+uint64_t pe64GetSectFileoff(const PESection *sect);
+
+/***
+ * @brief returns a file offset of the end of section.
+ *
+ * @param[in] sect pointer to section descriptor.
+ *
+ * @return file offset to a section start
+ */
+EXPORT_FUNC
+uint64_t pe64GetSectEndFileoff(const PESection *sect);
+
+/***
+ * @brief Function returns pointer to the static symbols table
+ *
+ * @param[in] pe pointer to the target PE64File
+ *
+ * @return pointer to static symbol table or NULL if fail
+ */
 EXPORT_FUNC
 PESymbol *pe64GetSSymTab(const PE64File *pe);
-EXPORT_FUNC
-PESymbol *pe64GetSSymSortTab(const PE64File *pe);
+
+/***
+ * @brief Function returns pointer to the symbol with name
+ *
+ * @param[in] pe pointer to PE64File structer
+ * @param[in] name symbol name needed to find
+ *
+ * @return pointer to PESymbol or NULL if fail
+ */
 EXPORT_FUNC
 PESymbol *pe64GetSymByName(const PE64File *pe, const char *name);
 
 /***
- * Description:
- *  Function for work with qsort. Function compares addresses of symbols and
- * Output:
- *  1 - if (a->addr > b->addr)
- *  -1 - if (a->addr < b->addr)
- *  0 - if (a->addr == b->addr)
+ * @brief Function for work with qsort. Functions compare addresses of symbols
+ *        and returns 1/-1/0 if a->addr >/</== b->addr.
+ *
+ * @param[in] a pointer to a fist symbol
+ * @param[in] b pointer to a second symbol
  */
 EXPORT_FUNC
 int pe64CmpSym(const void *a, const void *b);
 
+/***
+ * @brief Function returns name of the symbol
+ *
+ * @param[in] pe pointer to the target PE64File
+ * @param[in] sym pointer to symbol structure
+ *
+ * @return pointer to name of symbol or NULL if fail
+ */
+EXPORT_FUNC
+const char*pe64GetSymName(const PE64File *pe, const PESymbol *sym);
 EXPORT_FUNC
 const char*pe64GetLongSymName(const PE64File *pe, const PESymbol *sym);
 EXPORT_FUNC
 const char*pe64GetShortSymName(const PE64File *pe, const PESymbol *sym);
-EXPORT_FUNC
-const char*pe64GetSymName(const PE64File *pe, const PESymbol *sym);
 
+/***
+ * @brief Function returns amount of static symbols
+ *
+ * @param[in] pe pointer to the target PE64File
+ *
+ * @return amount of static symbols or -1
+ */
 EXPORT_FUNC
 uint64_t pe64GetAmountSSym(const PE64File *pe);
+
+/***
+ * @brief returns addr of static symbol without ASLR
+ *
+ * @param[in] sym pointer to the target static PESymbol
+ *
+ * @return address of -1
+ */
 EXPORT_FUNC
 uint64_t pe64GetSSymAddr(const PESymbol *sym);
+
+/***
+ * @brief return section number where symbol placed
+ *
+ * @param[in] sym pointer to the target static PESymbol
+ *
+ * @return section number of -1
+ */
 EXPORT_FUNC
 uint64_t pe64GetSSymSectIndx(const PESymbol *sym);
+
+/***
+ * @brief returns addr of static symbol with name without ASLR
+ *
+ * @param[in] pe PE file descriptor
+ * @param[in] name mane of symbol
+ *
+ * @return address of -1
+ */
 EXPORT_FUNC
 uint64_t pe64GetAddrSymByName(const PE64File *pe, const char *name);
+
+/***
+ * @brief returns file position for the static symbol
+ *
+ * @param[in] pe pointer to the target PE64File
+ * @param[in] sym pointer to symbol
+ *
+ * @return file offset to start of symbol or -1
+ */
 EXPORT_FUNC
 uint64_t pe64GetSSymFileoff(const PE64File *pe, const PESymbol *sym);
+
+/***
+ * @brief returns size of static symbol
+ *
+ * @param[in] pe pointer to PE64File structer
+ * @param[in] sym pointer to the target static PESymbol
+ *
+ * @return size of static symbol or -1
+ */
 EXPORT_FUNC
 uint64_t pe64GetSSymSize(const PE64File *pe, const PESymbol *sym);
 
+/***
+ * @brief returns an amount of segments
+ *
+ * @param[in] pe pointer to the target PE64File
+ *
+ * @return amount of segments
+ */
 EXPORT_FUNC
 uint64_t pe64GetAmountSeg(const PE64File *pe);
 

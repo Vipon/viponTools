@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2024 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,15 @@
 
 Arch fatMacho64ParseArch = ARCH;
 
-static MACHO64_ERROR macho64FatParseArch32(FatMacho64File *ff)
+/***
+ * @brief parse 32 bit fat arch descriptor
+ *
+ * @param[in,out] ff pointer to FatMacho64File
+ *
+ * @return MACHO64_OK or MACHO64_NO_MEM
+*/
+static
+MACHO64_ERROR macho64FatParseArch32(FatMacho64File *ff)
 {
     FileD fd = ff->fd;
     size_t off = sizeof(FatHeader);
@@ -56,7 +64,15 @@ static MACHO64_ERROR macho64FatParseArch32(FatMacho64File *ff)
     return MACHO64_OK;
 }
 
-static MACHO64_ERROR macho64FatParseArch64(FatMacho64File *ff)
+/***
+ * @brief parse 64 bit fat arch descriptor
+ *
+ * @param[in,out] ff pointer to FatMacho64File
+ *
+ * @return MACHO64_OK or MACHO64_NO_MEM
+*/
+static
+MACHO64_ERROR macho64FatParseArch64(FatMacho64File *ff)
 {
     FileD fd = ff->fd;
     size_t off = sizeof(FatHeader);
@@ -83,44 +99,35 @@ static MACHO64_ERROR macho64FatParseArch64(FatMacho64File *ff)
 }
 
 /***
- * Description:
- *  Function init FatHeader of a FatMacho64File  @mf.
- * Input:
- *  @mf - FatMacho64File file descriptor.
- * Output:
- *  Success:
- *      MACHO64_OK.
- *  Fail:
- *      MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_NO_FAT_HEADER.
+ * @brief Inits FatHeader of a FatMacho64File
+ *
+ * @param[in] mf FatMacho64File file descriptor
+ *
+ * @return MACHO64_OK or
+ *         MACHO64_INV_ARG, MACHO64_NO_MEM, MACHO64_NO_FAT_HEADER
  */
-static MACHO64_ERROR macho64FatParseHeader(FatMacho64File *ff)
+static
+MACHO64_ERROR macho64FatParseHeader(FatMacho64File *ff)
 {
     if (ff == NULL || IS_INV_FD(ff->fd))
         return MACHO64_INV_ARG;
 
-    FileD fd = ff->fd;
     size_t off = 0;
-    size_t size = sizeof(FatHeader);
-    FatHeader *fatHead = (FatHeader*)readFromFile(fd, &off, size);
-    if (fatHead == NULL)
-        return MACHO64_NO_MEM;
+    FatHeader *fatHead = (FatHeader*)(ff->faddr + off);
 
     // fat header is always in big-endian
-    fatHead->magic = be32toh(fatHead->magic);
-    fatHead->nfat_arch = be32toh(fatHead->nfat_arch);
-    switch (fatHead->magic) {
+    ff->fatHead.magic = be32toh(fatHead->magic);
+    ff->fatHead.nfat_arch = be32toh(fatHead->nfat_arch);
+    switch (ff->fatHead.magic) {
     case FAT_MAGIC:
     case FAT_CIGAM:
-        ff->fatHead = *fatHead;
-        Free(fatHead);
         return macho64FatParseArch32(ff);
     case FAT_MAGIC_64:
     case FAT_CIGAM_64:
-        ff->fatHead = *fatHead;
-        Free(fatHead);
         return macho64FatParseArch64(ff);
     default:
-        Free(fatHead);
+        ff->fatHead.magic = 0;
+        ff->fatHead.nfat_arch = 0;
         return MACHO64_NO_FAT_HEADER;
     }
 }
@@ -136,6 +143,16 @@ FatMacho64File *fatMacho64Parse(const char *fn)
         return NULL;
     }
 
+    size_t fs = get_file_size(fd);
+    if (fs == (size_t) -1) {
+        return NULL;
+    }
+
+    uint8_t *faddr = map_file(fd, fs, PROT_READ);
+    if (faddr == NULL) {
+        return NULL;
+    }
+
     FatMacho64File *ff = (FatMacho64File*) Calloc(1, sizeof(FatMacho64File));
     if (ff == NULL) {
         LOG_ERROR("Cannot allocate %zu bytes", sizeof(FatMacho64File));
@@ -143,6 +160,8 @@ FatMacho64File *fatMacho64Parse(const char *fn)
     }
 
     ff->fd = fd;
+    ff->fs = fs;
+    ff->faddr = faddr;
     size_t nameLen = strlen(fn) + 1;
     if ((ff->fn = (char*) Calloc(nameLen, sizeof(char))) == NULL) {
         LOG_ERROR("Cannot allocate %zu bytes", nameLen);
@@ -162,6 +181,8 @@ FatMacho64File *fatMacho64Parse(const char *fn)
     for (i = 0; i < nArch; ++i) {
         ff->mf[i].fd = ff->fd;
         ff->mf[i].fn = ff->fn;
+        ff->mf[i].fs = ff->fs;
+        ff->mf[i].faddr = ff->faddr;
         if (ff->fatArch) {
             if (_macho64Parse(ff->mf + i, ff->fatArch[i].offset))
                 goto eexit_1;
@@ -183,31 +204,21 @@ eexit_0:
 
 void fatMacho64Free(FatMacho64File *ff)
 {
-    if (ff == NULL)
+    if (ff == NULL) {
         return;
-
+    }
     if (ff->fn) {
         Free(ff->fn);
-        ff->fn = NULL;
     }
-
     if (ff->fd != INV_FD) {
         close(ff->fd);
-        ff->fd = INV_FD;
     }
-
-    uint32_t num = ff->fatHead.nfat_arch;
-    ff->fatHead.magic = 0;
-    ff->fatHead.nfat_arch = 0;
-
     if (ff->fatArch) {
         Free(ff->fatArch);
-        ff->fatArch = NULL;
     }
-
     if (ff-> mf) {
         uint32_t i = 0;
-        for (i = 0; i < num; ++i) {
+        for (i = 0; i < ff->fatHead.nfat_arch; ++i) {
             ff->mf[i].fd = INV_FD;
             ff->mf[i].fn = NULL;
 
@@ -217,6 +228,7 @@ void fatMacho64Free(FatMacho64File *ff)
         Free(ff->mf);
     }
 
+    vt_memset_s(ff, sizeof(FatMacho64File), 0xff, sizeof(FatMacho64File));
     Free(ff);
 }
 
@@ -234,8 +246,9 @@ MACHO64_ERROR fatMacho64Check(const FatMacho64File *mf)
                 return err;
             }
         }
-    } else
+    } else {
         return MACHO64_NO_FAT_HEADER;
+    }
 
     return MACHO64_OK;
 }
@@ -247,7 +260,6 @@ MACHO64_ERROR fatMacho64Check(const FatMacho64File *mf)
         Macho64File* mf = ff->mf + i;   \
         code;                           \
     }                                   \
-
 
 Macho64File* fatMacho64GetMacho64ByArch(FatMacho64File *ff, Arch arch)
 {
@@ -294,15 +306,6 @@ Macho64Sym *fatMacho64GetSSymTab(const FatMacho64File *ff)
         return NULL;
 
     return macho64GetSSymTab(mf);
-}
-
-Macho64Sym *fatMacho64GetSSymSortTab(const FatMacho64File *ff)
-{
-    const Macho64File *mf = fatMacho64GetConstMacho64ByArch(ff, fatMacho64ParseArch);
-    if (mf == NULL)
-        return NULL;
-
-    return macho64GetSSymSortTab(mf);
 }
 
 uint64_t fatMacho64GetAmountSSym(const FatMacho64File *ff)

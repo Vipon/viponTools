@@ -44,7 +44,6 @@ BinParser binParser = {0};
     binParser.getSymName = (BinGetSymName) &type ## GetSymName; \
     binParser.cmpSym = (BinCmpSym) &type ## CmpSym; \
     binParser.getSSymTab = (BinGetSSymTab) &type ## GetSSymTab; \
-    binParser.getSSymSortTab = (BinGetSSymSortTab) &type ## GetSSymSortTab; \
     binParser.getAmountSSym = (BinGetAmountSSym) &type ## GetAmountSSym; \
     binParser.getSSymAddr = (BinGetSSymAddr) &type ## GetSSymAddr; \
     binParser.getAddrSymByName = (BinGetAddrSymByName) &type ## GetAddrSymByName; \

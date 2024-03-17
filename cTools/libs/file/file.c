@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2023 Konychev Valera
+ * Copyright (c) 2020-2024 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,23 +33,17 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-size_t getFileSize(int fd)
+size_t get_file_size(int fd)
 {
-    if (fd < 0) {
-        LOG_ERROR("Invalid arguments.");
-        return (size_t)-1;
-    }
-
     struct stat st;
     if (fstat(fd, &st)) {
-        PERROR("fstat");
         return (size_t)-1;
     }
 
     return (size_t)st.st_size;
 }
 
-void *readFromFile(int fd, const size_t *off, size_t size)
+void* readFromFile(int fd, const size_t *off, size_t size)
 {
     if (fd < 0) {
         STDERROR_PRINT_DEBUG("Invalid arguments.");
@@ -84,20 +78,16 @@ void *readFromFile(int fd, const size_t *off, size_t size)
     return data;
 }
 
-void *mapFileForRead(int fd, size_t fileSize)
+void* map_file(FileD fd, size_t fs, mprot_t prot)
 {
-    if (fd < 0 || fileSize == (size_t)-1) {
-        LOG_ERROR("Invalid arguments.");
-        return MAP_FAILED;
-    }
-
-    fileSize = alignUpToPageSize(fileSize);
-    return mmap(NULL, fileSize, PROT_READ, MAP_PRIVATE | MAP_FILE, fd, 0);
+    fs = alignUpToPageSize(fs);
+    return mmap(NULL, fs, prot, MAP_PRIVATE | MAP_FILE, fd, 0);
 }
 
-int unmapFile(void *addr, size_t fileSize)
+int unmap_file(void *addr, size_t fs)
 {
-    return munmap(addr, fileSize);
+    fs = alignUpToPageSize(fs);
+    return munmap(addr, fs);
 }
 
 #elif defined(__WIN__)
@@ -107,7 +97,7 @@ FileD open(const char *fn, FileFlag flags)
 {
     return CreateFile(  fn,                     // file to open
                         flags,                  // purpose flags
-                        FILE_SHARE_RW,          // share for reading
+                        FILE_SHARE_READ,        // share for reading
                         NULL,                   // default security
                         OPEN_EXISTING,          // existing file only
                         FILE_ATTRIBUTE_NORMAL,  // normal file
@@ -135,7 +125,7 @@ ssize_t read(FileD fd, void *buf, size_t count)
         return -1;
 }
 
-size_t getFileSize(FileD fd)
+size_t get_file_size(FileD fd)
 {
     return GetFileSize(fd, NULL);
 }
@@ -173,6 +163,43 @@ void *readFromFile(FileD fd, const size_t *off, size_t size)
     }
 
     return data;
+}
+
+void* map_file(FileD fd, size_t fs, mprot_t prot)
+{
+    UNUSED(fs);
+    HANDLE hMap =
+        CreateFileMapping( fd
+            // Mapping attributes
+            , NULL
+            // Protection flags
+            , (prot & PROT_WRITE) ? PAGE_READWRITE : PAGE_READONLY
+            // MaximumSizeHigh
+            , 0
+            // MaximumSizeLow, 0 - means file size
+            , 0
+            // Name of mapping object
+            , NULL
+            );
+    if (hMap == INVALID_HANDLE_VALUE) {
+        return NULL;
+    }
+
+    void *res = MapViewOfFile( hMap
+                             , prot // dwDesiredAccess
+                             , 0    // dwFileOffsetHigh
+                             , 0    // dwFileOffsetLow
+                             , 0
+                             );
+
+    CloseHandle(hMap);
+    return res;
+}
+
+int unmap_file(void *addr, size_t fs)
+{
+    UNUSED(fs);
+    return UnmapViewOfFile(addr);
 }
 
 #else

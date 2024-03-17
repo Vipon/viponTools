@@ -110,8 +110,8 @@ uint8_t *directCopyBytes(const uint8_t *src, uint8_t *dst, size_t num);
  *
  * \return Point to \param dst.
  */
-EXPORT_FUNC uint8_t*
-backwards_copy_bytes(const uint8_t *src, uint8_t *dst, size_t num);
+EXPORT_FUNC
+uint8_t* backwards_copy_bytes(const uint8_t *src, uint8_t *dst, size_t num);
 
 /**
  * \brief Copies \param num bytes from the \param src to the \param dst buffer.
@@ -123,8 +123,8 @@ backwards_copy_bytes(const uint8_t *src, uint8_t *dst, size_t num);
  *
  * \return Point to \param dst
  */
-EXPORT_FUNC uint8_t*
-copy_bytes(const uint8_t *src, uint8_t *dst, size_t num);
+EXPORT_FUNC
+uint8_t* copy_bytes(const uint8_t *src, uint8_t *dst, size_t num);
 
 /**
  * \brief Set memory protection.
