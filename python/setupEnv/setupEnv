@@ -273,7 +273,9 @@ class SetUpQueue:
             if os.name == "nt":
                 # Previous installations can update user's PATH
                 env = dict(os.environ)
-                env['PATH'] = get_user_path()
+                for p in get_user_path().split(';'):
+                    if not p in env['PATH']:
+                        env['PATH'] = env['PATH'] + p + ';'
             execCmd(args, env)
 
             i.status = SetUpQueue.SetUpInstance.InstanceState.INSTALLED

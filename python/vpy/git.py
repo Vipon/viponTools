@@ -22,11 +22,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import subprocess
+from . import cmd as cmd
 
 GIT_BIN = 'git'
 
 def clone(args: [str]):
     args = [GIT_BIN, 'clone'] + args
-    subprocess.run(args)
+    cmd.execCmd(args, captureOut=True)
 
