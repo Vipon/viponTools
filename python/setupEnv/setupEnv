@@ -23,6 +23,7 @@
 # SOFTWARE.
 
 import sys
+import os
 from os.path import dirname, realpath, join, isabs
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(curDir)
@@ -35,7 +36,7 @@ from typing import List
 from vpy.cmd import execCmd
 from vpy.importHelp import installImport
 from vpy.type import isStr, isList, isDict
-from vpy.os import execForOs
+from vpy.os import execForOs, get_user_path
 
 installImport('yaml', 'pyyaml')
 import yaml
@@ -268,7 +269,12 @@ class SetUpQueue:
             if i.dir is not None:
                 args += ['--install-prefix', i.dir]
             print(f'Installing {i.name}:', flush=True)
-            execCmd(args)
+            env = None
+            if os.name == "nt":
+                # Previous installations can update user's PATH
+                env = dict(os.environ)
+                env['PATH'] = get_user_path()
+            execCmd(args, env)
 
             i.status = SetUpQueue.SetUpInstance.InstanceState.INSTALLED
 
