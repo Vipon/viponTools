@@ -24,6 +24,8 @@
 
 import os
 import platform
+if os.name == 'nt':
+    import winreg
 
 from . import apt as apt
 from . import brew as brew
@@ -80,11 +82,38 @@ def getForOs(linux=None, mac=None, win=None):
     else:
         raise 'Unknown OS'
 
+def get_user_path() -> str:
+    def get_win_user_path() -> str:
+        # Get the current user registry
+        root = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+        # Go to the environment key
+        key = winreg.OpenKey(root, 'Environment', 0, winreg.KEY_ALL_ACCESS)
+        # Grab the current path value
+        return winreg.QueryValueEx(key, 'PATH')[0]
+    def get_nix_user_path() -> str:
+        return ''
+
+    return execForOs( linux = get_nix_user_path
+                    , mac = get_nix_user_path
+                    , win = get_win_user_path
+                    )
+
 def appendPath(newPath):
     def appendNixPath():
         return
     def appendWinPath():
-        os.system(f'setx path "%path%;{newPath}"')
+        # Get the current user registry
+        root = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+        # Go to the environment key
+        key = winreg.OpenKey(root, 'Environment', 0, winreg.KEY_ALL_ACCESS)
+        # Grab the current path value
+        path = winreg.QueryValueEx(key, 'PATH')[0]
+        if newPath in path:
+            return
+        # Takes the current path value and appends the new program path
+        new_path = path + newPath + ';'
+        # Updated the path with the updated path
+        winreg.SetValueEx(key, 'PATH', 0, winreg.REG_EXPAND_SZ, new_path)
 
     execForOs(
         linux = appendNixPath,

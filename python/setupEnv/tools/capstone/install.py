@@ -79,7 +79,8 @@ def buildAndInstallCapstone():
           , '..'
           ]
     env = dict(os.environ)
-    env['CFLAGS'] = '-fpic'
+    if os.name != 'nt':
+        env['CFLAGS'] = '-fpic'
     execCmd(cmd, env)
 
     if isWin():
