@@ -55,6 +55,9 @@ void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand)
     }
 
     uint64_t relpltAmount = relplt->sh_size / sizeof(Elf64Rel);
+    Elf64Sym *hook_sym = elf64GetSymByName(elf64, "elf64Hook");
+    uint64_t func_original_addr = elf64GetSSymAddr(hook_sym);
+    uint64_t func_addr_diff = (uint64_t)&elf64Hook - func_original_addr;
 
     /***
      * r_info        -   This member gives both the symbol table index,
@@ -70,9 +73,11 @@ void *elf64Hook(const Elf64File *elf64, const char *func, const void *hand)
     void *relAddr = NULL;
     uint64_t i = 0;
     for (i = 0; i < relpltAmount; ++i)
-        if (ELF64_R_SYM(elf64->relaplt[i].r_info) == symbolIndex){
-            relAddr = (void*) *(uint64_t*) elf64->relaplt[i].r_offset;
-            *(uint64_t*) (elf64->relaplt[i].r_offset) = (uint64_t) hand;
+        if (ELF64_R_SYM(elf64->relaplt[i].r_info) == symbolIndex) {
+            uint64_t offset = elf64->relaplt[i].r_offset;
+            uint64_t* addr = (uint64_t*)(func_addr_diff + offset);
+            relAddr = (void*) *addr;
+            *addr = (uint64_t) hand;
 
             return relAddr;
         }
