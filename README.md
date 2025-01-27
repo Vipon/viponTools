@@ -74,3 +74,7 @@ xcodebuild -scheme ALL_BUILD
 xcodebuild -scheme RUN_TESTS
 ```
 
+## Donate
+
+Bitcoin: bc1qdy94rqqye8ez64qy59dl6e5cz3pks4mxku85vk <br>
+USDT TRC20: TYR4YCLV5crWB7htBDAZoDve6sRB9AxJJQ <br>
