@@ -42,6 +42,7 @@ add_vipon_library(
 )
 
 if (WIN32)
+  target_compile_options(binParse PRIVATE "-Wno-cast-function-type-mismatch")
   if (VIPON_TOOLS_LIB_TYPE STREQUAL "SHARED")
     target_compile_definitions(binParse PRIVATE BIN_PARSER_SHARED_LIB)
   elseif (VIPON_TOOLS_LIB_TYPE STREQUAL "STATIC")
