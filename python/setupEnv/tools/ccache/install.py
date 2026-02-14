@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2022 Konychev Valera
+# Copyright (c) 2022-2026 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 # SOFTWARE.
 
 import sys
+from packaging.version import Version
 from os.path import dirname, realpath, join
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
@@ -33,6 +34,7 @@ from vpy.dir import createDir, mvDir
 from vpy.net import downloadFile
 from vpy.file import extractFile
 from vpy.installArgs import parseInstallArgs
+import vpy.ccache as ccache
 import vpy.installArgs as vpy
 
 import vpy.brew as brew
@@ -120,6 +122,11 @@ def installCCache():
 
 def main():
     args = parseArgs()
+    cur_version = Version(ccache.get_installed_version())
+    new_version = Version(vpy.INSTALL_VERSION)
+    if cur_version >= new_version:
+        return
+
     if isWin() or not args.default:
         downloadCCache()
         extractCCache()

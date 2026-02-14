@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2021-2026 Konychev Valera
+# Copyright (c) 2026 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-##  @package vpy.dir
-#   Library for manipulations with directories.
+from vpy.cmd import execCmd
 
-import os
-import shutil
-from vpy.file import mvFile
+def get_installed_version():
+    com = [ 'cmake'
+          , '--version'
+    ]
 
-##  Create directory
-#   @brief Create directory including its parents
-#   @param path Path to the directory
-def createDir(path: str) -> None:
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-##  Move directory
-#   @brief Move directory from src to dst
-#   @param src Path to the source directory
-#   @param dst Path to the destination directory
-def mvDir(src: str, dst: str) -> None:
-    mvFile(src, dst)
-
-def is_dir_exist(path: str) -> bool:
-    return os.path.isdir(path)
-
-def rm_dir(path: str) -> bool:
-    shutil.rmtree(path)
+    output = execCmd(com, verbose = False, captureOut = True)
+    if output.returncode == 0:
+        return output.stdout.decode("utf-8").split()[2]
+    else:
+        return 0

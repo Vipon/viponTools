@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2022-2023 Konychev Valera
+# Copyright (c) 2022-2026 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,11 @@ def execCmd( com: List[str]
     if verbose:
         print(' '.join(com), flush=True)
 
-    res = subprocess.run(com, env=env, check=canFail, capture_output=captureOut)
+    try:
+        res = subprocess.run(com, env=env, check=canFail,
+            capture_output=captureOut)
+    except Exception as e:
+        return subprocess.CompletedProcess(args=com, returncode=-1)
 
     if verbose:
         if res.stdout is not None:

@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2022 Konychev Valera
+# Copyright (c) 2022-2026 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,17 @@
 from . import cmd as cmd
 
 GIT_BIN = 'git'
+
+def init():
+    args = [GIT_BIN, 'init']
+    cmd.execCmd(args, captureOut=True)
+
+def apply(patch_file: str, verbose = True):
+    args = [GIT_BIN, 'apply']
+    if verbose:
+        args += [ '-v' ]
+    args += [patch_file]
+    cmd.execCmd(args, captureOut=True)
 
 def clone(args: [str]):
     args = [GIT_BIN, 'clone'] + args
