@@ -33,4 +33,4 @@ def get_installed_version():
     if output.returncode == 0:
         return output.stdout.decode("utf-8").split()[2]
     else:
-        return 0
+        return '0'
