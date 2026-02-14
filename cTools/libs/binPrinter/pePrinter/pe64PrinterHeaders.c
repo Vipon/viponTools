@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -484,6 +484,9 @@ static void pe64PrintSubsystem(const OptHeader64 *optHeader)
         break;
     case IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION:
         printf("WINDOWS_BOOT_APPLICATION");
+        break;
+    default:
+        printf("UNKNOWN");
         break;
     }
 }

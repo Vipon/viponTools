@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2024 Konychev Valerii
+ * Copyright (c) 2024-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -230,7 +230,7 @@ void elf64PrintRela(const Elf64File *elf, const Elf64Rel *rel)
     if (verName)
         printf("@%s", verName);
 
-    printf(" + %"PRIu64, rel->r_addend);
+    printf(" + %"PRIu64, (uint64_t)rel->r_addend);
     NEW_LINE;
 
     Free(ver);

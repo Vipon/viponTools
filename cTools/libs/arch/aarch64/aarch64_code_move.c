@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023-2024 Konychev Valerii
+ * Copyright (c) 2023-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -147,7 +147,7 @@ aarch64_move_adrp( uint32_t instr
     imm21 = SIGN_EXTEND(imm21, 20);
     STDERROR_LOG("ADRP: old_pc: 0x%"PRIx64"\n", old_pc);
     STDERROR_LOG("ADRP: instr: %"PRIx32"\n", instr);
-    STDERROR_LOG("ADRP: imm19: %"PRIx64"\n", imm21);
+    STDERROR_LOG("ADRP: imm19: %"PRIx64"\n", (uint64_t)imm21);
     uint64_t target_addr = old_page_pc + ((uint64_t)imm21 << 12);
     r->old_target = target_addr;
     STDERROR_LOG("ADRP: target_addr: %"PRIx64"\n", target_addr);
@@ -338,9 +338,9 @@ aarch64_move_b_cond( uint32_t instr
     uint8_t cond = instr & 0xF;
     int64_t imm19 = SIGN_EXTEND((instr >> 5) & 0x7FFFF, 18);
 
-    STDERROR_LOG("BC: old_pc: %"PRIx64"\n", old_pc);
+    STDERROR_LOG("BC: old_pc: %"PRIx64"\n", (uint64_t)old_pc);
     STDERROR_LOG("BC: instr: %"PRIx32"\n", instr);
-    STDERROR_LOG("BC: imm19: %"PRIx64"\n", imm19);
+    STDERROR_LOG("BC: imm19: %"PRIx64"\n", (uint64_t)imm19);
     uint64_t target_addr = old_pc + ((uint64_t)imm19 << 2);
     r->old_target = target_addr;
     STDERROR_LOG("BC: original_target: %"PRIx64"\n", target_addr);

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -104,7 +104,7 @@ void macho64PrintSection(const Macho64Sect *sect)
     printf("%10s: 0x%"PRIx64"\n", "addr" , sect->addr);
     printf("%10s: 0x%"PRIx64"\n", "size" , sect->size);
     printf("%10s: %"PRIu32"\n", "offset" , sect->offset);
-    printf("%10s: %"PRIu32"\n", "align" , 1 << sect->align);
+    printf("%10s: %"PRIu32"\n", "align" , (uint32_t)(1 << sect->align));
     printf("%10s: %"PRIu32"\n", "reloff" , sect->reloff);
     printf("%10s: %"PRIu32"\n", "nreloc" , sect->nreloc);
     printf("%10s: 0x%.8"PRIx32, "flags" , sect->flags);
