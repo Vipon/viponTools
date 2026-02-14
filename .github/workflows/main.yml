@@ -103,8 +103,8 @@ jobs:
         with:
           name: viponTools_macos
           path: viponTools.tar.gz
-  ubuntu-2004-gmake-debug:
-    runs-on: ubuntu-20.04
+  ubuntu-2404-gmake-debug:
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -123,8 +123,8 @@ jobs:
         with:
           shell: bash
           working-directory: gmake
-  ubuntu-2004-ninja-debug:
-    runs-on: ubuntu-20.04
+  ubuntu-2404-ninja-debug:
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -144,8 +144,8 @@ jobs:
         with:
           shell: bash
           working-directory: ninja
-  ubuntu-2004-gmake-release:
-    runs-on: ubuntu-20.04
+  ubuntu-2404-gmake-release:
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
