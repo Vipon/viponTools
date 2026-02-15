@@ -4,7 +4,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -28,7 +28,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -52,7 +52,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -76,7 +76,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -127,7 +127,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -148,7 +148,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -174,8 +174,10 @@ jobs:
   windows-ninja-debug-static:
     runs-on: windows-2025-vs2026
     steps:
+      - name: Prepare git
+        run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -191,8 +193,10 @@ jobs:
   windows-msvc-debug-static:
     runs-on: windows-2025-vs2026
     steps:
+      - name: Prepare git
+        run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -212,13 +216,16 @@ jobs:
   windows-msvc-release-shared:
     runs-on: windows-2025-vs2026
     steps:
+      - name: Prepare git
+        run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
           path: C:\bin\ccache\
-      - run: .\setup.bat
+      - run: |
+          .\setup.bat
       - name: Configure MSVC Release
         run: python .\configure --vs --release
       - name: MSVC Build
