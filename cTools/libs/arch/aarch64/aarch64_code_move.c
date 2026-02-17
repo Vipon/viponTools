@@ -536,13 +536,7 @@ aarch64_instr_move( const uint8_t *src
     return (CODE_MOVE_ERROR)r->new_size;
 }
 
-extern void
-resolve_relocations( vt_sorted_vector_t *rel
-                   , uint8_t *dst
-                   , uint64_t old_pc
-                   , uint64_t instr_num
-                   );
-void
+static void
 resolve_relocations( vt_sorted_vector_t *rel
                    , uint8_t *dst
                    , uint64_t old_pc
@@ -606,15 +600,14 @@ resolve_relocations( vt_sorted_vector_t *rel
                                     );
             break;
         case RELOC_AARCH64_ADRP:
-            /*STDERROR_LOG("Reloc ADRP:\n");
+            STDERROR_LOG("Reloc ADRP:\n");
             STDERROR_LOG("\told_target: 0x%"PRIx64", new_pc_old_target: 0x%"PRIx64"\n", r[i].old_target
                     , old_target->new_pc);
-
             aarch64_put_adrp( (uint32_t*)instr_p
                             , r[i].new_pc
                             , r[i].new_target
                             , reg_num
-                            );*/
+                            );
             break;
         case RELOC_AARCH64_ADRP_ABS48:
             aarch64_put_adrp_stub_abs48( (uint32_t*)instr_p

@@ -59,7 +59,7 @@ void test_detect_pc_rel(void)
         { "b.lo 0x100", AARCH64_INSTR_TYPE_CBR, AARCH64_INSTR_OP_BCC },
         { "b.ls 0x100", AARCH64_INSTR_TYPE_CBR, AARCH64_INSTR_OP_BLS },
 /*
-    FEAT_HBC
+    FEAT_HBC (Hinted Conditional Branches) is an Armv8.7+ AArch64 architecture feature
         { "bc.eq 0x160", AARCH64_INSTR_TYPE_CBR, AARCH64_INSTR_OP_BCEQ },
         { "bc.ne 0x100", AARCH64_INSTR_TYPE_CBR, AARCH64_INSTR_OP_BCNE },
         { "bc.ge 0x100", AARCH64_INSTR_TYPE_CBR, AARCH64_INSTR_OP_BCGE },
