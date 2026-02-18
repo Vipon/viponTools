@@ -31,6 +31,8 @@ add_vipon_test(
 if (APPLE)
   if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
     if (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 17 AND CMAKE_C_COMPILER_VERSION VERSION_LESS 18)
+      # LLVM 17 bug: https://reviews.llvm.org/D153167
+      # Problem with non-local labels in asm code
       target_compile_options(macho64PrintExeTest PRIVATE "-fno-sanitize=all")
     endif ()
   endif ()

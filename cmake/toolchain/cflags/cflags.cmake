@@ -61,9 +61,9 @@ set(CMAKE_CXX_FLAGS_RELEASE ${CXX_FLAGS_RELEASE})
 
 if (APPLE)
   if ("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "arm64")
-    # Main MacOsX linker has problem with linking MOD_CODE macro
     if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
       if (CMAKE_C_COMPILER_VERSION VERSION_LESS 17.0)
+        # Main MacOsX linker has problem with linking MOD_CODE macro
         string(APPEND _LINKER_FLAGS " -ld_classic")
       endif ()
     endif ()
