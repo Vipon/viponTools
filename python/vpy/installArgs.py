@@ -46,6 +46,9 @@ def installArgs(descr: str):
     parser.add_argument('--default', action = 'store_true',
             default = False,
             help = 'if flag is set, produce default install: brew, apt etc.')
+    parser.add_argument('--plaform', metavar = 'TRIPLET', nargs = '?',
+            default = 'host',
+            help = 'specify target system triplet')
 
     return parser.parse_args()
 

@@ -870,7 +870,7 @@ uint32_t elf32GetSectFileoff(const Elf32Shdr *elf32Sect)
     return elf32Sect->sh_offset;
 }
 
-
+/* !TODO: rework instead of .rela, should be .rel
 uint32_t elf32GetRelocForAddr( const Elf32File *elf32
                              , const Elf32Shdr *sect
                              , uint32_t addr
@@ -915,7 +915,7 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
 
     uint32_t relaAmount = relaSect->sh_size / sizeof(Elf32Rel);
     uint32_t i = 0;
-    for (i = 0; i < relaAmount; ++i) {
+    for (i = 0; i < relaAmount; ++i) {*/
         /***
          * r_offset indicates the location at which the relocation should be
          * applied. For a relocatable file, this is the offset, in bytes, from
@@ -923,6 +923,7 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
          * being relocated. For an executable or shared object, this is the
          * virtual address of the storage unit being relocated.
          */
+/*
         if (  IS_ELF32_FILE_OBJ(elf32)
            && rela[i].r_offset + sect->sh_addr == addr
            ) {
@@ -950,7 +951,7 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
         return ELF32_NO_RELOCATION;
     }
 }
-
+*/
 
 void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func)
 {

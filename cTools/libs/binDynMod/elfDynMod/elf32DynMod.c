@@ -72,8 +72,8 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
      */
     void *relAddr = NULL;
     uint32_t i = 0;
-    for (i = 0; i < relpltAmount; ++i)
-        if (ELF32_R_SYM(elf32->relplt[i].r_info) == symbolIndex){
+    for (i = 0; i < relpltAmount; ++i) {
+        if (((uint32_t)ELF32_R_SYM(elf32->relplt[i].r_info)) == symbolIndex) {
             uint32_t offset = elf32->relplt[i].r_offset;
             uint32_t* addr = (uint32_t*)(size_t)(func_addr_diff + offset);
             relAddr = (void*)(size_t) *addr;
@@ -81,6 +81,7 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
 
             return relAddr;
         }
+    }
 
     return NULL;
 }

@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valerii
+# Copyright (c) 2021-2026 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,3 +28,12 @@ else()
     append_cxxflags(CXX_FLAGS -fPIC -std=gnu++20 -fcxx-exceptions -fexceptions)
 endif()
 
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+  if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i386")
+    # extra flags if need to compile and link 32-bits application
+    set(CMAKE_REQUIRED_LINK_OPTIONS -m32 -Wl-m,elf_i386)
+    append_cflags(C_FLAGS "-m32 -mfpmath=sse -msse2")
+    append_cxxflags(CXX_FLAGS "-m32 -mfpmath=sse -msse2")
+    unset(CMAKE_REQUIRED_LINK_OPTIONS)
+  endif()
+endif()

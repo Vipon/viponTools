@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021-2024 Konychev Valerii
+# Copyright (c) 2021-2026 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -59,17 +59,8 @@ set(CMAKE_CXX_FLAGS ${CXX_FLAGS})
 set(CMAKE_CXX_FLAGS_DEBUG ${CXX_FLAGS_DEBUG})
 set(CMAKE_CXX_FLAGS_RELEASE ${CXX_FLAGS_RELEASE})
 
-if (APPLE)
-  if ("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "arm64")
-    if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
-      if (CMAKE_C_COMPILER_VERSION VERSION_LESS 17.0)
-        # Main MacOsX linker has problem with linking MOD_CODE macro
-        string(APPEND _LINKER_FLAGS " -ld_classic")
-      endif ()
-    endif ()
-  endif ()
-endif (APPLE)
 
+include(${CMAKE_CURRENT_LIST_DIR}/linker.cmake)
 if (NOT "${_LINKER_FLAGS}" STREQUAL "")
   string(REPLACE " " ";" LINKER_FLAGS "${_LINKER_FLAGS}")
   add_link_options(${LINKER_FLAGS})

@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valerii
+# Copyright (c) 2026 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-include_guard(GLOBAL)
+if (APPLE)
+  if ("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "arm64")
+    if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
+      if (CMAKE_C_COMPILER_VERSION VERSION_LESS 17.0)
+        # Main MacOsX linker has problem with linking MOD_CODE macro
+        string(APPEND _LINKER_FLAGS " -ld_classic")
+      endif ()
+    endif ()
+  endif ()
+endif (APPLE)
 
-find_program(CCACHE ccache)
-  if(NOT CCACHE)
-    message(STATUS "ccache not found")
-  else()
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "ccache")
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "ccache")
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+  if ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i386")
+    string(APPEND _LINKER_FLAGS " -Wl,-m,elf_i386")
   endif()
-
+endif()

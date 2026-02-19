@@ -111,12 +111,9 @@ typedef Elf32_Sym   Elf32Sym;
  *   typedef struct {
  *       Elf32_Addr      r_offset;
  *       Elf32_Xword     r_info;
- *       Elf32_Sxword    r_addend;
  *   } Elf32_Rela;
- *
- *   x32, there are only relocations of type RELA
  */
-typedef Elf32_Rela  Elf32Rel;
+typedef Elf32_Rel  Elf32Rel;
 
 /***
  * #define ELF32_R_SYM(info) ((info)>>32)
@@ -572,8 +569,10 @@ uint32_t elf32GetSectFileoff(const Elf32Shdr *sect);
  *  Fail:
  *      NULL.
  */
+/* !TODO: rework instead of .rela, should be .rel
 EXPORT_FUNC
 uint32_t elf32GetRelocForAddr(const Elf32File *elf32, const Elf32Shdr *sect, uint32_t addr);
+*/
 
 /***
  * Before:
