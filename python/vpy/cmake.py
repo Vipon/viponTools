@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
+#
 # MIT License
 #
-# Copyright (c) 2023 Konychev Valerii
+# Copyright (c) 2026 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,29 +22,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_vipon_test(
-  NAME macho64PrintExeTest
-  SOURCES macho64PrintExeTest.c
-  LINK_LIBS macho64Printer macho64Parse file string LEB128 comdef mem
-  CMD_LINE macho64PrintExeTest_ref macho64PrintExeTest_ref.txt
-  TEST_FILES macho64PrintExeTest_ref macho64PrintExeTest_ref.txt
-)
+from vpy.cmd import execCmd
 
-if (APPLE)
-  if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
-    if (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 17 AND CMAKE_C_COMPILER_VERSION VERSION_LESS 18)
-      # LLVM 17 bug: https://reviews.llvm.org/D153167
-      # Problem with non-local labels in asm code
-      target_compile_options(macho64PrintExeTest PRIVATE "-fno-sanitize=all")
-    endif ()
-  endif ()
-endif ()
+def get_installed_version():
+    com = [ 'cmake'
+          , '--version'
+    ]
 
-add_vipon_test(
-  NAME macho64PrintObjTest
-  SOURCES macho64PrintObjTest.c
-  LINK_LIBS macho64Printer macho64Parse file string LEB128 comdef mem
-  CMD_LINE macho64PrintObjTest_ref macho64PrintObjTest_ref.txt
-  TEST_FILES macho64PrintObjTest_ref macho64PrintObjTest_ref.txt
-)
-
+    output = execCmd(com, verbose = False, captureOut = True)
+    if output.returncode == 0:
+        return output.stdout.decode("utf-8").split()[2]
+    else:
+        return '0'

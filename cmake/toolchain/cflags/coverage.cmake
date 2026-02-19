@@ -26,13 +26,13 @@ set(COVERAGE_CFLAGS)
 
 # Need to specify libs for link, because cmake checking with linking.
 set(CMAKE_REQUIRED_LIBRARIES --coverage)
-if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
   append_cflags(COVERAGE_CFLAGS --coverage -fprofile-abs-path)
-elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
   if (NOT WIN32)
     append_cflags(COVERAGE_CFLAGS "-fprofile-instr-generate -fcoverage-mapping")
   endif ()
-endif()
+endif ()
 
 append_cflags(COVERAGE_CFLAGS -fno-omit-frame-pointer)
 unset(CMAKE_REQUIRED_LIBRARIES)

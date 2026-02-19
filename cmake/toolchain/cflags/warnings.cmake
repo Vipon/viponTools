@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021-2023 Konychev Valerii
+# Copyright (c) 2021-2026 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,12 @@ if (MSVC)
     -Wno-compound-token-split-by-space
   )
 
-  message(STATUS "msvc_version: ${MSVC_VERSION}")
+  if (MSVC_VERSION GREATER_EQUAL "1950") # VC18
+    append_cflags(WARNING_FLAGS
+      -Wno-pre-c11-compat
+    )
+  endif()
+
   if (MSVC_VERSION GREATER_EQUAL "1930") # VS17
     append_cflags(WARNING_FLAGS
       -Wno-reserved-identifier

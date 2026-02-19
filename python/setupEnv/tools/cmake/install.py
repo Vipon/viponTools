@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2022 Konychev Valera
+# Copyright (c) 2022-2026 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 # SOFTWARE.
 
 from os.path import dirname, realpath
+from packaging.version import Version
 import sys
 curDir = dirname(realpath(__file__))
 vpyDir = dirname(dirname(dirname(curDir)))
@@ -32,9 +33,10 @@ from vpy.cmd import execCmd
 from vpy.net import downloadFile
 from vpy.os import execForOs, getForOs, isWin, installPkg
 from vpy.installArgs import parseInstallArgs
+import vpy.cmake as cmake
 import vpy.installArgs as vpy
 
-vpy.INSTALL_VERSION = '3.24.1'
+vpy.INSTALL_VERSION = '4.2.0-rc3'
 
 WIN_URL = None
 WIN_FN = None
@@ -100,6 +102,11 @@ def installCmake(args):
 
 def main():
     args = parseArgs()
+    cur_version = Version(cmake.get_installed_version())
+    new_version = Version(vpy.INSTALL_VERSION)
+    if cur_version >= new_version:
+        return
+
     if isWin() or not args.default:
         downloadCmake()
         installCmake(args)

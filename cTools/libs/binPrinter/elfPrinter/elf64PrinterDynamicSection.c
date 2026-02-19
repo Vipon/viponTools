@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2024 Konychev Valerii
+ * Copyright (c) 2024-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -340,7 +340,7 @@ void elf64PrintDynamicSection(const Elf64File *elf)
     printf("  Tag%8sType%25sName/Value\n", "", "");
     size_t i = 0;
     for (i = 0; i < num; ++i) {
-        printf(" 0x%.16"PRIx64" %-20s ", elf->dynamic[i].d_tag
+        printf(" 0x%.16"PRIx64" %-20s ", (uint64_t)elf->dynamic[i].d_tag
                                        , elf64GetDynamicTag(elf->dynamic[i].d_tag));
         elf64PrintDynUn(elf, elf->dynamic + i);
         NEW_LINE

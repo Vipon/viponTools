@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2020-2023 Konychev Valera
+ * Copyright (c) 2020-2026 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -183,11 +183,11 @@ void print_x86_instr(FILE *f, const x86_64_instr *insn)
 
     /* Print displacement */
     if (get_disp_size(insn))
-        fprintf(f, "disp: %#0*x\n", get_disp_size(insn) << 1, get_disp(insn));
+        fprintf(f, "disp: %#0*x\n", get_disp_size(insn) << 1, (uint32_t)get_disp(insn));
 
     /* Print immediate */
     if (get_imm_size(insn))
-        fprintf(f, "imm: %#0*"PRIx64"\n", get_imm_size(insn) << 1, get_imm(insn));
+        fprintf(f, "imm: %#0*"PRIx64"\n", get_imm_size(insn) << 1, (uint64_t)get_imm(insn));
 
     /* Print information of operands */
     fprintf(f, "\tOperands num: %u\n", x86->op_count);
@@ -205,7 +205,7 @@ void print_x86_instr(FILE *f, const x86_64_instr *insn)
 
         case X86_OP_IMM:
             fprintf(f, "X86_OP_IMM\n");
-            fprintf(f, "\t\timm:\n\t\t\t%"PRIx64"\n", x86_op[i].imm);
+            fprintf(f, "\t\timm:\n\t\t\t%"PRIx64"\n", (uint64_t)x86_op[i].imm);
             break;
 
         case X86_OP_MEM:
@@ -217,7 +217,7 @@ void print_x86_instr(FILE *f, const x86_64_instr *insn)
                 fprintf(f, "\t\tscale:\n\t\t\t%d\n", x86_op[i].mem.scale);
             }
 
-            fprintf(f, "\t\tdisp:\n\t\t\t%"PRIx64"\n", x86_op[i].mem.disp);
+            fprintf(f, "\t\tdisp:\n\t\t\t%"PRIx64"\n", (uint64_t)x86_op[i].mem.disp);
             break;
 /*
         case X86_OP_FP:
@@ -780,7 +780,7 @@ ERR_DISASM_WRAP get_jmp_target( x86_64_instr *insn,
 
     case X86_OP_IMM:
         /* if it's relative ip instruction: jmp/call rel32 */
-        LOG("ip 0x%zx imm 0x%"PRIx64"\n", ip, x86_op[0].imm);
+        LOG("ip 0x%zx imm 0x%"PRIx64"\n", ip, (uint64_t)x86_op[0].imm);
         *jmp_target = (uint64_t)x86_op[0].imm;
         break;
 

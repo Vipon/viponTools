@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -97,7 +97,7 @@ void macho64PrintCodeDirectory(const CS_CodeDirectory* cd)
     printf("%17s: %"PRIu8"\n", "hashSize", hashSize);
     printf("%17s: %s\n", "hashType", getHashType(cd->hashType));
     printf("%17s: %"PRIu8"\n", "platform", cd->platform);
-    printf("%17s: %"PRIu32"\n", "pageSize", 1 << cd->pageSize);
+    printf("%17s: %"PRIu32"\n", "pageSize", (uint32_t)(1 << cd->pageSize));
     printf("%17s: %"PRIu32"\n", "spare2", be32toh(cd->spare2));
 
     switch (version) {
@@ -134,7 +134,7 @@ void macho64PrintCodeDirectory(const CS_CodeDirectory* cd)
 
     uint32_t i = 0;
     for (i = nSpecialSlots; i > 0; --i) {
-        printf("%17s[%d]: ", "HashSlot", -i);
+        printf("%17s[%d]: ", "HashSlot", (int32_t)-i);
         uint8_t j = 0;
         for (j = 0; j < hashSize; ++j) {
             printf("%.2"PRIx8, *(hashBase - i*hashSize + j));
@@ -144,7 +144,7 @@ void macho64PrintCodeDirectory(const CS_CodeDirectory* cd)
 
     // hash sum of loadable pages
     for (i = 0; i < nCodeSlots; ++i) {
-        printf("%17s[%d]: ", "HashSlot", i);
+        printf("%17s[%d]: ", "HashSlot", (int32_t)i);
         uint8_t j = 0;
         for (j = 0; j < hashSize; ++j) {
             printf("%.2"PRIx8, *(hashBase + i*hashSize + j));
@@ -180,15 +180,15 @@ void macho64PrintCodeSign(const Macho64File *mf)
     printf("Super Blob:\n");
     // should be CSMAGIC_EMBEDDED_SIGNATURE = 0xfade0cc0
     printf("%9s: 0x%x\n", "magic", be32toh(sb->magic));
-    printf("%9s: %d\n", "length", be32toh(sb->length));
-    printf("%9s: %d\n", "count", be32toh(sb->count));
+    printf("%9s: %d\n", "length", (int32_t)be32toh(sb->length));
+    printf("%9s: %d\n", "count", (int32_t)be32toh(sb->count));
 
     uint32_t i = 0;
     for (i = 0; i < be32toh(sb->count); ++i) {
         CS_BlobIndex *b = sb->index + i;
         uint32_t type = be32toh(b->type);
         uint32_t off = be32toh(b->offset);
-        printf("%13s[%u]: (type: 0x%.8x, offset: %d)\n", "Blob", i, type, off);
+        printf("%13s[%u]: (type: 0x%.8x, offset: %d)\n", "Blob", i, type, (int32_t)off);
 
         CS_GenericBlob *gb = (CS_GenericBlob*)(((uint8_t*)sb) + off);
         uint32_t magic = be32toh(gb->magic);

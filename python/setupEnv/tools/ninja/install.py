@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valera
+# Copyright (c) 2021-2026 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from packaging.version import Version
 from os.path import dirname, realpath
 import sys
 curDir = dirname(realpath(__file__))
@@ -33,6 +34,7 @@ from vpy.os import execForOs, getForOs, appendPath, isMacOsX, installPkg
 from vpy.file import extractFile, mvFile
 from vpy.dir import createDir
 from vpy.installArgs import parseInstallArgs
+import vpy.ninja as ninja
 import vpy.installArgs as vpy
 
 vpy.INSTALL_VERSION = '1.10.2'
@@ -94,6 +96,10 @@ def installNinja():
 
 def main():
     args = parseArgs()
+    cur_version = Version(ninja.get_installed_version())
+    new_version = Version(vpy.INSTALL_VERSION)
+    if cur_version >= new_version:
+        return
 
     if isMacOsX() and args.default:
         installPkg('ninja')

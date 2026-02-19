@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2020-2022 Konychev Valerii
+# Copyright (c) 2020-2026 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -92,7 +92,7 @@ def finalizeArgs(args):
         else:
             # VS build system on Win
             if args.use_version == None:
-                args.use_version = '17'
+                args.use_version = '18'
 
 
 def goToOutputDir(args):
@@ -112,7 +112,9 @@ def execCmake(args):
     elif args.ninja:
         generator = 'Ninja'
     elif args.vs:
-        if args.use_version == '17':
+        if args.use_version == '18':
+            generator = 'Visual Studio 18 2026'
+        elif args.use_version == '17':
             generator = 'Visual Studio 17 2022'
         elif args.use_version == '16':
             generator = 'Visual Studio 16 2019'

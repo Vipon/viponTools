@@ -4,7 +4,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -28,7 +28,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -52,7 +52,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -76,7 +76,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -103,11 +103,11 @@ jobs:
         with:
           name: viponTools_macos
           path: viponTools.tar.gz
-  ubuntu-2004-gmake-debug:
-    runs-on: ubuntu-20.04
+  ubuntu-2404-gmake-debug:
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -123,11 +123,11 @@ jobs:
         with:
           shell: bash
           working-directory: gmake
-  ubuntu-2004-ninja-debug:
-    runs-on: ubuntu-20.04
+  ubuntu-2404-ninja-debug:
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -144,11 +144,11 @@ jobs:
         with:
           shell: bash
           working-directory: ninja
-  ubuntu-2004-gmake-release:
-    runs-on: ubuntu-20.04
+  ubuntu-2404-gmake-release:
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -172,10 +172,12 @@ jobs:
           name: viponTools_Ubuntu
           path: viponTools.tar.gz
   windows-ninja-debug-static:
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     steps:
+      - name: Prepare git
+        run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -189,10 +191,12 @@ jobs:
           shell: cmd
           working-directory: output
   windows-msvc-debug-static:
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     steps:
+      - name: Prepare git
+        run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
@@ -210,15 +214,18 @@ jobs:
         working-directory: output
         run: cmake --install . --config Debug
   windows-msvc-release-shared:
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     steps:
+      - name: Prepare git
+        run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set Env Variables
         uses: ./.github/actions/set_env_var
         with:
           path: C:\bin\ccache\
-      - run: .\setup.bat
+      - run: |
+          .\setup.bat
       - name: Configure MSVC Release
         run: python .\configure --vs --release
       - name: MSVC Build

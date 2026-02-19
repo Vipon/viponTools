@@ -41,7 +41,14 @@ add_vipon_library(
   INSTALL ON
 )
 
+if (APPLE)
+  target_compile_options(binParse PRIVATE "-Wno-cast-function-type-mismatch")
+endif (APPLE)
+
 if (WIN32)
+  if (MSVC_VERSION GREATER_EQUAL "1950")
+    target_compile_options(binParse PRIVATE "-Wno-cast-function-type-mismatch")
+  endif ()
   if (VIPON_TOOLS_LIB_TYPE STREQUAL "SHARED")
     target_compile_definitions(binParse PRIVATE BIN_PARSER_SHARED_LIB)
   elseif (VIPON_TOOLS_LIB_TYPE STREQUAL "STATIC")

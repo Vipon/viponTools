@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -378,8 +378,8 @@ void macho64PrintHeader(const Macho64File *mf)
     macho64PrintMagicNum(h);
     NEW_LINE;
 
-    printf("%10s: 0x%.8x (%s)\n", "cputype"   , h->cputype, macho64GetCpuTypeStr(h));
-    printf("%10s: 0x%.8x (%s)\n", "cpusubtype", h->cpusubtype, macho64GetCpuSubTypeStr(h));
+    printf("%10s: 0x%.8x (%s)\n", "cputype"   , (unsigned)h->cputype, macho64GetCpuTypeStr(h));
+    printf("%10s: 0x%.8x (%s)\n", "cpusubtype", (unsigned)h->cpusubtype, macho64GetCpuSubTypeStr(h));
     printf("%10s: 0x%.8x (%s)\n", "filetype"  , h->filetype, macho64GetFileTypeStr(h));
     printf("%10s: 0x%.8x\n"     , "ncmds"     , h->ncmds);
     printf("%10s: 0x%.8x\n"     , "sizeofcmds", h->sizeofcmds);

@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2024 Konychev Valerii
+ * Copyright (c) 2024-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -250,7 +250,7 @@ macho64PrintFixups(const Macho64File *mf)
 
     macho_starts_in_image_t *starts_in_image = (macho_starts_in_image_t*)p;
     printf("starts_in_image:\n");
-    printf("    seg_count %d\n", starts_in_image->seg_count);
+    printf("    seg_count %u\n", starts_in_image->seg_count);
     uint32_t i = 0;
     for (i = 0; i < starts_in_image->seg_count; ++i) {
         printf("    seg_info_offset[%"PRIu32"] 0x%.8"PRIx32"\n", i,

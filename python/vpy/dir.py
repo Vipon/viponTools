@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2021 Konychev Valera
+# Copyright (c) 2021-2026 Konychev Valera
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 #   Library for manipulations with directories.
 
 import os
+import shutil
 from vpy.file import mvFile
 
 ##  Create directory
@@ -42,3 +43,8 @@ def createDir(path: str) -> None:
 def mvDir(src: str, dst: str) -> None:
     mvFile(src, dst)
 
+def is_dir_exist(path: str) -> bool:
+    return os.path.isdir(path)
+
+def rm_dir(path: str) -> bool:
+    shutil.rmtree(path)
