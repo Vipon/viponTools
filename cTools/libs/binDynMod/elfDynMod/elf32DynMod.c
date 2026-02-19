@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,9 +48,9 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
      * shSize      -   contains the size, in bytes, of the section.
      * relpltAmount-   amount of Elf32Rel structures in .rela.ptl section.
      */
-    Elf32Shdr *relplt = elf32GetSectByName(elf32, RELAPLT);
+    Elf32Shdr *relplt = elf32GetSectByName(elf32, RELPLT);
     if (relplt == NULL) {
-        LOG_ERROR("Cannot get the section " RELAPLT);
+        LOG_ERROR("Cannot get the section " RELPLT);
         return NULL;
     }
 
@@ -73,8 +73,8 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
     void *relAddr = NULL;
     uint32_t i = 0;
     for (i = 0; i < relpltAmount; ++i)
-        if (ELF32_R_SYM(elf32->relaplt[i].r_info) == symbolIndex){
-            uint32_t offset = elf32->relaplt[i].r_offset;
+        if (ELF32_R_SYM(elf32->relplt[i].r_info) == symbolIndex){
+            uint32_t offset = elf32->relplt[i].r_offset;
             uint32_t* addr = (uint32_t*)(size_t)(func_addr_diff + offset);
             relAddr = (void*)(size_t) *addr;
             *addr = (uint32_t)(size_t) hand;

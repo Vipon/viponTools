@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2023 Konychev Valerii
+ * Copyright (c) 2023-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -185,7 +185,7 @@ void macho64PrintLComLoadDylib(const Macho64File *mf, const LoadCommand *lc)
     printf("%9s: %s (offset %"PRIu32")\n", "name"
                                          , (char*)(((size_t)dl) + dl->dylib.name.offset)
                                          , dl->dylib.name.offset);
-    time_t time = dl->dylib.timestamp;
+    time_t time = (time_t)dl->dylib.timestamp;
     printf("%9s: %s"                     , "timestamp", asctime(gmtime(&time)));
     printf("%9s: %"PRIu32".%"PRIu32".%"PRIu32"\n"
                                          , "dylib ver"
