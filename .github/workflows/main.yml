@@ -136,7 +136,6 @@ jobs:
           cpath: ${HOME}/.local/include:${CPATH}
           library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
       - run: ./setup.sh
-      - run: chmod 0744 "${HOME}/.local/bin/ninja"
       - name: Configure Debug Ninja
         run: ./configure --ninja --output ninja
       - name: Ninja Build Test Install

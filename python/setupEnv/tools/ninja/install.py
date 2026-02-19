@@ -92,6 +92,8 @@ def installNinja():
             )
     createDir(path)
     mvFile(execFile, path)
+    if isLinux():
+        os.chmod(path, 0o744)
     appendPath(path)
 
 def main():
