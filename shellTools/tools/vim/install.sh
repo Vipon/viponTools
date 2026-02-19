@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 SCRIPT_DIR="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
-source "${SCRIPT_DIR}/../../os/libos.sh"
+source "${SCRIPT_DIR}/../../os/libOs.sh"
 
 ROOT="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
 BUILD_DIR="${ROOT}/vim/src"

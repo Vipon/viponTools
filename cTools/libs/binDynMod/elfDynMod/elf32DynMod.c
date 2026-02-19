@@ -55,6 +55,9 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
     }
 
     uint32_t relpltAmount = relplt->sh_size / sizeof(Elf32Rel);
+    Elf32Sym *hook_sym = elf32GetSymByName(elf32, "elf32Hook");
+    uint32_t func_original_addr = elf32GetSSymAddr(hook_sym);
+    uint32_t func_addr_diff = (uint32_t)(size_t)(void*)&elf32Hook - func_original_addr;
 
     /***
      * r_info        -   This member gives both the symbol table index,
@@ -71,9 +74,10 @@ void *elf32Hook(const Elf32File *elf32, const char *func, const void *hand)
     uint32_t i = 0;
     for (i = 0; i < relpltAmount; ++i)
         if (ELF32_R_SYM(elf32->relaplt[i].r_info) == symbolIndex){
-            // !TODO: need refactor
-            relAddr = (void*) (size_t)*(uint32_t*) (size_t)elf32->relaplt[i].r_offset;
-            *(uint32_t*) (size_t)(elf32->relaplt[i].r_offset) = (uint32_t)(uint64_t) hand;
+            uint32_t offset = elf32->relaplt[i].r_offset;
+            uint32_t* addr = (uint32_t*)(size_t)(func_addr_diff + offset);
+            relAddr = (void*)(size_t) *addr;
+            *addr = (uint32_t)(size_t) hand;
 
             return relAddr;
         }
