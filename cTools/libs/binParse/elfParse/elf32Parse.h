@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valerii
+ * Copyright (c) 2021-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@
  * alignment -   4 bytes
  */
 typedef Elf32_Word Elf32Word;
+
 /***
  *   typedef struct
  *   {
@@ -62,6 +63,7 @@ typedef Elf32_Word Elf32Word;
  *   } Elf32_Ehdr;
  */
 typedef Elf32_Ehdr  Elf32Ehdr;
+
 /***
  *  typedef struct
  *  {
@@ -76,6 +78,7 @@ typedef Elf32_Ehdr  Elf32Ehdr;
  *  } Elf32_Phdr;
  */
 typedef Elf32_Phdr  Elf32Phdr;
+
 /***
  *   typedef struct {
  *       Elf32_Word      sh_name;        // Sect name
@@ -91,6 +94,7 @@ typedef Elf32_Phdr  Elf32Phdr;
  *   } Elf32_Shdr;
  */
 typedef Elf32_Shdr  Elf32Shdr;
+
 /***
  *   typedef struct {
  *       Elf32_Word      st_name;
@@ -102,39 +106,45 @@ typedef Elf32_Shdr  Elf32Shdr;
  *   } Elf32_Sym;
  */
 typedef Elf32_Sym   Elf32Sym;
+
 /***
  *   typedef struct {
  *       Elf32_Addr      r_offset;
  *       Elf32_Xword     r_info;
- *       Elf32_Sxword    r_addend;
  *   } Elf32_Rela;
- *
- *   x32, there are only relocations of type RELA
  */
-typedef Elf32_Rela  Elf32Rel;
+typedef Elf32_Rel  Elf32Rel;
+
 /***
  * #define ELF32_R_SYM(info) ((info)>>32)
  */
 #define RELADYN     ".rela.dyn"
+#define RELDYN     ".rel.dyn"
+
 /***
  * .rela.plt:
  *   .rela   -  Relocation information.
  *   .plt    -  The procedure linkage table.
  */
 #define RELAPLT     ".rela.plt"
+#define RELPLT     ".rel.plt"
+
 /***
  * .symtab   -  This section holds a symbol table.
  */
 #define SYMTAB      ".symtab"
+
 /***
  * .dynsym   -  This section holds the dynamic linking symbol table.
  */
 #define DYNSYM      ".dynsym"
+
 /***
  * .strtab  -   This section holds strings, most commonly the strings that
  *              represent the names associated with symbol table entries.
  */
 #define STRTAB      ".strtab"
+
 /***
  * .dynstr  -   This section holds strings needed for dynamic linking,
  *              most commonly the strings that represent the names
@@ -178,7 +188,10 @@ typedef Elf32_Rela  Elf32Rel;
 typedef struct {
     char        *fn;
     FileD       fd;
+    size_t      fs;
+    uint8_t     *faddr;
     uint32_t    type;
+    Arch        arch;
     Elf32Ehdr   *header;
     Elf32Shdr   *sections;
     Elf32Phdr   *segments;
@@ -186,14 +199,12 @@ typedef struct {
     uint32_t    symnum;
     Elf32Sym    *dynsym;
     uint32_t    dynsymnum;
-    Elf32Sym    *sortSymtab;
-    Elf32Rel    *relaplt;
-    Elf32Rel    *reladyn;
+    Elf32Rel    *relplt;
+    Elf32Rel    *reldyn;
     char        *sectNameTab;
     char        *symNameTab;
     char        *dynSymNameTab;
 } Elf32File;
-
 
 #ifdef __WIN__
 typedef enum : uint32_t {
@@ -203,8 +214,8 @@ typedef enum {
     ELF32_NO_RELOCATION = (uint32_t)-16,
     ELF32_NO_SECTION,
     ELF32_NO_SYMBOL,
-    ELF32_NO_RELADYN,
-    ELF32_NO_RELAPLT,
+    ELF32_NO_RELDYN,
+    ELF32_NO_RELPLT,
     ELF32_NO_DYN_SYM_NAME_TAB,
     ELF32_NO_SYM_NAME_TAB,
     ELF32_NO_SH_NAME_TAB,
@@ -236,7 +247,6 @@ static_assert(((int32_t)ELF32_INV_ARG) < 0, "ERRORS must be negative");
 EXPORT_FUNC
 Elf32File *elf32Parse(const char *fn);
 
-
 /***
  * Before:
  *  You must completed all jobs with this elf32, otherwise you will free all
@@ -249,7 +259,6 @@ Elf32File *elf32Parse(const char *fn);
 EXPORT_FUNC
 void elf32Free(Elf32File *elf32);
 
-
 /***
  * Input:
  *  @elf32 - Elf32File structure, that is nedded to check.
@@ -261,7 +270,6 @@ void elf32Free(Elf32File *elf32);
  */
 EXPORT_FUNC
 ELF32_ERROR elf32Check(const Elf32File *elf32);
-
 
 /***
  * Description:
@@ -278,7 +286,6 @@ EXPORT_FUNC
 ELF32_ERROR elf32PrintSymbol(const Elf32File *elf32, const Elf32Sym *sym);
 EXPORT_FUNC
 ELF32_ERROR elf32PrintSymbols(const Elf32File *elf32);
-
 
 /***
  * Before:
@@ -298,7 +305,6 @@ ELF32_ERROR elf32PrintSymbols(const Elf32File *elf32);
 EXPORT_FUNC
 Elf32Sym *elf32GetSymByName(const Elf32File *elf32, const char *name);
 
-
 /***
  * Description:
  *  Function returns name of the symbol @sym.
@@ -314,7 +320,6 @@ Elf32Sym *elf32GetSymByName(const Elf32File *elf32, const char *name);
 EXPORT_FUNC
 char *elf32GetSymName(const Elf32File *elf32, const Elf32Sym *sym);
 
-
 /***
  * Description:
  *  Function for work with qsort. Functions compare addresses of symbols and
@@ -322,7 +327,6 @@ char *elf32GetSymName(const Elf32File *elf32, const Elf32Sym *sym);
  */
 EXPORT_FUNC
 int elf32CmpSym(const void *a, const void *b);
-
 
 /***
  * Description:
@@ -337,9 +341,6 @@ int elf32CmpSym(const void *a, const void *b);
  */
 EXPORT_FUNC
 Elf32Sym *elf32GetSSymTab(const Elf32File *elf32);
-EXPORT_FUNC
-Elf32Sym *elf32GetSSymSortTab(const Elf32File *elf32);
-
 
 /***
  * Description:
@@ -355,7 +356,6 @@ Elf32Sym *elf32GetSSymSortTab(const Elf32File *elf32);
 EXPORT_FUNC
 uint32_t elf32GetAmountSSym(const Elf32File *elf32);
 
-
 /***
  * Description:
  *  Function returns addr of static symbol without randomization address space.
@@ -369,7 +369,6 @@ uint32_t elf32GetAmountSSym(const Elf32File *elf32);
  */
 EXPORT_FUNC
 uint32_t elf32GetSSymAddr(const Elf32Sym *sym);
-
 
 /***
  * Before:
@@ -387,7 +386,6 @@ uint32_t elf32GetSSymAddr(const Elf32Sym *sym);
 EXPORT_FUNC
 uint32_t elf32GetAddrSymByName(const Elf32File *elf32, const char *name);
 
-
 /***
  * Description:
  *  Function returns size of static symbol without randomization address space.
@@ -401,7 +399,6 @@ uint32_t elf32GetAddrSymByName(const Elf32File *elf32, const char *name);
  */
 EXPORT_FUNC
 uint32_t elf32GetSSymSize(const Elf32File *elf32, const Elf32Sym *sym);
-
 
 /***
  * Description:
@@ -417,7 +414,6 @@ uint32_t elf32GetSSymSize(const Elf32File *elf32, const Elf32Sym *sym);
  */
 EXPORT_FUNC
 uint32_t elf32GetSSymFileoff(const Elf32File *elf32, const Elf32Sym *sym);
-
 
 /***
  * Before:
@@ -435,7 +431,6 @@ uint32_t elf32GetSSymFileoff(const Elf32File *elf32, const Elf32Sym *sym);
 EXPORT_FUNC
 uint32_t elf32GetDSymIndxByName(const Elf32File *elf32, const char *name);
 
-
 /***
  *  Function returns an amount of segments in the binary file.
  * Input:
@@ -449,7 +444,6 @@ uint32_t elf32GetDSymIndxByName(const Elf32File *elf32, const char *name);
 EXPORT_FUNC
 uint32_t elf32GetAmountSeg(const Elf32File *elf32);
 
-
 /***
  * Input:
  *  sh_type - this member categorizes the section’s contents and semantics.
@@ -461,7 +455,6 @@ uint32_t elf32GetAmountSeg(const Elf32File *elf32);
  */
 EXPORT_FUNC
 Elf32Shdr *elf32GetSectByType(const Elf32File *elf32, const Elf32Word sh_type);
-
 
 /***
  * Description:
@@ -481,7 +474,6 @@ Elf32Shdr *elf32GetSectByName(const Elf32File *elf32, const char* name);
 EXPORT_FUNC
 Elf32Shdr *elf32GetLastLoadableSect(const Elf32File *elf32);
 
-
 /***
  * Before:
  *  If you need a file position, you should to save it.
@@ -499,14 +491,12 @@ Elf32Shdr *elf32GetLastLoadableSect(const Elf32File *elf32);
 EXPORT_FUNC
 void *elf32ReadSect(const Elf32File *elf32, const Elf32Shdr *sectionHeader);
 
-
 /***
  * Description:
  *  Function returns an amount of sections in the binary file.
  */
 EXPORT_FUNC
 uint32_t elf32GetAmountSect(const Elf32File *elf32);
-
 
 /***
  * Description:
@@ -523,7 +513,6 @@ uint32_t elf32GetAmountSect(const Elf32File *elf32);
 EXPORT_FUNC
 const char* elf32GetSectName(const Elf32File *elf32, const Elf32Shdr *sect);
 
-
 /***
  * Description:
  *  Function returns a size of a section.
@@ -537,7 +526,6 @@ const char* elf32GetSectName(const Elf32File *elf32, const Elf32Shdr *sect);
  */
 EXPORT_FUNC
 uint32_t elf32GetSectSize(const Elf32Shdr *elf32Sect);
-
 
 /***
  * Description:
@@ -553,7 +541,6 @@ uint32_t elf32GetSectSize(const Elf32Shdr *elf32Sect);
 EXPORT_FUNC
 uint32_t elf32GetSectAddr(const Elf32Shdr *sect);
 
-
 /***
  * Description:
  *  Function returns a file offset of a section.
@@ -567,7 +554,6 @@ uint32_t elf32GetSectAddr(const Elf32Shdr *sect);
  */
 EXPORT_FUNC
 uint32_t elf32GetSectFileoff(const Elf32Shdr *sect);
-
 
 /***
  * Description:
@@ -583,8 +569,10 @@ uint32_t elf32GetSectFileoff(const Elf32Shdr *sect);
  *  Fail:
  *      NULL.
  */
+/* !TODO: rework instead of .rela, should be .rel
 EXPORT_FUNC
 uint32_t elf32GetRelocForAddr(const Elf32File *elf32, const Elf32Shdr *sect, uint32_t addr);
+*/
 
 /***
  * Before:

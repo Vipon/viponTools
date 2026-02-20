@@ -136,7 +136,6 @@ jobs:
           cpath: ${HOME}/.local/include:${CPATH}
           library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
       - run: ./setup.sh
-      - run: chmod 0744 "${HOME}/.local/bin/ninja"
       - name: Configure Debug Ninja
         run: ./configure --ninja --output ninja
       - name: Ninja Build Test Install
@@ -170,6 +169,38 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: viponTools_Ubuntu
+          path: viponTools.tar.gz
+  ubuntu-2404-32-gmake-release:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set Env Variables
+        uses: ./.github/actions/set_env_var
+        with:
+          shell: bash
+          path: ${HOME}/.local/bin
+          cpath: ${HOME}/.local/include:${CPATH}
+          library_path: ${HOME}/.local/lib:${LIBRARY_PATH}
+      - run: ./setup.sh
+      - name: Set up 32-bits build env
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt install build-essential gcc-multilib g++-multilib
+      - name: Configure Gmake Release
+        run: ./configure --gmake --release --target-platform=i386-linux-gnu --output i386_release
+      - name: Gmake Build Test Install
+        uses: ./.github/actions/gmake_build_test_install
+        with:
+          shell: bash
+          working-directory: i386_release
+      - name: Make Achive
+        working-directory: i386_release
+        run: tar -czvf ../viponTools.tar.gz viponTools
+      - uses: actions/upload-artifact@v4
+        with:
+          name: viponTools_Ubuntu_i386
           path: viponTools.tar.gz
   windows-ninja-debug-static:
     runs-on: windows-2025-vs2026

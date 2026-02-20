@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021-2023 Konychev Valerii
+ * Copyright (c) 2021-2026 Konychev Valerii
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,68 +34,67 @@
 #include <inttypes.h>
 
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Description:
- *  Function returns elf32 header, which is readed from file with descriptor @fd.
- * Input:
- *  @fd - target elf32File descriptor.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_HEADER
- * After:
- *  need to free memory.
+ * @brief parse machine acritecture
+ *
+ * @param[in,out] elf32 elf32File descriptor
  */
-static ELF32_ERROR elf32ParseHeader(Elf32File *elf32)
+static
+void elf32ParseArch(Elf32File *elf32)
 {
-    if (elf32 == NULL || IS_INV_FD(elf32->fd))
-        return ELF32_INV_ARG;
+    switch (elf32->header->e_machine) {
+    case EM_386:
+        elf32->arch = X86;
+        break;
+    case EM_ARM:
+        elf32->arch = ARM;
+        break;
+    case EM_X86_64:
+        elf32->arch = X86_64;
+        break;
+    case EM_AARCH64:
+        elf32->arch = AARCH64;
+        break;
+    default:
+        elf32->arch = UNKNOWN_ARCH;
+        break;
+    }
+}
 
-    FileD fd = elf32->fd;
+/***
+ * @brief parse elf32 header
+ *
+ * @param[in,out] elf32 elf32File descriptor
+ *
+ * @return ELF32_OK or ELF32_NO_HEADER
+ */
+static
+ELF32_ERROR elf32ParseHeader(Elf32File *elf32)
+{
     size_t ehOff = 0;
-    uint32_t ehSize = sizeof(Elf32Ehdr);
-    Elf32Ehdr *header = (Elf32Ehdr*) readFromFile(fd, &ehOff, ehSize);
-    if (header == NULL)
-        return ELF32_NO_MEM;
-
+    Elf32Ehdr *header = (Elf32Ehdr*)(elf32->faddr + ehOff);
     unsigned char *eIdent = header->e_ident;
     if (  eIdent[EI_MAG0] == '\x7f' && eIdent[EI_MAG1] == 'E'
        && eIdent[EI_MAG2] == 'L' && eIdent[EI_MAG3] == 'F'
        && eIdent[EI_CLASS] == ELFCLASS32) {
         elf32->header = header;
         elf32->type = header->e_type;
+        elf32ParseArch(elf32);
         return ELF32_OK;
     } else {
-        Free(header);
         return ELF32_NO_HEADER;
     }
 }
 
-
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - point to target elf32File structure with initialized fields: fd and
- *        elf32Header.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_SECTIONS
- * After all:
- *  need to free memory.
+ * @brief parse elf sections
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_SECTIONS
  */
-static ELF32_ERROR elf32ParseSections(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseSections(Elf32File *elf32)
 {
-    /***
-     * Sections are identified by an index into the section header table.
-     */
-    if (elf32 == NULL || elf32->header == NULL || IS_INV_FD(elf32->fd))
-        return ELF32_INV_ARG;
-
     /***
      * e_shoff - contains the file offset, in bytes, of the section header
      *           table.
@@ -107,84 +106,48 @@ static ELF32_ERROR elf32ParseSections(Elf32File *elf32)
      * Otherwise, the sh_size member of the initial entry contains the value
      * zero.
      */
-    FileD fd = elf32->fd;
     size_t eShOff = elf32->header->e_shoff;
     uint32_t shNum = elf32->header->e_shnum;
-    uint32_t shSize = 0;
-
-    if (shNum != SHN_UNDEF)
-        shSize = shNum * sizeof(Elf32Shdr);
-    else {
-        Elf32Shdr *sect0 = (Elf32Shdr*) readFromFile(fd, &eShOff, sizeof(Elf32Shdr));
-        shNum = sect0->sh_size;
-        if (shNum == 0) {
-            free(sect0);
+    if (shNum == SHN_UNDEF) {
+        Elf32Shdr *sect0 = (Elf32Shdr*)(elf32->faddr + eShOff);
+        if (sect0->sh_size == 0) {
             return ELF32_NO_SECTIONS;
-        } else
-            shSize = shNum * sizeof(Elf32Shdr);
-
-        free(sect0);
+        }
     }
 
-    elf32->sections = (Elf32Shdr*) readFromFile(fd, &eShOff, shSize);
-    if (elf32->sections == NULL)
-        return ELF32_NO_MEM;
-
+    elf32->sections = (Elf32Shdr*)(elf32->faddr + eShOff);
     return ELF32_OK;
 }
 
-
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - point to target elf32File structure with initialized fields: fd and
- *        elf32Header.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_SEGMENTS
- * After all:
- *  need to free memory.
+ * @brief parse segments
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_SEGMENTS
  */
-static ELF32_ERROR elf32ParseSegments(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseSegments(Elf32File *elf32)
 {
-    if (elf32 == NULL || IS_INV_FD(elf32->fd) || elf32->header == NULL)
-        return ELF32_INV_ARG;
-
-    size_t phoff = elf32->header->e_phoff;
+    uint32_t phoff = elf32->header->e_phoff;
     uint32_t phnum = elf32->header->e_phnum;
     if (phnum == 0)
         return ELF32_NO_SEGMENTS;
 
-    elf32->segments = readFromFile(elf32->fd, &phoff, sizeof(Elf32Phdr)*phnum);
-    if (elf32->segments == NULL)
-        return ELF32_NO_MEM;
-
+    elf32->segments = (Elf32Phdr*)(elf32->faddr + phoff);
     return ELF32_OK;
 }
 
-
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *          sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_SYMTAB
- * After:
- *  need to free memory
+ * @brief parse symbol tab
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_SYMTAB
  */
-static ELF32_ERROR elf32ParseSymTab(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseSymTab(Elf32File *elf32)
 {
-    if (elf32 == NULL)
-        return ELF32_INV_ARG;
-
     /***
      * SHT_SYMTAB - Contains a linker symbol table.
      */
@@ -192,34 +155,22 @@ static ELF32_ERROR elf32ParseSymTab(Elf32File *elf32)
     if (symtab == NULL)
         return ELF32_NO_SYMTAB;
 
-    elf32->symtab = (Elf32Sym*) elf32ReadSect(elf32, symtab);
-    if (elf32->symtab == NULL)
-        return ELF32_NO_MEM;
-
+    elf32->symtab = (Elf32Sym*)(elf32->faddr + symtab->sh_offset);
     elf32->symnum = symtab->sh_size/sizeof(Elf32Sym);
     return ELF32_OK;
 }
 
 
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *        sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_DYNSYM
- * After all:
- *  need to free memory
+ * @brief parse dynamic symbol table
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_DYNSYM
  */
-static ELF32_ERROR elf32ParseDynSym(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseDynSym(Elf32File *elf32)
 {
-    if (elf32 == NULL)
-        return ELF32_INV_ARG;
-
     /***
      * SHT_DYNSYM - Contains a dynamic loader symbol table.
      */
@@ -227,35 +178,22 @@ static ELF32_ERROR elf32ParseDynSym(Elf32File *elf32)
     if (dynsym == NULL)
         return ELF32_NO_DYNSYM;
 
-    elf32->dynsym = (Elf32Sym*) elf32ReadSect(elf32, dynsym);
-    if (elf32->dynsym == NULL)
-        return ELF32_NO_MEM;
-
-
+    elf32->dynsym = (Elf32Sym*)(elf32->faddr + dynsym->sh_offset);
     elf32->dynsymnum = dynsym->sh_size/sizeof(Elf32Sym);
     return ELF32_OK;
 }
 
 
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *        sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_SYMBOLS
- * After all:
- *  need to free memory
+ * @brief parse symbols static and dynamic
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_SYMBOLS
  */
-static ELF32_ERROR elf32ParseSymbols(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseSymbols(Elf32File *elf32)
 {
-    if (elf32 == NULL)
-        return ELF32_INV_ARG;
-
     elf32ParseSymTab(elf32);
     elf32ParseDynSym(elf32);
 
@@ -265,59 +203,15 @@ static ELF32_ERROR elf32ParseSymbols(Elf32File *elf32)
     return ELF32_OK;
 }
 
-
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *          sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_SYMTAB
- * After:
- *  need to free memory
- */
-static ELF32_ERROR elf32ParseSortSymTab(Elf32File *elf32)
-{
-    if (elf32 == NULL)
-        return ELF32_INV_ARG;
-
-    /***
-     * SHT_SYMTAB - Contains a linker symbol table.
-     */
-    Elf32Shdr *symtab = elf32GetSectByType(elf32, SHT_SYMTAB);
-    if (symtab == NULL)
-        return ELF32_NO_SYMTAB;
-
-    uint32_t shSize = symtab->sh_size;
-    uint32_t symNum = shSize/sizeof(Elf32Sym);
-    Elf32Sym *sortSymtab = (Elf32Sym*) elf32ReadSect(elf32, symtab);
-
-    qsort(sortSymtab, symNum, sizeof(Elf32Sym), elf32CmpSym);
-
-    elf32->sortSymtab = sortSymtab;
-    return ELF32_OK;
-}
-
-
-/***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *        sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_SH_NAME_TAB
- * After:
- *  need to free memory. You should to be careful, see Symbols structure.
+ * @brief parse section name table
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_SH_NAME_TAB
 */
-static ELF32_ERROR elf32ParseSectNameTab(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseSectNameTab(Elf32File *elf32)
 {
     if (elf32 == NULL || elf32->header == NULL || elf32->sections == NULL)
         return ELF32_INV_ARG;
@@ -333,138 +227,79 @@ static ELF32_ERROR elf32ParseSectNameTab(Elf32File *elf32)
         return ELF32_NO_SH_NAME_TAB;
 
     Elf32Shdr *nameTab = &elf32->sections[shStrNdx];
-    elf32->sectNameTab = (char*) elf32ReadSect(elf32, nameTab);
-    if (elf32->sectNameTab == NULL)
-        return ELF32_NO_MEM;
-
+    elf32->sectNameTab = (char*)(elf32->faddr + nameTab->sh_offset);
     return ELF32_OK;
 }
 
-
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *        sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_SYM_NAME_TAB
- * After:
- *  need to free memory
+ * @brief parse symbol name table
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_SYM_NAME_TAB
  */
-static ELF32_ERROR elf32ParseSymNameTab(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseSymNameTab(Elf32File *elf32)
 {
-    if (elf32 == NULL)
-        return ELF32_INV_ARG;
-
     Elf32Shdr *strtab = elf32GetSectByName(elf32, STRTAB);
     if (strtab == NULL)
         return ELF32_NO_SYM_NAME_TAB;
 
-    char *symNameTab = (char*) elf32ReadSect(elf32, strtab);
-    if (symNameTab == NULL)
-        return ELF32_NO_MEM;
-
-    elf32->symNameTab = symNameTab;
+    elf32->symNameTab = (char*)(elf32->faddr + strtab->sh_offset);
     return ELF32_OK;
 }
 
-
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *        sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_DYN_SYM_NAME_TAB
- * After:
- *  need to free memory
+ * @brief parse dynamic symbol name table
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_DYN_SYM_NAME_TAB
  */
-static ELF32_ERROR elf32ParseDynSymNameTab(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseDynSymNameTab(Elf32File *elf32)
 {
-    if (elf32 == NULL)
-        return ELF32_INV_ARG;
-
     Elf32Shdr *dynSymTab = elf32GetSectByName(elf32, DYNSTR);
     if (dynSymTab == NULL)
         return ELF32_NO_DYN_SYM_NAME_TAB;
 
-    char *dynSymNameTab = (char*) elf32ReadSect(elf32, dynSymTab);
-    if (dynSymNameTab == NULL)
-        return ELF32_NO_MEM;
-
-    elf32->dynSymNameTab = dynSymNameTab;
+    elf32->dynSymNameTab = (char*)(elf32->faddr + dynSymTab->sh_offset);
     return ELF32_OK;
 }
 
-
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *          sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_RELAPLT
- * After:
- *  need to free memory
+ * @brief parse rel plt table
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_RELPLT
  */
-static ELF32_ERROR elf32ParseRelaPlt(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseRelPlt(Elf32File *elf32)
 {
-    if (elf32 == NULL || elf32->fn == NULL)
-        return ELF32_INV_ARG;
+    Elf32Shdr *relplt = elf32GetSectByName(elf32, RELPLT);
+    if (relplt == NULL)
+        return ELF32_NO_RELPLT;
 
-    Elf32Shdr *relaplt = elf32GetSectByName(elf32, RELAPLT);
-    if (relaplt == NULL)
-        return ELF32_NO_RELAPLT;
-    else {
-        elf32->relaplt = (Elf32Rel*)elf32ReadSect(elf32, relaplt);
-        if (elf32->relaplt == NULL)
-            return ELF32_NO_MEM;
-    }
-
+    elf32->relplt = (Elf32Rel*)(elf32->faddr + relplt->sh_offset);
     return ELF32_OK;
 }
 
-
 /***
- * Before:
- *  If you need a file position, you should to save it.
- * Input:
- *  @elf32 - Elf32File structer with initialized fields: fd, elf32Header and
- *          sectionHeaders.
- * Output:
- *  Success:
- *      ELF32_OK
- *  Fail:
- *      ELF32_INV_ARG, ELF32_NO_MEM, ELF32_NO_RELADYN
- * After:
- *  need to free memory
+ * @brief parse rela dyn table
+ *
+ * @param[in,out] elf32 pointer to Elf32File
+ *
+ * @return ELF32_OK or ELF32_NO_RELDYN
  */
-static ELF32_ERROR elf32ParseRelaDyn(Elf32File *elf32)
+static
+ELF32_ERROR elf32ParseRelDyn(Elf32File *elf32)
 {
-    if (elf32 == NULL || elf32->fn == NULL)
-        return ELF32_INV_ARG;
+    Elf32Shdr *reldyn = elf32GetSectByName(elf32, RELDYN);
+    if (reldyn == NULL)
+        return ELF32_NO_RELDYN;
 
-    Elf32Shdr *reladyn = elf32GetSectByName(elf32, RELADYN);
-    if (reladyn == NULL)
-        return ELF32_NO_RELADYN;
-    else {
-        elf32->reladyn = (Elf32Rel*)elf32ReadSect(elf32, reladyn);
-        if (elf32->reladyn == NULL)
-            return ELF32_NO_MEM;
-    }
-
+    elf32->reldyn = (Elf32Rel*)(elf32->faddr + reldyn->sh_offset);
     return ELF32_OK;
 }
 
@@ -476,108 +311,107 @@ Elf32File *elf32Parse(const char *fn)
         return NULL;
     }
 
-    LOG("start elf32Parse\n")
-    FileD fd = open(fn, O_RDONLY);
-    if (IS_INV_FD(fd)) {
-        PERROR("open()");
-        return NULL;
-    }
-
     Elf32File *elf32 = (Elf32File*) Calloc(1, sizeof(Elf32File));
     if (elf32 == NULL) {
         LOG_ERROR("Cannot allocate %zu bytes", sizeof(Elf32File));
-        goto eexit_0;
+        goto eexit0;
     }
 
-    elf32->fd = fd;
+    elf32->fd = open(fn, O_RDONLY);
+    if (IS_INV_FD(elf32->fd)) {
+        PERROR("open()");
+        goto eexit1;
+    }
+
+    elf32->fs = get_file_size(elf32->fd);
+    if (elf32->fs == (size_t) -1) {
+        LOG_ERROR("Cannot get file size");
+        goto eexit1;
+    }
+
+    elf32->faddr = (uint8_t*)map_file(elf32->fd, elf32->fs, PROT_READ);
+    if (elf32->faddr == NULL) {
+        LOG_ERROR("Cannot map file");
+        goto eexit1;
+    }
+
     uint32_t nameSize = (uint32_t)(strlen(fn) * sizeof(char));
     if ((elf32->fn = (char*) Calloc(nameSize, sizeof(char))) == NULL) {
         LOG_ERROR("Cannot allocate %u bytes", nameSize);
-        goto eexit_1;
+        goto eexit1;
     }
 
     strncpy(elf32->fn, fn, nameSize);
 
     if (elf32ParseHeader(elf32)) {
         LOG_ERROR("Cannot parse elf32 header");
-        goto eexit_1;
+        goto eexit1;
     }
 
     if (elf32ParseSections(elf32)) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
             /* Object file must have sections for linker */
             LOG_ERROR("There is no section headers table");
-            goto eexit_1;
-        } else
-            WARNING("There is no section headers table");
+            goto eexit1;
+        }
     }
 
     if (elf32ParseSegments(elf32)) {
         if (IS_ELF32_FILE_EXEC(elf32)) {
             /* Exec file must have segments for loader */
             LOG_ERROR("There are no program headers");
-            goto eexit_1;
-        } else
-            WARNING("There are no program headers");
+            goto eexit1;
+        }
     }
 
     if (elf32ParseSymbols(elf32)) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
             /* Object file must have symbols for linker */
             LOG_ERROR("There is no symbols table");
-            goto eexit_1;
-        } else
-            WARNING("There is no symbols table");
-    } else
-        elf32ParseSortSymTab(elf32);
+            goto eexit1;
+        }
+    }
 
     if (elf32ParseSectNameTab(elf32)) {
         if (elf32->symtab || elf32->dynsym) {
             LOG_ERROR("There is no section name table");
-            goto eexit_1;
-        } else
-            WARNING("There is no section name table");
+            goto eexit1;
+        }
     }
 
     if (elf32ParseSymNameTab(elf32)) {
         if (elf32->symtab || elf32->dynsym) {
             LOG_ERROR("Cannot parse symbol name table.");
-            goto eexit_1;
-        } else
-            WARNING("Cannot parse symbol name table.");
+            goto eexit1;
+        }
     }
 
     if (elf32ParseDynSymNameTab(elf32)) {
         if (elf32->dynsym != NULL) {
             LOG_ERROR("Cannot parse dynamic symbol name table.");
-            goto eexit_1;
-        } else
-            WARNING("Cannot parse dynamic symbol name table.");
+            goto eexit1;
+        }
     }
 
-    if (elf32ParseRelaPlt(elf32)) {
+    if (elf32ParseRelPlt(elf32)) {
         if (elf32->dynsym) {
-            LOG_ERROR("There is no " RELAPLT " table");
-            goto eexit_1;
-        } else
-            WARNING("There is no " RELAPLT " table");
+            LOG_ERROR("There is no " RELPLT " table");
+            goto eexit1;
+        }
     }
 
-    if (elf32ParseRelaDyn(elf32)) {
+    if (elf32ParseRelDyn(elf32)) {
         if (elf32->dynsym) {
-            LOG_ERROR("There is no " RELADYN " table");
-            goto eexit_1;
-        } else
-            WARNING("There is no " RELADYN " table");
+            LOG_ERROR("There is no " RELDYN " table");
+            goto eexit1;
+        }
     }
 
     return elf32;
 
-eexit_1:
+eexit1:
     elf32Free(elf32);
-    return NULL;
-eexit_0:
-    close(fd);
+eexit0:
     return NULL;
 }
 
@@ -585,91 +419,22 @@ eexit_0:
 void elf32Free(Elf32File *elf32)
 {
     if (elf32 == NULL) {
-        LOG_ERROR("Try to free NULL ptr stuct");
         return;
     }
 
-    LOG("start elf32Free");
-
     if (IS_VLD_FD(elf32->fd)) {
-        LOG("close file");
         close(elf32->fd);
         elf32->fd = 0;
     }
-
     if (elf32->fn != NULL) {
-        LOG("free file name");
         Free(elf32->fn);
         elf32->fn = NULL;
     }
-
-    if (elf32->header != NULL) {
-        LOG("free header");
-        Free(elf32->header);
-        elf32->header = NULL;
+    if (elf32->faddr) {
+        unmap_file(elf32->faddr, elf32->fs);
     }
 
-    if (elf32->segments != NULL) {
-        LOG("free segments");
-        Free(elf32->segments);
-        elf32->segments = NULL;
-    }
-
-    if (elf32->sections != NULL) {
-        LOG("free sections");
-        Free(elf32->sections);
-        elf32->sections = NULL;
-    }
-
-    if (elf32->symtab != NULL) {
-        LOG("free symbols");
-        Free(elf32->symtab);
-        elf32->symtab = NULL;
-    }
-
-    if (elf32->dynsym != NULL) {
-        LOG("free dynamic symbols");
-        Free(elf32->dynsym);
-        elf32->dynsym = NULL;
-    }
-
-    if (elf32->sortSymtab != NULL) {
-        LOG("free sortSymtab");
-        Free(elf32->sortSymtab);
-        elf32->sortSymtab = NULL;
-    }
-
-    if (elf32->relaplt != NULL) {
-        LOG("free relaplt");
-        Free(elf32->relaplt);
-        elf32->relaplt = NULL;
-    }
-
-    if (elf32->reladyn != NULL) {
-        LOG("free reladyn");
-        Free(elf32->reladyn);
-        elf32->reladyn = NULL;
-    }
-
-    if (elf32->sectNameTab != NULL) {
-        LOG("free sectNameTab");
-        Free(elf32->sectNameTab);
-        elf32->sectNameTab = NULL;
-    }
-
-    if (elf32->symNameTab != NULL) {
-        LOG("free symNameTab");
-        Free(elf32->symNameTab);
-        elf32->symNameTab = NULL;
-    }
-
-    if (elf32->dynSymNameTab != NULL) {
-        LOG("free dynSymNameTab");
-        Free(elf32->dynSymNameTab);
-        elf32->dynSymNameTab = NULL;
-    }
-
-    LOG("end elf32Free");
+    vt_memset_s(elf32, sizeof(Elf32File), 0xFF, sizeof(Elf32File));
     Free(elf32);
 }
 
@@ -677,89 +442,58 @@ void elf32Free(Elf32File *elf32)
 ELF32_ERROR elf32Check(const Elf32File *elf32)
 {
     if (elf32 == NULL) {
-        LOG_ERROR("Invalid arguments");
         return ELF32_INV_ARG;
     }
 
     if (elf32->header == NULL) {
-        LOG_ERROR("Uninitialized field elf32->header.");
         return ELF32_NO_HEADER;
     }
 
     if (elf32->segments == NULL) {
         if (IS_ELF32_FILE_EXEC(elf32)) {
-            LOG_ERROR("Uninitialized field elf32->segments.");
             return ELF32_NO_SEGMENTS;
-        } else
-            WARNING("Uninitialized field elf32->segments.");
+        }
     }
 
     if (elf32->sections == NULL) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
-            LOG_ERROR("Uninitialized field elf32->sections.");
             return ELF32_NO_SECTIONS;
-        } else
-            WARNING("Uninitialized field elf32->sections.");
+        }
     }
 
     if (elf32->symtab == NULL) {
         if (IS_ELF32_FILE_OBJ(elf32)) {
-            LOG_ERROR("Uninitialized field elf32->symtab.");
             return ELF32_NO_SYMTAB;
-        } else
-            WARNING("Uninitialized field elf32->symtab.");
+        }
     }
 
-    if (elf32->sortSymtab == NULL) {
-        if (IS_ELF32_FILE_OBJ(elf32)) {
-            LOG_ERROR("Uninitialized field elf32->sortSymtab.");
-            return ELF32_NO_SYMTAB;
-        } else
-            WARNING("Uninitialized field elf32->sortSymtab.");
-    }
-
-    if (elf32->dynsym == NULL)
-        WARNING("Uninitialized field elf32->dynsym.\n");
-
-    if (elf32->relaplt == NULL) {
+    if (elf32->relplt == NULL) {
         if (elf32->dynsym != NULL) {
-            LOG_ERROR("Uninitialized field elf32->relTabs.relaplt.");
-            return ELF32_NO_RELAPLT;
-        } else
-            WARNING("Uninitialized field elf32->relTabs.relaplt.\n");
+            return ELF32_NO_RELPLT;
+        }
     }
 
-    if (elf32->reladyn == NULL) {
+    if (elf32->reldyn == NULL) {
         if (elf32->dynsym != NULL) {
-            LOG_ERROR("Uninitialized field elf32->relTabs.reladyn.");
-            return ELF32_NO_RELADYN;
-        } else
-            WARNING("Uninitialized field elf32->relTabs.reladyn.\n");
+            return ELF32_NO_RELDYN;
+        }
     }
 
     if (elf32->sectNameTab == NULL) {
         if (elf32->symtab) {
-            LOG_ERROR("Uninitialized field elf32->sectNameTab.");
             return ELF32_NO_SH_NAME_TAB;
-        } else
-            WARNING("Uninitialized field elf32->sectNameTab.");
+        }
     }
 
     if (elf32->symNameTab  == NULL) {
         if (elf32->symtab != NULL) {
-            LOG_ERROR("Uninitialized field elf32->symNameTab.");
             return ELF32_NO_SYM_NAME_TAB;
-        } else {
-            WARNING("Uninitialized field elf32->symNameTab.\n");
         }
     }
 
     if (elf32->dynSymNameTab  == NULL) {
         if (elf32->dynsym != NULL) {
-            LOG_ERROR("Uninitialized field elf32->dynSymNameTab.");
             return ELF32_NO_DYN_SYM_NAME_TAB;
-        } else {
-            WARNING("Uninitialized field elf32->dynSymNameTab.\n");
         }
     }
 
@@ -886,18 +620,6 @@ Elf32Sym *elf32GetSSymTab(const Elf32File *elf32)
 
     return elf32->symtab;
 }
-
-
-Elf32Sym *elf32GetSSymSortTab(const Elf32File *elf32)
-{
-    if (elf32 == NULL || elf32->sortSymtab == NULL) {
-        LOG_ERROR("Invalid arguments");
-        return NULL;
-    }
-
-    return elf32->sortSymtab;
-}
-
 
 uint32_t elf32GetAmountSSym(const Elf32File *elf32)
 {
@@ -1148,7 +870,7 @@ uint32_t elf32GetSectFileoff(const Elf32Shdr *elf32Sect)
     return elf32Sect->sh_offset;
 }
 
-
+/* !TODO: rework instead of .rela, should be .rel
 uint32_t elf32GetRelocForAddr( const Elf32File *elf32
                              , const Elf32Shdr *sect
                              , uint32_t addr
@@ -1193,7 +915,7 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
 
     uint32_t relaAmount = relaSect->sh_size / sizeof(Elf32Rel);
     uint32_t i = 0;
-    for (i = 0; i < relaAmount; ++i) {
+    for (i = 0; i < relaAmount; ++i) {*/
         /***
          * r_offset indicates the location at which the relocation should be
          * applied. For a relocatable file, this is the offset, in bytes, from
@@ -1201,6 +923,7 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
          * being relocated. For an executable or shared object, this is the
          * virtual address of the storage unit being relocated.
          */
+/*
         if (  IS_ELF32_FILE_OBJ(elf32)
            && rela[i].r_offset + sect->sh_addr == addr
            ) {
@@ -1228,7 +951,7 @@ uint32_t elf32GetRelocForAddr( const Elf32File *elf32
         return ELF32_NO_RELOCATION;
     }
 }
-
+*/
 
 void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func)
 {
@@ -1250,9 +973,9 @@ void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func)
      * shSize       -   contains the size, in bytes, of the section.
      * relpltAmount -   amount of Elf32Rel structures in .rela.ptl section.
      */
-    Elf32Shdr *relplt = elf32GetSectByName(elf32, RELAPLT);
+    Elf32Shdr *relplt = elf32GetSectByName(elf32, RELPLT);
     if (relplt == NULL) {
-        LOG_ERROR("Cannot get the section " RELAPLT ".");
+        LOG_ERROR("Cannot get the section " RELPLT ".");
         return NULL;
     }
 
@@ -1271,8 +994,8 @@ void *elf32GetRelocDataAddr(const Elf32File *elf32, const char *func)
      */
     uint32_t i = 0;
     for (i = 0; i < relpltAmount; ++i)
-        if (ELF32_R_SYM(elf32->relaplt[i].r_info) == symbolIndex)
-            return (void*) (size_t)elf32->relaplt[i].r_offset;
+        if (ELF32_R_SYM(elf32->relplt[i].r_info) == symbolIndex)
+            return (void*) (size_t)elf32->relplt[i].r_offset;
 
     return NULL;
 }
