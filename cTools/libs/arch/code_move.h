@@ -64,6 +64,7 @@ typedef enum {
     RELOC_AARCH64_B_COND,
     RELOC_AARCH64_B_COND_ABS,
     RELOC_AARCH64_CB,
+    RELOC_AARCH64_TB
 } RELOC_TYPE;
 
 static_assert(sizeof(RELOC_TYPE) == 4, "RELOC_TYPE must be 32 bit");

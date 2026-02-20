@@ -32,6 +32,11 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" ST
   if (NOT WIN32)
     append_cflags(COVERAGE_CFLAGS "-fprofile-instr-generate -fcoverage-mapping")
   endif ()
+  if ("${CMAKE_XCODE_BUILD_SYSTEM}" STREQUAL "12")
+    # Problem detected with xcode 12, maybe some other versions also contain
+    # Xcode doesn't link coverage library without this parameter
+    string(APPEND _LINKER_FLAGS " --coverage")
+  endif ()
 endif ()
 
 append_cflags(COVERAGE_CFLAGS -fno-omit-frame-pointer)

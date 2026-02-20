@@ -675,3 +675,23 @@ uint8_t aarch64_put_cb( uint32_t *dst
     return 4;
 }
 
+uint8_t aarch64_put_tb( uint32_t *dst
+                      , uint64_t pc
+                      , uint64_t target_addr
+                      , uint8_t reg_num
+                      , bool non_zero
+                      , bool x64
+                      , uint8_t bit_pos
+                      )
+{
+    int64_t imm14 = SIGN_EXTEND((int64_t)(target_addr - pc) >> 2, 13);
+
+    *dst = (x64 ? 0x10000000 : 0x0)
+         | (uint32_t)0x36000000
+         | (non_zero ? 0x01000000 : 0x0)
+         | (uint32_t)(bit_pos & 0x1f) << 19
+         | (uint32_t)(imm14 & 0x3FFF) << 5
+         | (uint32_t)(reg_num & 0x1F);
+
+    return 4;
+}

@@ -282,5 +282,15 @@ uint8_t aarch64_put_cb( uint32_t *dst
                       , bool x64
                       );
 
+EXPORT_FUNC
+uint8_t aarch64_put_tb( uint32_t *dst
+                      , uint64_t pc
+                      , uint64_t target_addr
+                      , uint8_t reg_num
+                      , bool non_zero
+                      , bool x64
+                      , uint8_t bit_pos
+                      );
+
 #endif /* __AARCH64_H */
 
