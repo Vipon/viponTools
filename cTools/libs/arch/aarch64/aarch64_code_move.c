@@ -354,7 +354,7 @@ aarch64_move_b_cond( uint32_t instr
     uint64_t new_target_addr = new_pc + ((uint64_t)new_imm19 << 2);
     if (target_addr == new_target_addr) {
         STDERROR_LOG("BC\n");
-        // We can fit offset into 26 bits.
+        // We can fit offset into 19 bits.
         r->type = RELOC_AARCH64_B_COND;
         r->new_size = aarch64_put_b_cond( (uint32_t*)dst
                                         , new_pc
@@ -399,7 +399,7 @@ aarch64_move_cb( uint32_t instr
     uint64_t new_target_addr = new_pc + ((uint64_t)new_imm19 << 2);
     if (target_addr == new_target_addr) {
         STDERROR_LOG("CB\n");
-        // We can fit offset into 26 bits.
+        // We can fit offset into 19 bits.
         r->type = RELOC_AARCH64_CB;
         r->new_size = aarch64_put_cb( (uint32_t*)dst
                                     , new_pc
@@ -413,6 +413,50 @@ aarch64_move_cb( uint32_t instr
     }
 
     return r->new_size;
+}
+
+static uint8_t
+aarch64_move_tb( uint32_t instr
+               , uint8_t  *dst
+               , uint64_t old_pc
+               , uint64_t new_pc
+               , vt_sorted_vector_t *rel
+               )
+{
+    bt_reloc *r = GET_PRE_INIT_BT_RELOC(rel);
+    bool x64 = !!(instr & 0x80000000);
+    bool non_zero = !!(instr & 0x01000000);
+    uint8_t reg_num = instr & 0x1F;
+    int64_t imm14 = SIGN_EXTEND((instr >> 5) & 0x3FFF, 13);
+    uint8_t bit_pos = (x64 ? 0x20 : 0)
+                    | ((instr & 0x00f80000) >> 19);
+
+    uint64_t target_addr = old_pc + ((uint64_t)imm14 << 2);
+    r->old_target = target_addr;
+    target_addr = get_instr_new_addr(target_addr, rel);
+    r->new_target = target_addr;
+
+    int64_t new_imm14 = ((target_addr - new_pc) >> 2) & 0x3FFF;
+    new_imm14 = SIGN_EXTEND(new_imm14, 13);
+
+    uint64_t new_target_addr = new_pc + ((uint64_t)new_imm14 << 2);
+    if (target_addr == new_target_addr) {
+        // We can fit offset into 14 bits.
+        r->type = RELOC_AARCH64_TB;
+        r->new_size = aarch64_put_tb( (uint32_t*)dst
+                                    , new_pc
+                                    , target_addr
+                                    , reg_num
+                                    , non_zero
+                                    , x64
+                                    , bit_pos
+                                    );
+    } else {
+        STDERROR_LOG("TB: cannot fit in the 11 bits\n");
+    }
+
+    return r->new_size;
+
 }
 
 CODE_MOVE_ERROR
@@ -501,6 +545,15 @@ aarch64_instr_move( const uint8_t *src
         STDERROR_LOG("CB: new instr: %"PRIx32"\n", *(uint32_t*)dst);
         break;
     }
+    case AARCH64_INSTR_OP_TBZ32:
+    case AARCH64_INSTR_OP_TBNZ32:
+    case AARCH64_INSTR_OP_TBZ64:
+        FALLTHROUGH;
+    case AARCH64_INSTR_OP_TBNZ64:
+    {
+        r->new_size = aarch64_move_tb(instr, dst, old_pc, new_pc, rel);
+        break;
+    }
     case AARCH64_INSTR_OP_BCEQ:
     case AARCH64_INSTR_OP_BCNE:
     case AARCH64_INSTR_OP_BCCS:
@@ -517,10 +570,6 @@ aarch64_instr_move( const uint8_t *src
     case AARCH64_INSTR_OP_BCLE:
     case AARCH64_INSTR_OP_RETAASPPC:
     case AARCH64_INSTR_OP_RETABSPPC:
-    case AARCH64_INSTR_OP_TBZ32:
-    case AARCH64_INSTR_OP_TBNZ32:
-    case AARCH64_INSTR_OP_TBZ64:
-    case AARCH64_INSTR_OP_TBNZ64:
     case AARCH64_INSTR_OP_LDRF32:
     case AARCH64_INSTR_OP_LDRF64:
     case AARCH64_INSTR_OP_LDRF128:
@@ -763,6 +812,28 @@ resolve_relocations( vt_sorted_vector_t *rel
                           , reg_num
                           , non_zero
                           , x64
+                          );
+            STDERROR_LOG("\tFinal CB: %"PRIx32"\n", *(uint32_t*)instr_p);
+            break;
+        }
+        case RELOC_AARCH64_TB:
+        {
+            STDERROR_LOG("Reloc CB:\n");
+            STDERROR_LOG("\told_target: 0x%"PRIx64", new_pc_old_target: 0x%"PRIx64"\n", r[i].old_target
+                    , old_target->new_pc);
+            bool x64 = !!((*((uint32_t*)instr_p)) & 0x80000000);
+            bool non_zero = !!((*((uint32_t*)instr_p)) & 0x01000000);
+            uint8_t bit_pos = (x64 ? 0x20 : 0)
+                            | (((*((uint32_t*)instr_p)) & 0x00f80000) >> 19);
+
+            STDERROR_LOG("\tPre Final CB: %"PRIx32"\n", *(uint32_t*)instr_p);
+            aarch64_put_tb( (uint32_t*)instr_p
+                          , r[i].new_pc
+                          , r[i].new_target
+                          , reg_num
+                          , non_zero
+                          , x64
+                          , bit_pos
                           );
             STDERROR_LOG("\tFinal CB: %"PRIx32"\n", *(uint32_t*)instr_p);
             break;
