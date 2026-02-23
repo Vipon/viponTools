@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2024 Konychev Valera
+ * Copyright (c) 2024-2026 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,22 +35,62 @@ typedef struct vt_list_elem_t {
 } vt_list_elem_t;
 
 typedef struct vt_list_t {
-    size_t         size;
+    size_t         elem_size;
     vt_list_elem_t *first;
 } vt_list_t ;
 
-EXPORT_FUNC vt_list_t *
-vt_list_create(size_t data_size);
+/***
+ * @brief
+ * @param[in] l Pointer to the vector.
+ * @param[in] i Iterator pointer.
+ */
+#define VT_LIST_FOR_EACH(lp, i) \
+    for (i = (lp)->first; i != NULL; i = i->next)
 
+/**
+ * \brief Initiates list.
+ *
+ * \param[in] l Point to list needed to be initialized.
+ * \param[in] elem_size Size of type should be stored in the list.
+ */
 EXPORT_FUNC void
-vt_list_free(vt_list_t *l);
+vt_list_init(vt_list_t *l, size_t elem_size);
 
+/**
+ * \brief Finalizes list at the pointer \param l.
+ *
+ * \param[in] l Point to list needed to be finalized.
+ */
+EXPORT_FUNC void
+vt_list_fini(vt_list_t *l);
+
+/**
+ * \brief Add \param data at the begin of the list \param l.
+ *
+ * \param[in] l Point to list.
+ * \param[in] data Point to data need to be added at the begin
+ *
+ * \return 0 if success. -1 if fail.
+ */
 EXPORT_FUNC int
 vt_list_insert_at_begin(vt_list_t *l, const void *data);
 
+/**
+ * \brief Append \param data to the list \param l.
+ *
+ * \param[in] l Point to list.
+ * \param[in] data Point to data need to be appended
+ *
+ * \return 0 if success. -1 if fail.
+ */
 EXPORT_FUNC int
 vt_list_append(vt_list_t *l, const void *data);
 
+/**
+ * \brief Reverse list \param l.
+ *
+ * \param[in] l Point to the list.
+ */
 EXPORT_FUNC void
 vt_list_reverse(vt_list_t *l);
 

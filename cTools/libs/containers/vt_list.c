@@ -25,16 +25,11 @@
 #include "mem.h"
 #include "vt_list.h"
 
-vt_list_t *
-vt_list_create(size_t data_size)
+void
+vt_list_init(vt_list_t *l, size_t elem_size)
 {
-    vt_list_t *l = Malloc(sizeof(vt_list_t));
-    if (l == NULL)
-        return NULL;
-
-    l->size = data_size;
+    l->elem_size = elem_size;
     l->first = NULL;
-    return l;
 }
 
 static void
@@ -52,16 +47,15 @@ vt_list_elems_free(vt_list_elem_t *cur)
 }
 
 void
-vt_list_free(vt_list_t *l)
+vt_list_fini(vt_list_t *l)
 {
     if (l == NULL)
         return;
 
-    l->size = (size_t)-1;
+    l->elem_size = (size_t)-1;
     vt_list_elems_free(l->first);
 
     l->first = NULL;
-    free(l);
 }
 
 static vt_list_elem_t *
@@ -71,8 +65,8 @@ create_list_elem(const vt_list_t *l, const void *data)
     if (new_elem == NULL)
         return NULL;
 
-    new_elem->data = Malloc(l->size);
-    directCopyBytes(data, new_elem->data, l->size);
+    new_elem->data = Malloc(l->elem_size);
+    directCopyBytes(data, new_elem->data, l->elem_size);
     new_elem->next = NULL;
 
     return new_elem;
