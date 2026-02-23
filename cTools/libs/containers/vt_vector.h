@@ -71,7 +71,7 @@ EXPORT_FUNC int
 vt_vector_init(vt_vector_t *v, size_t capacity, size_t elem_size);
 
 /**
- * \brief Finalizes vector sotred at the pointer \param src.
+ * \brief Finalizes vector sotred at the pointer \param v.
  *
  * \param[in] v Point to vector needed to be finalized.
  */
