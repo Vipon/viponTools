@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2024 Konychev Valerii
+# Copyright (c) 2020-2026 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,12 @@
 # SOFTWARE.
 
 add_vipon_test(
+  NAME vt_list_test
+  SOURCES vt_list_test.c
+  LINK_LIBS vt_containers mem comdef
+)
+
+add_vipon_test(
   NAME vt_vector_test
   SOURCES vt_vector_test.c
   LINK_LIBS vt_containers mem comdef
@@ -37,4 +43,3 @@ add_vipon_test(
   SOURCES vt_stack_test.c
   LINK_LIBS vt_containers mem comdef
 )
-

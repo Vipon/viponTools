@@ -1,7 +1,7 @@
 /***
  * MIT License
  *
- * Copyright (c) 2021 Konychev Valera
+ * Copyright (c) 2021-2026 Konychev Valera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,29 +31,29 @@
 #ifndef __cplusplus
     #include <stdlib.h>
 
-    #define EXPECT_FUNC_EQ(func, res)          \
-        if ((func) != (res)) {                 \
+    #define EXPECT_FUNC_EQ(func, result)          \
+        if ((func) != (result)) {                 \
             VT_ERROR(STRINGIZE(func) " fail"); \
             exit(EXIT_FAILURE);                \
         }
 
-    #define EXPECT_VAL_EQ(val, res, format)                              \
-        if ((val) != (res)) {                                            \
-            VT_ERROR("expect: " format " result: " format, (val), (res));\
-            exit(EXIT_FAILURE);                                          \
+    #define EXPECT_VAL_EQ(expect, result, format)                              \
+        if ((expect) != (result)) {                                            \
+            VT_ERROR("expect: " format " result: " format, (expect), (result));\
+            exit(EXIT_FAILURE);                                                \
         }
 
-    #define EXPECT_VAL_NOT_EQ(val, res, format) \
-        if ((val) == (res)) {                   \
-            VT_ERROR(format);                   \
-            exit(EXIT_FAILURE);                 \
+    #define EXPECT_VAL_NOT_EQ(expect, result, format) \
+        if ((expect) == (result)) {                   \
+            VT_ERROR(format);                         \
+            exit(EXIT_FAILURE);                       \
         }
 
-    #define EXPECT_BYTE_EQ(val, res)    EXPECT_VAL_EQ(val, res, "%.2x")
-    #define EXPECT_INT_EQ(val, res)     EXPECT_VAL_EQ(val, res, "%d")
-    #define EXPECT_SIZET_EQ(val, res)   EXPECT_VAL_EQ(val, res, "%zu")
-    #define EXPECT_BOOL_EQ(val, res)    EXPECT_VAL_EQ(val, res, "%d")
-    #define EXPECT_POINTER_EQ(val, res) EXPECT_VAL_EQ(val, res, "%p")
+    #define EXPECT_BYTE_EQ(expect, result)    EXPECT_VAL_EQ(expect, result, "%.2x")
+    #define EXPECT_INT_EQ(expect, result)     EXPECT_VAL_EQ(expect, result, "%d")
+    #define EXPECT_SIZET_EQ(expect, result)   EXPECT_VAL_EQ(expect, result, "%zu")
+    #define EXPECT_BOOL_EQ(expect, result)    EXPECT_VAL_EQ(expect, result, "%d")
+    #define EXPECT_POINTER_EQ(expect, result) EXPECT_VAL_EQ(expect, result, "%p")
 
     #define EXPECT_STR_EQ(str0, str1)                        \
         if (strcmp(str0, str1)) {                            \
