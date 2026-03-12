@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+/* Linux like endian.h */
+
 #ifndef __ENDIAN_H
 #define __ENDIAN_H
 

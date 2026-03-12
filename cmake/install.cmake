@@ -36,9 +36,10 @@ endif ()
 
 function(installFiles dir)
   foreach(file ${ARGN})
+    get_filename_component(FILE_DIR ${file} DIRECTORY)
     install(
       FILES "${file}"
-      DESTINATION ${dir}
+      DESTINATION "${dir}/${FILE_DIR}"
     )
   endforeach(file)
 endfunction(installFiles)

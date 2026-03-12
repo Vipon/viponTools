@@ -37,7 +37,7 @@ typedef struct vt_list_elem_t {
 typedef struct vt_list_t {
     size_t         elem_size;
     vt_list_elem_t *first;
-} vt_list_t ;
+} vt_list_t;
 
 /***
  * @brief

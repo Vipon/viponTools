@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+/* Unix like elf.h */
+
 #ifndef __ELF_H
 #define __ELF_H
 
