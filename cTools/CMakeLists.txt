@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020-2023 Konychev Valerii
+# Copyright (c) 2020-2026 Konychev Valerii
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,6 @@ if (NOT WIN32)
   include_directories(AFTER include/Windows)
 endif ()
 
+add_subdirectory(include)
 add_subdirectory(libs)
 add_subdirectory(tools)
-
