@@ -37,7 +37,7 @@ struct hlist_head {
 };
 
 struct hlist_node {
-    struct hlist_node *next,
+    struct hlist_node *next;
     struct hlist_node **pprev;
 };
 

@@ -44,6 +44,45 @@
     struct list_head name = LIST_HEAD_INIT(name)
 
 /**
+ * @brief get the struct for this entry
+ * @param[in] ptr    the &struct list_head pointer.
+ * @param[in] type   the type of the struct this is embedded in.
+ * @param[in] member the name of the list_head within the struct.
+ */
+#define list_entry(ptr, type, member) \
+    container_of(ptr, type, member)
+
+/**
+ * @brief get the first element from a list
+ * @param[in] ptr    the list head to take the element from.
+ * @param[in] type   the type of the struct this is embedded in.
+ * @param[in] member the name of the list_head within the struct.
+ *
+ * Note, that list is expected to be not empty.
+ */
+#define list_first_entry(ptr, type, member) \
+    list_entry((ptr)->next, type, member)
+
+/**
+ * @brief get the last element from a list
+ * @param[in] ptr    the list head to take the element from.
+ * @param[in] type   the type of the struct this is embedded in.
+ * @param[in] member the name of the list_head within the struct.
+ *
+ * Note, that list is expected to be not empty.
+ */
+#define list_last_entry(ptr, type, member) \
+    list_entry((ptr)->prev, type, member)
+
+/**
+ * @brief get the next element in list
+ * @param[in] pos    the type * to cursor
+ * @param[in] member the name of the list_head within the struct.
+ */
+#define list_next_entry(pos, member) \
+    list_entry((pos)->member.next, typeof(*(pos)), member)
+
+/**
  * @brief iterate over a list
  * @param[in] i iterator.
  * @param[in] head the head for your list.
@@ -52,13 +91,51 @@
     for (i = (head)->next; !list_is_head(i, (head)); i = i->next)
 
 /**
- * @brief get the struct for this entry
- * @param[in] ptr    the &struct list_head pointer.
- * @param[in] type   the type of the struct this is embedded in.
+ * @brief iterate over a list safe against removal of list entry
+ * @param[in] cur   the &struct list_head to use as a loop cursor
+ * @param[in] next  another &struct list_head to use as temporary storage
+ * @param[in] head  the head for your list.
+ */
+#define list_for_each_safe(cur, next, head) \
+    for (cur = (head)->next, next = cur->next; \
+         !list_is_head(cur, (head)); \
+         cur = next, next = cur->next)
+
+/**
+ * @brief count nodes in the list
+ * @param[in] head the head for your list.
+ */
+static inline size_t
+list_count_nodes(struct list_head *head)
+{
+    struct list_head *pos;
+    size_t count = 0;
+
+    list_for_each(pos, head)
+        count++;
+
+    return count;
+}
+
+/**
+ * @brief test if the entry points to the head of the list
+ * @param[in] pos    the type * to cursor
+ * @param[in] head   the head for your list.
  * @param[in] member the name of the list_head within the struct.
  */
-#define list_entry(ptr, type, member) \
-    container_of(ptr, type, member)
+#define list_entry_is_head(pos, head, member) \
+    list_is_head(&pos->member, (head))
+
+/**
+ * @brief iterate over list of given type
+ * @param[in] pos    the type * to use as a loop cursor.
+ * @param[in] head   the head for your list.
+ * @param[in] member the name of the list_head within the struct.
+ */
+#define list_for_each_entry(pos, head, member)               \
+    for (pos = list_first_entry(head, typeof(*pos), member); \
+         !list_entry_is_head(pos, head, member);             \
+         pos = list_next_entry(pos, member))
 
 /**
  * @brief Initialize a list_head structure
@@ -137,6 +214,49 @@ void list_swap(struct list_head *first, struct list_head *second)
     if (pos == first)
         pos = second;
     list_add(first, pos);
+}
+
+/**
+ * @brief tests whether @param list is the first entry in list @param head
+ * @param[in] list the entry to test
+ * @param[in] head the head of the list
+ */
+static inline
+int list_is_first(const struct list_head *list, const struct list_head *head)
+{
+    return list->prev == head;
+}
+
+/**
+ * @brief tests whether @param list is the last entry in list @param head
+ * @param[in] list the entry to test
+ * @param[in] head the head of the list
+ */
+static inline
+int list_is_last(const struct list_head *list, const struct list_head *head)
+{
+    return list->next == head;
+}
+
+/**
+ * @brief tests whether @param list is the list @param head
+ * @param[in] list the entry to test
+ * @param[in] head the head of the list
+ */
+static inline
+int list_is_head(const struct list_head *list, const struct list_head *head)
+{
+    return list == head;
+}
+
+/**
+ * @brief tests whether a list is empty
+ * @param[in] head the list to test.
+ */
+static inline
+int list_empty(const struct list_head *head)
+{
+    return head->next == head;
 }
 
 #define HLIST_HEAD_INIT { .first = NULL }

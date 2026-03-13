@@ -79,3 +79,5 @@ elseif (UNIX AND NOT APPLE)
 endif ()
 
 installHeaders("${COMMON_HEADERS}")
+
+add_subdirectory(linux)
